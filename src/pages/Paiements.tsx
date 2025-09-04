@@ -91,8 +91,6 @@ export default function Paiements() {
           icon={Receipt}
           title="Aucun paiement enregistré"
           description="Commencez par enregistrer votre premier paiement client pour suivre vos encaissements."
-          actionLabel="Nouveau paiement"
-          onAction={() => {}}
         />
       </div>
     )

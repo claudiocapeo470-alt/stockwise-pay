@@ -245,8 +245,26 @@ All colors MUST be HSL.
     @apply text-destructive-foreground bg-destructive;
   }
 
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-smooth;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-0.5 shadow-large;
+  }
+
   /* Enhanced button states */
   .btn-enhanced {
     @apply transition-smooth focus-enhanced hover-lift;
+  }
+
+  /* Animation utilities */
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .transition-bounce {
+    transition: var(--transition-bounce);
   }
 }

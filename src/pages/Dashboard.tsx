@@ -2,16 +2,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import { WelcomeGuide } from "@/components/onboarding/WelcomeGuide";
 import { BarChart3, Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export default function Dashboard() {
   const { products } = useProducts();
   const { sales } = useSales();
   const { payments } = usePayments();
+  const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
+
+  // Show welcome guide for completely new users
+  const isNewUser = products.length === 0 && sales.length === 0 && payments.length === 0;
 
   const metrics = useMemo(() => {
     const totalProducts = products.length;
@@ -102,12 +107,38 @@ export default function Dashboard() {
         </Card>
       )}
 
+      {isNewUser && showWelcomeGuide && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <WelcomeGuide onClose={() => setShowWelcomeGuide(false)} />
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <RecentActivity />
         </div>
-        <div>
+        <div className="space-y-6">
           <QuickActions />
+          {isNewUser && (
+            <Card className="glass border-primary/20">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-primary">
+                  🚀 Nouveau Utilisateur
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Votre interface est vierge et se remplira avec votre activité
+                </p>
+                <button
+                  onClick={() => setShowWelcomeGuide(true)}
+                  className="text-xs text-primary hover:underline"
+                >
+                  Voir le guide de démarrage
+                </button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

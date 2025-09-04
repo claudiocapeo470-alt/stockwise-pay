@@ -22,17 +22,21 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <AppLayout>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/stocks" element={<Stocks />} />
-              <Route path="/ventes" element={<Ventes />} />
-              <Route path="/paiements" element={<Paiements />} />
-              <Route path="/rapports" element={<Rapports />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AppLayout>
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/*" element={
+              <AppLayout>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/stocks" element={<Stocks />} />
+                  <Route path="/ventes" element={<Ventes />} />
+                  <Route path="/paiements" element={<Paiements />} />
+                  <Route path="/rapports" element={<Rapports />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AppLayout>
+            } />
+          </Routes>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

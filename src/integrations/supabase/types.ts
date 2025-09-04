@@ -18,51 +18,66 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          customer_first_name: string | null
+          customer_last_name: string | null
           customer_name: string | null
           customer_phone: string | null
           due_date: string | null
           id: string
           notes: string | null
+          paid_amount: number
           payment_date: string
           payment_method: string
           payment_provider: string | null
           proof_image_url: string | null
+          remaining_amount: number
           sale_id: string | null
           status: string
+          total_amount: number
           transaction_id: string | null
           user_id: string
         }
         Insert: {
           amount: number
           created_at?: string
+          customer_first_name?: string | null
+          customer_last_name?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           due_date?: string | null
           id?: string
           notes?: string | null
+          paid_amount?: number
           payment_date?: string
           payment_method: string
           payment_provider?: string | null
           proof_image_url?: string | null
+          remaining_amount?: number
           sale_id?: string | null
           status?: string
+          total_amount?: number
           transaction_id?: string | null
           user_id: string
         }
         Update: {
           amount?: number
           created_at?: string
+          customer_first_name?: string | null
+          customer_last_name?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           due_date?: string | null
           id?: string
           notes?: string | null
+          paid_amount?: number
           payment_date?: string
           payment_method?: string
           payment_provider?: string | null
           proof_image_url?: string | null
+          remaining_amount?: number
           sale_id?: string | null
           status?: string
+          total_amount?: number
           transaction_id?: string | null
           user_id?: string
         }

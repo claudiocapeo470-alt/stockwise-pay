@@ -7,14 +7,15 @@ export interface Payment {
   id: string;
   user_id: string;
   sale_id: string | null;
-  amount: number;
-  payment_method: 'cash' | 'mobile_money' | 'bank_transfer' | 'card';
-  payment_provider: string | null;
-  transaction_id: string | null;
-  status: 'pending' | 'completed' | 'failed' | 'cancelled';
+  customer_first_name: string | null;
+  customer_last_name: string | null;
+  payment_method: 'especes' | 'orange_money' | 'mtn_money' | 'wave' | 'moov_money' | 'carte_bancaire';
+  total_amount: number;
+  paid_amount: number;
+  remaining_amount: number;
+  status: 'pending' | 'completed' | 'partial' | 'overdue';
   payment_date: string;
   due_date: string | null;
-  customer_name: string | null;
   customer_phone: string | null;
   notes: string | null;
   proof_image_url: string | null;
@@ -47,12 +48,17 @@ export const usePayments = () => {
   });
 
   const addPayment = useMutation({
-    mutationFn: async (payment: Omit<Payment, 'id' | 'user_id' | 'created_at'>) => {
+    mutationFn: async (payment: Omit<Payment, 'id' | 'user_id' | 'created_at' | 'remaining_amount'>) => {
       if (!user) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
         .from('payments')
-        .insert([{ ...payment, user_id: user.id }])
+        .insert([{ 
+          ...payment, 
+          user_id: user.id,
+          // Keep the legacy amount field for compatibility
+          amount: payment.paid_amount
+        }])
         .select()
         .single();
 

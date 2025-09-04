@@ -30,7 +30,7 @@ export default function Dashboard() {
     }).reduce((sum, sale) => sum + sale.total_amount, 0);
 
     const pendingPayments = payments.filter(p => p.status === 'pending').length;
-    const totalPayments = payments.reduce((sum, payment) => sum + payment.amount, 0);
+    const totalPayments = payments.reduce((sum, payment) => sum + payment.total_amount, 0);
 
     return {
       totalProducts,

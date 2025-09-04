@@ -71,8 +71,8 @@ export function RecentActivity() {
       id: `payment-${payment.id}`,
       type: "payment",
       title: "Paiement reçu",
-      description: `${payment.payment_method}${payment.customer_name ? ` - ${payment.customer_name}` : ''}`,
-      amount: `${payment.amount.toLocaleString()} CFA`,
+      description: `${payment.payment_method}${payment.customer_first_name || payment.customer_last_name ? ` - ${payment.customer_first_name} ${payment.customer_last_name}` : ''}`,
+      amount: `${payment.total_amount.toLocaleString()} CFA`,
       time: formatDistanceToNow(new Date(payment.created_at), { addSuffix: true, locale: fr }),
       status: payment.status === 'completed' ? 'completed' : 'pending'
     }))

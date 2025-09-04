@@ -102,8 +102,8 @@ export default function Rapports() {
     const outOfStockProducts = products.filter(p => p.quantity === 0).length
     const completedPayments = payments.filter(p => p.status === 'completed')
     const pendingPayments = payments.filter(p => p.status === 'pending')
-    const totalPaid = completedPayments.reduce((sum, p) => sum + Number(p.amount), 0)
-    const totalPending = pendingPayments.reduce((sum, p) => sum + Number(p.amount), 0)
+    const totalPaid = completedPayments.reduce((sum, p) => sum + Number(p.total_amount), 0)
+    const totalPending = pendingPayments.reduce((sum, p) => sum + Number(p.total_amount), 0)
 
     return {
       totalSales,
@@ -137,7 +137,8 @@ export default function Rapports() {
       } else if (data === 'payments') {
         content = 'Date,Client,Montant,Méthode,Statut\n'
         payments.forEach(payment => {
-          content += `${new Date(payment.created_at).toLocaleDateString()},${payment.customer_name || 'N/A'},${payment.amount},${payment.payment_method},${payment.status}\n`
+          const fullName = `${payment.customer_first_name || ''} ${payment.customer_last_name || ''}`.trim() || 'N/A'
+          content += `${new Date(payment.created_at).toLocaleDateString()},${fullName},${payment.total_amount},${payment.payment_method},${payment.status}\n`
         })
       }
       filename = `${data}_${new Date().toISOString().split('T')[0]}.csv`

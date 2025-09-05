@@ -75,6 +75,8 @@ const statusConfig = {
 } as const
 
 export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const { deletePayment } = usePayments();
   const status = statusConfig[payment.status]
   const StatusIcon = status.icon
   const MethodIcon = paymentMethodIcons[payment.payment_method]

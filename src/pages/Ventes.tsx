@@ -7,11 +7,14 @@ import { ShoppingCart, Search, Plus, Eye } from "lucide-react";
 import { useState } from "react";
 import { useSales } from "@/hooks/useSales";
 import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
+import { SaleDetailsDialog } from "@/components/sales/SaleDetailsDialog";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
 export default function Ventes() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSale, setSelectedSale] = useState<any>(null);
+  const [showSaleDetails, setShowSaleDetails] = useState(false);
   const { sales, isLoading } = useSales();
 
   const filteredSales = sales.filter(sale =>
@@ -157,7 +160,14 @@ export default function Ventes() {
                       <span className="font-semibold">{sale.total_amount.toLocaleString()} FCFA</span>
                     </TableCell>
                     <TableCell>
-                      <Button variant="outline" size="icon">
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => {
+                          setSelectedSale(sale);
+                          setShowSaleDetails(true);
+                        }}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
                     </TableCell>
@@ -168,6 +178,12 @@ export default function Ventes() {
           )}
         </CardContent>
       </Card>
+
+      <SaleDetailsDialog
+        sale={selectedSale}
+        open={showSaleDetails}
+        onOpenChange={setShowSaleDetails}
+      />
     </div>
   );
 }

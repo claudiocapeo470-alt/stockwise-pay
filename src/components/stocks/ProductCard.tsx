@@ -19,6 +19,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const { deleteProduct } = useProducts();
   const getStatusBadge = (status: string, quantity: number) => {
     if (quantity === 0) {
       return <Badge className="bg-destructive text-destructive-foreground">Épuisé</Badge>

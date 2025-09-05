@@ -1,12 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Download, TrendingUp, BarChart3, PieChart, Calendar, Eye } from "lucide-react"
+import { FileText, Download, TrendingUp, BarChart3, PieChart, Calendar, Eye, Plus } from "lucide-react"
 import { useProducts } from "@/hooks/useProducts"
 import { useSales } from "@/hooks/useSales"
 import { usePayments } from "@/hooks/usePayments"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { toast } from "sonner"
+import { ReportDialog } from "@/components/reports/ReportDialog"
+import { CustomReportDialog } from "@/components/reports/CustomReportDialog"
 
 const reports = [
   {
@@ -92,6 +94,9 @@ export default function Rapports() {
   const { products = [] } = useProducts()
   const { sales = [] } = useSales()
   const { payments = [] } = usePayments()
+  const [selectedReportType, setSelectedReportType] = useState<string | null>(null)
+  const [showReportDialog, setShowReportDialog] = useState(false)
+  const [showCustomReportDialog, setShowCustomReportDialog] = useState(false)
 
   // Calculate real metrics
   const metrics = useMemo(() => {
@@ -320,7 +325,10 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 className="flex-1 bg-gradient-primary hover:opacity-90"
-                onClick={() => toast.info("Rapport des ventes affiché")}
+                onClick={() => {
+                  setSelectedReportType('sales');
+                  setShowReportDialog(true);
+                }}
               >
                 <Eye className="h-4 w-4 mr-1" />
                 Voir le rapport
@@ -384,7 +392,10 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 className="flex-1 bg-gradient-primary hover:opacity-90"
-                onClick={() => toast.info("Rapport de stock affiché")}
+                onClick={() => {
+                  setSelectedReportType('inventory');
+                  setShowReportDialog(true);
+                }}
               >
                 <Eye className="h-4 w-4 mr-1" />
                 Voir le rapport
@@ -448,7 +459,10 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 className="flex-1 bg-gradient-primary hover:opacity-90"
-                onClick={() => toast.info("Rapport des paiements affiché")}
+                onClick={() => {
+                  setSelectedReportType('payments');
+                  setShowReportDialog(true);
+                }}
               >
                 <Eye className="h-4 w-4 mr-1" />
                 Voir le rapport

@@ -10,6 +10,8 @@ import Stocks from "./pages/Stocks";
 import Ventes from "./pages/Ventes";
 import Paiements from "./pages/Paiements";
 import Rapports from "./pages/Rapports";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -31,8 +33,10 @@ const App = () => (
                   <Route path="/stocks" element={<Stocks />} />
                   <Route path="/ventes" element={<Ventes />} />
                   <Route path="/paiements" element={<Paiements />} />
-                  <Route path="/rapports" element={<Rapports />} />
-                  <Route path="*" element={<NotFound />} />
+          <Route path="/rapports" element={<Rapports />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<NotFound />} />
                 </Routes>
               </AppLayout>
             } />

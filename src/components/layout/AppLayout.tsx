@@ -10,15 +10,18 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { user, loading } = useAuth();
+  const { user, loading, hasActiveSubscription, subscription } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (!loading && !user && location.pathname !== '/auth') {
       navigate('/auth');
+    } else if (!loading && user && !hasActiveSubscription && !subscription?.is_legacy) {
+      // Non-legacy users without subscription must pay
+      navigate('/auth');
     }
-  }, [user, loading, navigate, location]);
+  }, [user, loading, hasActiveSubscription, subscription, navigate, location]);
 
   if (loading) {
     return (
@@ -33,6 +36,26 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   if (!user && location.pathname !== '/auth') {
     return null;
+  }
+
+  // Check subscription status for access control
+  if (user && !hasActiveSubscription && !subscription?.is_legacy) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <h2 className="text-2xl font-bold text-foreground">Abonnement requis</h2>
+          <p className="text-muted-foreground">
+            Vous devez souscrire à un abonnement pour accéder à l'application.
+          </p>
+          <button
+            onClick={() => navigate('/auth')}
+            className="text-primary hover:underline"
+          >
+            Retour à la page de connexion
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

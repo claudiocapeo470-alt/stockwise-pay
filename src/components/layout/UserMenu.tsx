@@ -1,4 +1,4 @@
-import { LogOut, Settings, User, Shield } from 'lucide-react';
+import { LogOut, Settings, User, Shield, CreditCard } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus';
 
 export function UserMenu() {
   const { user, profile, signOut, isAdmin } = useAuth();
@@ -58,6 +59,12 @@ export function UserMenu() {
             </p>
           </div>
         </DropdownMenuLabel>
+        
+        <DropdownMenuSeparator />
+        
+        <div className="px-2 py-1.5">
+          <SubscriptionStatus />
+        </div>
         
         <DropdownMenuSeparator />
         

@@ -1,1 +1,11 @@
 project_id = "fsdfzzhbydlmuiblgkvb"
+
+[auth]
+enable_signup = true
+enable_confirmations = true
+
+[functions.create-subscription]
+verify_jwt = false
+
+[functions.process-payment]
+verify_jwt = false

@@ -19,6 +19,10 @@ import {
   Edit,
   Trash2
 } from "lucide-react"
+import React, { useState } from "react"
+import { EditPaymentDialog } from "./EditPaymentDialog"
+import { usePayments } from "@/hooks/usePayments"
+import { toast } from "sonner"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import { cn } from "@/lib/utils"
@@ -89,6 +93,17 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
     }).format(amount).replace('XOF', 'CFA')
   }
 
+  const handleDelete = async () => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce paiement ?')) {
+      try {
+        await deletePayment.mutateAsync(payment.id);
+        toast.success('Paiement supprimé avec succès');
+      } catch (error) {
+        toast.error('Erreur lors de la suppression');
+      }
+    }
+  };
+
   const getFullName = () => {
     return `${payment.customer_first_name || ''} ${payment.customer_last_name || ''}`.trim()
   }
@@ -98,7 +113,8 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
   }
 
   return (
-    <Card className="hover:shadow-large transition-shadow hover-lift">
+    <>
+      <Card className="hover:shadow-large transition-shadow hover-lift">
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -128,12 +144,12 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit?.(payment)}>
+              <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Modifier
               </DropdownMenuItem>
               <DropdownMenuItem 
-                onClick={() => onDelete?.(payment)}
+                onClick={handleDelete}
                 className="text-destructive focus:text-destructive"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -211,6 +227,13 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
           )}
         </div>
       </CardContent>
-    </Card>
+      </Card>
+
+      <EditPaymentDialog 
+        payment={payment}
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+      />
+    </>
   )
 }

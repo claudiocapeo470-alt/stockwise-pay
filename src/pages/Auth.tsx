@@ -37,6 +37,10 @@ export default function Auth() {
     // Check for payment success or cancellation
     const paymentStatus = searchParams.get('payment');
     if (paymentStatus === 'success') {
+      // Store email in localStorage temporarily for payment processing
+      if (formData.email) {
+        localStorage.setItem('paymentEmail', formData.email);
+      }
       handlePaymentReturn();
     } else if (paymentStatus === 'cancelled') {
       toast({
@@ -47,37 +51,67 @@ export default function Auth() {
       // Clean URL
       navigate('/auth', { replace: true });
     }
-  }, [user, navigate, searchParams]);
+  }, [user, navigate, searchParams, formData.email]);
 
   const handlePaymentReturn = async () => {
     setProcessingPayment(true);
     try {
+      // Debug: afficher tous les paramètres URL
+      const allParams = Object.fromEntries(searchParams.entries());
+      console.log('All URL params:', allParams);
+      
       const reference = searchParams.get('reference');
       const trxref = searchParams.get('trxref'); // Paystack also sends trxref
       const paymentRef = reference || trxref;
       
-      if (paymentRef && formData.email) {
-        const { data, error } = await supabase.functions.invoke('process-payment', {
-          body: { reference: paymentRef, email: formData.email }
-        });
-        
-        if (error) throw error;
-        
-        toast({
-          title: "Paiement réussi",
-          description: "Votre abonnement est maintenant actif !",
-        });
-        
-        // Clear payment success from URL and redirect to main app
-        navigate('/', { replace: true });
-      } else {
-        throw new Error("Référence de paiement manquante");
+      console.log('Payment reference found:', paymentRef);
+      
+      if (!paymentRef) {
+        console.error('No payment reference found in URL params:', allParams);
+        throw new Error("Référence de paiement manquante dans l'URL de retour");
       }
+      
+      // Try to get email from formData first, then from localStorage as backup
+      let userEmail = formData.email;
+      if (!userEmail) {
+        userEmail = localStorage.getItem('paymentEmail') || '';
+        console.log('Retrieved email from localStorage:', userEmail);
+      }
+      
+      if (!userEmail) {
+        console.error('No email found in formData or localStorage:', { formData, localStorage: localStorage.getItem('paymentEmail') });
+        throw new Error("Email utilisateur manquant");
+      }
+      
+      console.log('Processing payment with:', { reference: paymentRef, email: userEmail });
+      
+      const { data, error } = await supabase.functions.invoke('process-payment', {
+        body: { reference: paymentRef, email: userEmail }
+      });
+      
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
+      }
+      
+      console.log('Payment processed successfully:', data);
+      
+      // Clean up localStorage
+      localStorage.removeItem('paymentEmail');
+      
+      toast({
+        title: "Paiement réussi",
+        description: "Votre abonnement est maintenant actif !",
+      });
+      
+      // Clear payment success from URL and redirect to main app
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('Payment processing error:', error);
+      const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
       toast({
         title: "Erreur de paiement",
-        description: "Une erreur s'est produite lors du traitement du paiement.",
+        description: errorMessage,
         variant: "destructive",
       });
       navigate('/auth', { replace: true });

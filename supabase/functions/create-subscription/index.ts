@@ -54,7 +54,7 @@ serve(async (req) => {
     const customerCode = customerData.data.customer_code;
     logStep("Paystack customer created", { customerCode });
 
-    // Create subscription plan (9999 FCFA monthly)
+    // Initialize one-time payment for subscription (9999 FCFA)
     const subscriptionResponse = await fetch("https://api.paystack.co/transaction/initialize", {
       method: "POST",
       headers: {
@@ -63,13 +63,15 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         email,
-        amount: 999900, // 9999 FCFA in kobo
+        amount: 999900, // 9999 FCFA in kobo (9999 * 100)
         currency: "XOF",
-        plan: "monthly_subscription", // You need to create this plan in Paystack dashboard
         callback_url: `${req.headers.get("origin")}/auth?payment=success`,
+        cancel_url: `${req.headers.get("origin")}/auth?payment=cancelled`,
         metadata: {
           subscription_type: "monthly",
           amount_fcfa: 9999,
+          customer_code: customerCode,
+          purpose: "monthly_subscription_payment",
         },
       }),
     });

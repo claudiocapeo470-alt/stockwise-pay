@@ -34,10 +34,18 @@ export default function Auth() {
       navigate('/');
     }
     
-    // Check for payment success
+    // Check for payment success or cancellation
     const paymentStatus = searchParams.get('payment');
     if (paymentStatus === 'success') {
       handlePaymentReturn();
+    } else if (paymentStatus === 'cancelled') {
+      toast({
+        title: "Paiement annulé",
+        description: "Vous pouvez réessayer le paiement quand vous voulez.",
+        variant: "destructive",
+      });
+      // Clean URL
+      navigate('/auth', { replace: true });
     }
   }, [user, navigate, searchParams]);
 
@@ -45,9 +53,12 @@ export default function Auth() {
     setProcessingPayment(true);
     try {
       const reference = searchParams.get('reference');
-      if (reference && formData.email) {
+      const trxref = searchParams.get('trxref'); // Paystack also sends trxref
+      const paymentRef = reference || trxref;
+      
+      if (paymentRef && formData.email) {
         const { data, error } = await supabase.functions.invoke('process-payment', {
-          body: { reference, email: formData.email }
+          body: { reference: paymentRef, email: formData.email }
         });
         
         if (error) throw error;
@@ -57,8 +68,10 @@ export default function Auth() {
           description: "Votre abonnement est maintenant actif !",
         });
         
-        // Clear payment success from URL
-        navigate('/auth', { replace: true });
+        // Clear payment success from URL and redirect to main app
+        navigate('/', { replace: true });
+      } else {
+        throw new Error("Référence de paiement manquante");
       }
     } catch (error) {
       console.error('Payment processing error:', error);
@@ -67,6 +80,7 @@ export default function Auth() {
         description: "Une erreur s'est produite lors du traitement du paiement.",
         variant: "destructive",
       });
+      navigate('/auth', { replace: true });
     } finally {
       setProcessingPayment(false);
     }

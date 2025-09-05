@@ -14,6 +14,7 @@ export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -37,10 +38,6 @@ export default function Auth() {
     // Check for payment success or cancellation
     const paymentStatus = searchParams.get('payment');
     if (paymentStatus === 'success') {
-      // Store email in localStorage temporarily for payment processing
-      if (formData.email) {
-        localStorage.setItem('paymentEmail', formData.email);
-      }
       handlePaymentReturn();
     } else if (paymentStatus === 'cancelled') {
       toast({
@@ -83,10 +80,24 @@ export default function Auth() {
         throw new Error("Email utilisateur manquant");
       }
       
-      console.log('Processing payment with:', { reference: paymentRef, email: userEmail });
+      // Get stored user data from localStorage
+      const storedUserData = localStorage.getItem('pendingUserData');
+      if (!storedUserData) {
+        throw new Error("Données utilisateur manquantes pour finaliser l'inscription");
+      }
+      
+      const userData = JSON.parse(storedUserData);
+      
+      console.log('Processing payment with:', { reference: paymentRef, email: userEmail, firstName: userData.firstName, lastName: userData.lastName });
       
       const { data, error } = await supabase.functions.invoke('process-payment', {
-        body: { reference: paymentRef, email: userEmail }
+        body: { 
+          reference: paymentRef, 
+          email: userEmail,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          password: userData.password
+        }
       });
       
       if (error) {
@@ -98,14 +109,25 @@ export default function Auth() {
       
       // Clean up localStorage
       localStorage.removeItem('paymentEmail');
+      localStorage.removeItem('pendingUserData');
       
-      toast({
-        title: "Paiement réussi",
-        description: "Votre abonnement est maintenant actif !",
-      });
-      
-      // Clear payment success from URL and redirect to main app
-      navigate('/', { replace: true });
+      if (data.needs_email_confirmation) {
+        toast({
+          title: "Inscription réussie !",
+          description: "Vérifiez votre email et cliquez sur le lien de confirmation pour activer votre compte.",
+        });
+        
+        // Show email confirmation message
+        setShowEmailConfirmation(true);
+      } else {
+        toast({
+          title: "Paiement réussi",
+          description: "Votre abonnement est maintenant actif !",
+        });
+        
+        // Clear payment success from URL and redirect to main app
+        navigate('/', { replace: true });
+      }
     } catch (error) {
       console.error('Payment processing error:', error);
       const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
@@ -121,13 +143,21 @@ export default function Auth() {
   };
 
   const handleCreateSubscription = async () => {
-    if (!formData.email || !formData.firstName || !formData.lastName) {
+    if (!formData.email || !formData.firstName || !formData.lastName || !formData.password) {
       setError('Veuillez remplir tous les champs requis');
       return;
     }
 
     setLoading(true);
     try {
+      // Store user data temporarily for after payment
+      localStorage.setItem('pendingUserData', JSON.stringify({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        password: formData.password
+      }));
+      localStorage.setItem('paymentEmail', formData.email);
+
       const { data, error } = await supabase.functions.invoke('create-subscription', {
         body: {
           email: formData.email,
@@ -180,26 +210,8 @@ export default function Auth() {
           return;
         }
 
-        // If payment form is shown, create account after successful payment
-        const { error } = await signUp(
-          formData.email, 
-          formData.password, 
-          formData.firstName, 
-          formData.lastName
-        );
-        
-        if (error) {
-          if (error.message?.includes('User already registered')) {
-            setError('Un utilisateur avec cet email existe déjà');
-          } else {
-            setError(error.message || 'Erreur lors de l\'inscription');
-          }
-        } else {
-          toast({
-            title: 'Inscription réussie',
-            description: 'Vérifiez votre email pour confirmer votre compte',
-          });
-        }
+        // Payment form is shown, but actual signup happens after payment in process-payment function
+        // This should not be reached in normal flow as handleCreateSubscription redirects to Paystack
       }
     } catch (err) {
       setError('Une erreur inattendue est survenue');
@@ -219,6 +231,35 @@ export default function Auth() {
     setShowPayment(false);
     setError(null);
   };
+
+  if (showEmailConfirmation) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="text-center py-8">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-2">Paiement réussi !</h2>
+            <p className="text-muted-foreground mb-6">
+              Votre compte a été créé avec succès. Vérifiez votre email et cliquez sur le lien de confirmation pour activer votre compte.
+            </p>
+            <Button 
+              onClick={() => {
+                setShowEmailConfirmation(false);
+                navigate('/auth', { replace: true });
+              }}
+              className="w-full"
+            >
+              Retourner à la connexion
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (processingPayment) {
     return (

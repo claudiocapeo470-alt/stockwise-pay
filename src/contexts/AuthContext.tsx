@@ -19,25 +19,16 @@ interface UserRole {
   created_at: string;
 }
 
-interface Subscription {
-  subscribed: boolean;
-  subscription_end: string | null;
-  is_legacy: boolean;
-}
-
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
   userRole: UserRole | null;
-  subscription: Subscription | null;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
   isAdmin: boolean;
-  hasActiveSubscription: boolean;
-  checkSubscription: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -59,11 +50,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
 
   const isAdmin = userRole?.role === 'admin';
-  const hasActiveSubscription = subscription?.subscribed || false;
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -86,32 +75,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const checkSubscription = async () => {
-    if (!session?.user) {
-      setSubscription(null);
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-subscription', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (error) {
-        console.error('Error checking subscription:', error);
-        setSubscription({ subscribed: false, subscription_end: null, is_legacy: false });
-        return;
-      }
-
-      setSubscription(data);
-    } catch (error) {
-      console.error('Error checking subscription:', error);
-      setSubscription({ subscribed: false, subscription_end: null, is_legacy: false });
-    }
-  };
-
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -122,12 +85,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (session?.user) {
           setTimeout(() => {
             fetchProfile(session.user.id);
-            checkSubscription();
           }, 0);
         } else {
           setProfile(null);
           setUserRole(null);
-          setSubscription(null);
         }
         
         setLoading(false);
@@ -141,7 +102,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       if (session?.user) {
         fetchProfile(session.user.id);
-        checkSubscription();
       }
       
       setLoading(false);
@@ -184,14 +144,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     session,
     profile,
     userRole,
-    subscription,
     signIn,
     signUp,
     signOut,
     loading,
     isAdmin,
-    hasActiveSubscription,
-    checkSubscription,
   };
 
   return (

@@ -210,51 +210,6 @@ export type Database = {
           },
         ]
       }
-      subscribers: {
-        Row: {
-          amount: number
-          created_at: string
-          currency: string
-          email: string
-          id: string
-          is_legacy_user: boolean
-          paystack_customer_code: string | null
-          subscribed: boolean
-          subscription_code: string | null
-          subscription_end: string | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          amount?: number
-          created_at?: string
-          currency?: string
-          email: string
-          id?: string
-          is_legacy_user?: boolean
-          paystack_customer_code?: string | null
-          subscribed?: boolean
-          subscription_code?: string | null
-          subscription_end?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          currency?: string
-          email?: string
-          id?: string
-          is_legacy_user?: boolean
-          paystack_customer_code?: string | null
-          subscribed?: boolean
-          subscription_code?: string | null
-          subscription_end?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       user_roles: {
         Row: {
           created_at: string

@@ -3,14 +3,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Package, Plus, Search, AlertTriangle, Edit2, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useProducts } from "@/hooks/useProducts";
+import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
+import { EditProductDialog } from "@/components/stocks/EditProductDialog";
+import { toast } from "sonner";
 
 export default function Stocks() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { products, isLoading } = useProducts();
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const { products, isLoading, deleteProduct } = useProducts();
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -20,6 +25,20 @@ export default function Stocks() {
 
   const lowStockProducts = products.filter(p => p.quantity <= p.min_quantity);
   const outOfStockProducts = products.filter(p => p.quantity === 0);
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setShowEditDialog(true);
+  };
+
+  const handleDeleteProduct = async (product: Product) => {
+    try {
+      await deleteProduct.mutateAsync(product.id);
+      toast.success('Produit supprimé avec succès');
+    } catch (error) {
+      toast.error('Erreur lors de la suppression du produit');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -153,12 +172,43 @@ export default function Stocks() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="icon">
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => handleEditProduct(product)}
+                          title="Modifier le produit"
+                        >
                           <Edit2 className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="icon">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="icon"
+                              title="Supprimer le produit"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Êtes-vous sûr de vouloir supprimer le produit "{product.name}" ? 
+                                Cette action est irréversible.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Annuler</AlertDialogCancel>
+                              <AlertDialogAction 
+                                onClick={() => handleDeleteProduct(product)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Supprimer
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -168,6 +218,19 @@ export default function Stocks() {
           )}
         </CardContent>
       </Card>
+
+      {editingProduct && (
+        <EditProductDialog 
+          product={editingProduct}
+          open={showEditDialog}
+          onOpenChange={(open) => {
+            setShowEditDialog(open);
+            if (!open) {
+              setEditingProduct(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

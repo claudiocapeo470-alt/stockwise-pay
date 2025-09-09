@@ -16,11 +16,11 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: BarChart3 },
-  { name: "Stocks", href: "/stocks", icon: Package },
-  { name: "Ventes", href: "/ventes", icon: ShoppingCart },
-  { name: "Paiements", href: "/paiements", icon: Receipt },
-  { name: "Rapports", href: "/rapports", icon: FileText },
+  { name: "Dashboard", href: "/app", icon: BarChart3 },
+  { name: "Stocks", href: "/app/stocks", icon: Package },
+  { name: "Ventes", href: "/app/ventes", icon: ShoppingCart },
+  { name: "Paiements", href: "/app/paiements", icon: Receipt },
+  { name: "Rapports", href: "/app/rapports", icon: FileText },
 ]
 
 export function AppSidebar() {
@@ -39,8 +39,8 @@ export function AppSidebar() {
         : (user?.email?.[0] || 'U').toUpperCase());
 
   const isActive = (path: string) => {
-    if (path === "/" && location.pathname === "/") return true
-    if (path !== "/" && location.pathname.startsWith(path)) return true
+    if (path === "/app" && location.pathname === "/app") return true
+    if (path !== "/app" && location.pathname.startsWith(path)) return true
     return false
   }
 

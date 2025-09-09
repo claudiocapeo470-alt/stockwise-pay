@@ -2,30 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, ShoppingCart, Package, Receipt, FileText } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-
-const actions = [
-  {
-    title: "Nouvelle vente",
-    description: "Enregistrer une vente",
-    icon: Plus,
-    gradient: "primary",
-    href: "/ventes/nouvelle"
-  },
-  {
-    title: "Ajouter produit",
-    description: "Ajouter au stock",
-    icon: Package,
-    gradient: "success",
-    href: "/stocks/nouveau"
-  },
-  {
-    title: "Paiement reçu", 
-    description: "Marquer comme payé",
-    icon: Receipt,
-    gradient: "warning",
-    href: "/paiements/nouveau"
-  }
-]
+import { AddSaleDialog } from "@/components/sales/AddSaleDialog"
+import { AddProductDialog } from "@/components/stocks/AddProductDialog"
+import { AddPaymentDialog } from "@/components/payments/AddPaymentDialog"
 
 export function QuickActions() {
   const navigate = useNavigate()
@@ -42,25 +21,20 @@ export function QuickActions() {
         <CardTitle className="text-lg font-semibold">Actions rapides</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        {actions.map((action) => {
-          const Icon = action.icon
-          return (
-            <Button
-              key={action.title}
-              variant="ghost"
-              className="w-full justify-start h-auto p-4 hover:bg-accent"
-              onClick={() => navigate(action.href)}
-            >
-              <div className={`p-2 rounded-lg mr-3 ${gradientClasses[action.gradient as keyof typeof gradientClasses]}`}>
-                <Icon className="h-4 w-4 text-white" />
-              </div>
-              <div className="text-left">
-                <div className="font-medium text-foreground">{action.title}</div>
-                <div className="text-sm text-muted-foreground">{action.description}</div>
-              </div>
-            </Button>
-          )
-        })}
+        {/* Nouvelle vente */}
+        <div className="relative">
+          <AddSaleDialog />
+        </div>
+
+        {/* Ajouter produit */}
+        <div className="relative">
+          <AddProductDialog />
+        </div>
+
+        {/* Paiement reçu */}
+        <div className="relative">
+          <AddPaymentDialog />
+        </div>
         
         <Button 
           variant="outline" 

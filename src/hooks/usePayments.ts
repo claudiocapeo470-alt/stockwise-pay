@@ -45,6 +45,9 @@ export const usePayments = () => {
       return data as Payment[];
     },
     enabled: !!user,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
   });
 
   const addPayment = useMutation({

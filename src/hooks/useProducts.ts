@@ -40,6 +40,9 @@ export const useProducts = () => {
       return data as Product[];
     },
     enabled: !!user,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
   });
 
   const addProduct = useMutation({

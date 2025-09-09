@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Plus } from "lucide-react"
+import { CalendarIcon, Plus, Receipt } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { usePayments, Payment } from "@/hooks/usePayments"
@@ -88,9 +88,17 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-accent-primary hover:bg-accent-primary/90 text-primary-foreground">
-          <Plus className="h-4 w-4 mr-2" />
-          Nouveau paiement
+        <Button
+          variant="ghost"
+          className="w-full justify-start h-auto p-4 hover:bg-accent"
+        >
+          <div className="p-2 rounded-lg mr-3 bg-gradient-warning hover:opacity-90">
+            <Receipt className="h-4 w-4 text-white" />
+          </div>
+          <div className="text-left">
+            <div className="font-medium text-foreground">Paiement reçu</div>
+            <div className="text-sm text-muted-foreground">Marquer comme payé</div>
+          </div>
         </Button>
       </DialogTrigger>
       

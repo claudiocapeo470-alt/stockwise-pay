@@ -60,9 +60,17 @@ export function AddProductDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Ajouter un produit
+        <Button
+          variant="ghost"
+          className="w-full justify-start h-auto p-4 hover:bg-accent"
+        >
+          <div className="p-2 rounded-lg mr-3 bg-gradient-success hover:opacity-90">
+            <Plus className="h-4 w-4 text-white" />
+          </div>
+          <div className="text-left">
+            <div className="font-medium text-foreground">Ajouter produit</div>
+            <div className="text-sm text-muted-foreground">Ajouter au stock</div>
+          </div>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">

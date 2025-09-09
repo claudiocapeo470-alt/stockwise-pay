@@ -117,7 +117,7 @@ export default function Rapports() {
     }
   }, [products, sales, payments])
 
-  const handleExport = (type: 'csv' | 'excel' | 'pdf', data: string) => {
+  const handleExport = (type: 'csv' | 'excel', data: string) => {
     if (type === 'excel') {
       handleExcelExport(data)
       return

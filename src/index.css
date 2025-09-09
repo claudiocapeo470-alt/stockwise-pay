@@ -2,46 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fluid Animation Styles */
+/* Advanced Fluid Animation Styles - Scroll Reactive */
 .fluid-blob {
   position: absolute;
   border-radius: 50%;
   filter: blur(40px);
-  opacity: 0.9;
+  opacity: 0.8;
   animation-duration: 20s;
-  animation-timing-function: ease-in-out;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   animation-iteration-count: infinite;
   animation-direction: alternate;
   mix-blend-mode: screen;
+  will-change: transform, border-radius, opacity;
+  transform-origin: center center;
+}
+
+/* Scroll-reactive morphing shapes */
+.morphing-shape {
+  position: absolute;
+  background: linear-gradient(45deg, transparent, hsl(var(--primary) / 0.3), transparent);
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, border-radius, opacity;
+}
+
+/* Floating particles */
+.floating-particle {
+  position: absolute;
+  background: radial-gradient(circle, hsl(var(--accent) / 0.6), transparent);
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: particle-float 15s ease-in-out infinite;
+}
+
+/* Organic flowing lines */
+.flowing-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.4), hsl(var(--accent) / 0.4), transparent);
+  border-radius: 100px;
+  filter: blur(8px);
+  opacity: 0.6;
+  animation: flow-line 20s ease-in-out infinite;
 }
 
 .fluid-blob-1 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, #8b5cf6, #a855f7);
+  background: radial-gradient(circle at 30% 30%, hsl(var(--primary) / 0.6), hsl(var(--accent) / 0.4), transparent);
   top: 10%;
   left: 10%;
-  animation-name: float-1;
+  animation-name: organic-float-1;
   animation-duration: 18s;
 }
 
 .fluid-blob-2 {
   width: 350px;
   height: 350px;
-  background: radial-gradient(circle, #06b6d4, #3b82f6);
+  background: radial-gradient(ellipse at 60% 40%, hsl(var(--accent) / 0.5), hsl(var(--primary) / 0.3), transparent);
   top: 60%;
   right: 15%;
-  animation-name: float-2;
+  animation-name: organic-float-2;
   animation-duration: 22s;
 }
 
 .fluid-blob-3 {
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, #6366f1, #8b5cf6);
+  background: radial-gradient(circle at 70% 20%, hsl(var(--success) / 0.4), hsl(var(--primary) / 0.3), transparent);
   bottom: 20%;
   left: 20%;
-  animation-name: float-3;
+  animation-name: organic-float-3;
   animation-duration: 25s;
 }
 
@@ -75,22 +107,31 @@
   animation-duration: 24s;
 }
 
-@keyframes float-1 {
+@keyframes organic-float-1 {
   0%, 100% {
     transform: translateX(0) translateY(0) scale(1) rotate(0deg);
     border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    opacity: 0.6;
   }
-  25% {
-    transform: translateX(100px) translateY(-50px) scale(1.1) rotate(90deg);
-    border-radius: 50% 60% 30% 40% / 50% 40% 60% 30%;
+  20% {
+    transform: translateX(120px) translateY(-80px) scale(1.3) rotate(72deg);
+    border-radius: 40% 60% 50% 30% / 70% 40% 30% 60%;
+    opacity: 0.8;
   }
-  50% {
-    transform: translateX(50px) translateY(100px) scale(0.9) rotate(180deg);
-    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  40% {
+    transform: translateX(-80px) translateY(150px) scale(0.7) rotate(144deg);
+    border-radius: 70% 30% 60% 40% / 40% 70% 30% 50%;
+    opacity: 0.4;
   }
-  75% {
-    transform: translateX(-50px) translateY(50px) scale(1.05) rotate(270deg);
-    border-radius: 40% 50% 60% 30% / 30% 70% 40% 50%;
+  60% {
+    transform: translateX(180px) translateY(80px) scale(1.1) rotate(216deg);
+    border-radius: 30% 70% 40% 60% / 50% 30% 60% 40%;
+    opacity: 0.9;
+  }
+  80% {
+    transform: translateX(-120px) translateY(-120px) scale(1.4) rotate(288deg);
+    border-radius: 50% 40% 70% 30% / 60% 50% 40% 70%;
+    opacity: 0.3;
   }
 }
 
@@ -189,15 +230,109 @@
   }
 }
 
+/* New Organic Animations */
+@keyframes particle-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(-30px) rotate(90deg);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-60px) rotate(180deg);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-30px) rotate(270deg);
+    opacity: 0.5;
+  }
+}
+
+@keyframes flow-line {
+  0%, 100% {
+    transform: scaleX(1) skewX(0deg);
+    opacity: 0.6;
+  }
+  33% {
+    transform: scaleX(1.5) skewX(15deg);
+    opacity: 0.8;
+  }
+  66% {
+    transform: scaleX(0.8) skewX(-10deg);
+    opacity: 0.4;
+  }
+}
+
+@keyframes scroll-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes morphing-pulse {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    border-radius: 30% 70% 60% 40% / 40% 60% 30% 50%;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+/* Scroll-triggered animations */
+.scroll-morph {
+  animation: morphing-pulse 8s ease-in-out infinite;
+  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal {
+  animation: scroll-reveal 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Interactive hover states */
+.interactive-blob:hover {
+  transform: scale(1.1) !important;
+  opacity: 0.9 !important;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Performance optimizations */
-.fluid-blob {
-  will-change: transform, border-radius;
+.fluid-blob, .morphing-shape, .floating-particle, .flowing-line {
+  will-change: transform, border-radius, opacity;
   transform-origin: center center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .fluid-blob, .morphing-shape, .floating-particle, .flowing-line {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .scroll-morph, .scroll-reveal {
+    animation: none !important;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
   .fluid-blob {
-    animation: none;
+    filter: blur(30px);
+    opacity: 0.6;
+  }
+  
+  .morphing-shape {
+    filter: blur(40px);
+    opacity: 0.3;
   }
 }
 

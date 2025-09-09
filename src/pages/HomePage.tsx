@@ -34,7 +34,7 @@ const HomePage = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center space-x-2">
-              <BarChart3 className="h-8 w-8 text-primary" />
+              <img src="/assets/logo.png" alt="GestionPro Logo" className="h-8 w-auto" />
               <span className="text-xl font-bold text-foreground">GestionPro</span>
             </div>
 
@@ -211,7 +211,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <BarChart3 className="h-6 w-6 text-primary" />
+              <img src="/assets/logo.png" alt="GestionPro Logo" className="h-6 w-auto" />
               <span className="font-semibold text-foreground">GestionPro</span>
             </div>
             

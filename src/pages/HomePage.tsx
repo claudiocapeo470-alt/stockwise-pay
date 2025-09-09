@@ -96,17 +96,7 @@ const HomePage = () => {
       <section id="accueil" className="py-20 lg:py-32 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="mb-6 inline-block">
-              <div className="bg-black border border-white/20 rounded-full px-6 py-3 text-center">
-                <p className="text-sm font-medium text-primary leading-relaxed">
-                  <span className="font-bold">GestionPro</span> – La solution SaaS pensée pour les PME/TPE africaines
-                  <br />
-                  <span className="text-xs font-normal text-white/[0.97]">
-                    Centralisez, gérez et développez votre activité en toute simplicité.
-                  </span>
-                </p>
-              </div>
-            </div>
+            
             
             <h1 className="lg:text-6xl text-foreground mb-6 font-bold text-5xl">
               Gestion complète pour 

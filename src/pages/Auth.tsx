@@ -93,18 +93,20 @@ export default function Auth() {
         {/* Logo */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="bg-gradient-primary rounded-lg p-3">
+            <div className="bg-gradient-primary rounded-lg p-3 shadow-lg">
               <BarChart3 className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">GestionPro</h1>
-          <p className="text-sm text-muted-foreground">
-            Gestion complète pour PME/TPE
-          </p>
+          <div className="bg-background/90 backdrop-blur-sm rounded-lg px-4 py-2">
+            <h1 className="text-2xl font-bold text-foreground">GestionPro</h1>
+            <p className="text-sm text-muted-foreground">
+              Gestion complète pour PME/TPE
+            </p>
+          </div>
         </div>
 
         {/* Auth Form */}
-        <Card>
+        <Card className="bg-background/95 backdrop-blur-md border-border/50">
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl text-center">
               {isLogin ? 'Connexion' : 'Créer un compte'}

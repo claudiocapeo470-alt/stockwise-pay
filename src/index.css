@@ -6,13 +6,13 @@
 .fluid-blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.9;
+  filter: blur(50px);
+  opacity: 0.4;
   animation-duration: 20s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation-direction: alternate;
-  mix-blend-mode: screen;
+  mix-blend-mode: multiply;
 }
 
 .fluid-blob-1 {

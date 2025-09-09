@@ -142,7 +142,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <div className="mb-6 inline-block">
-              <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-full px-6 py-3 text-center">
+              <div className="bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full px-6 py-3 text-center backdrop-blur-sm bg-background/80">
                 <p className="text-sm font-medium text-primary leading-relaxed">
                   <span className="font-bold">GestionPro</span> – La solution SaaS pensée pour les PME/TPE africaines
                   <br />
@@ -153,15 +153,17 @@ const HomePage = () => {
               </div>
             </div>
             
-            <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6">
-              Gestion complète pour 
-              <span className="text-primary"> PME/TPE</span>
-            </h1>
-            
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Simplifiez la gestion de votre entreprise avec notre solution tout-en-un : 
-              stocks, ventes, paiements et rapports en temps réel.
-            </p>
+            <div className="bg-background/80 backdrop-blur-sm rounded-2xl p-8 mb-8">
+              <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6">
+                Gestion complète pour 
+                <span className="text-primary"> PME/TPE</span>
+              </h1>
+              
+              <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Simplifiez la gestion de votre entreprise avec notre solution tout-en-un : 
+                stocks, ventes, paiements et rapports en temps réel.
+              </p>
+            </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 

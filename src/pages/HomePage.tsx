@@ -139,9 +139,17 @@ const HomePage = () => {
       <section id="accueil" className="py-20 lg:py-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge variant="secondary" className="mb-6 px-4 py-2">
-              Solution SaaS pour PME/TPE Africaines
-            </Badge>
+            <div className="mb-6 inline-block">
+              <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-full px-6 py-3 text-center">
+                <p className="text-sm font-medium text-primary leading-relaxed">
+                  <span className="font-bold">GestionPro</span> – La solution SaaS pensée pour les PME/TPE africaines
+                  <br />
+                  <span className="text-xs text-muted-foreground font-normal">
+                    Centralisez, gérez et développez votre activité en toute simplicité.
+                  </span>
+                </p>
+              </div>
+            </div>
             
             <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6">
               Gestion complète pour 

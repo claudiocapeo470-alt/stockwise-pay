@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Download, TrendingUp, BarChart3, PieChart, Calendar, Eye, Plus } from "lucide-react"
+import { FileText, Download, TrendingUp, BarChart3, PieChart, Calendar, Eye, Plus, Trash2 } from "lucide-react"
 import { useProducts } from "@/hooks/useProducts"
 import { useSales } from "@/hooks/useSales"
 import { usePayments } from "@/hooks/usePayments"
@@ -100,6 +100,16 @@ export default function Rapports() {
   const [selectedReportType, setSelectedReportType] = useState<string | null>(null)
   const [showReportDialog, setShowReportDialog] = useState(false)
   const [showCustomReportDialog, setShowCustomReportDialog] = useState(false)
+  const [generatedReports, setGeneratedReports] = useState<Array<{
+    id: string;
+    name: string;
+    dateRange: string;
+    selectedData: any;
+    selectedMetrics: any;
+    createdAt: Date;
+    startDate?: string;
+    endDate?: string;
+  }>>([])
 
   // Calculate real metrics
   const metrics = useMemo(() => {
@@ -644,6 +654,22 @@ export default function Rapports() {
     })
   }
 
+  const handleCustomReportGenerated = (reportData: {
+    name: string;
+    dateRange: string;
+    selectedData: any;
+    selectedMetrics: any;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const newReport = {
+      id: crypto.randomUUID(),
+      ...reportData,
+      createdAt: new Date(),
+    };
+    setGeneratedReports(prev => [newReport, ...prev]);
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -1128,6 +1154,113 @@ export default function Rapports() {
         </CardContent>
       </Card>
 
+      {/* Rapports personnalisés générés */}
+      {generatedReports.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Rapports personnalisés générés</h3>
+          {generatedReports.map((report) => (
+            <Card key={report.id}>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    {report.name}
+                  </span>
+                  <Badge variant="secondary">Personnalisé</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-sm font-medium">Période:</p>
+                    <Badge variant="outline">
+                      {report.dateRange === "custom" 
+                        ? `${report.startDate} - ${report.endDate}` 
+                        : report.dateRange.replace(/_/g, ' ')
+                      }
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Créé le:</p>
+                    <Badge variant="outline">{formatDate(report.createdAt.toISOString())}</Badge>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-sm font-medium">Types de données:</p>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {Object.entries(report.selectedData).filter(([_, selected]) => selected).map(([key, _]) => (
+                        <Badge key={key} variant="outline" className="text-xs">
+                          {key === 'sales' ? 'Ventes' : 
+                           key === 'products' ? 'Produits' : 
+                           key === 'payments' ? 'Paiements' : 
+                           key === 'customers' ? 'Clients' : key}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Métriques:</p>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {Object.entries(report.selectedMetrics).filter(([_, selected]) => selected).map(([key, _]) => (
+                        <Badge key={key} variant="outline" className="text-xs">
+                          {key === 'revenue' ? 'CA' : 
+                           key === 'quantity' ? 'Quantité' : 
+                           key === 'profit' ? 'Profit' : 
+                           key === 'growth' ? 'Croissance' : 
+                           key === 'trends' ? 'Tendances' : key}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedReportType('custom-' + report.id);
+                      setShowReportDialog(true);
+                    }}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    Voir le rapport
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleExport('csv', 'sales')}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    CSV
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleExport('excel', 'sales')}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Excel
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setGeneratedReports(prev => prev.filter(r => r.id !== report.id));
+                      toast.success("Rapport supprimé");
+                    }}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Supprimer
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
       {/* Dialogs */}
       <ReportDialog
         reportType={selectedReportType}
@@ -1135,9 +1268,10 @@ export default function Rapports() {
         onOpenChange={setShowReportDialog}
       />
       
-      <CustomReportDialog
-        open={showCustomReportDialog}
+      <CustomReportDialog 
+        open={showCustomReportDialog} 
         onOpenChange={setShowCustomReportDialog}
+        onReportGenerated={handleCustomReportGenerated}
       />
     </div>
   )

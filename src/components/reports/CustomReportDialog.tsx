@@ -13,9 +13,17 @@ import { toast } from "sonner";
 interface CustomReportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onReportGenerated: (reportData: {
+    name: string;
+    dateRange: string;
+    selectedData: any;
+    selectedMetrics: any;
+    startDate?: string;
+    endDate?: string;
+  }) => void;
 }
 
-export function CustomReportDialog({ open, onOpenChange }: CustomReportDialogProps) {
+export function CustomReportDialog({ open, onOpenChange, onReportGenerated }: CustomReportDialogProps) {
   const [reportName, setReportName] = useState("");
   const [dateRange, setDateRange] = useState("last_30_days");
   const [startDate, setStartDate] = useState("");
@@ -67,6 +75,16 @@ export function CustomReportDialog({ open, onOpenChange }: CustomReportDialogPro
     }
 
     // Generate the custom report
+    const reportData = {
+      name: reportName,
+      dateRange,
+      selectedData,
+      selectedMetrics,
+      startDate: dateRange === "custom" ? startDate : undefined,
+      endDate: dateRange === "custom" ? endDate : undefined,
+    };
+    
+    onReportGenerated(reportData);
     toast.success(`Rapport "${reportName}" généré avec succès`);
     onOpenChange(false);
     

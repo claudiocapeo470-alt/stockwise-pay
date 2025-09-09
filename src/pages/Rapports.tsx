@@ -9,6 +9,7 @@ import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { ReportDialog } from "@/components/reports/ReportDialog"
 import { CustomReportDialog } from "@/components/reports/CustomReportDialog"
+import * as XLSX from 'xlsx'
 
 const reports = [
   {
@@ -123,6 +124,11 @@ export default function Rapports() {
   }, [products, sales, payments])
 
   const handleExport = (type: 'csv' | 'excel' | 'pdf', data: string) => {
+    if (type === 'excel') {
+      handleExcelExport(data)
+      return
+    }
+
     let content = ''
     let filename = ''
     let mimeType = ''
@@ -162,6 +168,155 @@ export default function Rapports() {
       URL.revokeObjectURL(url)
       toast.success(`Export ${filename} téléchargé avec succès`)
     }
+  }
+
+  const handleExcelExport = (data: string) => {
+    const wb = XLSX.utils.book_new()
+    let wsData: any[][] = []
+    let title = ''
+    
+    // Préparer les données selon le type
+    if (data === 'sales') {
+      title = 'RAPPORT DES VENTES'
+      wsData = [
+        [title], // Titre principal
+        [], // Ligne vide
+        [`Généré le: ${new Date().toLocaleDateString('fr-FR')}`], // Date
+        [`Nombre total de ventes: ${sales.length}`], // Statistiques
+        [`Chiffre d'affaires total: ${metrics.totalRevenue.toLocaleString()} CFA`],
+        [], // Ligne vide
+        ['Date', 'Produit', 'Client', 'Quantité', 'Prix unitaire (CFA)', 'Total (CFA)'] // En-têtes
+      ]
+      
+      sales.forEach(sale => {
+        const product = products.find(p => p.id === sale.product_id)
+        wsData.push([
+          new Date(sale.created_at).toLocaleDateString('fr-FR'),
+          product?.name || 'N/A',
+          sale.customer_name || 'N/A',
+          sale.quantity,
+          Number(sale.unit_price),
+          Number(sale.total_amount)
+        ])
+      })
+    } else if (data === 'products') {
+      title = 'INVENTAIRE COMPLET'
+      wsData = [
+        [title],
+        [],
+        [`Généré le: ${new Date().toLocaleDateString('fr-FR')}`],
+        [`Nombre total de produits: ${products.length}`],
+        [`Valeur totale du stock: ${products.reduce((sum, p) => sum + (p.price * p.quantity), 0).toLocaleString()} CFA`],
+        [],
+        ['Nom', 'Catégorie', 'Prix (CFA)', 'Quantité', 'Stock minimum', 'Valeur stock (CFA)']
+      ]
+      
+      products.forEach(product => {
+        wsData.push([
+          product.name,
+          product.category || 'N/A',
+          Number(product.price),
+          product.quantity,
+          product.min_quantity,
+          Number(product.price) * product.quantity
+        ])
+      })
+    } else if (data === 'payments') {
+      title = 'RAPPORT DES PAIEMENTS'
+      wsData = [
+        [title],
+        [],
+        [`Généré le: ${new Date().toLocaleDateString('fr-FR')}`],
+        [`Nombre total de paiements: ${payments.length}`],
+        [`Montant total encaissé: ${metrics.totalPaid.toLocaleString()} CFA`],
+        [`Montant en attente: ${metrics.totalPending.toLocaleString()} CFA`],
+        [],
+        ['Date', 'Client', 'Montant (CFA)', 'Méthode', 'Statut', 'Téléphone']
+      ]
+      
+      payments.forEach(payment => {
+        const fullName = `${payment.customer_first_name || ''} ${payment.customer_last_name || ''}`.trim() || 'N/A'
+        wsData.push([
+          new Date(payment.created_at).toLocaleDateString('fr-FR'),
+          fullName,
+          Number(payment.total_amount),
+          payment.payment_method,
+          payment.status,
+          payment.customer_phone || 'N/A'
+        ])
+      })
+    }
+
+    // Créer la feuille de calcul
+    const ws = XLSX.utils.aoa_to_sheet(wsData)
+    
+    // Appliquer le formatage
+    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1')
+    
+    // Titre principal (A1) - Gras et centré
+    ws['A1'].s = {
+      font: { bold: true, sz: 16 },
+      alignment: { horizontal: 'center', vertical: 'center' },
+      fill: { fgColor: { rgb: 'E3F2FD' } }
+    }
+    
+    // Fusionner les cellules pour le titre
+    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: range.e.c } }]
+    
+    // En-têtes de colonnes (ligne 7) - Gras avec bordures
+    const headerRow = 6
+    for (let col = 0; col <= range.e.c; col++) {
+      const cellRef = XLSX.utils.encode_cell({ r: headerRow, c: col })
+      if (ws[cellRef]) {
+        ws[cellRef].s = {
+          font: { bold: true },
+          alignment: { horizontal: 'center', vertical: 'center' },
+          fill: { fgColor: { rgb: 'F5F5F5' } },
+          border: {
+            top: { style: 'thin', color: { rgb: '000000' } },
+            bottom: { style: 'thin', color: { rgb: '000000' } },
+            left: { style: 'thin', color: { rgb: '000000' } },
+            right: { style: 'thin', color: { rgb: '000000' } }
+          }
+        }
+      }
+    }
+    
+    // Appliquer les bordures aux données
+    for (let row = headerRow + 1; row <= range.e.r; row++) {
+      for (let col = 0; col <= range.e.c; col++) {
+        const cellRef = XLSX.utils.encode_cell({ r: row, c: col })
+        if (ws[cellRef]) {
+          ws[cellRef].s = {
+            border: {
+              top: { style: 'thin', color: { rgb: '000000' } },
+              bottom: { style: 'thin', color: { rgb: '000000' } },
+              left: { style: 'thin', color: { rgb: '000000' } },
+              right: { style: 'thin', color: { rgb: '000000' } }
+            },
+            alignment: { vertical: 'center' }
+          }
+          
+          // Formater les montants
+          if (typeof ws[cellRef].v === 'number' && col >= 4) {
+            ws[cellRef].s.numFmt = '#,##0'
+          }
+        }
+      }
+    }
+    
+    // Ajuster la largeur des colonnes
+    const colWidths = wsData[headerRow]?.map(() => ({ wch: 15 })) || []
+    ws['!cols'] = colWidths
+    
+    // Ajouter la feuille au classeur
+    XLSX.utils.book_append_sheet(wb, ws, title)
+    
+    // Télécharger le fichier
+    const filename = `${data}_${new Date().toISOString().split('T')[0]}.xlsx`
+    XLSX.writeFile(wb, filename)
+    
+    toast.success(`Export Excel ${filename} téléchargé avec succès`)
   }
 
   const getStatusBadge = (status: string) => {
@@ -246,15 +401,15 @@ export default function Rapports() {
             <Button
               variant="outline"
               className="h-auto p-4 flex flex-col items-start gap-2 hover:bg-accent"
-              onClick={() => handleExport('csv', 'products')}
+              onClick={() => handleExport('excel', 'products')}
             >
               <div className="flex items-center gap-2 w-full">
                 <PieChart className="h-4 w-4" />
                 <span className="font-medium">Stock complet</span>
-                <Badge variant="outline" className="ml-auto text-xs">CSV</Badge>
+                <Badge variant="outline" className="ml-auto text-xs">Excel</Badge>
               </div>
               <p className="text-sm text-muted-foreground text-left">
-                Export CSV de l'inventaire complet
+                Export Excel de l'inventaire complet
               </p>
             </Button>
             
@@ -336,10 +491,10 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
-                onClick={() => handleExport('csv', 'sales')}
+                onClick={() => handleExport('excel', 'sales')}
               >
                 <Download className="h-4 w-4 mr-1" />
-                Exporter
+                Excel
               </Button>
             </div>
           </CardContent>
@@ -403,10 +558,10 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
-                onClick={() => handleExport('csv', 'products')}
+                onClick={() => handleExport('excel', 'products')}
               >
                 <Download className="h-4 w-4 mr-1" />
-                Exporter
+                Excel
               </Button>
             </div>
           </CardContent>
@@ -470,10 +625,10 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
-                onClick={() => handleExport('csv', 'payments')}
+                onClick={() => handleExport('excel', 'payments')}
               >
                 <Download className="h-4 w-4 mr-1" />
-                Exporter
+                Excel
               </Button>
             </div>
           </CardContent>

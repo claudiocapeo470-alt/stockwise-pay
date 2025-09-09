@@ -250,42 +250,6 @@
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes bounce-subtle {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-@keyframes rotate-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes scale-pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
 @keyframes flow-line {
   0%, 100% {
     transform: scaleX(1) skewX(0deg);
@@ -617,28 +581,7 @@ All colors MUST be HSL.
 
   /* Hover effects */
   .hover-lift {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:scale-105;
-  }
-
-  /* Enhanced Animation Classes */
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-pulse-slow {
-    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  .animate-bounce-subtle {
-    animation: bounce-subtle 2s ease-in-out infinite;
-  }
-
-  .animate-rotate-slow {
-    animation: rotate-slow 20s linear infinite;
-  }
-
-  .animate-scale-pulse {
-    animation: scale-pulse 2s ease-in-out infinite;
+    @apply transition-smooth;
   }
 
   .hover-lift:hover {

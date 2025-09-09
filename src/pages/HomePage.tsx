@@ -98,12 +98,12 @@ const HomePage = () => {
           <div className="text-center max-w-4xl mx-auto">
             
             
-            <h1 className="lg:text-6xl text-foreground mb-6 font-bold text-4xl">
+            <h1 className="text-foreground mb-6 font-bold text-4xl lg:text-6xl">
               Gestion complète pour 
               <span className="text-primary"> PME/TPE</span>
             </h1>
             
-            <p className="mb-8 max-w-2xl text-white/[0.97] text-xl text-center mx-[100px] px-[50px]">
+            <p className="mb-8 max-w-2xl text-white/[0.97] text-xl text-center mx-[100px] px-0">
               Simplifiez la gestion de votre entreprise avec notre solution tout-en-un : 
               stocks, ventes, paiements et rapports en temps réel.
             </p>

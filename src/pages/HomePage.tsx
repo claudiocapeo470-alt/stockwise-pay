@@ -97,7 +97,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <div className="mb-6 inline-block">
-              <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-full px-6 py-3 text-center">
+              <div className="bg-black border border-white/20 rounded-full px-6 py-3 text-center">
                 <p className="text-sm font-medium text-primary leading-relaxed">
                   <span className="font-bold">GestionPro</span> – La solution SaaS pensée pour les PME/TPE africaines
                   <br />

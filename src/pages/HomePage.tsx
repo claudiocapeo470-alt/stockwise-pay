@@ -3,57 +3,30 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { AnimatedBackground } from "@/components/ui/animated-background";
-import { 
-  BarChart3, 
-  Package, 
-  CreditCard, 
-  TrendingUp, 
-  Users, 
-  Shield, 
-  Smartphone,
-  ArrowRight,
-  CheckCircle,
-  Menu,
-  X
-} from "lucide-react";
+import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X } from "lucide-react";
 import { useState } from "react";
-
 const HomePage = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const features = [
-    {
-      icon: Package,
-      title: "Gestion des Stocks",
-      description: "Suivez vos inventaires en temps réel avec des alertes automatiques"
-    },
-    {
-      icon: TrendingUp,
-      title: "Ventes & Facturation",
-      description: "Gérez vos ventes et factures facilement avec suivi complet"
-    },
-    {
-      icon: CreditCard,
-      title: "Paiements",
-      description: "Suivez tous vos paiements clients et fournisseurs"
-    },
-    {
-      icon: BarChart3,
-      title: "Rapports Détaillés",
-      description: "Analysez votre activité avec des rapports complets"
-    }
-  ];
-
-  const benefits = [
-    "Interface intuitive et moderne",
-    "Accès depuis mobile et desktop", 
-    "Données sécurisées dans le cloud",
-    "Support client dédié"
-  ];
-
-  return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+  const features = [{
+    icon: Package,
+    title: "Gestion des Stocks",
+    description: "Suivez vos inventaires en temps réel avec des alertes automatiques"
+  }, {
+    icon: TrendingUp,
+    title: "Ventes & Facturation",
+    description: "Gérez vos ventes et factures facilement avec suivi complet"
+  }, {
+    icon: CreditCard,
+    title: "Paiements",
+    description: "Suivez tous vos paiements clients et fournisseurs"
+  }, {
+    icon: BarChart3,
+    title: "Rapports Détaillés",
+    description: "Analysez votre activité avec des rapports complets"
+  }];
+  const benefits = ["Interface intuitive et moderne", "Accès depuis mobile et desktop", "Données sécurisées dans le cloud", "Support client dédié"];
+  return <div className="min-h-screen bg-background relative overflow-hidden">
       <AnimatedBackground />
       {/* Navigation */}
       <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 relative">
@@ -80,32 +53,22 @@ const HomePage = () => {
 
             {/* CTA Buttons - Desktop */}
             <div className="hidden md:flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/auth')}
-              >
+              <Button variant="ghost" onClick={() => navigate('/auth')}>
                 Se connecter
               </Button>
-              <Button 
-                onClick={() => navigate('/auth')}
-                className="bg-primary hover:bg-primary/90"
-              >
+              <Button onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90">
                 S'inscrire
               </Button>
             </div>
 
             {/* Mobile menu button */}
-            <button
-              className="md:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
+            <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
 
           {/* Mobile Navigation */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-border">
+          {mobileMenuOpen && <div className="md:hidden py-4 border-t border-border">
               <nav className="flex flex-col space-y-4">
                 <a href="#accueil" className="text-muted-foreground hover:text-foreground transition-colors">
                   Accueil
@@ -117,23 +80,15 @@ const HomePage = () => {
                   Contact
                 </a>
                 <div className="flex flex-col space-y-2 pt-4">
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => navigate('/auth')}
-                    className="w-full"
-                  >
+                  <Button variant="ghost" onClick={() => navigate('/auth')} className="w-full">
                     Se connecter
                   </Button>
-                  <Button 
-                    onClick={() => navigate('/auth')}
-                    className="w-full bg-primary hover:bg-primary/90"
-                  >
+                  <Button onClick={() => navigate('/auth')} className="w-full bg-primary hover:bg-primary/90">
                     S'inscrire
                   </Button>
                 </div>
               </nav>
-            </div>
-          )}
+            </div>}
         </div>
       </header>
 
@@ -146,37 +101,29 @@ const HomePage = () => {
                 <p className="text-sm font-medium text-primary leading-relaxed">
                   <span className="font-bold">GestionPro</span> – La solution SaaS pensée pour les PME/TPE africaines
                   <br />
-                  <span className="text-xs text-muted-foreground font-normal">
+                  <span className="text-xs font-normal text-white/[0.97]">
                     Centralisez, gérez et développez votre activité en toute simplicité.
                   </span>
                 </p>
               </div>
             </div>
             
-            <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6">
+            <h1 className="lg:text-6xl text-foreground mb-6 font-bold text-5xl">
               Gestion complète pour 
               <span className="text-primary"> PME/TPE</span>
             </h1>
             
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="mb-8 max-w-2xl mx-auto text-white/[0.97] text-3xl">
               Simplifiez la gestion de votre entreprise avec notre solution tout-en-un : 
               stocks, ventes, paiements et rapports en temps réel.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/auth')}
-                className="bg-primary hover:bg-primary/90 px-8"
-              >
+              <Button size="lg" onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90 px-8">
                 Commencer gratuitement
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={() => navigate('/auth')}
-              >
+              <Button size="lg" variant="outline" onClick={() => navigate('/auth')}>
                 Se connecter
               </Button>
             </div>
@@ -191,14 +138,13 @@ const HomePage = () => {
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
               Fonctionnalités complètes
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg max-w-2xl mx-auto text-white">
               Toutes les fonctionnalités dont votre PME/TPE a besoin pour prospérer
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {features.map((feature, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow border border-border">
+            {features.map((feature, index) => <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow border border-border">
                 <feature.icon className="h-12 w-12 mx-auto mb-4 text-primary" />
                 <h3 className="text-lg font-semibold text-foreground mb-2">
                   {feature.title}
@@ -206,8 +152,7 @@ const HomePage = () => {
                 <p className="text-muted-foreground text-sm">
                   {feature.description}
                 </p>
-              </Card>
-            ))}
+              </Card>)}
           </div>
 
           {/* Benefits Grid */}
@@ -217,17 +162,12 @@ const HomePage = () => {
                 Pourquoi choisir GestionPro ?
               </h3>
               <div className="space-y-4">
-                {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center space-x-3">
+                {benefits.map((benefit, index) => <div key={index} className="flex items-center space-x-3">
                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                    <span className="text-muted-foreground">{benefit}</span>
-                  </div>
-                ))}
+                    <span className="text-white">{benefit}</span>
+                  </div>)}
               </div>
-              <Button 
-                className="mt-8 bg-primary hover:bg-primary/90"
-                onClick={() => navigate('/auth')}
-              >
+              <Button className="mt-8 bg-primary hover:bg-primary/90" onClick={() => navigate('/auth')}>
                 Démarrer maintenant
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -269,12 +209,7 @@ const HomePage = () => {
             <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
               Rejoignez des centaines de PME/TPE qui font déjà confiance à GestionPro
             </p>
-            <Button 
-              size="lg" 
-              variant="secondary"
-              onClick={() => navigate('/auth')}
-              className="px-8"
-            >
+            <Button size="lg" variant="secondary" onClick={() => navigate('/auth')} className="px-8">
               Créer mon compte gratuitement
             </Button>
           </div>
@@ -301,8 +236,6 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default HomePage;

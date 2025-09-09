@@ -1,8 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Download, TrendingUp, BarChart3, PieChart, Calendar } from "lucide-react";
+import { TrendingUp, BarChart3, PieChart, Calendar } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
@@ -316,19 +315,6 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
 
         <div className="space-y-6">
           {renderReportContent()}
-          
-          <div className="flex justify-end">
-            <Button
-              variant="outline"
-              onClick={() => {
-                // Export functionality can be added here
-                console.log('Export report:', reportType);
-              }}
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Exporter PDF
-            </Button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>

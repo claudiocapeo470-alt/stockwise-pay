@@ -2,9 +2,9 @@ import { memo } from "react";
 
 const AnimatedBackground = memo(() => {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
-      {/* Base gradient layer */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background/90 to-background" />
+    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* Base dark layer */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black" />
       
       {/* Animated fluid shapes */}
       <div className="absolute inset-0">
@@ -16,8 +16,8 @@ const AnimatedBackground = memo(() => {
         <div className="fluid-blob fluid-blob-6" />
       </div>
       
-      {/* Overlay for subtle blending */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/40" />
+      {/* Subtle overlay for content readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20" />
     </div>
   );
 });

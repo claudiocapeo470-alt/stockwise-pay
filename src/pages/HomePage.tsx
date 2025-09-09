@@ -53,10 +53,10 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       <AnimatedBackground />
       {/* Navigation */}
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -138,7 +138,7 @@ const HomePage = () => {
       </header>
 
       {/* Hero Section */}
-      <section id="accueil" className="py-20 lg:py-32">
+      <section id="accueil" className="py-20 lg:py-32 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <div className="mb-6 inline-block">
@@ -185,7 +185,7 @@ const HomePage = () => {
       </section>
 
       {/* Features Section */}
-      <section id="fonctionnalites" className="py-20 bg-muted/30">
+      <section id="fonctionnalites" className="py-20 bg-muted/30 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
@@ -260,7 +260,7 @@ const HomePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20">
+      <section className="py-20 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-r from-primary to-accent rounded-2xl p-12 text-center text-primary-foreground">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
@@ -282,7 +282,7 @@ const HomePage = () => {
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="border-t border-border bg-muted/30 py-12">
+      <footer id="contact" className="border-t border-border bg-muted/30 py-12 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">

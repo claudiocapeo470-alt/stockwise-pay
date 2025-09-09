@@ -6,18 +6,19 @@
 .fluid-blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.7;
+  filter: blur(40px);
+  opacity: 0.9;
   animation-duration: 20s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation-direction: alternate;
+  mix-blend-mode: screen;
 }
 
 .fluid-blob-1 {
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, hsl(260, 80%, 65%), hsl(240, 70%, 55%));
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #8b5cf6, #a855f7);
   top: 10%;
   left: 10%;
   animation-name: float-1;
@@ -25,9 +26,9 @@
 }
 
 .fluid-blob-2 {
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, hsl(280, 75%, 60%), hsl(200, 80%, 60%));
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #06b6d4, #3b82f6);
   top: 60%;
   right: 15%;
   animation-name: float-2;
@@ -35,9 +36,9 @@
 }
 
 .fluid-blob-3 {
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, hsl(220, 85%, 70%), hsl(180, 70%, 65%));
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #6366f1, #8b5cf6);
   bottom: 20%;
   left: 20%;
   animation-name: float-3;
@@ -45,9 +46,9 @@
 }
 
 .fluid-blob-4 {
-  width: 350px;
-  height: 350px;
-  background: radial-gradient(circle, hsl(300, 70%, 55%), hsl(260, 85%, 65%));
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #d946ef, #a855f7);
   top: 30%;
   right: 30%;
   animation-name: float-4;
@@ -55,9 +56,9 @@
 }
 
 .fluid-blob-5 {
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, hsl(190, 80%, 70%), hsl(210, 75%, 60%));
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, #0ea5e9, #06b6d4);
   top: 80%;
   left: 60%;
   animation-name: float-5;
@@ -65,9 +66,9 @@
 }
 
 .fluid-blob-6 {
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(circle, hsl(250, 90%, 70%), hsl(270, 80%, 65%));
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, #7c3aed, #8b5cf6);
   top: 5%;
   right: 5%;
   animation-name: float-6;

@@ -87,9 +87,9 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
       <AnimatedBackground />
-      <div className="w-full max-w-md space-y-8 relative z-10">
+      <div className="w-full max-w-md space-y-8 relative z-20">
         {/* Logo */}
         <div className="text-center">
           <div className="flex justify-center mb-4">

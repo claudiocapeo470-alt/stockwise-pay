@@ -82,12 +82,6 @@ const quickExports = [
     description: "Export Excel de l'inventaire complet",
     icon: PieChart,
     format: "Excel"
-  },
-  {
-    title: "Paiements en retard",
-    description: "Liste des paiements en retard",
-    icon: Calendar,
-    format: "PDF"
   }
 ]
 
@@ -664,7 +658,7 @@ export default function Rapports() {
               <div className="text-xs text-muted-foreground">
                 • Sélection de période personnalisée<br/>
                 • Filtres par catégorie/client<br/>
-                • Formats multiples (CSV, PDF)
+                • Formats multiples (CSV, Excel)
               </div>
             </div>
 

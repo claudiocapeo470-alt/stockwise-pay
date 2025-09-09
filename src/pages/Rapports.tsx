@@ -663,7 +663,7 @@ export default function Rapports() {
     endDate?: string;
   }) => {
     const newReport = {
-      id: crypto.randomUUID(),
+      id: Math.random().toString(36).substr(2, 9),
       ...reportData,
       createdAt: new Date(),
     };

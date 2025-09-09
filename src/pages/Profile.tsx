@@ -14,7 +14,7 @@ import { fr } from "date-fns/locale";
 import { ImageUpload } from "@/components/profile/ImageUpload";
 
 export default function Profile() {
-  const { user, profile, isAdmin } = useAuth();
+  const { user, profile, isAdmin, refreshProfile } = useAuth();
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -118,8 +118,8 @@ export default function Profile() {
       toast.success("Profil mis à jour avec succès");
       setIsEditingProfile(false);
       
-      // Refresh the page to get updated data
-      window.location.reload();
+      // Refresh profile data
+      await refreshProfile();
     } catch (error) {
       console.error('Error updating profile:', error);
       toast.error("Erreur lors de la mise à jour du profil");

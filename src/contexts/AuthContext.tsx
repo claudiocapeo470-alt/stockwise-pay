@@ -31,6 +31,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   loading: boolean;
   isAdmin: boolean;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -58,11 +59,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        return;
+      }
 
       const { data: roleData } = await supabase
         .from('user_roles')
@@ -74,6 +80,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUserRole(roleData);
     } catch (error) {
       console.error('Error fetching profile:', error);
+    }
+  };
+
+  // Fonction pour rafraîchir le profil
+  const refreshProfile = async () => {
+    if (user) {
+      await fetchProfile(user.id);
     }
   };
 
@@ -151,6 +164,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signOut,
     loading,
     isAdmin,
+    refreshProfile,
   };
 
   return (

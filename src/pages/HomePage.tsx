@@ -98,7 +98,7 @@ const HomePage = () => {
           <div className="text-center max-w-4xl mx-auto">
             
             
-            <h1 className="lg:text-6xl text-foreground mb-6 font-bold text-5xl">
+            <h1 className="lg:text-6xl text-foreground mb-6 font-bold text-4xl">
               Gestion complète pour 
               <span className="text-primary"> PME/TPE</span>
             </h1>

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: BarChart3 },
@@ -24,9 +25,18 @@ const navigation = [
 
 export function AppSidebar() {
   const { state, isMobile } = useSidebar()
-  const { signOut, user, isAdmin } = useAuth()
+  const { signOut, user, profile, isAdmin } = useAuth()
   const location = useLocation()
   const isCollapsed = state === "collapsed"
+
+  const displayName = profile?.company_name || 
+    (profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}`.trim() : user?.email?.split('@')[0] || 'Utilisateur');
+
+  const initials = profile?.company_name 
+    ? profile.company_name.substring(0, 2).toUpperCase()
+    : (profile?.first_name && profile?.last_name
+        ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase()
+        : (user?.email?.[0] || 'U').toUpperCase());
 
   const isActive = (path: string) => {
     if (path === "/" && location.pathname === "/") return true
@@ -76,11 +86,15 @@ export function AppSidebar() {
         {!isCollapsed && user && (
           <div className="px-3 py-2 mb-2">
             <div className="flex items-center gap-3">
-              <div className="bg-accent rounded-full p-2">
-                <User className="h-4 w-4" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={profile?.avatar_url || ''} alt={displayName} />
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{user.email}</p>
+                <p className="text-sm font-medium truncate">{displayName}</p>
+                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                 {isAdmin && (
                   <p className="text-xs text-muted-foreground">Administrateur</p>
                 )}

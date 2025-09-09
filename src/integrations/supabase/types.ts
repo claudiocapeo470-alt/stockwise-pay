@@ -135,6 +135,8 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          company_name: string | null
           created_at: string
           email: string | null
           first_name: string | null
@@ -144,6 +146,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          avatar_url?: string | null
+          company_name?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
@@ -153,6 +157,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          avatar_url?: string | null
+          company_name?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
@@ -209,6 +215,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscribers: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          email: string
+          id: string
+          is_legacy_user: boolean
+          paystack_customer_code: string | null
+          subscribed: boolean
+          subscription_code: string | null
+          subscription_end: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          email: string
+          id?: string
+          is_legacy_user?: boolean
+          paystack_customer_code?: string | null
+          subscribed?: boolean
+          subscription_code?: string | null
+          subscription_end?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          email?: string
+          id?: string
+          is_legacy_user?: boolean
+          paystack_customer_code?: string | null
+          subscribed?: boolean
+          subscription_code?: string | null
+          subscription_end?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

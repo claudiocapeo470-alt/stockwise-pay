@@ -4,13 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { User, Mail, Calendar, Shield, Key, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Calendar, Shield, Key, Eye, EyeOff, Edit2, Save, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { ImageUpload } from "@/components/profile/ImageUpload";
 
 export default function Profile() {
   const { user, profile, isAdmin } = useAuth();
@@ -19,6 +20,30 @@ export default function Profile() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  
+  // Profile editing states
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [profileData, setProfileData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    company_name: "",
+    avatar_url: ""
+  });
+
+  // Initialize profile data
+  useEffect(() => {
+    if (profile && user) {
+      setProfileData({
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || "",
+        email: user.email || "",
+        company_name: profile.company_name || "",
+        avatar_url: profile.avatar_url || ""
+      });
+    }
+  }, [profile, user]);
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,13 +78,82 @@ export default function Profile() {
     }
   };
 
-  const displayName = profile?.first_name 
-    ? `${profile.first_name} ${profile.last_name || ''}`.trim()
-    : user?.email?.split('@')[0] || 'Utilisateur';
+  const handleProfileUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!profileData.first_name.trim()) {
+      toast.error("Le prénom est obligatoire");
+      return;
+    }
 
-  const initials = profile?.first_name && profile?.last_name
-    ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase()
-    : (user?.email?.[0] || 'U').toUpperCase();
+    if (!profileData.company_name.trim()) {
+      toast.error("Le nom de l'entreprise est obligatoire");
+      return;
+    }
+
+    setIsUpdatingProfile(true);
+    
+    try {
+      // Update profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          first_name: profileData.first_name.trim(),
+          last_name: profileData.last_name.trim(),
+          company_name: profileData.company_name.trim(),
+          avatar_url: profileData.avatar_url
+        })
+        .eq('user_id', user?.id);
+
+      if (profileError) throw profileError;
+
+      // Update auth email if changed
+      if (profileData.email !== user?.email) {
+        const { error: authError } = await supabase.auth.updateUser({
+          email: profileData.email
+        });
+        if (authError) throw authError;
+      }
+
+      toast.success("Profil mis à jour avec succès");
+      setIsEditingProfile(false);
+      
+      // Refresh the page to get updated data
+      window.location.reload();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error("Erreur lors de la mise à jour du profil");
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
+
+  const handleImageUpload = (url: string) => {
+    setProfileData(prev => ({ ...prev, avatar_url: url }));
+  };
+
+  const cancelProfileEdit = () => {
+    setIsEditingProfile(false);
+    // Reset to original values
+    if (profile && user) {
+      setProfileData({
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || "",
+        email: user.email || "",
+        company_name: profile.company_name || "",
+        avatar_url: profile.avatar_url || ""
+      });
+    }
+  };
+
+  const displayName = profile?.company_name || 
+    (profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}`.trim() : user?.email?.split('@')[0] || 'Utilisateur');
+
+  const initials = profile?.company_name 
+    ? profile.company_name.substring(0, 2).toUpperCase()
+    : (profile?.first_name && profile?.last_name
+        ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase()
+        : (user?.email?.[0] || 'U').toUpperCase());
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -75,8 +169,16 @@ export default function Profile() {
         {/* Profile Overview */}
         <Card className="lg:col-span-1">
           <CardHeader className="text-center">
-            <div className="mx-auto w-20 h-20 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold mb-4">
-              {initials}
+            <div className="mx-auto w-20 h-20 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold mb-4 overflow-hidden">
+              {profileData.avatar_url ? (
+                <img
+                  src={profileData.avatar_url}
+                  alt="Photo de profil"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                initials
+              )}
             </div>
             <CardTitle className="text-xl">{displayName}</CardTitle>
             <div className="flex items-center justify-center gap-2">
@@ -95,45 +197,114 @@ export default function Profile() {
         {/* Account Information */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Informations du compte
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Informations du compte
+              </div>
+              {!isEditingProfile && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditingProfile(true)}
+                >
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Modifier
+                </Button>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Personal Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Informations personnelles</h3>
+            <form onSubmit={handleProfileUpdate} className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium">Informations personnelles</h3>
+                {isEditingProfile && (
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={cancelProfileEdit}
+                      disabled={isUpdatingProfile}
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      Annuler
+                    </Button>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      disabled={isUpdatingProfile}
+                    >
+                      <Save className="h-4 w-4 mr-1" />
+                      {isUpdatingProfile ? "Enregistrement..." : "Enregistrer"}
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Company Name Field */}
+              <div>
+                <Label htmlFor="companyName">Nom de l'entreprise *</Label>
+                <Input
+                  id="companyName"
+                  value={profileData.company_name}
+                  onChange={(e) => setProfileData(prev => ({ ...prev, company_name: e.target.value }))}
+                  disabled={!isEditingProfile || isUpdatingProfile}
+                  className={!isEditingProfile ? "bg-muted" : ""}
+                  placeholder="Nom de votre entreprise"
+                  required
+                />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName">Prénom</Label>
+                  <Label htmlFor="firstName">Prénom *</Label>
                   <Input
                     id="firstName"
-                    value={profile?.first_name || ""}
-                    disabled
-                    className="bg-muted"
+                    value={profileData.first_name}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, first_name: e.target.value }))}
+                    disabled={!isEditingProfile || isUpdatingProfile}
+                    className={!isEditingProfile ? "bg-muted" : ""}
+                    placeholder="Votre prénom"
+                    required
                   />
                 </div>
                 <div>
                   <Label htmlFor="lastName">Nom</Label>
                   <Input
                     id="lastName"
-                    value={profile?.last_name || ""}
-                    disabled
-                    className="bg-muted"
+                    value={profileData.last_name}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, last_name: e.target.value }))}
+                    disabled={!isEditingProfile || isUpdatingProfile}
+                    className={!isEditingProfile ? "bg-muted" : ""}
+                    placeholder="Votre nom de famille"
                   />
                 </div>
               </div>
+              
               <div>
                 <Label htmlFor="email">Adresse email</Label>
                 <Input
                   id="email"
-                  value={user?.email || ""}
-                  disabled
-                  className="bg-muted"
+                  type="email"
+                  value={profileData.email}
+                  onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
+                  disabled={!isEditingProfile || isUpdatingProfile}
+                  className={!isEditingProfile ? "bg-muted" : ""}
+                  placeholder="votre@email.com"
                 />
               </div>
-            </div>
+
+              {/* Image Upload Section */}
+              {isEditingProfile && (
+                <ImageUpload
+                  currentImageUrl={profileData.avatar_url}
+                  onImageUpload={handleImageUpload}
+                  disabled={isUpdatingProfile}
+                />
+              )}
+            </form>
 
             <Separator />
 
@@ -189,7 +360,7 @@ export default function Profile() {
                   <Key className="h-4 w-4" />
                   Sécurité
                 </h3>
-                {!isChangingPassword && (
+                {!isChangingPassword && !isEditingProfile && (
                   <Button
                     variant="outline"
                     size="sm"

@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 
 export function UserMenu() {
@@ -19,19 +19,21 @@ export function UserMenu() {
 
   if (!user) return null;
 
-  const displayName = profile?.first_name 
-    ? `${profile.first_name} ${profile.last_name || ''}`.trim()
-    : user.email?.split('@')[0] || 'Utilisateur';
+  const displayName = profile?.company_name || 
+    (profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}`.trim() : user.email?.split('@')[0] || 'Utilisateur');
 
-  const initials = profile?.first_name && profile?.last_name
-    ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase()
-    : (user.email?.[0] || 'U').toUpperCase();
+  const initials = profile?.company_name 
+    ? profile.company_name.substring(0, 2).toUpperCase()
+    : (profile?.first_name && profile?.last_name
+        ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase()
+        : (user.email?.[0] || 'U').toUpperCase());
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
+            <AvatarImage src={profile?.avatar_url || ''} alt={displayName} />
             <AvatarFallback className="bg-primary text-primary-foreground text-xs">
               {initials}
             </AvatarFallback>

@@ -153,7 +153,7 @@ const HomePage = () => {
               stocks, ventes, paiements et rapports en temps réel.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg" 
                 onClick={() => navigate('/auth')}
@@ -169,30 +169,6 @@ const HomePage = () => {
               >
                 Se connecter
               </Button>
-            </div>
-
-            {/* Hero Visual */}
-            <div className="relative">
-              <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8 border border-border shadow-2xl">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-center">
-                  <div className="bg-card p-4 rounded-lg border border-border">
-                    <Package className="h-8 w-8 mx-auto mb-2 text-primary" />
-                    <p className="text-sm font-medium">Stocks</p>
-                  </div>
-                  <div className="bg-card p-4 rounded-lg border border-border">
-                    <TrendingUp className="h-8 w-8 mx-auto mb-2 text-primary" />
-                    <p className="text-sm font-medium">Ventes</p>
-                  </div>
-                  <div className="bg-card p-4 rounded-lg border border-border">
-                    <CreditCard className="h-8 w-8 mx-auto mb-2 text-primary" />
-                    <p className="text-sm font-medium">Paiements</p>
-                  </div>
-                  <div className="bg-card p-4 rounded-lg border border-border">
-                    <BarChart3 className="h-8 w-8 mx-auto mb-2 text-primary" />
-                    <p className="text-sm font-medium">Rapports</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

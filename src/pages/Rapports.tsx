@@ -10,6 +10,8 @@ import { toast } from "sonner"
 import { ReportDialog } from "@/components/reports/ReportDialog"
 import { CustomReportDialog } from "@/components/reports/CustomReportDialog"
 import * as XLSX from 'xlsx'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 
 const reports = [
   {
@@ -82,6 +84,12 @@ const quickExports = [
     description: "Export Excel de l'inventaire complet",
     icon: PieChart,
     format: "Excel"
+  },
+  {
+    title: "Rapport paiements",
+    description: "Export PDF des paiements",
+    icon: Calendar,
+    format: "PDF"
   }
 ]
 
@@ -117,9 +125,14 @@ export default function Rapports() {
     }
   }, [products, sales, payments])
 
-  const handleExport = (type: 'csv' | 'excel', data: string) => {
+  const handleExport = (type: 'csv' | 'excel' | 'pdf', data: string) => {
     if (type === 'excel') {
       handleExcelExport(data)
+      return
+    }
+
+    if (type === 'pdf') {
+      handlePDFExport(data)
       return
     }
 
@@ -313,6 +326,280 @@ export default function Rapports() {
     toast.success(`Export Excel ${filename} téléchargé avec succès`)
   }
 
+  const handlePDFExport = (data: string) => {
+    const doc = new jsPDF('p', 'mm', 'a4')
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const pageHeight = doc.internal.pageSize.getHeight()
+    let currentY = 20
+
+    // Configuration des couleurs et styles
+    const primaryColor: [number, number, number] = [59, 130, 246] // Bleu primary
+    const secondaryColor: [number, number, number] = [107, 114, 128] // Gris
+    const successColor: [number, number, number] = [34, 197, 94] // Vert
+    const warningColor: [number, number, number] = [251, 191, 36] // Orange
+    const errorColor: [number, number, number] = [239, 68, 68] // Rouge
+
+    // Fonction pour ajouter l'en-tête
+    const addHeader = (title: string) => {
+      // Titre principal
+      doc.setFontSize(24)
+      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
+      doc.setFont('helvetica', 'bold')
+      doc.text(title, pageWidth / 2, currentY, { align: 'center' })
+      currentY += 15
+
+      // Ligne de séparation
+      doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2])
+      doc.setLineWidth(0.5)
+      doc.line(20, currentY, pageWidth - 20, currentY)
+      currentY += 10
+
+      // Date de génération
+      doc.setFontSize(12)
+      doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2])
+      doc.setFont('helvetica', 'normal')
+      doc.text(`Généré le: ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`, 20, currentY)
+      currentY += 15
+    }
+
+    // Fonction pour ajouter les statistiques
+    const addStats = (stats: { label: string; value: string; color?: [number, number, number] }[]) => {
+      doc.setFontSize(14)
+      doc.setTextColor(0, 0, 0)
+      doc.setFont('helvetica', 'bold')
+      doc.text('STATISTIQUES GÉNÉRALES', 20, currentY)
+      currentY += 10
+
+      stats.forEach((stat, index) => {
+        const x = 20 + (index % 2) * (pageWidth / 2 - 20)
+        const y = currentY + Math.floor(index / 2) * 8
+
+        doc.setFontSize(10)
+        doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2])
+        doc.setFont('helvetica', 'normal')
+        doc.text(`${stat.label}:`, x, y)
+        
+        const color = stat.color || [0, 0, 0] as [number, number, number]
+        doc.setTextColor(color[0], color[1], color[2])
+        doc.setFont('helvetica', 'bold')
+        doc.text(stat.value, x + 50, y)
+      })
+
+      currentY += Math.ceil(stats.length / 2) * 8 + 10
+    }
+
+    if (data === 'sales') {
+      addHeader('RAPPORT DÉTAILLÉ DES VENTES')
+      
+      const stats = [
+        { label: 'Nombre total de ventes', value: `${metrics.totalSales}`, color: primaryColor },
+        { label: 'Chiffre d\'affaires total', value: `${metrics.totalRevenue.toLocaleString()} CFA`, color: successColor },
+        { label: 'Valeur moyenne par vente', value: `${metrics.totalSales > 0 ? Math.round(metrics.totalRevenue / metrics.totalSales).toLocaleString() : '0'} CFA`, color: primaryColor },
+        { label: 'Nombre de produits vendus', value: `${sales.reduce((sum, sale) => sum + sale.quantity, 0)}`, color: secondaryColor }
+      ]
+      
+      addStats(stats)
+
+      // Tableau des ventes
+      const tableColumns = ['Date', 'Produit', 'Client', 'Qty', 'Prix unitaire', 'Total']
+      const tableData = sales.map(sale => {
+        const product = products.find(p => p.id === sale.product_id)
+        return [
+          new Date(sale.created_at).toLocaleDateString('fr-FR'),
+          product?.name || 'Produit supprimé',
+          sale.customer_name || 'Client anonyme',
+          sale.quantity.toString(),
+          `${Number(sale.unit_price).toLocaleString()} CFA`,
+          `${Number(sale.total_amount).toLocaleString()} CFA`
+        ]
+      })
+
+      autoTable(doc, {
+        startY: currentY,
+        head: [tableColumns],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { 
+          fillColor: primaryColor,
+          textColor: 255,
+          fontSize: 10,
+          fontStyle: 'bold'
+        },
+        bodyStyles: { 
+          fontSize: 9,
+          cellPadding: 3
+        },
+        alternateRowStyles: { 
+          fillColor: [248, 250, 252] 
+        },
+        columnStyles: {
+          3: { halign: 'center' },
+          4: { halign: 'right' },
+          5: { halign: 'right', fontStyle: 'bold' }
+        },
+        margin: { left: 20, right: 20 }
+      })
+
+    } else if (data === 'products') {
+      addHeader('INVENTAIRE COMPLET DES PRODUITS')
+      
+      const totalStockValue = products.reduce((sum, p) => sum + (p.price * p.quantity), 0)
+      const stats = [
+        { label: 'Nombre total de produits', value: `${metrics.totalProducts}`, color: primaryColor },
+        { label: 'Valeur totale du stock', value: `${totalStockValue.toLocaleString()} CFA`, color: successColor },
+        { label: 'Produits en stock bas', value: `${metrics.lowStockProducts}`, color: warningColor },
+        { label: 'Produits épuisés', value: `${metrics.outOfStockProducts}`, color: errorColor }
+      ]
+      
+      addStats(stats)
+
+      const tableColumns = ['Produit', 'Catégorie', 'Prix', 'Stock', 'Min.', 'Valeur', 'Statut']
+      const tableData = products.map(product => {
+        const stockValue = product.price * product.quantity
+        let status = 'Normal'
+        
+        if (product.quantity === 0) {
+          status = 'Épuisé'
+        } else if (product.quantity <= product.min_quantity) {
+          status = 'Stock bas'
+        }
+
+        return [
+          product.name,
+          product.category || 'Non définie',
+          `${Number(product.price).toLocaleString()} CFA`,
+          product.quantity.toString(),
+          product.min_quantity.toString(),
+          `${stockValue.toLocaleString()} CFA`,
+          status
+        ]
+      })
+
+      autoTable(doc, {
+        startY: currentY,
+        head: [tableColumns],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { 
+          fillColor: primaryColor,
+          textColor: 255,
+          fontSize: 10,
+          fontStyle: 'bold'
+        },
+        bodyStyles: { 
+          fontSize: 9,
+          cellPadding: 3
+        },
+        alternateRowStyles: { 
+          fillColor: [248, 250, 252] 
+        },
+        columnStyles: {
+          2: { halign: 'right' },
+          3: { halign: 'center' },
+          4: { halign: 'center' },
+          5: { halign: 'right' },
+          6: { halign: 'center', fontStyle: 'bold' }
+        },
+        margin: { left: 20, right: 20 },
+        didParseCell: function(data) {
+          if (data.column.index === 6) { // Colonne Statut
+            const status = data.cell.raw as string
+            if (status === 'Épuisé') {
+              data.cell.styles.textColor = errorColor
+              data.cell.styles.fontStyle = 'bold'
+            } else if (status === 'Stock bas') {
+              data.cell.styles.textColor = warningColor
+              data.cell.styles.fontStyle = 'bold'
+            } else {
+              data.cell.styles.textColor = successColor
+            }
+          }
+        }
+      })
+
+    } else if (data === 'payments') {
+      addHeader('RAPPORT DES PAIEMENTS')
+      
+      const stats = [
+        { label: 'Nombre total de paiements', value: `${payments.length}`, color: primaryColor },
+        { label: 'Montant total encaissé', value: `${metrics.totalPaid.toLocaleString()} CFA`, color: successColor },
+        { label: 'Montant en attente', value: `${metrics.totalPending.toLocaleString()} CFA`, color: warningColor },
+        { label: 'Taux de recouvrement', value: `${metrics.paymentRate}%`, color: primaryColor }
+      ]
+      
+      addStats(stats)
+
+      const tableColumns = ['Date', 'Client', 'Téléphone', 'Montant', 'Méthode', 'Statut']
+      const tableData = payments.map(payment => {
+        const fullName = `${payment.customer_first_name || ''} ${payment.customer_last_name || ''}`.trim() || 'N/A'
+        return [
+          new Date(payment.created_at).toLocaleDateString('fr-FR'),
+          fullName,
+          payment.customer_phone || 'N/A',
+          `${Number(payment.total_amount).toLocaleString()} CFA`,
+          payment.payment_method,
+          payment.status === 'completed' ? 'Terminé' : 
+          payment.status === 'pending' ? 'En attente' : 
+          payment.status === 'partial' ? 'Partiel' : 'En retard'
+        ]
+      })
+
+      autoTable(doc, {
+        startY: currentY,
+        head: [tableColumns],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { 
+          fillColor: primaryColor,
+          textColor: 255,
+          fontSize: 10,
+          fontStyle: 'bold'
+        },
+        bodyStyles: { 
+          fontSize: 9,
+          cellPadding: 3
+        },
+        alternateRowStyles: { 
+          fillColor: [248, 250, 252] 
+        },
+        columnStyles: {
+          3: { halign: 'right', fontStyle: 'bold' },
+          4: { halign: 'center' },
+          5: { halign: 'center', fontStyle: 'bold' }
+        },
+        margin: { left: 20, right: 20 },
+        didParseCell: function(data) {
+          if (data.column.index === 5) { // Colonne Statut
+            const status = data.cell.raw as string
+            if (status === 'Terminé') {
+              data.cell.styles.textColor = successColor
+            } else if (status === 'En attente' || status === 'Partiel') {
+              data.cell.styles.textColor = warningColor
+            } else {
+              data.cell.styles.textColor = errorColor
+            }
+          }
+        }
+      })
+    }
+
+    // Ajouter un pied de page
+    const finalY = (doc as any).lastAutoTable?.finalY || currentY
+    if (finalY < pageHeight - 30) {
+      doc.setFontSize(8)
+      doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2])
+      doc.setFont('helvetica', 'italic')
+      doc.text(`Rapport généré automatiquement par votre système de gestion`, pageWidth / 2, pageHeight - 20, { align: 'center' })
+      doc.text(`Page 1`, pageWidth / 2, pageHeight - 10, { align: 'center' })
+    }
+
+    // Télécharger le PDF
+    const filename = `rapport_${data}_${new Date().toISOString().split('T')[0]}.pdf`
+    doc.save(filename)
+    
+    toast.success(`Rapport PDF ${filename} téléchargé avec succès`)
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "ready":
@@ -410,15 +697,15 @@ export default function Rapports() {
             <Button
               variant="outline"
               className="h-auto p-4 flex flex-col items-start gap-2 hover:bg-accent"
-              onClick={() => handleExport('csv', 'payments')}
+              onClick={() => handleExport('pdf', 'payments')}
             >
               <div className="flex items-center gap-2 w-full">
                 <Calendar className="h-4 w-4" />
-                <span className="font-medium">Tous les paiements</span>
-                <Badge variant="outline" className="ml-auto text-xs">CSV</Badge>
+                <span className="font-medium">Rapport paiements</span>
+                <Badge variant="outline" className="ml-auto text-xs">PDF</Badge>
               </div>
               <p className="text-sm text-muted-foreground text-left">
-                Export CSV de tous les paiements
+                Export PDF des paiements
               </p>
             </Button>
           </div>
@@ -490,6 +777,14 @@ export default function Rapports() {
                 <Download className="h-4 w-4 mr-1" />
                 Excel
               </Button>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => handleExport('pdf', 'sales')}
+              >
+                <Download className="h-4 w-4 mr-1" />
+                PDF
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -556,6 +851,14 @@ export default function Rapports() {
               >
                 <Download className="h-4 w-4 mr-1" />
                 Excel
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => handleExport('pdf', 'products')}
+              >
+                <Download className="h-4 w-4 mr-1" />
+                PDF
               </Button>
             </div>
           </CardContent>
@@ -624,6 +927,14 @@ export default function Rapports() {
                 <Download className="h-4 w-4 mr-1" />
                 Excel
               </Button>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => handleExport('pdf', 'payments')}
+              >
+                <Download className="h-4 w-4 mr-1" />
+                PDF
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -658,7 +969,7 @@ export default function Rapports() {
               <div className="text-xs text-muted-foreground">
                 • Sélection de période personnalisée<br/>
                 • Filtres par catégorie/client<br/>
-                • Formats multiples (CSV, Excel)
+                • Formats multiples (CSV, Excel, PDF)
               </div>
             </div>
 

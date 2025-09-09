@@ -3,8 +3,8 @@ import { memo } from "react";
 const AnimatedBackground = memo(() => {
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-      {/* Base background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background to-background/95" />
+      {/* Base dark layer */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black" />
       
       {/* Animated fluid shapes */}
       <div className="absolute inset-0">
@@ -16,8 +16,8 @@ const AnimatedBackground = memo(() => {
         <div className="fluid-blob fluid-blob-6" />
       </div>
       
-      {/* Strong overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background/90" />
+      {/* Subtle overlay for content readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20" />
     </div>
   );
 });

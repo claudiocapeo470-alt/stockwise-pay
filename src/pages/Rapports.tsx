@@ -672,7 +672,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 className="flex-1 bg-gradient-primary hover:opacity-90"
-                onClick={() => toast.info("Fonctionnalité en développement")}
+                onClick={() => setShowCustomReportDialog(true)}
               >
                 <FileText className="h-4 w-4 mr-1" />
                 Créer rapport
@@ -813,12 +813,27 @@ export default function Rapports() {
           <p className="text-muted-foreground mb-4">
             Créez un rapport sur mesure en sélectionnant les données et la période qui vous intéressent.
           </p>
-          <Button className="bg-gradient-primary hover:opacity-90">
+          <Button 
+            className="bg-gradient-primary hover:opacity-90"
+            onClick={() => setShowCustomReportDialog(true)}
+          >
             <FileText className="h-4 w-4 mr-2" />
             Nouveau rapport personnalisé
           </Button>
         </CardContent>
       </Card>
+
+      {/* Dialogs */}
+      <ReportDialog
+        reportType={selectedReportType}
+        open={showReportDialog}
+        onOpenChange={setShowReportDialog}
+      />
+      
+      <CustomReportDialog
+        open={showCustomReportDialog}
+        onOpenChange={setShowCustomReportDialog}
+      />
     </div>
   )
 }

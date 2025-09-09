@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedBackground } from '@/components/ui/animated-background';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -86,8 +87,9 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+      <AnimatedBackground />
+      <div className="w-full max-w-md space-y-8 relative z-10">
         {/* Logo */}
         <div className="text-center">
           <div className="flex justify-center mb-4">

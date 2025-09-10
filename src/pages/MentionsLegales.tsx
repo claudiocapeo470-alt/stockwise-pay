@@ -70,9 +70,8 @@ export default function MentionsLegales() {
 
               <div>
                 <h3 className="font-semibold mb-2">Hébergement</h3>
-                <p>[Nom de l'hébergeur]<br />
-                Adresse de l'hébergeur<br />
-                Site web de l'hébergeur</p>
+                <p>Nom de l'hébergeur : Lovable<br />
+                Site web de l'hébergeur : Lovable.dev</p>
               </div>
             </CardContent>
           </Card>

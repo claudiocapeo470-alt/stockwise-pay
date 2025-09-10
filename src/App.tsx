@@ -15,6 +15,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import HomePage from "./pages/HomePage";
+import MentionsLegales from "./pages/MentionsLegales";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,9 @@ const App = () => (
           <Routes>
             {/* Landing Page */}
             <Route path="/" element={<HomePage />} />
+            
+            {/* Legal Pages */}
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
             
             {/* Auth Route */}
             <Route path="/auth" element={<Auth />} />

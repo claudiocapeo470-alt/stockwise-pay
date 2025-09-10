@@ -222,6 +222,14 @@ const HomePage = () => {
               <p className="text-xs text-muted-foreground mt-1">
                 Solution SaaS pour PME/TPE Africaines
               </p>
+              <div className="mt-2">
+                <a 
+                  href="/mentions-legales" 
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
+                >
+                  Mentions légales
+                </a>
+              </div>
             </div>
           </div>
         </div>

@@ -103,7 +103,7 @@ const HomePage = () => {
               <span className="text-primary"> PME/TPE</span>
             </h1>
             
-            <p className="mb-8 max-w-2xl text-white/[0.97] text-xl text-center mx-[100px] px-0">
+            <p className="mb-8 max-w-2xl text-white/[0.97] text-lg sm:text-xl text-center mx-auto px-4 sm:px-6 lg:px-0">
               Simplifiez la gestion de votre entreprise avec notre solution tout-en-un : 
               stocks, ventes, paiements et rapports en temps réel.
             </p>

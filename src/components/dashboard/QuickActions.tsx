@@ -39,7 +39,7 @@ export function QuickActions() {
         <Button 
           variant="outline" 
           className="w-full mt-4"
-          onClick={() => navigate("/rapports")}
+          onClick={() => navigate("/app/rapports")}
         >
           <FileText className="h-4 w-4 mr-2" />
           Voir tous les rapports

@@ -55,14 +55,6 @@ export default function Auth() {
     try {
       if (resetStep === 'email') {
         // Étape 1: Envoyer le code par email
-        const resetCode = generateResetCode();
-        
-        // Stocker le code et l'email temporairement (dans une vraie app, ceci devrait être fait côté serveur)
-        localStorage.setItem('resetCode', resetCode);
-        localStorage.setItem('resetEmail', resetEmail);
-        localStorage.setItem('resetCodeTimestamp', Date.now().toString());
-
-        // Envoyer l'email
         const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-password-reset`, {
           method: 'POST',
           headers: {
@@ -70,14 +62,17 @@ export default function Auth() {
             'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
           },
           body: JSON.stringify({
-            email: resetEmail,
-            resetCode: resetCode
+            email: resetEmail
           })
         });
 
         if (!response.ok) {
-          throw new Error('Erreur lors de l\'envoi de l\'email');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Erreur lors de l\'envoi de l\'email');
         }
+
+        // Stocker l'email pour les étapes suivantes
+        localStorage.setItem('resetEmail', resetEmail);
 
         setResetStep('code');
         toast({
@@ -85,32 +80,14 @@ export default function Auth() {
           description: 'Vérifiez votre email pour le code de vérification'
         });
       } else if (resetStep === 'code') {
-        // Étape 2: Vérifier le code
-        const storedCode = localStorage.getItem('resetCode');
-        const storedTimestamp = localStorage.getItem('resetCodeTimestamp');
-        
-        if (!storedCode || !storedTimestamp) {
-          setError('Code expiré. Veuillez recommencer.');
-          setResetStep('email');
+        // Étape 2: Passer à l'étape de saisie du nouveau mot de passe
+        if (!formData.resetCode || formData.resetCode.length !== 6) {
+          setError('Veuillez saisir un code de 6 chiffres');
           return;
         }
 
-        // Vérifier si le code n'est pas expiré (15 minutes)
-        const now = Date.now();
-        const codeAge = now - parseInt(storedTimestamp);
-        if (codeAge > 15 * 60 * 1000) {
-          setError('Code expiré. Veuillez recommencer.');
-          localStorage.removeItem('resetCode');
-          localStorage.removeItem('resetEmail');
-          localStorage.removeItem('resetCodeTimestamp');
-          setResetStep('email');
-          return;
-        }
-
-        if (formData.resetCode !== storedCode) {
-          setError('Code incorrect');
-          return;
-        }
+        // Stocker le code pour l'étape suivante
+        localStorage.setItem('resetCode', formData.resetCode);
 
         setResetStep('password');
         toast({
@@ -130,36 +107,57 @@ export default function Auth() {
         }
 
         const storedEmail = localStorage.getItem('resetEmail');
-        if (!storedEmail) {
+        const storedCode = localStorage.getItem('resetCode');
+        
+        if (!storedEmail || !storedCode) {
           setError('Session expirée. Veuillez recommencer.');
           setResetStep('email');
           return;
         }
 
-        // Utiliser la fonction de réinitialisation de Supabase
-        const { error } = await supabase.auth.updateUser({
-          password: formData.password
+        // Utiliser notre edge function pour réinitialiser le mot de passe
+        const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/reset-password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
+          },
+          body: JSON.stringify({
+            email: storedEmail,
+            code: storedCode,
+            newPassword: formData.password
+          })
         });
 
-        if (error) {
-          // Si l'utilisateur n'est pas connecté, utiliser l'approche avec token
-          setError('Veuillez vous reconnecter pour changer votre mot de passe');
-          setResetStep(null);
-          setActiveTab('login');
-          return;
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.error || 'Erreur lors de la réinitialisation du mot de passe');
         }
 
         // Nettoyer le localStorage
         localStorage.removeItem('resetCode');
         localStorage.removeItem('resetEmail');
-        localStorage.removeItem('resetCodeTimestamp');
 
-        setResetStep(null);
-        setActiveTab('login');
-        toast({
-          title: 'Mot de passe réinitialisé',
-          description: 'Vous pouvez maintenant vous connecter avec votre nouveau mot de passe'
-        });
+        // Connecter automatiquement l'utilisateur
+        const { error: signInError } = await signIn(storedEmail, formData.password);
+        
+        if (signInError) {
+          // Si la connexion automatique échoue, rediriger vers la page de connexion
+          setResetStep(null);
+          setActiveTab('login');
+          setFormData({ ...formData, email: storedEmail, password: '', confirmPassword: '', resetCode: '' });
+          toast({
+            title: 'Mot de passe réinitialisé',
+            description: 'Vous pouvez maintenant vous connecter avec votre nouveau mot de passe'
+          });
+        } else {
+          // Connexion réussie, l'utilisateur sera redirigé automatiquement
+          toast({
+            title: 'Mot de passe réinitialisé',
+            description: 'Connexion automatique réussie'
+          });
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Une erreur inattendue est survenue');

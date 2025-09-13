@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -11,7 +12,6 @@ const corsHeaders = {
 
 interface PasswordResetRequest {
   email: string;
-  resetCode: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -21,9 +21,36 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, resetCode }: PasswordResetRequest = await req.json();
+    const { email }: PasswordResetRequest = await req.json();
+
+    // Generate a 6-digit reset code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     console.log(`Sending password reset email to: ${email} with code: ${resetCode}`);
+
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+
+    // Store the reset code in the database
+    const { error: dbError } = await supabase
+      .from('password_reset_codes')
+      .insert({
+        email: email,
+        code: resetCode,
+      });
+
+    if (dbError) {
+      console.error("Error storing reset code:", dbError);
+      throw new Error("Erreur lors de la génération du code de réinitialisation");
+    }
 
     const emailResponse = await resend.emails.send({
       from: "Stocknix <noreply@resend.dev>",

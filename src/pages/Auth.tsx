@@ -149,9 +149,9 @@ export default function Auth() {
                     </Alert>}
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="login-email">Email</Label>
                     <Input 
-                      id="email" 
+                      id="login-email" 
                       name="email" 
                       type="email" 
                       required 
@@ -163,10 +163,10 @@ export default function Auth() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Mot de passe</Label>
+                    <Label htmlFor="login-password">Mot de passe</Label>
                     <div className="relative">
                       <Input 
-                        id="password" 
+                        id="login-password"
                         name="password" 
                         type={showPassword ? 'text' : 'password'} 
                         required 
@@ -243,9 +243,9 @@ export default function Auth() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="register-email">Email</Label>
                     <Input 
-                      id="email" 
+                      id="register-email" 
                       name="email" 
                       type="email" 
                       required 
@@ -257,10 +257,10 @@ export default function Auth() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Mot de passe</Label>
+                    <Label htmlFor="register-password">Mot de passe</Label>
                     <div className="relative">
                       <Input 
-                        id="password" 
+                        id="register-password"
                         name="password" 
                         type={showPassword ? 'text' : 'password'} 
                         required 

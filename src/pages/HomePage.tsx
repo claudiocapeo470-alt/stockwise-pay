@@ -35,7 +35,7 @@ const HomePage = () => {
             {/* Logo */}
             <div className="flex items-center space-x-2">
               <BarChart3 className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold text-foreground">GestionPro</span>
+              <span className="text-xl font-bold text-foreground">Stocknix</span>
             </div>
 
             {/* Desktop Navigation */}
@@ -149,7 +149,7 @@ const HomePage = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h3 className="text-2xl font-bold text-foreground mb-6">
-                Pourquoi choisir GestionPro ?
+                Pourquoi choisir Stocknix ?
               </h3>
               <div className="space-y-4">
                 {benefits.map((benefit, index) => <div key={index} className="flex items-center space-x-3">
@@ -197,7 +197,7 @@ const HomePage = () => {
               Prêt à transformer votre entreprise ?
             </h2>
             <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-              Rejoignez des centaines de PME/TPE qui font déjà confiance à GestionPro
+              Rejoignez des centaines de PME/TPE qui font déjà confiance à Stocknix
             </p>
             <Button size="lg" variant="secondary" onClick={() => navigate('/auth')} className="px-8">
               Créer mon compte gratuitement
@@ -212,12 +212,12 @@ const HomePage = () => {
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <BarChart3 className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-foreground">GestionPro</span>
+              <span className="font-semibold text-foreground">Stocknix</span>
             </div>
             
             <div className="text-center md:text-right">
               <p className="text-sm text-muted-foreground">
-                © 2024 GestionPro. Tous droits réservés.
+                © 2024 Stocknix. Tous droits réservés.
               </p>
               <p className="text-xs text-muted-foreground mt-1">
                 Solution SaaS pour PME/TPE Africaines

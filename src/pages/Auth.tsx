@@ -52,7 +52,7 @@ export default function Auth() {
         } else {
           toast({
             title: 'Connexion réussie',
-            description: 'Bienvenue dans GestionPro !'
+            description: 'Bienvenue dans Stocknix !'
           });
         }
       } else {
@@ -94,7 +94,7 @@ export default function Auth() {
               <BarChart3 className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">GestionPro</h1>
+          <h1 className="text-2xl font-bold text-foreground">Stocknix</h1>
           <p className="text-sm text-slate-50">
             Gestion complète pour PME/TPE
           </p>

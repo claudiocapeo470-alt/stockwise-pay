@@ -70,7 +70,7 @@ export default function MentionsLegales() {
 
               <div>
                 <h3 className="font-semibold mb-2">Hébergement</h3>
-                <p>Nom de l'hébergeur : GestionPro<br />
+                <p>Nom de l'hébergeur : Stocknix<br />
                 Site web de l'hébergeur : gestionpro.space</p>
               </div>
             </CardContent>
@@ -85,7 +85,7 @@ export default function MentionsLegales() {
               <div>
                 <h3 className="font-semibold mb-2">Objet</h3>
                 <p>
-                  GestionPro est une solution SaaS (Software as a Service) de gestion d'entreprise 
+                  Stocknix est une solution SaaS (Software as a Service) de gestion d'entreprise 
                   permettant aux PME de gérer leurs stocks, ventes, paiements et générer des rapports. 
                   L'utilisation de ce service implique l'acceptation pleine et entière des présentes 
                   conditions générales d'utilisation.
@@ -157,7 +157,7 @@ export default function MentionsLegales() {
               <div>
                 <h3 className="font-semibold mb-2">Droits de RICH MIND</h3>
                 <p>
-                  Tous les éléments de l'application GestionPro (textes, images, logos, marques, 
+                  Tous les éléments de l'application Stocknix (textes, images, logos, marques, 
                   structure, design, etc.) sont protégés par les droits de propriété intellectuelle 
                   et appartiennent exclusivement à RICH MIND ou à ses partenaires.
                 </p>

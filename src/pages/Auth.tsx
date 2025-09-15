@@ -423,9 +423,7 @@ export default function Auth() {
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-indigo-300 tracking-tight">
-                    GestionPro
-                  </h1>
+                  <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-indigo-300 tracking-tight">Stocknix</h1>
                   <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full mt-2"></div>
                 </div>
               </div>
@@ -489,7 +487,7 @@ export default function Auth() {
 
           <div className="w-full max-w-lg">
             {/* Header avec effet de profondeur 8K */}
-            <div className="text-center mb-12 bg-slate-900 rounded-none">
+            <div className="text-center mb-12">
               <div className="lg:hidden flex justify-center mb-6">
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-3xl blur-lg opacity-75"></div>
@@ -501,7 +499,7 @@ export default function Auth() {
               <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-purple-200 mb-4 tracking-tight">
                 Bienvenue
               </h2>
-              <p className="text-xl text-white/70 font-medium">
+              <p className="text-xl font-medium text-slate-50">
                 Accédez à votre espace professionnel ultra-moderne
               </p>
             </div>
@@ -513,12 +511,12 @@ export default function Auth() {
               
               <div className="relative bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 p-10 shadow-2xl">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-10 bg-white/5 rounded-2xl p-2 backdrop-blur-sm border border-white/10">
-                    <TabsTrigger value="login" className="rounded-xl py-4 text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90">
+                  <TabsList className="grid w-full grid-cols-2 mb-10 bg-white/5 rounded-2xl p-2 backdrop-blur-sm border border-white/10 py-0 px-0">
+                    <TabsTrigger value="login" className="rounded-xl text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90 px-0 my-0 py-[10px]">
                       <LogIn className="w-4 h-4 mr-2" />
                       Connexion
                     </TabsTrigger>
-                    <TabsTrigger value="register" className="rounded-xl py-4 text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90">
+                    <TabsTrigger value="register" className="rounded-xl text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90 px-0 py-[10px]">
                       <UserPlus className="w-4 h-4 mr-2" />
                       Inscription
                     </TabsTrigger>

@@ -9,7 +9,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
-
 export default function Auth() {
   const [activeTab, setActiveTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +34,6 @@ export default function Auth() {
   const {
     toast
   } = useToast();
-
   useEffect(() => {
     if (user) {
       navigate('/app');
@@ -46,12 +44,10 @@ export default function Auth() {
   const generateResetCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
   };
-
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
     try {
       if (resetStep === 'email') {
         // Étape 1: Envoyer le code par email
@@ -65,7 +61,6 @@ export default function Auth() {
             email: resetEmail
           })
         });
-
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || 'Erreur lors de l\'envoi de l\'email');
@@ -73,7 +68,6 @@ export default function Auth() {
 
         // Stocker l'email pour les étapes suivantes
         localStorage.setItem('resetEmail', resetEmail);
-
         setResetStep('code');
         toast({
           title: 'Code envoyé',
@@ -88,7 +82,6 @@ export default function Auth() {
 
         // Stocker le code pour l'étape suivante
         localStorage.setItem('resetCode', formData.resetCode);
-
         setResetStep('password');
         toast({
           title: 'Code vérifié',
@@ -100,15 +93,12 @@ export default function Auth() {
           setError('Les mots de passe ne correspondent pas');
           return;
         }
-
         if (formData.password.length < 6) {
           setError('Le mot de passe doit contenir au moins 6 caractères');
           return;
         }
-
         const storedEmail = localStorage.getItem('resetEmail');
         const storedCode = localStorage.getItem('resetCode');
-        
         if (!storedEmail || !storedCode) {
           setError('Session expirée. Veuillez recommencer.');
           setResetStep('email');
@@ -128,9 +118,7 @@ export default function Auth() {
             newPassword: formData.password
           })
         });
-
         const responseData = await response.json();
-
         if (!response.ok) {
           throw new Error(responseData.error || 'Erreur lors de la réinitialisation du mot de passe');
         }
@@ -140,13 +128,20 @@ export default function Auth() {
         localStorage.removeItem('resetEmail');
 
         // Connecter automatiquement l'utilisateur
-        const { error: signInError } = await signIn(storedEmail, formData.password);
-        
+        const {
+          error: signInError
+        } = await signIn(storedEmail, formData.password);
         if (signInError) {
           // Si la connexion automatique échoue, rediriger vers la page de connexion
           setResetStep(null);
           setActiveTab('login');
-          setFormData({ ...formData, email: storedEmail, password: '', confirmPassword: '', resetCode: '' });
+          setFormData({
+            ...formData,
+            email: storedEmail,
+            password: '',
+            confirmPassword: '',
+            resetCode: ''
+          });
           toast({
             title: 'Mot de passe réinitialisé',
             description: 'Vous pouvez maintenant vous connecter avec votre nouveau mot de passe'
@@ -165,7 +160,6 @@ export default function Auth() {
       setLoading(false);
     }
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -210,22 +204,19 @@ export default function Auth() {
       setLoading(false);
     }
   };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
   };
-
   const handleResetEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setResetEmail(e.target.value);
   };
 
   // Si on est en mode réinitialisation de mot de passe
   if (resetStep) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex relative">
+    return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex relative">
         {/* Clean gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-800/30 to-slate-900/40"></div>
 
@@ -268,11 +259,7 @@ export default function Auth() {
           <div className="w-full max-w-md">
             {/* Back button */}
             <div className="mb-6">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/')}
-                className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl"
-              >
+              <Button variant="ghost" onClick={() => navigate('/')} className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl">
                 <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
                 <span className="text-sm font-medium">Retour</span>
               </Button>
@@ -289,8 +276,7 @@ export default function Auth() {
             </div>
 
             <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8">
-              {resetStep === 'email' && (
-                <div className="space-y-6">
+              {resetStep === 'email' && <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
                     <h3 className="text-xl font-semibold text-card-foreground">Mot de passe oublié ?</h3>
                     <p className="text-sm text-muted-foreground">
@@ -305,26 +291,16 @@ export default function Auth() {
 
                     <div className="space-y-2">
                       <Label htmlFor="reset-email" className="text-sm font-medium text-card-foreground">Adresse email</Label>
-                      <Input 
-                        id="reset-email" 
-                        type="email" 
-                        required 
-                        value={resetEmail} 
-                        onChange={handleResetEmailChange} 
-                        placeholder="jean.dupont@example.com"
-                        className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                      />
+                      <Input id="reset-email" type="email" required value={resetEmail} onChange={handleResetEmailChange} placeholder="jean.dupont@example.com" className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" />
                     </div>
 
                     <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl" disabled={loading}>
                       {loading ? 'Envoi en cours...' : 'Envoyer le code'}
                     </Button>
                   </form>
-                </div>
-              )}
+                </div>}
 
-              {resetStep === 'code' && (
-                <div className="space-y-6">
+              {resetStep === 'code' && <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
                     <h3 className="text-xl font-semibold text-card-foreground">Vérification</h3>
                     <p className="text-sm text-muted-foreground">
@@ -339,28 +315,16 @@ export default function Auth() {
 
                     <div className="space-y-2">
                       <Label htmlFor="reset-code" className="text-sm font-medium text-card-foreground">Code de vérification</Label>
-                      <Input 
-                        id="reset-code" 
-                        name="resetCode"
-                        type="text" 
-                        required 
-                        value={formData.resetCode} 
-                        onChange={handleInputChange} 
-                        placeholder="123456"
-                        className="h-12 text-center text-lg font-mono rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                        maxLength={6}
-                      />
+                      <Input id="reset-code" name="resetCode" type="text" required value={formData.resetCode} onChange={handleInputChange} placeholder="123456" className="h-12 text-center text-lg font-mono rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" maxLength={6} />
                     </div>
 
                     <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl" disabled={loading}>
                       {loading ? 'Vérification...' : 'Vérifier le code'}
                     </Button>
                   </form>
-                </div>
-              )}
+                </div>}
 
-              {resetStep === 'password' && (
-                <div className="space-y-6">
+              {resetStep === 'password' && <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
                     <h3 className="text-xl font-semibold text-card-foreground">Nouveau mot de passe</h3>
                     <p className="text-sm text-muted-foreground">
@@ -376,24 +340,8 @@ export default function Auth() {
                     <div className="space-y-2">
                       <Label htmlFor="new-password" className="text-sm font-medium text-card-foreground">Nouveau mot de passe</Label>
                       <div className="relative">
-                        <Input 
-                          id="new-password"
-                          name="password" 
-                          type={showPassword ? 'text' : 'password'} 
-                          required 
-                          value={formData.password} 
-                          onChange={handleInputChange} 
-                          placeholder="••••••••" 
-                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                          minLength={6}
-                        />
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
+                        <Input id="new-password" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" minLength={6} />
+                        <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
                           {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
@@ -402,24 +350,8 @@ export default function Auth() {
                     <div className="space-y-2">
                       <Label htmlFor="confirm-password" className="text-sm font-medium text-card-foreground">Confirmer le mot de passe</Label>
                       <div className="relative">
-                        <Input 
-                          id="confirm-password"
-                          name="confirmPassword" 
-                          type={showConfirmPassword ? 'text' : 'password'} 
-                          required 
-                          value={formData.confirmPassword} 
-                          onChange={handleInputChange} 
-                          placeholder="••••••••" 
-                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                          minLength={6}
-                        />
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        >
+                        <Input id="confirm-password" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} required value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" minLength={6} />
+                        <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                           {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
@@ -429,38 +361,30 @@ export default function Auth() {
                       {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
                     </Button>
                   </form>
-                </div>
-              )}
+                </div>}
 
               <div className="mt-8 text-center">
-                <Button 
-                  variant="ghost" 
-                  onClick={() => {
-                    setResetStep(null);
-                    setError(null);
-                    setFormData({
-                      email: '',
-                      password: '',
-                      firstName: '',
-                      lastName: '',
-                      confirmPassword: '',
-                      resetCode: ''
-                    });
-                  }}
-                  className="text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 px-3 py-2"
-                >
+                <Button variant="ghost" onClick={() => {
+                setResetStep(null);
+                setError(null);
+                setFormData({
+                  email: '',
+                  password: '',
+                  firstName: '',
+                  lastName: '',
+                  confirmPassword: '',
+                  resetCode: ''
+                });
+              }} className="text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 px-3 py-2">
                   ← Retour à la connexion
                 </Button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex relative">
+  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex relative">
       {/* Clean gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-800/30 to-slate-900/40"></div>
 
@@ -503,11 +427,7 @@ export default function Auth() {
         <div className="w-full max-w-md">
           {/* Back button */}
           <div className="mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/')}
-              className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl"
-            >
+            <Button variant="ghost" onClick={() => navigate('/')} className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl">
               <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
               <span className="text-sm font-medium">Retour</span>
             </Button>
@@ -524,84 +444,46 @@ export default function Auth() {
           </div>
 
           <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8">
-            <Tabs 
-              value={activeTab} 
-              onValueChange={(value) => {
-                setActiveTab(value);
-                setError(null);
-                setFormData({
-                  email: '',
-                  password: '',
-                  firstName: '',
-                  lastName: '',
-                  confirmPassword: '',
-                  resetCode: ''
-                });
-              }}
-              className="w-full"
-            >
+            <Tabs value={activeTab} onValueChange={value => {
+            setActiveTab(value);
+            setError(null);
+            setFormData({
+              email: '',
+              password: '',
+              firstName: '',
+              lastName: '',
+              confirmPassword: '',
+              resetCode: ''
+            });
+          }} className="w-full">
               <TabsList className="grid w-full grid-cols-2 h-12 rounded-xl bg-slate-100 p-1">
-                <TabsTrigger 
-                  value="login"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200"
-                >
+                <TabsTrigger value="login" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200">
                   <LogIn className="w-4 h-4 mr-2" />
                   Connexion
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="register"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200"
-                >
+                <TabsTrigger value="register" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200">
                   <UserPlus className="w-4 h-4 mr-2" />
                   Inscription
                 </TabsTrigger>
               </TabsList>
 
               <div className="mt-6">
-                {error && (
-                  <Alert variant="destructive" className="mb-6 rounded-xl bg-destructive/10 border-destructive/20">
+                {error && <Alert variant="destructive" className="mb-6 rounded-xl bg-destructive/10 border-destructive/20">
                     <AlertDescription className="text-destructive-foreground">{error}</AlertDescription>
-                  </Alert>
-                )}
+                  </Alert>}
 
                 <TabsContent value="login" className="space-y-6 mt-0">
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-sm font-medium text-card-foreground">Email</Label>
-                      <Input 
-                        id="email" 
-                        name="email" 
-                        type="email" 
-                        autoComplete="email" 
-                        required 
-                        value={formData.email} 
-                        onChange={handleInputChange} 
-                        placeholder="jean.dupont@example.com"
-                        className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                      />
+                      <Input id="email" name="email" type="email" autoComplete="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-12 rounded-xl border-border focus:border-primary focus:ring-primary text-foreground bg-slate-50" />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="password" className="text-sm font-medium text-card-foreground">Mot de passe</Label>
                       <div className="relative">
-                        <Input 
-                          id="password" 
-                          name="password" 
-                          type={showPassword ? 'text' : 'password'} 
-                          autoComplete="current-password" 
-                          required 
-                          value={formData.password} 
-                          onChange={handleInputChange} 
-                          placeholder="••••••••"
-                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                        />
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
+                        <Input id="password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-12 h-12 rounded-xl border-border focus:border-primary focus:ring-primary text-foreground bg-slate-50" />
+                        <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
                           {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
@@ -609,22 +491,13 @@ export default function Auth() {
 
                     <div className="flex items-center justify-between">
                       <div className="text-sm">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          className="p-0 h-auto text-blue-600 hover:text-purple-600 hover:bg-transparent transition-colors duration-200"
-                          onClick={() => setResetStep('email')}
-                        >
+                        <Button type="button" variant="ghost" className="p-0 h-auto text-blue-600 hover:text-purple-600 hover:bg-transparent transition-colors duration-200" onClick={() => setResetStep('email')}>
                           Mot de passe oublié ?
                         </Button>
                       </div>
                     </div>
 
-                    <Button 
-                      type="submit" 
-                      disabled={loading} 
-                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
+                    <Button type="submit" disabled={loading} className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl">
                       {loading ? 'Connexion...' : 'Se connecter'}
                     </Button>
                   </form>
@@ -635,71 +508,24 @@ export default function Auth() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="firstName" className="text-sm font-medium text-card-foreground">Prénom</Label>
-                        <Input 
-                          id="firstName" 
-                          name="firstName" 
-                          type="text" 
-                          autoComplete="given-name" 
-                          required 
-                          value={formData.firstName} 
-                          onChange={handleInputChange} 
-                          placeholder="Jean"
-                          className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                        />
+                        <Input id="firstName" name="firstName" type="text" autoComplete="given-name" required value={formData.firstName} onChange={handleInputChange} placeholder="Jean" className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="lastName" className="text-sm font-medium text-card-foreground">Nom</Label>
-                        <Input 
-                          id="lastName" 
-                          name="lastName" 
-                          type="text" 
-                          autoComplete="family-name" 
-                          required 
-                          value={formData.lastName} 
-                          onChange={handleInputChange} 
-                          placeholder="Dupont"
-                          className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                        />
+                        <Input id="lastName" name="lastName" type="text" autoComplete="family-name" required value={formData.lastName} onChange={handleInputChange} placeholder="Dupont" className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" />
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-sm font-medium text-card-foreground">Email</Label>
-                      <Input 
-                        id="email" 
-                        name="email" 
-                        type="email" 
-                        autoComplete="email" 
-                        required 
-                        value={formData.email} 
-                        onChange={handleInputChange} 
-                        placeholder="jean.dupont@example.com"
-                        className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                      />
+                      <Input id="email" name="email" type="email" autoComplete="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="password" className="text-sm font-medium text-card-foreground">Mot de passe</Label>
                       <div className="relative">
-                        <Input 
-                          id="password" 
-                          name="password" 
-                          type={showPassword ? 'text' : 'password'} 
-                          autoComplete="new-password" 
-                          required 
-                          value={formData.password} 
-                          onChange={handleInputChange} 
-                          placeholder="••••••••"
-                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                          minLength={6}
-                        />
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
+                        <Input id="password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" minLength={6} />
+                        <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
                           {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
@@ -708,35 +534,14 @@ export default function Auth() {
                     <div className="space-y-2">
                       <Label htmlFor="confirmPassword" className="text-sm font-medium text-card-foreground">Confirmer le mot de passe</Label>
                       <div className="relative">
-                        <Input 
-                          id="confirmPassword" 
-                          name="confirmPassword" 
-                          type={showConfirmPassword ? 'text' : 'password'} 
-                          autoComplete="new-password" 
-                          required 
-                          value={formData.confirmPassword} 
-                          onChange={handleInputChange} 
-                          placeholder="••••••••"
-                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
-                          minLength={6}
-                        />
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        >
+                        <Input id="confirmPassword" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} autoComplete="new-password" required value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" minLength={6} />
+                        <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                           {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
                     </div>
 
-                    <Button 
-                      type="submit" 
-                      disabled={loading} 
-                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
+                    <Button type="submit" disabled={loading} className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl">
                       {loading ? 'Inscription...' : 'S\'inscrire'}
                     </Button>
                   </form>
@@ -756,6 +561,5 @@ export default function Auth() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }

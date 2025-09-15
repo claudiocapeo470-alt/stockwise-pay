@@ -9,8 +9,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
-import financialDashboard from '@/assets/3d-financial-dashboard.png';
-import paymentAutomation from '@/assets/3d-payment-automation.png';
 
 export default function Auth() {
   const [activeTab, setActiveTab] = useState('login');
@@ -227,31 +225,42 @@ export default function Auth() {
   // Si on est en mode réinitialisation de mot de passe
   if (resetStep) {
     return (
-      <div className="min-h-screen bg-gradient-dark-animated flex relative overflow-hidden">
-        {/* Animated background effects */}
-        <div className="absolute inset-0">
-          <div className="fluid-blob fluid-blob-1 animate-pulse"></div>
-          <div className="fluid-blob fluid-blob-2 animate-pulse"></div>
-          <div className="fluid-blob fluid-blob-3 animate-pulse"></div>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex relative">
+        {/* Clean gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-800/30 to-slate-900/40"></div>
 
         {/* Côté gauche - Branding */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-neon relative">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 relative">
           <div className="flex flex-col justify-center px-12 py-16 text-white relative z-10">
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 shadow-neon">
-                  <BarChart3 className="h-8 w-8 text-white" />
+            <div className="mb-12">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
+                  <BarChart3 className="h-10 w-10 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">GestionPro</h1>
+                <h1 className="text-4xl font-bold text-white">GestionPro</h1>
               </div>
-              <p className="text-xl font-medium mb-4 text-blue-100">Gestion Intelligente SaaS</p>
-              <p className="text-blue-200 text-lg leading-relaxed">
+              <p className="text-xl font-semibold mb-6 text-blue-100">Gestion Intelligente SaaS</p>
+              <p className="text-blue-100 text-lg leading-relaxed">
                 Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité avec notre solution moderne.
               </p>
             </div>
+            
+            <div className="space-y-4 text-blue-100">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
+                <span className="text-lg">Tableau de bord intuitif</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
+                <span className="text-lg">Gestion automatisée des paiements</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
+                <span className="text-lg">Rapports détaillés en temps réel</span>
+              </div>
+            </div>
           </div>
-          <div className="absolute inset-0 bg-black/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
         </div>
 
         {/* Côté droit - Formulaire */}
@@ -262,24 +271,24 @@ export default function Auth() {
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/')}
-                className="group flex items-center gap-2 text-white hover:text-primary transition-all duration-300 hover:shadow-neon p-2 rounded-xl hover:bg-white/5"
+                className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl"
               >
-                <ArrowLeft className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
                 <span className="text-sm font-medium">Retour</span>
               </Button>
             </div>
 
             <div className="text-center mb-8">
               <div className="lg:hidden flex justify-center mb-4">
-                <div className="bg-gradient-neon rounded-xl p-3 shadow-neon">
+                <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4">
                   <BarChart3 className="h-8 w-8 text-white" />
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Réinitialisation du mot de passe</h2>
-              <p className="text-muted-foreground">Suivez les étapes pour récupérer votre accès</p>
+              <h2 className="text-3xl font-bold text-white mb-3">Réinitialisation du mot de passe</h2>
+              <p className="text-white/70 text-lg">Suivez les étapes pour récupérer votre accès</p>
             </div>
 
-            <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-large border border-white/10 p-8">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8">
               {resetStep === 'email' && (
                 <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
@@ -307,7 +316,7 @@ export default function Auth() {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300" disabled={loading}>
+                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl" disabled={loading}>
                       {loading ? 'Envoi en cours...' : 'Envoyer le code'}
                     </Button>
                   </form>
@@ -343,7 +352,7 @@ export default function Auth() {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300" disabled={loading}>
+                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl" disabled={loading}>
                       {loading ? 'Vérification...' : 'Vérifier le code'}
                     </Button>
                   </form>
@@ -416,7 +425,7 @@ export default function Auth() {
                       </div>
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300" disabled={loading}>
+                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl" disabled={loading}>
                       {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
                     </Button>
                   </form>
@@ -438,7 +447,7 @@ export default function Auth() {
                       resetCode: ''
                     });
                   }}
-                  className="text-sm text-muted-foreground hover:text-primary hover:bg-white/5 rounded-lg transition-all duration-300"
+                  className="text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 px-3 py-2"
                 >
                   ← Retour à la connexion
                 </Button>
@@ -451,65 +460,42 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dark-animated flex relative overflow-hidden">
-      {/* Animated background effects */}
-      <div className="absolute inset-0">
-        <div className="fluid-blob fluid-blob-1 animate-pulse"></div>
-        <div className="fluid-blob fluid-blob-2 animate-pulse"></div>
-        <div className="fluid-blob fluid-blob-3 animate-pulse"></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex relative">
+      {/* Clean gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-800/30 to-slate-900/40"></div>
 
       {/* Côté gauche - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-neon relative">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 relative">
         <div className="flex flex-col justify-center px-12 py-16 text-white relative z-10">
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 shadow-neon">
-                <BarChart3 className="h-8 w-8 text-white" />
+          <div className="mb-12">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
+                <BarChart3 className="h-10 w-10 text-white" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">GestionPro</h1>
+              <h1 className="text-4xl font-bold text-white">GestionPro</h1>
             </div>
-            <p className="text-xl font-medium mb-4 text-blue-100">Gestion Intelligente SaaS</p>
-            <p className="text-blue-200 text-lg leading-relaxed mb-8">
+            <p className="text-xl font-semibold mb-6 text-blue-100">Gestion Intelligente SaaS</p>
+            <p className="text-blue-100 text-lg leading-relaxed">
               Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité avec notre solution moderne.
             </p>
           </div>
           
-          <div className="space-y-4 text-blue-100 mb-8">
+          <div className="space-y-4 text-blue-100">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-gradient-to-r from-primary to-accent rounded-full shadow-glow animate-pulse"></div>
-              <span>Tableau de bord intuitif</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-gradient-to-r from-primary to-accent rounded-full shadow-glow animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-              <span>Gestion automatisée des paiements</span>
+              <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
+              <span className="text-lg">Tableau de bord intuitif</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-gradient-to-r from-primary to-accent rounded-full shadow-glow animate-pulse" style={{ animationDelay: '1s' }}></div>
-              <span>Rapports détaillés en temps réel</span>
+              <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
+              <span className="text-lg">Gestion automatisée des paiements</span>
             </div>
-          </div>
-
-          {/* 3D Illustrations */}
-          <div className="relative">
-            <div className="absolute -top-20 -right-10 opacity-30 hover:opacity-50 transition-opacity duration-500">
-              <img 
-                src={financialDashboard} 
-                alt="3D Financial Dashboard" 
-                className="w-40 h-40 object-contain drop-shadow-2xl animate-pulse"
-              />
-            </div>
-            <div className="absolute -bottom-10 -left-5 opacity-40 hover:opacity-60 transition-opacity duration-500">
-              <img 
-                src={paymentAutomation} 
-                alt="3D Payment Automation" 
-                className="w-32 h-32 object-contain drop-shadow-2xl animate-pulse" 
-                style={{ animationDelay: '1.5s' }}
-              />
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
+              <span className="text-lg">Rapports détaillés en temps réel</span>
             </div>
           </div>
         </div>
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
       </div>
 
       {/* Côté droit - Formulaire */}
@@ -520,24 +506,24 @@ export default function Auth() {
             <Button 
               variant="ghost" 
               onClick={() => navigate('/')}
-              className="group flex items-center gap-2 text-white hover:text-primary transition-all duration-300 hover:shadow-neon p-2 rounded-xl hover:bg-white/5"
+              className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl"
             >
-              <ArrowLeft className="h-4 w-4 group-hover:scale-110 transition-transform" />
+              <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
               <span className="text-sm font-medium">Retour</span>
             </Button>
           </div>
 
           <div className="text-center mb-8">
             <div className="lg:hidden flex justify-center mb-4">
-              <div className="bg-gradient-neon rounded-xl p-3 shadow-neon">
+              <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4">
                 <BarChart3 className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Bienvenue sur GestionPro</h2>
-            <p className="text-muted-foreground">Connectez-vous pour accéder à votre espace</p>
+            <h2 className="text-3xl font-bold text-white mb-3">Bienvenue sur GestionPro</h2>
+            <p className="text-white/70 text-lg">Connectez-vous pour accéder à votre espace</p>
           </div>
 
-          <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-large border border-white/10 p-8">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8">
             <Tabs 
               value={activeTab} 
               onValueChange={(value) => {
@@ -554,17 +540,17 @@ export default function Auth() {
               }}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-2 h-12 rounded-xl bg-secondary/50 p-1 backdrop-blur-sm">
+              <TabsList className="grid w-full grid-cols-2 h-12 rounded-xl bg-slate-100 p-1">
                 <TabsTrigger 
                   value="login"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon rounded-lg font-medium transition-all duration-300"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   Connexion
                 </TabsTrigger>
                 <TabsTrigger 
                   value="register"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon rounded-lg font-medium transition-all duration-300"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200"
                 >
                   <UserPlus className="w-4 h-4 mr-2" />
                   Inscription
@@ -626,7 +612,7 @@ export default function Auth() {
                         <Button
                           type="button"
                           variant="ghost"
-                          className="p-0 h-auto text-primary hover:text-accent hover:bg-transparent transition-colors duration-300"
+                          className="p-0 h-auto text-blue-600 hover:text-purple-600 hover:bg-transparent transition-colors duration-200"
                           onClick={() => setResetStep('email')}
                         >
                           Mot de passe oublié ?
@@ -637,7 +623,7 @@ export default function Auth() {
                     <Button 
                       type="submit" 
                       disabled={loading} 
-                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300"
+                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
                       {loading ? 'Connexion...' : 'Se connecter'}
                     </Button>
@@ -749,7 +735,7 @@ export default function Auth() {
                     <Button 
                       type="submit" 
                       disabled={loading} 
-                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300"
+                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
                       {loading ? 'Inscription...' : 'S\'inscrire'}
                     </Button>
@@ -761,7 +747,7 @@ export default function Auth() {
             <div className="mt-8 pt-6 border-t border-white/10">
               <p className="text-xs text-muted-foreground text-center leading-relaxed">
                 En vous connectant, vous acceptez nos{' '}
-                <Link to="/mentions-legales" className="text-primary hover:text-accent transition-colors duration-300">
+                <Link to="/mentions-legales" className="text-blue-600 hover:text-purple-600 transition-colors duration-200">
                   conditions d'utilisation
                 </Link>{' '}
                 et notre politique de confidentialité.

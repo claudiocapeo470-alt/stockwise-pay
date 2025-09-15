@@ -423,13 +423,13 @@ export default function Auth() {
       </div>
 
       {/* Côté droit - Formulaire */}
-      <div className="flex-1 flex items-center justify-center p-8 lg:p-12 relative z-10">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center p-8 lg:p-12 relative z-10 rounded-lg bg-slate-50">
+        <div className="w-full max-w-md rounded-2xl">
           {/* Back button */}
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => navigate('/')} className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl">
+            <Button variant="ghost" onClick={() => navigate('/')} className="group flex items-center gap-2 transition-all duration-200 p-3 rounded-xl text-slate-50 text-base bg-[#000507]">
               <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-              <span className="text-sm font-medium">Retour</span>
+              <span className="text-sm font-medium text-slate-50">Retour</span>
             </Button>
           </div>
 
@@ -439,11 +439,11 @@ export default function Auth() {
                 <BarChart3 className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold text-white mb-3">Bienvenue sur Stocknix</h2>
-            <p className="text-white/70 text-lg">Connectez-vous pour accéder à votre espace</p>
+            <h2 className="text-3xl font-bold mb-3 text-blue-700">Bienvenue sur Stocknix</h2>
+            <p className="text-lg text-slate-950 mx-0 py-0 my-0">Connectez-vous pour accéder à votre espace</p>
           </div>
 
-          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8">
+          <div className="backdrop-blur shadow-2xl p-8 rounded-3xl bg-slate-50">
             <Tabs value={activeTab} onValueChange={value => {
             setActiveTab(value);
             setError(null);
@@ -461,8 +461,8 @@ export default function Auth() {
                   <LogIn className="w-4 h-4 mr-2" />
                   Connexion
                 </TabsTrigger>
-                <TabsTrigger value="register" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200 bg-zinc-700 hover:bg-zinc-600">
-                  <UserPlus className="w-4 h-4 mr-2" />
+                <TabsTrigger value="register" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200 bg-slate-50 text-zinc-50">
+                  <UserPlus className="w-4 h-4 mr-2 bg-slate-950" />
                   Inscription
                 </TabsTrigger>
               </TabsList>
@@ -550,7 +550,7 @@ export default function Auth() {
             </Tabs>
 
             <div className="mt-8 pt-6 border-t border-white/10">
-              <p className="text-xs text-muted-foreground text-center leading-relaxed mx-0 px-0 py-0 my-0">
+              <p className="text-xs text-center leading-relaxed mx-0 px-0 py-0 my-0 text-slate-950">
                 En vous connectant, vous acceptez nos{' '}
                 <Link to="/mentions-legales" className="text-blue-600 hover:text-purple-600 transition-colors duration-200">
                   conditions d'utilisation

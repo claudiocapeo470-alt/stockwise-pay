@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { supabase } from '@/integrations/supabase/client';
 export default function Auth() {
   const [activeTab, setActiveTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
@@ -25,15 +24,9 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'code' | 'password' | null>(null);
   const [resetEmail, setResetEmail] = useState('');
-  const {
-    signIn,
-    signUp,
-    user
-  } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   useEffect(() => {
     if (user) {
       navigate('/app');
@@ -128,9 +121,7 @@ export default function Auth() {
         localStorage.removeItem('resetEmail');
 
         // Connecter automatiquement l'utilisateur
-        const {
-          error: signInError
-        } = await signIn(storedEmail, formData.password);
+        const { error: signInError } = await signIn(storedEmail, formData.password);
         if (signInError) {
           // Si la connexion automatique échoue, rediriger vers la page de connexion
           setResetStep(null);
@@ -166,9 +157,7 @@ export default function Auth() {
     setLoading(true);
     try {
       if (activeTab === 'login') {
-        const {
-          error
-        } = await signIn(formData.email, formData.password);
+        const { error } = await signIn(formData.email, formData.password);
         if (error) {
           if (error.message?.includes('Invalid login credentials')) {
             setError('Email ou mot de passe incorrect');
@@ -182,9 +171,7 @@ export default function Auth() {
           });
         }
       } else {
-        const {
-          error
-        } = await signUp(formData.email, formData.password, formData.firstName, formData.lastName);
+        const { error } = await signUp(formData.email, formData.password, formData.firstName, formData.lastName);
         if (error) {
           if (error.message?.includes('User already registered')) {
             setError('Un utilisateur avec cet email existe déjà');

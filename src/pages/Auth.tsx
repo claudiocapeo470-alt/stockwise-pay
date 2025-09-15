@@ -24,9 +24,15 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'code' | 'password' | null>(null);
   const [resetEmail, setResetEmail] = useState('');
-  const { signIn, signUp, user } = useAuth();
+  const {
+    signIn,
+    signUp,
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   useEffect(() => {
     if (user) {
       navigate('/app');
@@ -121,7 +127,9 @@ export default function Auth() {
         localStorage.removeItem('resetEmail');
 
         // Connecter automatiquement l'utilisateur
-        const { error: signInError } = await signIn(storedEmail, formData.password);
+        const {
+          error: signInError
+        } = await signIn(storedEmail, formData.password);
         if (signInError) {
           // Si la connexion automatique échoue, rediriger vers la page de connexion
           setResetStep(null);
@@ -157,7 +165,9 @@ export default function Auth() {
     setLoading(true);
     try {
       if (activeTab === 'login') {
-        const { error } = await signIn(formData.email, formData.password);
+        const {
+          error
+        } = await signIn(formData.email, formData.password);
         if (error) {
           if (error.message?.includes('Invalid login credentials')) {
             setError('Email ou mot de passe incorrect');
@@ -171,7 +181,9 @@ export default function Auth() {
           });
         }
       } else {
-        const { error } = await signUp(formData.email, formData.password, formData.firstName, formData.lastName);
+        const {
+          error
+        } = await signUp(formData.email, formData.password, formData.firstName, formData.lastName);
         if (error) {
           if (error.message?.includes('User already registered')) {
             setError('Un utilisateur avec cet email existe déjà');
@@ -371,8 +383,7 @@ export default function Auth() {
         </div>
       </div>;
   }
-  return (
-    <div className="min-h-screen relative overflow-hidden">
+  return <div className="min-h-screen relative overflow-hidden">
       {/* Ultra modern animated gradient background with 8K depth */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950"></div>
       <div className="absolute inset-0 bg-gradient-to-tr from-blue-950/50 via-purple-900/30 to-indigo-950/50 animate-pulse"></div>
@@ -385,9 +396,9 @@ export default function Auth() {
 
       {/* Premium grid overlay for ultra-modern depth */}
       <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
-        backgroundSize: '50px 50px'
-      }}></div>
+      backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
+      backgroundSize: '50px 50px'
+    }}></div>
 
       <div className="relative z-10 min-h-screen flex">
         {/* Côté gauche - Ultra-premium branding avec effets 3D */}
@@ -412,9 +423,7 @@ export default function Auth() {
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-indigo-300 tracking-tight">
-                    GestionPro
-                  </h1>
+                  <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-indigo-300 tracking-tight">Stocknix</h1>
                   <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full mt-2"></div>
                 </div>
               </div>
@@ -432,13 +441,23 @@ export default function Auth() {
             </div>
             
             <div className="space-y-6">
-              {[
-                { icon: "💎", text: "Interface 8K Ultra-Premium", gradient: "from-cyan-400 to-blue-500" },
-                { icon: "🚀", text: "Performance & Vitesse Optimales", gradient: "from-purple-400 to-pink-500" },
-                { icon: "🤖", text: "IA Intégrée & Automatisation", gradient: "from-indigo-400 to-purple-500" },
-                { icon: "📊", text: "Analytics Temps Réel 3D", gradient: "from-cyan-400 to-purple-500" }
-              ].map((feature, index) => (
-                <div key={index} className="flex items-center gap-4 group cursor-pointer">
+              {[{
+              icon: "💎",
+              text: "Interface 8K Ultra-Premium",
+              gradient: "from-cyan-400 to-blue-500"
+            }, {
+              icon: "🚀",
+              text: "Performance & Vitesse Optimales",
+              gradient: "from-purple-400 to-pink-500"
+            }, {
+              icon: "🤖",
+              text: "IA Intégrée & Automatisation",
+              gradient: "from-indigo-400 to-purple-500"
+            }, {
+              icon: "📊",
+              text: "Analytics Temps Réel 3D",
+              gradient: "from-cyan-400 to-purple-500"
+            }].map((feature, index) => <div key={index} className="flex items-center gap-4 group cursor-pointer">
                   <div className="relative">
                     <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-300`}></div>
                     <div className={`relative w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center text-xl backdrop-blur-sm border border-white/10`}>
@@ -448,8 +467,7 @@ export default function Auth() {
                   <span className="text-lg font-medium text-white/90 group-hover:text-white transition-colors">
                     {feature.text}
                   </span>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </div>
@@ -458,11 +476,7 @@ export default function Auth() {
         <div className="flex-1 flex items-center justify-center p-8 lg:p-16 relative">
           {/* Back button avec effet néon premium */}
           <div className="absolute top-8 left-8">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/')} 
-              className="group flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-300 p-4 rounded-2xl border border-white/10 hover:border-cyan-400/30 backdrop-blur-sm hover:shadow-lg hover:shadow-cyan-500/20"
-            >
+            <Button variant="ghost" onClick={() => navigate('/')} className="group flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-300 p-4 rounded-2xl border border-white/10 hover:border-cyan-400/30 backdrop-blur-sm hover:shadow-lg hover:shadow-cyan-500/20">
               <div className="relative">
                 <ArrowLeft className="h-5 w-5 transition-all duration-300 group-hover:-translate-x-1 group-hover:text-cyan-300" />
                 <div className="absolute inset-0 bg-cyan-400/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -485,7 +499,7 @@ export default function Auth() {
               <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-purple-200 mb-4 tracking-tight">
                 Bienvenue
               </h2>
-              <p className="text-xl text-white/70 font-medium">
+              <p className="text-xl font-medium text-slate-50">
                 Accédez à votre espace professionnel ultra-moderne
               </p>
             </div>
@@ -497,89 +511,45 @@ export default function Auth() {
               
               <div className="relative bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 p-10 shadow-2xl">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-10 bg-white/5 rounded-2xl p-2 backdrop-blur-sm border border-white/10">
-                    <TabsTrigger 
-                      value="login" 
-                      className="rounded-xl py-4 text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90"
-                    >
+                  <TabsList className="grid w-full grid-cols-2 mb-10 bg-white/5 rounded-2xl p-2 backdrop-blur-sm border border-white/10 py-0 px-0">
+                    <TabsTrigger value="login" className="rounded-xl text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90 px-0 my-0 py-[10px]">
                       <LogIn className="w-4 h-4 mr-2" />
                       Connexion
                     </TabsTrigger>
-                    <TabsTrigger 
-                      value="register" 
-                      className="rounded-xl py-4 text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90"
-                    >
+                    <TabsTrigger value="register" className="rounded-xl text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90 px-0 py-[10px]">
                       <UserPlus className="w-4 h-4 mr-2" />
                       Inscription
                     </TabsTrigger>
                   </TabsList>
 
-                  {error && (
-                    <Alert variant="destructive" className="mb-8 rounded-2xl bg-red-500/10 border-red-500/20 backdrop-blur-sm">
+                  {error && <Alert variant="destructive" className="mb-8 rounded-2xl bg-red-500/10 border-red-500/20 backdrop-blur-sm">
                       <AlertDescription className="text-red-200">{error}</AlertDescription>
-                    </Alert>
-                  )}
+                    </Alert>}
 
                   <TabsContent value="login" className="space-y-8">
                     <form onSubmit={handleSubmit} className="space-y-8">
                       <div className="space-y-3">
                         <Label htmlFor="email" className="text-sm font-semibold text-white/90 tracking-wide">Adresse email</Label>
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          required
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          placeholder="jean.dupont@example.com"
-                          className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10"
-                        />
+                        <Input id="email" name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
                       </div>
 
                       <div className="space-y-3">
                         <Label htmlFor="password" className="text-sm font-semibold text-white/90 tracking-wide">Mot de passe</Label>
                         <div className="relative">
-                          <Input
-                            id="password"
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            required
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            placeholder="••••••••"
-                            className="pr-14 h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-0 top-0 h-full px-4 hover:bg-transparent text-white/60 hover:text-white"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-5 w-5" />
-                            ) : (
-                              <Eye className="h-5 w-5" />
-                            )}
+                          <Input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-14 h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
+                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-4 hover:bg-transparent text-white/60 hover:text-white" onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                           </Button>
                         </div>
                       </div>
 
                       <div className="text-right">
-                        <button
-                          type="button"
-                          onClick={() => setResetStep('email')}
-                          className="text-sm text-cyan-300 hover:text-cyan-200 font-semibold transition-colors tracking-wide"
-                        >
+                        <button type="button" onClick={() => setResetStep('email')} className="text-sm text-cyan-300 hover:text-cyan-200 font-semibold transition-colors tracking-wide">
                           Mot de passe oublié ?
                         </button>
                       </div>
 
-                      <Button
-                        type="submit"
-                        className="w-full h-16 text-lg font-bold rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group"
-                        disabled={loading}
-                      >
+                      <Button type="submit" className="w-full h-16 text-lg font-bold rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group" disabled={loading}>
                         <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <span className="relative z-10 tracking-wide">
                           {loading ? 'Connexion...' : 'Se connecter'}
@@ -593,72 +563,25 @@ export default function Auth() {
                       <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-3">
                           <Label htmlFor="firstName" className="text-sm font-semibold text-white/90 tracking-wide">Prénom</Label>
-                          <Input
-                            id="firstName"
-                            name="firstName"
-                            type="text"
-                            required
-                            value={formData.firstName}
-                            onChange={handleInputChange}
-                            placeholder="Jean"
-                            className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10"
-                          />
+                          <Input id="firstName" name="firstName" type="text" required value={formData.firstName} onChange={handleInputChange} placeholder="Jean" className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
                         </div>
                         <div className="space-y-3">
                           <Label htmlFor="lastName" className="text-sm font-semibold text-white/90 tracking-wide">Nom</Label>
-                          <Input
-                            id="lastName"
-                            name="lastName"
-                            type="text"
-                            required
-                            value={formData.lastName}
-                            onChange={handleInputChange}
-                            placeholder="Dupont"
-                            className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10"
-                          />
+                          <Input id="lastName" name="lastName" type="text" required value={formData.lastName} onChange={handleInputChange} placeholder="Dupont" className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
                         </div>
                       </div>
 
                       <div className="space-y-3">
                         <Label htmlFor="email-register" className="text-sm font-semibold text-white/90 tracking-wide">Adresse email</Label>
-                        <Input
-                          id="email-register"
-                          name="email"
-                          type="email"
-                          required
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          placeholder="jean.dupont@example.com"
-                          className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10"
-                        />
+                        <Input id="email-register" name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
                       </div>
 
                       <div className="space-y-3">
                         <Label htmlFor="password-register" className="text-sm font-semibold text-white/90 tracking-wide">Mot de passe</Label>
                         <div className="relative">
-                          <Input
-                            id="password-register"
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            required
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            placeholder="••••••••"
-                            className="pr-14 h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10"
-                            minLength={6}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-0 top-0 h-full px-4 hover:bg-transparent text-white/60 hover:text-white"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-5 w-5" />
-                            ) : (
-                              <Eye className="h-5 w-5" />
-                            )}
+                          <Input id="password-register" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-14 h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" minLength={6} />
+                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-4 hover:bg-transparent text-white/60 hover:text-white" onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                           </Button>
                         </div>
                       </div>
@@ -666,37 +589,14 @@ export default function Auth() {
                       <div className="space-y-3">
                         <Label htmlFor="confirm-password" className="text-sm font-semibold text-white/90 tracking-wide">Confirmer le mot de passe</Label>
                         <div className="relative">
-                          <Input
-                            id="confirm-password"
-                            name="confirmPassword"
-                            type={showConfirmPassword ? 'text' : 'password'}
-                            required
-                            value={formData.confirmPassword}
-                            onChange={handleInputChange}
-                            placeholder="••••••••"
-                            className="pr-14 h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-0 top-0 h-full px-4 hover:bg-transparent text-white/60 hover:text-white"
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          >
-                            {showConfirmPassword ? (
-                              <EyeOff className="h-5 w-5" />
-                            ) : (
-                              <Eye className="h-5 w-5" />
-                            )}
+                          <Input id="confirm-password" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} required value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" className="pr-14 h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
+                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-4 hover:bg-transparent text-white/60 hover:text-white" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                           </Button>
                         </div>
                       </div>
 
-                      <Button
-                        type="submit"
-                        className="w-full h-16 text-lg font-bold rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group"
-                        disabled={loading}
-                      >
+                      <Button type="submit" className="w-full h-16 text-lg font-bold rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group" disabled={loading}>
                         <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <span className="relative z-10 tracking-wide">
                           {loading ? 'Inscription...' : 'Créer un compte'}
@@ -721,6 +621,5 @@ export default function Auth() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }

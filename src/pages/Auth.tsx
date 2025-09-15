@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BarChart3, Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
+import { BarChart3, Eye, EyeOff, LogIn, UserPlus, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
+import financialDashboard from '@/assets/3d-financial-dashboard.png';
+import paymentAutomation from '@/assets/3d-payment-automation.png';
 
 export default function Auth() {
   const [activeTab, setActiveTab] = useState('login');
@@ -225,56 +227,75 @@ export default function Auth() {
   // Si on est en mode réinitialisation de mot de passe
   if (resetStep) {
     return (
-      <div className="min-h-screen bg-white flex">
+      <div className="min-h-screen bg-gradient-dark-animated flex relative overflow-hidden">
+        {/* Animated background effects */}
+        <div className="absolute inset-0">
+          <div className="fluid-blob fluid-blob-1 animate-pulse"></div>
+          <div className="fluid-blob fluid-blob-2 animate-pulse"></div>
+          <div className="fluid-blob fluid-blob-3 animate-pulse"></div>
+        </div>
+
         {/* Côté gauche - Branding */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-teal-600 relative">
-          <div className="flex flex-col justify-center px-12 py-16 text-white">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-neon relative">
+          <div className="flex flex-col justify-center px-12 py-16 text-white relative z-10">
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 shadow-neon">
                   <BarChart3 className="h-8 w-8 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold">GestionPro</h1>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">GestionPro</h1>
               </div>
-              <p className="text-xl font-medium mb-4">Gestion Intelligente SaaS</p>
-              <p className="text-blue-100 text-lg leading-relaxed">
+              <p className="text-xl font-medium mb-4 text-blue-100">Gestion Intelligente SaaS</p>
+              <p className="text-blue-200 text-lg leading-relaxed">
                 Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité avec notre solution moderne.
               </p>
             </div>
           </div>
-          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute inset-0 bg-black/20"></div>
         </div>
 
         {/* Côté droit - Formulaire */}
-        <div className="flex-1 flex items-center justify-center p-8 lg:p-12">
+        <div className="flex-1 flex items-center justify-center p-8 lg:p-12 relative z-10">
           <div className="w-full max-w-md">
+            {/* Back button */}
+            <div className="mb-6">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/')}
+                className="group flex items-center gap-2 text-white hover:text-primary transition-all duration-300 hover:shadow-neon p-2 rounded-xl hover:bg-white/5"
+              >
+                <ArrowLeft className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-medium">Retour</span>
+              </Button>
+            </div>
+
             <div className="text-center mb-8">
               <div className="lg:hidden flex justify-center mb-4">
-                <div className="bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl p-3">
+                <div className="bg-gradient-neon rounded-xl p-3 shadow-neon">
                   <BarChart3 className="h-8 w-8 text-white" />
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Réinitialisation du mot de passe</h2>
-              <p className="text-gray-600">Suivez les étapes pour récupérer votre accès</p>
+              <h2 className="text-2xl font-bold text-white mb-2">Réinitialisation du mot de passe</h2>
+              <p className="text-muted-foreground">Suivez les étapes pour récupérer votre accès</p>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-large border border-white/10 p-8">
               {resetStep === 'email' && (
                 <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
-                    <h3 className="text-xl font-semibold text-gray-900">Mot de passe oublié ?</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className="text-xl font-semibold text-card-foreground">Mot de passe oublié ?</h3>
+                    <p className="text-sm text-muted-foreground">
                       Saisissez votre adresse email pour recevoir un code de vérification
                     </p>
                   </div>
 
                   <form onSubmit={handlePasswordReset} className="space-y-6">
-                    {error && <Alert variant="destructive" className="rounded-xl">
-                        <AlertDescription>{error}</AlertDescription>
+                    {error && <Alert variant="destructive" className="rounded-xl bg-destructive/10 border-destructive/20">
+                        <AlertDescription className="text-destructive-foreground">{error}</AlertDescription>
                       </Alert>}
 
                     <div className="space-y-2">
-                      <Label htmlFor="reset-email" className="text-sm font-medium text-gray-700">Adresse email</Label>
+                      <Label htmlFor="reset-email" className="text-sm font-medium text-card-foreground">Adresse email</Label>
                       <Input 
                         id="reset-email" 
                         type="email" 
@@ -282,11 +303,11 @@ export default function Auth() {
                         value={resetEmail} 
                         onChange={handleResetEmailChange} 
                         placeholder="jean.dupont@example.com"
-                        className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                       />
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" disabled={loading}>
+                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300" disabled={loading}>
                       {loading ? 'Envoi en cours...' : 'Envoyer le code'}
                     </Button>
                   </form>
@@ -296,19 +317,19 @@ export default function Auth() {
               {resetStep === 'code' && (
                 <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
-                    <h3 className="text-xl font-semibold text-gray-900">Vérification</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className="text-xl font-semibold text-card-foreground">Vérification</h3>
+                    <p className="text-sm text-muted-foreground">
                       Saisissez le code de 6 chiffres envoyé à votre email
                     </p>
                   </div>
 
                   <form onSubmit={handlePasswordReset} className="space-y-6">
-                    {error && <Alert variant="destructive" className="rounded-xl">
-                        <AlertDescription>{error}</AlertDescription>
+                    {error && <Alert variant="destructive" className="rounded-xl bg-destructive/10 border-destructive/20">
+                        <AlertDescription className="text-destructive-foreground">{error}</AlertDescription>
                       </Alert>}
 
                     <div className="space-y-2">
-                      <Label htmlFor="reset-code" className="text-sm font-medium text-gray-700">Code de vérification</Label>
+                      <Label htmlFor="reset-code" className="text-sm font-medium text-card-foreground">Code de vérification</Label>
                       <Input 
                         id="reset-code" 
                         name="resetCode"
@@ -317,12 +338,12 @@ export default function Auth() {
                         value={formData.resetCode} 
                         onChange={handleInputChange} 
                         placeholder="123456"
-                        className="h-12 text-center text-lg font-mono rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-12 text-center text-lg font-mono rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                         maxLength={6}
                       />
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" disabled={loading}>
+                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300" disabled={loading}>
                       {loading ? 'Vérification...' : 'Vérifier le code'}
                     </Button>
                   </form>
@@ -332,19 +353,19 @@ export default function Auth() {
               {resetStep === 'password' && (
                 <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
-                    <h3 className="text-xl font-semibold text-gray-900">Nouveau mot de passe</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className="text-xl font-semibold text-card-foreground">Nouveau mot de passe</h3>
+                    <p className="text-sm text-muted-foreground">
                       Saisissez votre nouveau mot de passe
                     </p>
                   </div>
 
                   <form onSubmit={handlePasswordReset} className="space-y-6">
-                    {error && <Alert variant="destructive" className="rounded-xl">
-                        <AlertDescription>{error}</AlertDescription>
+                    {error && <Alert variant="destructive" className="rounded-xl bg-destructive/10 border-destructive/20">
+                        <AlertDescription className="text-destructive-foreground">{error}</AlertDescription>
                       </Alert>}
 
                     <div className="space-y-2">
-                      <Label htmlFor="new-password" className="text-sm font-medium text-gray-700">Nouveau mot de passe</Label>
+                      <Label htmlFor="new-password" className="text-sm font-medium text-card-foreground">Nouveau mot de passe</Label>
                       <div className="relative">
                         <Input 
                           id="new-password"
@@ -354,7 +375,7 @@ export default function Auth() {
                           value={formData.password} 
                           onChange={handleInputChange} 
                           placeholder="••••••••" 
-                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                           minLength={6}
                         />
                         <Button 
@@ -364,13 +385,13 @@ export default function Auth() {
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
                           onClick={() => setShowPassword(!showPassword)}
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                          {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirm-password" className="text-sm font-medium text-gray-700">Confirmer le mot de passe</Label>
+                      <Label htmlFor="confirm-password" className="text-sm font-medium text-card-foreground">Confirmer le mot de passe</Label>
                       <div className="relative">
                         <Input 
                           id="confirm-password"
@@ -380,7 +401,7 @@ export default function Auth() {
                           value={formData.confirmPassword} 
                           onChange={handleInputChange} 
                           placeholder="••••••••" 
-                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                           minLength={6}
                         />
                         <Button 
@@ -390,12 +411,12 @@ export default function Auth() {
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
-                          {showConfirmPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" disabled={loading}>
+                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300" disabled={loading}>
                       {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
                     </Button>
                   </form>
@@ -417,7 +438,7 @@ export default function Auth() {
                       resetCode: ''
                     });
                   }}
-                  className="text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg"
+                  className="text-sm text-muted-foreground hover:text-primary hover:bg-white/5 rounded-lg transition-all duration-300"
                 >
                   ← Retour à la connexion
                 </Button>
@@ -430,55 +451,93 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="min-h-screen bg-gradient-dark-animated flex relative overflow-hidden">
+      {/* Animated background effects */}
+      <div className="absolute inset-0">
+        <div className="fluid-blob fluid-blob-1 animate-pulse"></div>
+        <div className="fluid-blob fluid-blob-2 animate-pulse"></div>
+        <div className="fluid-blob fluid-blob-3 animate-pulse"></div>
+      </div>
+
       {/* Côté gauche - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-teal-600 relative">
-        <div className="flex flex-col justify-center px-12 py-16 text-white">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-neon relative">
+        <div className="flex flex-col justify-center px-12 py-16 text-white relative z-10">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 shadow-neon">
                 <BarChart3 className="h-8 w-8 text-white" />
               </div>
-              <h1 className="text-3xl font-bold">GestionPro</h1>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">GestionPro</h1>
             </div>
-            <p className="text-xl font-medium mb-4">Gestion Intelligente SaaS</p>
-            <p className="text-blue-100 text-lg leading-relaxed">
+            <p className="text-xl font-medium mb-4 text-blue-100">Gestion Intelligente SaaS</p>
+            <p className="text-blue-200 text-lg leading-relaxed mb-8">
               Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité avec notre solution moderne.
             </p>
           </div>
           
-          <div className="space-y-4 text-blue-100">
+          <div className="space-y-4 text-blue-100 mb-8">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-primary to-accent rounded-full shadow-glow animate-pulse"></div>
               <span>Tableau de bord intuitif</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-primary to-accent rounded-full shadow-glow animate-pulse" style={{ animationDelay: '0.5s' }}></div>
               <span>Gestion automatisée des paiements</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-primary to-accent rounded-full shadow-glow animate-pulse" style={{ animationDelay: '1s' }}></div>
               <span>Rapports détaillés en temps réel</span>
             </div>
           </div>
+
+          {/* 3D Illustrations */}
+          <div className="relative">
+            <div className="absolute -top-20 -right-10 opacity-30 hover:opacity-50 transition-opacity duration-500">
+              <img 
+                src={financialDashboard} 
+                alt="3D Financial Dashboard" 
+                className="w-40 h-40 object-contain drop-shadow-2xl animate-pulse"
+              />
+            </div>
+            <div className="absolute -bottom-10 -left-5 opacity-40 hover:opacity-60 transition-opacity duration-500">
+              <img 
+                src={paymentAutomation} 
+                alt="3D Payment Automation" 
+                className="w-32 h-32 object-contain drop-shadow-2xl animate-pulse" 
+                style={{ animationDelay: '1.5s' }}
+              />
+            </div>
+          </div>
         </div>
-        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="absolute inset-0 bg-black/20"></div>
       </div>
 
       {/* Côté droit - Formulaire */}
-      <div className="flex-1 flex items-center justify-center p-8 lg:p-12">
+      <div className="flex-1 flex items-center justify-center p-8 lg:p-12 relative z-10">
         <div className="w-full max-w-md">
+          {/* Back button */}
+          <div className="mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/')}
+              className="group flex items-center gap-2 text-white hover:text-primary transition-all duration-300 hover:shadow-neon p-2 rounded-xl hover:bg-white/5"
+            >
+              <ArrowLeft className="h-4 w-4 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium">Retour</span>
+            </Button>
+          </div>
+
           <div className="text-center mb-8">
             <div className="lg:hidden flex justify-center mb-4">
-              <div className="bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl p-3">
+              <div className="bg-gradient-neon rounded-xl p-3 shadow-neon">
                 <BarChart3 className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Bienvenue sur GestionPro</h2>
-            <p className="text-gray-600">Connectez-vous pour accéder à votre espace</p>
+            <h2 className="text-2xl font-bold text-white mb-2">Bienvenue sur GestionPro</h2>
+            <p className="text-muted-foreground">Connectez-vous pour accéder à votre espace</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+          <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-large border border-white/10 p-8">
             <Tabs 
               value={activeTab} 
               onValueChange={(value) => {
@@ -495,17 +554,17 @@ export default function Auth() {
               }}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-2 h-12 rounded-xl bg-gray-100 p-1">
+              <TabsList className="grid w-full grid-cols-2 h-12 rounded-xl bg-secondary/50 p-1 backdrop-blur-sm">
                 <TabsTrigger 
                   value="login"
-                  className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm rounded-lg font-medium"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon rounded-lg font-medium transition-all duration-300"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   Connexion
                 </TabsTrigger>
                 <TabsTrigger 
                   value="register"
-                  className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm rounded-lg font-medium"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon rounded-lg font-medium transition-all duration-300"
                 >
                   <UserPlus className="w-4 h-4 mr-2" />
                   Inscription
@@ -514,15 +573,15 @@ export default function Auth() {
 
               <div className="mt-6">
                 {error && (
-                  <Alert variant="destructive" className="mb-6 rounded-xl">
-                    <AlertDescription>{error}</AlertDescription>
+                  <Alert variant="destructive" className="mb-6 rounded-xl bg-destructive/10 border-destructive/20">
+                    <AlertDescription className="text-destructive-foreground">{error}</AlertDescription>
                   </Alert>
                 )}
 
                 <TabsContent value="login" className="space-y-6 mt-0">
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+                      <Label htmlFor="email" className="text-sm font-medium text-card-foreground">Email</Label>
                       <Input 
                         id="email" 
                         name="email" 
@@ -532,12 +591,12 @@ export default function Auth() {
                         value={formData.email} 
                         onChange={handleInputChange} 
                         placeholder="jean.dupont@example.com"
-                        className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium text-gray-700">Mot de passe</Label>
+                      <Label htmlFor="password" className="text-sm font-medium text-card-foreground">Mot de passe</Label>
                       <div className="relative">
                         <Input 
                           id="password" 
@@ -548,7 +607,7 @@ export default function Auth() {
                           value={formData.password} 
                           onChange={handleInputChange} 
                           placeholder="••••••••"
-                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                         />
                         <Button 
                           type="button" 
@@ -557,7 +616,7 @@ export default function Auth() {
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
                           onClick={() => setShowPassword(!showPassword)}
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                          {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
                     </div>
@@ -567,7 +626,7 @@ export default function Auth() {
                         <Button
                           type="button"
                           variant="ghost"
-                          className="p-0 h-auto text-blue-600 hover:text-blue-700 hover:bg-transparent"
+                          className="p-0 h-auto text-primary hover:text-accent hover:bg-transparent transition-colors duration-300"
                           onClick={() => setResetStep('email')}
                         >
                           Mot de passe oublié ?
@@ -578,7 +637,7 @@ export default function Auth() {
                     <Button 
                       type="submit" 
                       disabled={loading} 
-                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300"
                     >
                       {loading ? 'Connexion...' : 'Se connecter'}
                     </Button>
@@ -589,7 +648,7 @@ export default function Auth() {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">Prénom</Label>
+                        <Label htmlFor="firstName" className="text-sm font-medium text-card-foreground">Prénom</Label>
                         <Input 
                           id="firstName" 
                           name="firstName" 
@@ -599,11 +658,11 @@ export default function Auth() {
                           value={formData.firstName} 
                           onChange={handleInputChange} 
                           placeholder="Jean"
-                          className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Nom</Label>
+                        <Label htmlFor="lastName" className="text-sm font-medium text-card-foreground">Nom</Label>
                         <Input 
                           id="lastName" 
                           name="lastName" 
@@ -613,13 +672,13 @@ export default function Auth() {
                           value={formData.lastName} 
                           onChange={handleInputChange} 
                           placeholder="Dupont"
-                          className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+                      <Label htmlFor="email" className="text-sm font-medium text-card-foreground">Email</Label>
                       <Input 
                         id="email" 
                         name="email" 
@@ -629,12 +688,12 @@ export default function Auth() {
                         value={formData.email} 
                         onChange={handleInputChange} 
                         placeholder="jean.dupont@example.com"
-                        className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium text-gray-700">Mot de passe</Label>
+                      <Label htmlFor="password" className="text-sm font-medium text-card-foreground">Mot de passe</Label>
                       <div className="relative">
                         <Input 
                           id="password" 
@@ -645,7 +704,7 @@ export default function Auth() {
                           value={formData.password} 
                           onChange={handleInputChange} 
                           placeholder="••••••••"
-                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                           minLength={6}
                         />
                         <Button 
@@ -655,13 +714,13 @@ export default function Auth() {
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
                           onClick={() => setShowPassword(!showPassword)}
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                          {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirmer le mot de passe</Label>
+                      <Label htmlFor="confirmPassword" className="text-sm font-medium text-card-foreground">Confirmer le mot de passe</Label>
                       <div className="relative">
                         <Input 
                           id="confirmPassword" 
@@ -672,7 +731,7 @@ export default function Auth() {
                           value={formData.confirmPassword} 
                           onChange={handleInputChange} 
                           placeholder="••••••••"
-                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground"
                           minLength={6}
                         />
                         <Button 
@@ -682,7 +741,7 @@ export default function Auth() {
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
-                          {showConfirmPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
                     </div>
@@ -690,7 +749,7 @@ export default function Auth() {
                     <Button 
                       type="submit" 
                       disabled={loading} 
-                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-neon hover:shadow-neon transition-all duration-300"
                     >
                       {loading ? 'Inscription...' : 'S\'inscrire'}
                     </Button>
@@ -699,10 +758,10 @@ export default function Auth() {
               </div>
             </Tabs>
 
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <p className="text-xs text-gray-500 text-center leading-relaxed">
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <p className="text-xs text-muted-foreground text-center leading-relaxed">
                 En vous connectant, vous acceptez nos{' '}
-                <Link to="/mentions-legales" className="text-blue-600 hover:text-blue-700">
+                <Link to="/mentions-legales" className="text-primary hover:text-accent transition-colors duration-300">
                   conditions d'utilisation
                 </Link>{' '}
                 et notre politique de confidentialité.

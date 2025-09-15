@@ -3,14 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { BarChart3, Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
-import { AnimatedBackground } from '@/components/ui/animated-background';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
+
 export default function Auth() {
   const [activeTab, setActiveTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
@@ -36,6 +35,7 @@ export default function Auth() {
   const {
     toast
   } = useToast();
+
   useEffect(() => {
     if (user) {
       navigate('/app');
@@ -184,7 +184,7 @@ export default function Auth() {
         } else {
           toast({
             title: 'Connexion réussie',
-            description: 'Bienvenue dans Stocknix !'
+            description: 'Bienvenue dans GestionPro !'
           });
         }
       } else {
@@ -210,6 +210,7 @@ export default function Auth() {
       setLoading(false);
     }
   };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
@@ -224,39 +225,56 @@ export default function Auth() {
   // Si on est en mode réinitialisation de mot de passe
   if (resetStep) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
-        <AnimatedBackground />
-        <div className="w-full max-w-md space-y-8 relative z-20">
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="bg-gradient-primary rounded-lg p-3">
-                <BarChart3 className="h-8 w-8 text-primary-foreground" />
+      <div className="min-h-screen bg-white flex">
+        {/* Côté gauche - Branding */}
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-teal-600 relative">
+          <div className="flex flex-col justify-center px-12 py-16 text-white">
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
+                  <BarChart3 className="h-8 w-8 text-white" />
+                </div>
+                <h1 className="text-3xl font-bold">GestionPro</h1>
               </div>
+              <p className="text-xl font-medium mb-4">Gestion Intelligente SaaS</p>
+              <p className="text-blue-100 text-lg leading-relaxed">
+                Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité avec notre solution moderne.
+              </p>
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Stocknix</h1>
-            <p className="text-sm text-slate-50">
-              Réinitialisation du mot de passe
-            </p>
           </div>
+          <div className="absolute inset-0 bg-black/10"></div>
+        </div>
 
-          <Card>
-            <CardContent className="p-6">
+        {/* Côté droit - Formulaire */}
+        <div className="flex-1 flex items-center justify-center p-8 lg:p-12">
+          <div className="w-full max-w-md">
+            <div className="text-center mb-8">
+              <div className="lg:hidden flex justify-center mb-4">
+                <div className="bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl p-3">
+                  <BarChart3 className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Réinitialisation du mot de passe</h2>
+              <p className="text-gray-600">Suivez les étapes pour récupérer votre accès</p>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
               {resetStep === 'email' && (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
-                    <h2 className="text-xl font-semibold">Mot de passe oublié ?</h2>
-                    <p className="text-sm text-muted-foreground">
+                    <h3 className="text-xl font-semibold text-gray-900">Mot de passe oublié ?</h3>
+                    <p className="text-sm text-gray-600">
                       Saisissez votre adresse email pour recevoir un code de vérification
                     </p>
                   </div>
 
-                  <form onSubmit={handlePasswordReset} className="space-y-4">
-                    {error && <Alert variant="destructive">
+                  <form onSubmit={handlePasswordReset} className="space-y-6">
+                    {error && <Alert variant="destructive" className="rounded-xl">
                         <AlertDescription>{error}</AlertDescription>
                       </Alert>}
 
                     <div className="space-y-2">
-                      <Label htmlFor="reset-email">Adresse email</Label>
+                      <Label htmlFor="reset-email" className="text-sm font-medium text-gray-700">Adresse email</Label>
                       <Input 
                         id="reset-email" 
                         type="email" 
@@ -264,11 +282,11 @@ export default function Auth() {
                         value={resetEmail} 
                         onChange={handleResetEmailChange} 
                         placeholder="jean.dupont@example.com"
-                        className="h-12"
+                        className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base font-medium" disabled={loading}>
+                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" disabled={loading}>
                       {loading ? 'Envoi en cours...' : 'Envoyer le code'}
                     </Button>
                   </form>
@@ -276,21 +294,21 @@ export default function Auth() {
               )}
 
               {resetStep === 'code' && (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
-                    <h2 className="text-xl font-semibold">Vérification</h2>
-                    <p className="text-sm text-muted-foreground">
+                    <h3 className="text-xl font-semibold text-gray-900">Vérification</h3>
+                    <p className="text-sm text-gray-600">
                       Saisissez le code de 6 chiffres envoyé à votre email
                     </p>
                   </div>
 
-                  <form onSubmit={handlePasswordReset} className="space-y-4">
-                    {error && <Alert variant="destructive">
+                  <form onSubmit={handlePasswordReset} className="space-y-6">
+                    {error && <Alert variant="destructive" className="rounded-xl">
                         <AlertDescription>{error}</AlertDescription>
                       </Alert>}
 
                     <div className="space-y-2">
-                      <Label htmlFor="reset-code">Code de vérification</Label>
+                      <Label htmlFor="reset-code" className="text-sm font-medium text-gray-700">Code de vérification</Label>
                       <Input 
                         id="reset-code" 
                         name="resetCode"
@@ -299,12 +317,12 @@ export default function Auth() {
                         value={formData.resetCode} 
                         onChange={handleInputChange} 
                         placeholder="123456"
-                        className="h-12 text-center text-lg font-mono"
+                        className="h-12 text-center text-lg font-mono rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                         maxLength={6}
                       />
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base font-medium" disabled={loading}>
+                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" disabled={loading}>
                       {loading ? 'Vérification...' : 'Vérifier le code'}
                     </Button>
                   </form>
@@ -312,21 +330,21 @@ export default function Auth() {
               )}
 
               {resetStep === 'password' && (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div className="text-center space-y-2 mb-6">
-                    <h2 className="text-xl font-semibold">Nouveau mot de passe</h2>
-                    <p className="text-sm text-muted-foreground">
+                    <h3 className="text-xl font-semibold text-gray-900">Nouveau mot de passe</h3>
+                    <p className="text-sm text-gray-600">
                       Saisissez votre nouveau mot de passe
                     </p>
                   </div>
 
-                  <form onSubmit={handlePasswordReset} className="space-y-4">
-                    {error && <Alert variant="destructive">
+                  <form onSubmit={handlePasswordReset} className="space-y-6">
+                    {error && <Alert variant="destructive" className="rounded-xl">
                         <AlertDescription>{error}</AlertDescription>
                       </Alert>}
 
                     <div className="space-y-2">
-                      <Label htmlFor="new-password">Nouveau mot de passe</Label>
+                      <Label htmlFor="new-password" className="text-sm font-medium text-gray-700">Nouveau mot de passe</Label>
                       <div className="relative">
                         <Input 
                           id="new-password"
@@ -336,7 +354,7 @@ export default function Auth() {
                           value={formData.password} 
                           onChange={handleInputChange} 
                           placeholder="••••••••" 
-                          className="pr-12 h-12"
+                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                           minLength={6}
                         />
                         <Button 
@@ -346,13 +364,13 @@ export default function Auth() {
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
                           onClick={() => setShowPassword(!showPassword)}
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                          {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
                         </Button>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
+                      <Label htmlFor="confirm-password" className="text-sm font-medium text-gray-700">Confirmer le mot de passe</Label>
                       <div className="relative">
                         <Input 
                           id="confirm-password"
@@ -362,7 +380,7 @@ export default function Auth() {
                           value={formData.confirmPassword} 
                           onChange={handleInputChange} 
                           placeholder="••••••••" 
-                          className="pr-12 h-12"
+                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                           minLength={6}
                         />
                         <Button 
@@ -372,19 +390,19 @@ export default function Auth() {
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
-                          {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
                         </Button>
                       </div>
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base font-medium" disabled={loading}>
+                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" disabled={loading}>
                       {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
                     </Button>
                   </form>
                 </div>
               )}
 
-              <div className="mt-6 text-center">
+              <div className="mt-8 text-center">
                 <Button 
                   variant="ghost" 
                   onClick={() => {
@@ -399,36 +417,68 @@ export default function Auth() {
                       resetCode: ''
                     });
                   }}
-                  className="text-sm text-muted-foreground hover:text-foreground"
+                  className="text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg"
                 >
                   ← Retour à la connexion
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
-  return <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
-      <AnimatedBackground />
-      <div className="w-full max-w-md space-y-8 relative z-20">
-        {/* Logo */}
-        <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="bg-gradient-primary rounded-lg p-3">
-              <BarChart3 className="h-8 w-8 text-primary-foreground" />
+
+  return (
+    <div className="min-h-screen bg-white flex">
+      {/* Côté gauche - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-teal-600 relative">
+        <div className="flex flex-col justify-center px-12 py-16 text-white">
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
+                <BarChart3 className="h-8 w-8 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold">GestionPro</h1>
+            </div>
+            <p className="text-xl font-medium mb-4">Gestion Intelligente SaaS</p>
+            <p className="text-blue-100 text-lg leading-relaxed">
+              Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité avec notre solution moderne.
+            </p>
+          </div>
+          
+          <div className="space-y-4 text-blue-100">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <span>Tableau de bord intuitif</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <span>Gestion automatisée des paiements</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <span>Rapports détaillés en temps réel</span>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Stocknix</h1>
-          <p className="text-sm text-slate-50">
-            Gestion complète pour PME/TPE
-          </p>
         </div>
+        <div className="absolute inset-0 bg-black/10"></div>
+      </div>
 
-        {/* Auth Form */}
-        <Card>
-          <CardContent className="p-0">
+      {/* Côté droit - Formulaire */}
+      <div className="flex-1 flex items-center justify-center p-8 lg:p-12">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="lg:hidden flex justify-center mb-4">
+              <div className="bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl p-3">
+                <BarChart3 className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Bienvenue sur GestionPro</h2>
+            <p className="text-gray-600">Connectez-vous pour accéder à votre espace</p>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
             <Tabs 
               value={activeTab} 
               onValueChange={(value) => {
@@ -445,203 +495,222 @@ export default function Auth() {
               }}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-2 h-12 rounded-t-lg rounded-b-none bg-muted/30">
+              <TabsList className="grid w-full grid-cols-2 h-12 rounded-xl bg-gray-100 p-1">
                 <TabsTrigger 
-                  value="login" 
-                  className="h-full rounded-t-lg rounded-b-none data-[state=active]:bg-card data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  value="login"
+                  className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm rounded-lg font-medium"
                 >
-                  <LogIn className="mr-2 h-4 w-4" />
+                  <LogIn className="w-4 h-4 mr-2" />
                   Connexion
                 </TabsTrigger>
                 <TabsTrigger 
-                  value="register" 
-                  className="h-full rounded-t-lg rounded-b-none data-[state=active]:bg-card data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  value="register"
+                  className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm rounded-lg font-medium"
                 >
-                  <UserPlus className="mr-2 h-4 w-4" />
+                  <UserPlus className="w-4 h-4 mr-2" />
                   Inscription
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="login" className="p-6 m-0 rounded-none space-y-4 animate-fade-in">
-                <div className="text-center space-y-2 mb-6">
-                  <h2 className="text-xl font-semibold">Bon retour !</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Connectez-vous à votre espace de gestion
-                  </p>
-                </div>
+              <div className="mt-6">
+                {error && (
+                  <Alert variant="destructive" className="mb-6 rounded-xl">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {error && <Alert variant="destructive">
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>}
-
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
-                    <Input 
-                      id="login-email" 
-                      name="email" 
-                      type="email" 
-                      required 
-                      value={formData.email} 
-                      onChange={handleInputChange} 
-                      placeholder="jean.dupont@example.com"
-                      className="h-12"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password">Mot de passe</Label>
-                    <div className="relative">
+                <TabsContent value="login" className="space-y-6 mt-0">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
                       <Input 
-                        id="login-password"
-                        name="password" 
-                        type={showPassword ? 'text' : 'password'} 
+                        id="email" 
+                        name="email" 
+                        type="email" 
+                        autoComplete="email" 
                         required 
-                        value={formData.password} 
+                        value={formData.email} 
                         onChange={handleInputChange} 
-                        placeholder="••••••••" 
-                        className="pr-12 h-12"
+                        placeholder="jean.dupont@example.com"
+                        className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                       />
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="icon" 
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                      </Button>
                     </div>
-                  </div>
 
-                  <Button type="submit" className="w-full h-12 text-base font-medium" disabled={loading}>
-                    {loading ? (
-                      'Connexion en cours...'
-                    ) : (
-                      <>
-                        <LogIn className="mr-2 h-4 w-4" />
-                        Se connecter
-                      </>
-                    )}
-                  </Button>
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-sm font-medium text-gray-700">Mot de passe</Label>
+                      <div className="relative">
+                        <Input 
+                          id="password" 
+                          name="password" 
+                          type={showPassword ? 'text' : 'password'} 
+                          autoComplete="current-password" 
+                          required 
+                          value={formData.password} 
+                          onChange={handleInputChange} 
+                          placeholder="••••••••"
+                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                        />
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                        </Button>
+                      </div>
+                    </div>
 
-                  <div className="text-center mt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="p-0 h-auto text-blue-600 hover:text-blue-700 hover:bg-transparent"
+                          onClick={() => setResetStep('email')}
+                        >
+                          Mot de passe oublié ?
+                        </Button>
+                      </div>
+                    </div>
+
                     <Button 
-                      type="button"
-                      variant="ghost" 
-                      onClick={() => setResetStep('email')}
-                      className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+                      type="submit" 
+                      disabled={loading} 
+                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
                     >
-                      Mot de passe oublié ?
+                      {loading ? 'Connexion...' : 'Se connecter'}
                     </Button>
-                  </div>
-                </form>
-              </TabsContent>
+                  </form>
+                </TabsContent>
 
-              <TabsContent value="register" className="p-6 m-0 rounded-none space-y-4 animate-fade-in">
-                <div className="text-center space-y-2 mb-6">
-                  <h2 className="text-xl font-semibold">Créer un compte</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Rejoignez Stocknix et commencez dès maintenant
-                  </p>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {error && <Alert variant="destructive">
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>}
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">Prénom</Label>
-                      <Input 
-                        id="firstName" 
-                        name="firstName" 
-                        type="text" 
-                        required
-                        value={formData.firstName} 
-                        onChange={handleInputChange} 
-                        placeholder="Jean"
-                        className="h-12"
-                      />
+                <TabsContent value="register" className="space-y-6 mt-0">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">Prénom</Label>
+                        <Input 
+                          id="firstName" 
+                          name="firstName" 
+                          type="text" 
+                          autoComplete="given-name" 
+                          required 
+                          value={formData.firstName} 
+                          onChange={handleInputChange} 
+                          placeholder="Jean"
+                          className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Nom</Label>
+                        <Input 
+                          id="lastName" 
+                          name="lastName" 
+                          type="text" 
+                          autoComplete="family-name" 
+                          required 
+                          value={formData.lastName} 
+                          onChange={handleInputChange} 
+                          placeholder="Dupont"
+                          className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                        />
+                      </div>
                     </div>
+
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">Nom</Label>
+                      <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
                       <Input 
-                        id="lastName" 
-                        name="lastName" 
-                        type="text" 
-                        required
-                        value={formData.lastName} 
-                        onChange={handleInputChange} 
-                        placeholder="Dupont"
-                        className="h-12"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="register-email">Email</Label>
-                    <Input 
-                      id="register-email" 
-                      name="email" 
-                      type="email" 
-                      required 
-                      value={formData.email} 
-                      onChange={handleInputChange} 
-                      placeholder="jean.dupont@example.com"
-                      className="h-12"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="register-password">Mot de passe</Label>
-                    <div className="relative">
-                      <Input 
-                        id="register-password"
-                        name="password" 
-                        type={showPassword ? 'text' : 'password'} 
+                        id="email" 
+                        name="email" 
+                        type="email" 
+                        autoComplete="email" 
                         required 
-                        value={formData.password} 
+                        value={formData.email} 
                         onChange={handleInputChange} 
-                        placeholder="••••••••" 
-                        className="pr-12 h-12"
+                        placeholder="jean.dupont@example.com"
+                        className="h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                       />
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="icon" 
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                      </Button>
                     </div>
-                  </div>
 
-                  <Button type="submit" className="w-full h-12 text-base font-medium" disabled={loading}>
-                    {loading ? (
-                      'Création en cours...'
-                    ) : (
-                      <>
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        Créer mon compte
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </TabsContent>
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-sm font-medium text-gray-700">Mot de passe</Label>
+                      <div className="relative">
+                        <Input 
+                          id="password" 
+                          name="password" 
+                          type={showPassword ? 'text' : 'password'} 
+                          autoComplete="new-password" 
+                          required 
+                          value={formData.password} 
+                          onChange={handleInputChange} 
+                          placeholder="••••••••"
+                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          minLength={6}
+                        />
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirmer le mot de passe</Label>
+                      <div className="relative">
+                        <Input 
+                          id="confirmPassword" 
+                          name="confirmPassword" 
+                          type={showConfirmPassword ? 'text' : 'password'} 
+                          autoComplete="new-password" 
+                          required 
+                          value={formData.confirmPassword} 
+                          onChange={handleInputChange} 
+                          placeholder="••••••••"
+                          className="pr-12 h-12 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                          minLength={6}
+                        />
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      disabled={loading} 
+                      className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                    >
+                      {loading ? 'Inscription...' : 'S\'inscrire'}
+                    </Button>
+                  </form>
+                </TabsContent>
+              </div>
             </Tabs>
 
-            <div className="px-6 pb-6">
-              <div className="text-center text-xs text-muted-foreground">
-                <Link to="/" className="hover:text-foreground hover:underline transition-colors">
-                  ← Retour à l'accueil
-                </Link>
-              </div>
+            <div className="mt-8 pt-6 border-t border-gray-100">
+              <p className="text-xs text-gray-500 text-center leading-relaxed">
+                En vous connectant, vous acceptez nos{' '}
+                <Link to="/mentions-legales" className="text-blue-600 hover:text-blue-700">
+                  conditions d'utilisation
+                </Link>{' '}
+                et notre politique de confidentialité.
+              </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
-    </div>;
+    </div>
+  );
 }

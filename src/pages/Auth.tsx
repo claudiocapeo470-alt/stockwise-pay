@@ -390,7 +390,7 @@ export default function Auth() {
 
       {/* Côté gauche - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 relative">
-        <div className="flex flex-col justify-center px-12 py-16 text-white relative z-10">
+        <div className="flex flex-col justify-center px-12 py-16 text-white relative z-10 bg-slate-950">
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-6">
               <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
@@ -399,7 +399,7 @@ export default function Auth() {
               <h1 className="text-4xl font-bold text-white">Stocknix</h1>
             </div>
             <p className="text-xl font-semibold mb-6 text-slate-50">Gestion Intelligente SaaS</p>
-            <p className="text-lg leading-relaxed text-[#ffd6d6]/[0.97]">
+            <p className="text-lg leading-relaxed text-slate-50">
               Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité avec notre solution moderne.
             </p>
           </div>
@@ -407,15 +407,15 @@ export default function Auth() {
           <div className="space-y-4 text-blue-100">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
-              <span className="text-lg">Tableau de bord intuitif</span>
+              <span className="text-lg text-slate-50">Tableau de bord intuitif</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
-              <span className="text-lg">Gestion automatisée des paiements</span>
+              <span className="text-lg text-slate-50">Gestion automatisée des paiements</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
-              <span className="text-lg">Rapports détaillés en temps réel</span>
+              <span className="text-lg text-slate-50">Rapports détaillés en temps réel</span>
             </div>
           </div>
         </div>

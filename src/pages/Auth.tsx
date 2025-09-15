@@ -508,23 +508,23 @@ export default function Auth() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="firstName" className="text-sm font-medium text-card-foreground">Prénom</Label>
-                        <Input id="firstName" name="firstName" type="text" autoComplete="given-name" required value={formData.firstName} onChange={handleInputChange} placeholder="Jean" className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" />
+                        <Input id="firstName" name="firstName" type="text" autoComplete="given-name" required value={formData.firstName} onChange={handleInputChange} placeholder="Jean" className="h-12 rounded-xl border-border focus:border-primary focus:ring-primary text-foreground bg-slate-50" />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="lastName" className="text-sm font-medium text-card-foreground">Nom</Label>
-                        <Input id="lastName" name="lastName" type="text" autoComplete="family-name" required value={formData.lastName} onChange={handleInputChange} placeholder="Dupont" className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" />
+                        <Input id="lastName" name="lastName" type="text" autoComplete="family-name" required value={formData.lastName} onChange={handleInputChange} placeholder="Dupont" className="h-12 rounded-xl border-border focus:border-primary focus:ring-primary text-foreground bg-slate-50" />
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-sm font-medium text-card-foreground">Email</Label>
-                      <Input id="email" name="email" type="email" autoComplete="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" />
+                      <Input id="email" name="email" type="email" autoComplete="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-12 rounded-xl border-border focus:border-primary focus:ring-primary text-foreground bg-slate-50" />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="password" className="text-sm font-medium text-card-foreground">Mot de passe</Label>
                       <div className="relative">
-                        <Input id="password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" minLength={6} />
+                        <Input id="password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" required value={formData.password} onChange={handleInputChange} placeholder="••••••••" minLength={6} className="pr-12 h-12 rounded-xl border-border focus:border-primary focus:ring-primary text-foreground bg-slate-50" />
                         <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
                           {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
@@ -534,7 +534,7 @@ export default function Auth() {
                     <div className="space-y-2">
                       <Label htmlFor="confirmPassword" className="text-sm font-medium text-card-foreground">Confirmer le mot de passe</Label>
                       <div className="relative">
-                        <Input id="confirmPassword" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} autoComplete="new-password" required value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" minLength={6} />
+                        <Input id="confirmPassword" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} autoComplete="new-password" required value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" minLength={6} className="pr-12 h-12 rounded-xl border-border focus:border-primary focus:ring-primary text-foreground bg-slate-50" />
                         <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                           {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>

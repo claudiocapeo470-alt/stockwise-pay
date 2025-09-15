@@ -396,10 +396,10 @@ export default function Auth() {
               <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
                 <BarChart3 className="h-10 w-10 text-white" />
               </div>
-              <h1 className="text-4xl font-bold text-white">GestionPro</h1>
+              <h1 className="text-4xl font-bold text-white">Stocknix</h1>
             </div>
-            <p className="text-xl font-semibold mb-6 text-blue-100">Gestion Intelligente SaaS</p>
-            <p className="text-blue-100 text-lg leading-relaxed">
+            <p className="text-xl font-semibold mb-6 text-slate-50">Gestion Intelligente SaaS</p>
+            <p className="text-lg leading-relaxed text-[#ffd6d6]/[0.97]">
               Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité avec notre solution moderne.
             </p>
           </div>
@@ -439,7 +439,7 @@ export default function Auth() {
                 <BarChart3 className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold text-white mb-3">Bienvenue sur GestionPro</h2>
+            <h2 className="text-3xl font-bold text-white mb-3">Bienvenue sur Stocknix</h2>
             <p className="text-white/70 text-lg">Connectez-vous pour accéder à votre espace</p>
           </div>
 
@@ -457,11 +457,11 @@ export default function Auth() {
             });
           }} className="w-full">
               <TabsList className="grid w-full grid-cols-2 h-12 rounded-xl bg-slate-100 p-1">
-                <TabsTrigger value="login" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200">
+                <TabsTrigger value="login" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200 bg-zinc-800 hover:bg-zinc-700">
                   <LogIn className="w-4 h-4 mr-2" />
                   Connexion
                 </TabsTrigger>
-                <TabsTrigger value="register" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200">
+                <TabsTrigger value="register" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg font-medium transition-all duration-200 bg-zinc-700 hover:bg-zinc-600">
                   <UserPlus className="w-4 h-4 mr-2" />
                   Inscription
                 </TabsTrigger>
@@ -550,7 +550,7 @@ export default function Auth() {
             </Tabs>
 
             <div className="mt-8 pt-6 border-t border-white/10">
-              <p className="text-xs text-muted-foreground text-center leading-relaxed">
+              <p className="text-xs text-muted-foreground text-center leading-relaxed mx-0 px-0 py-0 my-0">
                 En vous connectant, vous acceptez nos{' '}
                 <Link to="/mentions-legales" className="text-blue-600 hover:text-purple-600 transition-colors duration-200">
                   conditions d'utilisation

@@ -219,38 +219,73 @@ export default function Auth() {
         {/* Clean gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-800/30 to-slate-900/40"></div>
 
-        {/* Côté gauche - Branding */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 relative">
-          <div className="flex flex-col justify-center px-12 py-16 text-white relative z-10">
-            <div className="mb-12">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
-                  <BarChart3 className="h-10 w-10 text-white" />
+        {/* Côté gauche - Ultra-premium branding avec effets 3D */}
+        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+          {/* Multi-layer gradient overlay with premium depth */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/90 via-purple-900/70 to-slate-900/90 backdrop-blur-sm"></div>
+          
+          {/* Professional 3D geometric decorations */}
+          <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute top-32 left-16 w-20 h-20 border-2 border-cyan-400/30 rotate-45 animate-spin-slow"></div>
+            <div className="absolute bottom-40 right-20 w-16 h-16 border-2 border-purple-400/30 rotate-12 animate-pulse"></div>
+            <div className="absolute top-1/2 left-8 w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-lg rotate-45 animate-float"></div>
+          </div>
+
+          <div className="relative z-10 flex flex-col justify-center px-16 py-20 text-white">
+            <div className="mb-16">
+              <div className="flex items-center gap-6 mb-8">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="relative bg-gradient-to-br from-cyan-500/20 to-purple-600/20 backdrop-blur-xl rounded-3xl p-5 border border-white/10">
+                    <BarChart3 className="h-12 w-12 text-cyan-300" />
+                  </div>
                 </div>
-                <h1 className="text-4xl font-bold text-white">Stocknix</h1>
+                <div>
+                  <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-indigo-300 tracking-tight">Stocknix</h1>
+                  <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full mt-2"></div>
+                </div>
               </div>
-              <p className="text-xl font-semibold mb-6 text-blue-100">Gestion Intelligente SaaS</p>
-              <p className="text-blue-100 text-lg leading-relaxed">
-                Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité avec notre solution moderne.
-              </p>
+              
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-white/95 leading-tight">
+                  Plateforme de Gestion
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300"> Ultra-Moderne</span>
+                </h2>
+                <p className="text-xl text-cyan-100/80 leading-relaxed">
+                  Révolutionnez votre gestion d'entreprise avec notre solution de nouvelle génération, Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité . Intelligence artificielle, automatisation et design futuriste en ultra-haute définition
+                </p>
+              </div>
             </div>
             
-            <div className="space-y-4 text-blue-100">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
-                <span className="text-lg">Tableau de bord intuitif</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
-                <span className="text-lg">Gestion automatisée des paiements</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
-                <span className="text-lg">Rapports détaillés en temps réel</span>
-              </div>
+            <div className="space-y-6">
+              {[{
+              text: "Tableau de bord intuitif",
+              gradient: "from-cyan-400 to-blue-500"
+            }, {
+              text: "Gestion automatisée des paiements",
+              gradient: "from-purple-400 to-pink-500"
+            }, {
+              text: "Rapports détaillés en temps réel",
+              gradient: "from-indigo-400 to-purple-500"
+            }, {
+              text: "Performance & Vitesse Optimales",
+              gradient: "from-cyan-400 to-purple-500"
+            }, {
+              text: "IA Intégrée & Automatisation",
+              gradient: "from-emerald-400 to-cyan-500"
+            }].map((feature, index) => <div key={index} className="flex items-center gap-4 group cursor-pointer">
+                  <div className="relative">
+                    <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-300`}></div>
+                    <div className={`relative w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/10`}>
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+                  <span className="text-lg font-medium text-white/90 group-hover:text-white transition-colors">
+                    {feature.text}
+                  </span>
+                </div>)}
             </div>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
         </div>
 
         {/* Côté droit - Formulaire */}

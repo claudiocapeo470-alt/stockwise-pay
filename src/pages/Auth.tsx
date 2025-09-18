@@ -215,14 +215,14 @@ export default function Auth() {
 
   // Si on est en mode réinitialisation de mot de passe
   if (resetStep) {
-    return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex relative">
-        {/* Clean gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-800/30 to-slate-900/40"></div>
+  return <div className="min-h-screen bg-black flex relative">
+        {/* Premium black gradient overlay with subtle depth */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-950/50 to-black"></div>
 
         {/* Côté gauche - Ultra-premium branding avec effets 3D */}
-        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-          {/* Multi-layer gradient overlay with premium depth */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/90 via-purple-900/70 to-slate-900/90 backdrop-blur-sm"></div>
+        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-black">
+          {/* Multi-layer black gradient overlay with premium depth */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900/30 to-black backdrop-blur-sm"></div>
           
           {/* Professional 3D geometric decorations */}
           <div className="absolute top-0 left-0 w-full h-full">
@@ -419,9 +419,9 @@ export default function Auth() {
       </div>;
   }
   return <div className="min-h-screen relative overflow-hidden">
-      {/* Ultra modern animated gradient background with 8K depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950"></div>
-      <div className="absolute inset-0 bg-gradient-to-tr from-blue-950/50 via-purple-900/30 to-indigo-950/50 animate-pulse"></div>
+      {/* Ultra modern animated black gradient background with 8K depth */}
+      <div className="absolute inset-0 bg-black"></div>
+      <div className="absolute inset-0 bg-gradient-to-tr from-gray-900/20 via-black to-gray-900/10 animate-pulse"></div>
       
       {/* Professional floating geometric shapes for 3D depth */}
       <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-full blur-xl animate-float"></div>
@@ -437,9 +437,9 @@ export default function Auth() {
 
       <div className="relative z-10 min-h-screen flex">
         {/* Côté gauche - Ultra-premium branding avec effets 3D */}
-        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-          {/* Multi-layer gradient overlay with premium depth */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/90 via-purple-900/70 to-slate-900/90 backdrop-blur-sm"></div>
+        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-black">
+          {/* Multi-layer black gradient overlay with premium depth */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900/20 to-black backdrop-blur-sm"></div>
           
           {/* Professional 3D geometric decorations */}
           <div className="absolute top-0 left-0 w-full h-full">

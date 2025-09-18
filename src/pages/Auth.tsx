@@ -434,34 +434,32 @@ export default function Auth() {
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300"> Ultra-Moderne</span>
                 </h2>
                 <p className="text-xl text-cyan-100/80 leading-relaxed">
-                  Révolutionnez votre gestion d'entreprise avec notre solution SaaS de nouvelle génération. 
-                  Intelligence artificielle, automatisation et design futuriste en ultra-haute définition.
+                  Révolutionnez votre gestion d'entreprise avec notre solution de nouvelle génération, Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité . Intelligence artificielle, automatisation et design futuriste en ultra-haute définition
                 </p>
               </div>
             </div>
             
             <div className="space-y-6">
               {[{
-              icon: "💎",
-              text: "Interface 8K Ultra-Premium",
+              text: "Tableau de bord intuitif",
               gradient: "from-cyan-400 to-blue-500"
             }, {
-              icon: "🚀",
-              text: "Performance & Vitesse Optimales",
+              text: "Gestion automatisée des paiements",
               gradient: "from-purple-400 to-pink-500"
             }, {
-              icon: "🤖",
-              text: "IA Intégrée & Automatisation",
+              text: "Rapports détaillés en temps réel",
               gradient: "from-indigo-400 to-purple-500"
             }, {
-              icon: "📊",
-              text: "Analytics Temps Réel 3D",
+              text: "Performance & Vitesse Optimales",
               gradient: "from-cyan-400 to-purple-500"
+            }, {
+              text: "IA Intégrée & Automatisation",
+              gradient: "from-emerald-400 to-cyan-500"
             }].map((feature, index) => <div key={index} className="flex items-center gap-4 group cursor-pointer">
                   <div className="relative">
                     <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-300`}></div>
-                    <div className={`relative w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center text-xl backdrop-blur-sm border border-white/10`}>
-                      {feature.icon}
+                    <div className={`relative w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/10`}>
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
                     </div>
                   </div>
                   <span className="text-lg font-medium text-white/90 group-hover:text-white transition-colors">

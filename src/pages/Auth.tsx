@@ -177,7 +177,7 @@ export default function Auth() {
         } else {
           toast({
             title: 'Connexion réussie',
-            description: 'Bienvenue dans GestionPro !'
+            description: 'Bienvenue dans Stocknix !'
           });
         }
       } else {
@@ -227,7 +227,7 @@ export default function Auth() {
                 <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
                   <BarChart3 className="h-10 w-10 text-white" />
                 </div>
-                <h1 className="text-4xl font-bold text-white">GestionPro</h1>
+                <h1 className="text-4xl font-bold text-white">Stocknix</h1>
               </div>
               <p className="text-xl font-semibold mb-6 text-blue-100">Gestion Intelligente SaaS</p>
               <p className="text-blue-100 text-lg leading-relaxed">

@@ -17,7 +17,7 @@ export default function Settings() {
       <div>
         <h1 className="text-3xl font-bold text-foreground">Paramètres</h1>
         <p className="text-muted-foreground">
-          Configuration et préférences de votre application Gestion Pro
+          Configuration et préférences de votre application Stocknix
         </p>
       </div>
 
@@ -251,7 +251,7 @@ export default function Settings() {
         <CardContent className="pt-6">
           <div className="text-center text-sm text-muted-foreground space-y-2">
             <p>
-              <strong>Gestion Pro</strong> - Solution complète de gestion commerciale
+              <strong>Stocknix</strong> - Solution complète de gestion commerciale
             </p>
             <p>
               Développé avec passion pour les entreprises africaines

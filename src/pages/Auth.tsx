@@ -258,7 +258,7 @@ export default function Auth() {
           <div className="w-full max-w-md">
             {/* Back button */}
             <div className="mb-6">
-              <Button variant="ghost" onClick={() => navigate('/')} className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl">
+              <Button variant="ghost" onClick={() => setResetStep(null)} className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl">
                 <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
                 <span className="text-sm font-medium">Retour</span>
               </Button>

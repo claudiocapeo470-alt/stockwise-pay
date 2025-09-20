@@ -512,7 +512,7 @@ export default function Auth() {
         </div>
 
         {/* Côté droit - Formulaire ultra-premium avec glassmorphism */}
-        <div className="flex-1 flex items-center justify-center p-8 lg:p-16 relative">
+        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-16 relative">
           {/* Back button avec effet néon premium */}
           <div className="absolute top-8 left-8">
             <Button variant="ghost" onClick={() => navigate('/')} className="group flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-300 p-4 rounded-2xl border border-white/10 hover:border-cyan-400/30 backdrop-blur-sm hover:shadow-lg hover:shadow-cyan-500/20">
@@ -548,16 +548,18 @@ export default function Auth() {
               {/* Glow effect background avec profondeur extrême */}
               <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-indigo-500/20 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
               
-              <div className="relative bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 p-10 shadow-2xl">
+              <div className="relative bg-white/10 backdrop-blur-2xl rounded-2xl md:rounded-3xl border border-white/20 p-6 md:p-8 lg:p-10 shadow-2xl">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-10 bg-white/5 rounded-2xl p-2 backdrop-blur-sm border border-white/10 py-0 px-0">
-                    <TabsTrigger value="login" className="rounded-xl text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90 px-0 my-0 py-[10px]">
-                      <LogIn className="w-4 h-4 mr-2" />
-                      Connexion
+                  <TabsList className="grid w-full grid-cols-2 mb-8 md:mb-10 bg-white/10 rounded-2xl p-1 md:p-2 backdrop-blur-sm border border-white/20 h-12 md:h-auto">
+                    <TabsTrigger value="login" className="rounded-xl text-sm md:text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white hover:text-white/90 px-2 md:px-0 py-2 md:py-[10px] h-10 md:h-auto">
+                      <LogIn className="w-4 h-4 mr-1 md:mr-2" />
+                      <span className="hidden sm:inline">Connexion</span>
+                      <span className="sm:hidden">Login</span>
                     </TabsTrigger>
-                    <TabsTrigger value="register" className="rounded-xl text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white/70 hover:text-white/90 px-0 py-[10px]">
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Inscription
+                    <TabsTrigger value="register" className="rounded-xl text-sm md:text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white hover:text-white/90 px-2 md:px-0 py-2 md:py-[10px] h-10 md:h-auto">
+                      <UserPlus className="w-4 h-4 mr-1 md:mr-2" />
+                      <span className="hidden sm:inline">Inscription</span>
+                      <span className="sm:hidden">Sign Up</span>
                     </TabsTrigger>
                   </TabsList>
 
@@ -565,19 +567,19 @@ export default function Auth() {
                       <AlertDescription className="text-red-200">{error}</AlertDescription>
                     </Alert>}
 
-                  <TabsContent value="login" className="space-y-8">
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                      <div className="space-y-3">
-                        <Label htmlFor="email" className="text-sm font-semibold text-white/90 tracking-wide">Adresse email</Label>
-                        <Input id="email" name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
+                  <TabsContent value="login" className="space-y-6 md:space-y-8">
+                    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+                      <div className="space-y-2 md:space-y-3">
+                        <Label htmlFor="email" className="text-sm font-semibold text-white tracking-wide">Adresse email</Label>
+                        <Input id="email" name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
                       </div>
 
-                      <div className="space-y-3">
-                        <Label htmlFor="password" className="text-sm font-semibold text-white/90 tracking-wide">Mot de passe</Label>
+                      <div className="space-y-2 md:space-y-3">
+                        <Label htmlFor="password" className="text-sm font-semibold text-white tracking-wide">Mot de passe</Label>
                         <div className="relative">
-                          <Input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-14 h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
-                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-4 hover:bg-transparent text-white/60 hover:text-white" onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                          <Input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-12 md:pr-14 h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
+                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 md:px-4 hover:bg-transparent text-white/70 hover:text-white" onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
                           </Button>
                         </div>
                       </div>
@@ -588,7 +590,7 @@ export default function Auth() {
                         </button>
                       </div>
 
-                      <Button type="submit" className="w-full h-16 text-lg font-bold rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group" disabled={loading}>
+                      <Button type="submit" className="w-full h-12 md:h-14 lg:h-16 text-base md:text-lg font-bold rounded-xl md:rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group" disabled={loading}>
                         <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <span className="relative z-10 tracking-wide">
                           {loading ? 'Connexion...' : 'Se connecter'}
@@ -597,45 +599,45 @@ export default function Auth() {
                     </form>
                   </TabsContent>
 
-                  <TabsContent value="register" className="space-y-8">
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                      <div className="grid grid-cols-2 gap-6">
-                        <div className="space-y-3">
-                          <Label htmlFor="firstName" className="text-sm font-semibold text-white/90 tracking-wide">Prénom</Label>
-                          <Input id="firstName" name="firstName" type="text" required value={formData.firstName} onChange={handleInputChange} placeholder="Jean" className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
+                  <TabsContent value="register" className="space-y-6 md:space-y-8">
+                    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                        <div className="space-y-2 md:space-y-3">
+                          <Label htmlFor="firstName" className="text-sm font-semibold text-white tracking-wide">Prénom</Label>
+                          <Input id="firstName" name="firstName" type="text" required value={formData.firstName} onChange={handleInputChange} placeholder="Jean" className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
                         </div>
-                        <div className="space-y-3">
-                          <Label htmlFor="lastName" className="text-sm font-semibold text-white/90 tracking-wide">Nom</Label>
-                          <Input id="lastName" name="lastName" type="text" required value={formData.lastName} onChange={handleInputChange} placeholder="Dupont" className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
+                        <div className="space-y-2 md:space-y-3">
+                          <Label htmlFor="lastName" className="text-sm font-semibold text-white tracking-wide">Nom</Label>
+                          <Input id="lastName" name="lastName" type="text" required value={formData.lastName} onChange={handleInputChange} placeholder="Dupont" className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
                         </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <Label htmlFor="email-register" className="text-sm font-semibold text-white/90 tracking-wide">Adresse email</Label>
-                        <Input id="email-register" name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
+                      <div className="space-y-2 md:space-y-3">
+                        <Label htmlFor="email-register" className="text-sm font-semibold text-white tracking-wide">Adresse email</Label>
+                        <Input id="email-register" name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
                       </div>
 
-                      <div className="space-y-3">
-                        <Label htmlFor="password-register" className="text-sm font-semibold text-white/90 tracking-wide">Mot de passe</Label>
+                      <div className="space-y-2 md:space-y-3">
+                        <Label htmlFor="password-register" className="text-sm font-semibold text-white tracking-wide">Mot de passe</Label>
                         <div className="relative">
-                          <Input id="password-register" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-14 h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" minLength={6} />
-                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-4 hover:bg-transparent text-white/60 hover:text-white" onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                          <Input id="password-register" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-12 md:pr-14 h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" minLength={6} />
+                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 md:px-4 hover:bg-transparent text-white/70 hover:text-white" onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
                           </Button>
                         </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <Label htmlFor="confirm-password" className="text-sm font-semibold text-white/90 tracking-wide">Confirmer le mot de passe</Label>
+                      <div className="space-y-2 md:space-y-3">
+                        <Label htmlFor="confirm-password" className="text-sm font-semibold text-white tracking-wide">Confirmer le mot de passe</Label>
                         <div className="relative">
-                          <Input id="confirm-password" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} required value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" className="pr-14 h-14 rounded-2xl bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 text-white placeholder:text-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/10" />
-                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-4 hover:bg-transparent text-white/60 hover:text-white" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                          <Input id="confirm-password" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} required value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" className="pr-12 md:pr-14 h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
+                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 md:px-4 hover:bg-transparent text-white/70 hover:text-white" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
                           </Button>
                         </div>
                       </div>
 
-                      <Button type="submit" className="w-full h-16 text-lg font-bold rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group" disabled={loading}>
+                      <Button type="submit" className="w-full h-12 md:h-14 lg:h-16 text-base md:text-lg font-bold rounded-xl md:rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group" disabled={loading}>
                         <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <span className="relative z-10 tracking-wide">
                           {loading ? 'Inscription...' : 'Créer un compte'}

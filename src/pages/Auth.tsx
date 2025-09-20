@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BarChart3, Eye, EyeOff, LogIn, UserPlus, ArrowLeft } from 'lucide-react';
+import { BarChart3, Eye, EyeOff, LogIn, UserPlus, ArrowLeft, Sparkles, Shield, Zap, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 export default function Auth() {
   const [activeTab, setActiveTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
@@ -24,15 +25,11 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'code' | 'password' | null>(null);
   const [resetEmail, setResetEmail] = useState('');
-  const {
-    signIn,
-    signUp,
-    user
-  } = useAuth();
+
+  const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
   useEffect(() => {
     if (user) {
       navigate('/app');
@@ -43,29 +40,28 @@ export default function Auth() {
   const generateResetCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
   };
+
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
     try {
       if (resetStep === 'email') {
-        // Étape 1: Envoyer le code par email
         const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-password-reset`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
           },
-          body: JSON.stringify({
-            email: resetEmail
-          })
+          body: JSON.stringify({ email: resetEmail })
         });
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || 'Erreur lors de l\'envoi de l\'email');
         }
 
-        // Stocker l'email pour les étapes suivantes
         localStorage.setItem('resetEmail', resetEmail);
         setResetStep('code');
         toast({
@@ -73,13 +69,11 @@ export default function Auth() {
           description: 'Vérifiez votre email pour le code de vérification'
         });
       } else if (resetStep === 'code') {
-        // Étape 2: Passer à l'étape de saisie du nouveau mot de passe
         if (!formData.resetCode || formData.resetCode.length !== 6) {
           setError('Veuillez saisir un code de 6 chiffres');
           return;
         }
 
-        // Stocker le code pour l'étape suivante
         localStorage.setItem('resetCode', formData.resetCode);
         setResetStep('password');
         toast({
@@ -87,7 +81,6 @@ export default function Auth() {
           description: 'Vous pouvez maintenant saisir votre nouveau mot de passe'
         });
       } else if (resetStep === 'password') {
-        // Étape 3: Réinitialiser le mot de passe
         if (formData.password !== formData.confirmPassword) {
           setError('Les mots de passe ne correspondent pas');
           return;
@@ -96,15 +89,16 @@ export default function Auth() {
           setError('Le mot de passe doit contenir au moins 6 caractères');
           return;
         }
+
         const storedEmail = localStorage.getItem('resetEmail');
         const storedCode = localStorage.getItem('resetCode');
+        
         if (!storedEmail || !storedCode) {
           setError('Session expirée. Veuillez recommencer.');
           setResetStep('email');
           return;
         }
 
-        // Utiliser notre edge function pour réinitialiser le mot de passe
         const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/reset-password`, {
           method: 'POST',
           headers: {
@@ -117,21 +111,17 @@ export default function Auth() {
             newPassword: formData.password
           })
         });
+
         const responseData = await response.json();
         if (!response.ok) {
           throw new Error(responseData.error || 'Erreur lors de la réinitialisation du mot de passe');
         }
 
-        // Nettoyer le localStorage
         localStorage.removeItem('resetCode');
         localStorage.removeItem('resetEmail');
 
-        // Connecter automatiquement l'utilisateur
-        const {
-          error: signInError
-        } = await signIn(storedEmail, formData.password);
+        const { error: signInError } = await signIn(storedEmail, formData.password);
         if (signInError) {
-          // Si la connexion automatique échoue, rediriger vers la page de connexion
           setResetStep(null);
           setActiveTab('login');
           setFormData({
@@ -146,7 +136,6 @@ export default function Auth() {
             description: 'Vous pouvez maintenant vous connecter avec votre nouveau mot de passe'
           });
         } else {
-          // Connexion réussie, l'utilisateur sera redirigé automatiquement
           toast({
             title: 'Mot de passe réinitialisé',
             description: 'Connexion automatique réussie'
@@ -159,15 +148,15 @@ export default function Auth() {
       setLoading(false);
     }
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
     try {
       if (activeTab === 'login') {
-        const {
-          error
-        } = await signIn(formData.email, formData.password);
+        const { error } = await signIn(formData.email, formData.password);
         if (error) {
           if (error.message?.includes('Invalid login credentials')) {
             setError('Email ou mot de passe incorrect');
@@ -181,9 +170,7 @@ export default function Auth() {
           });
         }
       } else {
-        const {
-          error
-        } = await signUp(formData.email, formData.password, formData.firstName, formData.lastName);
+        const { error } = await signUp(formData.email, formData.password, formData.firstName, formData.lastName);
         if (error) {
           if (error.message?.includes('User already registered')) {
             setError('Un utilisateur avec cet email existe déjà');
@@ -203,464 +190,500 @@ export default function Auth() {
       setLoading(false);
     }
   };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
   };
+
   const handleResetEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setResetEmail(e.target.value);
   };
 
-  // Si on est en mode réinitialisation de mot de passe
+  // Password Reset UI
   if (resetStep) {
-  return <div className="min-h-screen bg-background flex relative overflow-hidden">
-        {/* Ultra-modern animated gradient background matching home page */}
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/5 to-accent/5"></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-background to-accent/10 animate-pulse"></div>
-        
-        {/* Premium floating geometric shapes for 3D depth */}
-        <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-xl animate-float"></div>
-        <div className="absolute top-40 right-40 w-24 h-24 bg-gradient-to-br from-accent/30 to-primary/15 rounded-full blur-lg animate-float-delayed"></div>
-        <div className="absolute bottom-32 left-32 w-40 h-40 bg-gradient-to-br from-success/15 to-primary/10 rounded-full blur-2xl animate-float-slow"></div>
-
-        {/* Côté gauche - Ultra-premium branding avec effets 3D */}
-        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-surface">
-          {/* Multi-layer premium gradient overlay with enhanced depth */}
-          <div className="absolute inset-0 bg-gradient-to-br from-card via-primary/10 to-accent/10 backdrop-blur-sm"></div>
-          
-          {/* Professional 3D geometric decorations */}
-          <div className="absolute top-0 left-0 w-full h-full">
-            <div className="absolute top-32 left-16 w-20 h-20 border-2 border-cyan-400/30 rotate-45 animate-spin-slow"></div>
-            <div className="absolute bottom-40 right-20 w-16 h-16 border-2 border-purple-400/30 rotate-12 animate-pulse"></div>
-            <div className="absolute top-1/2 left-8 w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-lg rotate-45 animate-float"></div>
-          </div>
-
-          <div className="relative z-10 flex flex-col justify-center px-16 py-20 text-white">
-            <div className="mb-16">
-              <div className="flex items-center gap-6 mb-8">
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="relative bg-gradient-to-br from-cyan-500/20 to-purple-600/20 backdrop-blur-xl rounded-3xl p-5 border border-white/10">
-                    <BarChart3 className="h-12 w-12 text-cyan-300" />
-                  </div>
-                </div>
-                <div>
-                  <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-indigo-300 tracking-tight">Stocknix</h1>
-                  <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full mt-2"></div>
-                </div>
-              </div>
-              
-              <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-white/95 leading-tight">
-                  Plateforme de Gestion
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300"> Ultra-Moderne</span>
-                </h2>
-                <p className="text-xl text-cyan-100/80 leading-relaxed">
-                  Révolutionnez votre gestion d'entreprise avec notre solution de nouvelle génération, Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité . Intelligence artificielle, automatisation et design futuriste en ultra-haute définition
-                </p>
-              </div>
-            </div>
-            
-            <div className="space-y-6">
-              {[{
-              text: "Tableau de bord intuitif",
-              gradient: "from-cyan-400 to-blue-500"
-            }, {
-              text: "Gestion automatisée des paiements",
-              gradient: "from-purple-400 to-pink-500"
-            }, {
-              text: "Rapports détaillés en temps réel",
-              gradient: "from-indigo-400 to-purple-500"
-            }, {
-              text: "Performance & Vitesse Optimales",
-              gradient: "from-cyan-400 to-purple-500"
-            }, {
-              text: "IA Intégrée & Automatisation",
-              gradient: "from-emerald-400 to-cyan-500"
-            }].map((feature, index) => <div key={index} className="flex items-center gap-4 group cursor-pointer">
-                  <div className="relative">
-                    <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-300`}></div>
-                    <div className={`relative w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/10`}>
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-                  <span className="text-lg font-medium text-white/90 group-hover:text-white transition-colors">
-                    {feature.text}
-                  </span>
-                </div>)}
-            </div>
-          </div>
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10 flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+          <div className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-accent/20 to-secondary/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-32 left-20 w-72 h-72 bg-gradient-to-r from-secondary/20 to-primary/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
         </div>
 
-        {/* Côté droit - Formulaire */}
-        <div className="flex-1 flex items-center justify-center p-8 lg:p-12 relative z-10">
-          <div className="w-full max-w-md">
-            {/* Back button */}
-            <div className="mb-6">
-              <Button variant="ghost" onClick={() => setResetStep(null)} className="group flex items-center gap-2 text-white hover:text-white hover:bg-white/10 transition-all duration-200 p-3 rounded-xl">
-                <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-                <span className="text-sm font-medium">Retour</span>
-              </Button>
-            </div>
-
-            <div className="text-center mb-8">
-              <div className="lg:hidden flex justify-center mb-4">
-                <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4">
-                  <BarChart3 className="h-8 w-8 text-white" />
-                </div>
-              </div>
-              <h2 className="text-3xl font-bold text-white mb-3">Réinitialisation du mot de passe</h2>
-              <p className="text-white/70 text-lg">Suivez les étapes pour récupérer votre accès</p>
-            </div>
-
-            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8">
-              {resetStep === 'email' && <div className="space-y-6">
-                  <div className="text-center space-y-2 mb-6">
-                    <h3 className="text-xl font-semibold text-card-foreground">Mot de passe oublié ?</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Saisissez votre adresse email pour recevoir un code de vérification
-                    </p>
-                  </div>
-
-                  <form onSubmit={handlePasswordReset} className="space-y-6">
-                    {error && <Alert variant="destructive" className="rounded-xl bg-destructive/10 border-destructive/20">
-                        <AlertDescription className="text-destructive-foreground">{error}</AlertDescription>
-                      </Alert>}
-
-                    <div className="space-y-2">
-                      <Label htmlFor="reset-email" className="text-sm font-medium text-card-foreground">Adresse email</Label>
-                      <Input id="reset-email" type="email" required value={resetEmail} onChange={handleResetEmailChange} placeholder="jean.dupont@example.com" className="h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" />
-                    </div>
-
-                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl" disabled={loading}>
-                      {loading ? 'Envoi en cours...' : 'Envoyer le code'}
-                    </Button>
-                  </form>
-                </div>}
-
-              {resetStep === 'code' && <div className="space-y-6">
-                  <div className="text-center space-y-2 mb-6">
-                    <h3 className="text-xl font-semibold text-card-foreground">Vérification</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Saisissez le code de 6 chiffres envoyé à votre email
-                    </p>
-                  </div>
-
-                  <form onSubmit={handlePasswordReset} className="space-y-6">
-                    {error && <Alert variant="destructive" className="rounded-xl bg-destructive/10 border-destructive/20">
-                        <AlertDescription className="text-destructive-foreground">{error}</AlertDescription>
-                      </Alert>}
-
-                    <div className="space-y-2">
-                      <Label htmlFor="reset-code" className="text-sm font-medium text-card-foreground">Code de vérification</Label>
-                      <Input id="reset-code" name="resetCode" type="text" required value={formData.resetCode} onChange={handleInputChange} placeholder="123456" className="h-12 text-center text-lg font-mono rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" maxLength={6} />
-                    </div>
-
-                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl" disabled={loading}>
-                      {loading ? 'Vérification...' : 'Vérifier le code'}
-                    </Button>
-                  </form>
-                </div>}
-
-              {resetStep === 'password' && <div className="space-y-6">
-                  <div className="text-center space-y-2 mb-6">
-                    <h3 className="text-xl font-semibold text-card-foreground">Nouveau mot de passe</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Saisissez votre nouveau mot de passe
-                    </p>
-                  </div>
-
-                  <form onSubmit={handlePasswordReset} className="space-y-6">
-                    {error && <Alert variant="destructive" className="rounded-xl bg-destructive/10 border-destructive/20">
-                        <AlertDescription className="text-destructive-foreground">{error}</AlertDescription>
-                      </Alert>}
-
-                    <div className="space-y-2">
-                      <Label htmlFor="new-password" className="text-sm font-medium text-card-foreground">Nouveau mot de passe</Label>
-                      <div className="relative">
-                        <Input id="new-password" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" minLength={6} />
-                        <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
-                          {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="confirm-password" className="text-sm font-medium text-card-foreground">Confirmer le mot de passe</Label>
-                      <div className="relative">
-                        <Input id="confirm-password" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} required value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" className="pr-12 h-12 rounded-xl bg-input border-border focus:border-primary focus:ring-primary text-foreground" minLength={6} />
-                        <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                          {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <Button type="submit" className="w-full h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl" disabled={loading}>
-                      {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
-                    </Button>
-                  </form>
-                </div>}
-
-              <div className="mt-8 text-center">
-                <Button variant="ghost" onClick={() => {
-                setResetStep(null);
-                setError(null);
-                setFormData({
-                  email: '',
-                  password: '',
-                  firstName: '',
-                  lastName: '',
-                  confirmPassword: '',
-                  resetCode: ''
-                });
-              }} className="text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 px-3 py-2">
-                  ← Retour à la connexion
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>;
-  }
-  return <div className="min-h-screen relative overflow-hidden">
-      {/* Ultra modern animated gradient background with premium depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/5 to-accent/5"></div>
-      <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-background to-accent/10 animate-pulse"></div>
-      
-      {/* Professional floating geometric shapes for 3D depth */}
-      <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-full blur-xl animate-float"></div>
-      <div className="absolute top-60 right-32 w-24 h-24 bg-gradient-to-br from-purple-500/20 to-pink-600/20 rounded-full blur-lg animate-float-delayed"></div>
-      <div className="absolute bottom-40 left-32 w-40 h-40 bg-gradient-to-br from-indigo-500/15 to-purple-600/15 rounded-full blur-2xl animate-float-slow"></div>
-      <div className="absolute bottom-20 right-20 w-28 h-28 bg-gradient-to-br from-cyan-400/15 to-blue-500/15 rounded-full blur-lg animate-float"></div>
-
-      {/* Premium grid overlay for ultra-modern depth */}
-      <div className="absolute inset-0 opacity-10" style={{
-      backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
-      backgroundSize: '50px 50px'
-    }}></div>
-
-      <div className="relative z-10 min-h-screen flex">
-        {/* Côté gauche - Ultra-premium branding avec effets 3D */}
-        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-surface">
-          {/* Multi-layer premium gradient overlay with enhanced depth */}
-          <div className="absolute inset-0 bg-gradient-to-br from-card via-primary/10 to-accent/10 backdrop-blur-sm"></div>
-          
-          {/* Professional 3D geometric decorations */}
-          <div className="absolute top-0 left-0 w-full h-full">
-            <div className="absolute top-32 left-16 w-20 h-20 border-2 border-cyan-400/30 rotate-45 animate-spin-slow"></div>
-            <div className="absolute bottom-40 right-20 w-16 h-16 border-2 border-purple-400/30 rotate-12 animate-pulse"></div>
-            <div className="absolute top-1/2 left-8 w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-lg rotate-45 animate-float"></div>
-          </div>
-
-          <div className="relative z-10 flex flex-col justify-center px-16 py-20 text-white">
-            <div className="mb-16">
-              <div className="flex items-center gap-6 mb-8">
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="relative bg-gradient-to-br from-cyan-500/20 to-purple-600/20 backdrop-blur-xl rounded-3xl p-5 border border-white/10">
-                    <BarChart3 className="h-12 w-12 text-cyan-300" />
-                  </div>
-                </div>
-                <div>
-                  <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-indigo-300 tracking-tight">Stocknix</h1>
-                  <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full mt-2"></div>
-                </div>
-              </div>
-              
-              <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-white/95 leading-tight">
-                  Plateforme de Gestion
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300"> Ultra-Moderne</span>
-                </h2>
-                <p className="text-xl text-cyan-100/80 leading-relaxed">
-                  Révolutionnez votre gestion d'entreprise avec notre solution de nouvelle génération, Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité . Intelligence artificielle, automatisation et design futuriste en ultra-haute définition
-                </p>
-              </div>
-            </div>
-            
-            <div className="space-y-6">
-              {[{
-              text: "Tableau de bord intuitif",
-              gradient: "from-cyan-400 to-blue-500"
-            }, {
-              text: "Gestion automatisée des paiements",
-              gradient: "from-purple-400 to-pink-500"
-            }, {
-              text: "Rapports détaillés en temps réel",
-              gradient: "from-indigo-400 to-purple-500"
-            }, {
-              text: "Performance & Vitesse Optimales",
-              gradient: "from-cyan-400 to-purple-500"
-            }, {
-              text: "IA Intégrée & Automatisation",
-              gradient: "from-emerald-400 to-cyan-500"
-            }].map((feature, index) => <div key={index} className="flex items-center gap-4 group cursor-pointer">
-                  <div className="relative">
-                    <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-300`}></div>
-                    <div className={`relative w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/10`}>
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-                  <span className="text-lg font-medium text-white/90 group-hover:text-white transition-colors">
-                    {feature.text}
-                  </span>
-                </div>)}
-            </div>
-          </div>
-        </div>
-
-        {/* Côté droit - Formulaire ultra-premium avec glassmorphism */}
-        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-16 relative">
-          {/* Back button avec effet néon premium */}
-          <div className="absolute top-8 left-8">
-            <Button variant="ghost" onClick={() => navigate('/')} className="group flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-300 p-4 rounded-2xl border border-white/10 hover:border-cyan-400/30 backdrop-blur-sm hover:shadow-lg hover:shadow-cyan-500/20">
-              <div className="relative">
-                <ArrowLeft className="h-5 w-5 transition-all duration-300 group-hover:-translate-x-1 group-hover:text-cyan-300" />
-                <div className="absolute inset-0 bg-cyan-400/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </div>
-              <span className="text-sm font-semibold tracking-wide">Retour</span>
+        <div className="relative z-10 w-full max-w-md">
+          <div className="mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => setResetStep(null)} 
+              className="group flex items-center gap-2 text-foreground hover:bg-accent transition-all duration-200"
+            >
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              Retour à la connexion
             </Button>
           </div>
 
-          <div className="w-full max-w-lg">
-            {/* Header avec effet de profondeur 8K */}
-            <div className="text-center mb-12">
-              <div className="lg:hidden flex justify-center mb-6">
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-3xl blur-lg opacity-75"></div>
-                  <div className="relative bg-gradient-to-br from-cyan-500/20 to-purple-600/20 backdrop-blur-xl rounded-3xl p-4 border border-white/10">
-                    <BarChart3 className="h-10 w-10 text-cyan-300" />
-                  </div>
-                </div>
+          <div className="bg-card/80 backdrop-blur-xl border border-border/50 rounded-3xl shadow-2xl p-8">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-8 w-8 text-white" />
               </div>
-              <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-purple-200 mb-4 tracking-tight">
-                Bienvenue
-              </h2>
-              <p className="text-xl font-medium text-slate-50">
-                Accédez à votre espace professionnel ultra-moderne
-              </p>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Réinitialisation</h2>
+              <p className="text-muted-foreground">Récupérez l'accès à votre compte</p>
             </div>
 
-            {/* Formulaire avec glassmorphism 8K ultra-premium */}
-            <div className="relative group">
-              {/* Glow effect background avec profondeur extrême */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-indigo-500/20 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-              
-              <div className="relative bg-white/10 backdrop-blur-2xl rounded-2xl md:rounded-3xl border border-white/20 p-6 md:p-8 lg:p-10 shadow-2xl">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-8 md:mb-10 bg-white/10 rounded-2xl p-1 md:p-2 backdrop-blur-sm border border-white/20 h-12 md:h-auto">
-                    <TabsTrigger value="login" className="rounded-xl text-sm md:text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white hover:text-white/90 px-2 md:px-0 py-2 md:py-[10px] h-10 md:h-auto">
-                      <LogIn className="w-4 h-4 mr-1 md:mr-2" />
-                      <span className="hidden sm:inline">Connexion</span>
-                      <span className="sm:hidden">Login</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="register" className="rounded-xl text-sm md:text-sm font-bold transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-white hover:text-white/90 px-2 md:px-0 py-2 md:py-[10px] h-10 md:h-auto">
-                      <UserPlus className="w-4 h-4 mr-1 md:mr-2" />
-                      <span className="hidden sm:inline">Inscription</span>
-                      <span className="sm:hidden">Sign Up</span>
-                    </TabsTrigger>
-                  </TabsList>
+            {resetStep === 'email' && (
+              <form onSubmit={handlePasswordReset} className="space-y-6">
+                {error && (
+                  <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-                  {error && <Alert variant="destructive" className="mb-8 rounded-2xl bg-red-500/10 border-red-500/20 backdrop-blur-sm">
-                      <AlertDescription className="text-red-200">{error}</AlertDescription>
-                    </Alert>}
+                <div className="space-y-2">
+                  <Label htmlFor="reset-email">Adresse email</Label>
+                  <Input
+                    id="reset-email"
+                    type="email"
+                    required
+                    value={resetEmail}
+                    onChange={handleResetEmailChange}
+                    placeholder="votre@email.com"
+                    className="h-12 rounded-2xl"
+                  />
+                </div>
 
-                  <TabsContent value="login" className="space-y-6 md:space-y-8">
-                    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
-                      <div className="space-y-2 md:space-y-3">
-                        <Label htmlFor="email" className="text-sm font-semibold text-white tracking-wide">Adresse email</Label>
-                        <Input id="email" name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
-                      </div>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                  disabled={loading}
+                >
+                  {loading ? 'Envoi...' : 'Envoyer le code'}
+                </Button>
+              </form>
+            )}
 
-                      <div className="space-y-2 md:space-y-3">
-                        <Label htmlFor="password" className="text-sm font-semibold text-white tracking-wide">Mot de passe</Label>
-                        <div className="relative">
-                          <Input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-12 md:pr-14 h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
-                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 md:px-4 hover:bg-transparent text-white/70 hover:text-white" onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
-                          </Button>
-                        </div>
-                      </div>
+            {resetStep === 'code' && (
+              <form onSubmit={handlePasswordReset} className="space-y-6">
+                {error && (
+                  <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-                      <div className="text-right">
-                        <button type="button" onClick={() => setResetStep('email')} className="text-sm text-cyan-300 hover:text-cyan-200 font-semibold transition-colors tracking-wide">
-                          Mot de passe oublié ?
-                        </button>
-                      </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reset-code">Code de vérification</Label>
+                  <Input
+                    id="reset-code"
+                    name="resetCode"
+                    type="text"
+                    required
+                    value={formData.resetCode}
+                    onChange={handleInputChange}
+                    placeholder="123456"
+                    className="h-12 text-center text-lg font-mono rounded-2xl"
+                    maxLength={6}
+                  />
+                </div>
 
-                      <Button type="submit" className="w-full h-12 md:h-14 lg:h-16 text-base md:text-lg font-bold rounded-xl md:rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group" disabled={loading}>
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <span className="relative z-10 tracking-wide">
-                          {loading ? 'Connexion...' : 'Se connecter'}
-                        </span>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                  disabled={loading}
+                >
+                  {loading ? 'Vérification...' : 'Vérifier le code'}
+                </Button>
+              </form>
+            )}
+
+            {resetStep === 'password' && (
+              <form onSubmit={handlePasswordReset} className="space-y-6">
+                {error && (
+                  <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">Nouveau mot de passe</Label>
+                    <div className="relative">
+                      <Input
+                        id="new-password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        placeholder="••••••••"
+                        className="h-12 rounded-2xl pr-12"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
-                    </form>
-                  </TabsContent>
+                    </div>
+                  </div>
 
-                  <TabsContent value="register" className="space-y-6 md:space-y-8">
-                    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                        <div className="space-y-2 md:space-y-3">
-                          <Label htmlFor="firstName" className="text-sm font-semibold text-white tracking-wide">Prénom</Label>
-                          <Input id="firstName" name="firstName" type="text" required value={formData.firstName} onChange={handleInputChange} placeholder="Jean" className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
-                        </div>
-                        <div className="space-y-2 md:space-y-3">
-                          <Label htmlFor="lastName" className="text-sm font-semibold text-white tracking-wide">Nom</Label>
-                          <Input id="lastName" name="lastName" type="text" required value={formData.lastName} onChange={handleInputChange} placeholder="Dupont" className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2 md:space-y-3">
-                        <Label htmlFor="email-register" className="text-sm font-semibold text-white tracking-wide">Adresse email</Label>
-                        <Input id="email-register" name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="jean.dupont@example.com" className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
-                      </div>
-
-                      <div className="space-y-2 md:space-y-3">
-                        <Label htmlFor="password-register" className="text-sm font-semibold text-white tracking-wide">Mot de passe</Label>
-                        <div className="relative">
-                          <Input id="password-register" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleInputChange} placeholder="••••••••" className="pr-12 md:pr-14 h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" minLength={6} />
-                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 md:px-4 hover:bg-transparent text-white/70 hover:text-white" onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2 md:space-y-3">
-                        <Label htmlFor="confirm-password" className="text-sm font-semibold text-white tracking-wide">Confirmer le mot de passe</Label>
-                        <div className="relative">
-                          <Input id="confirm-password" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} required value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" className="pr-12 md:pr-14 h-12 md:h-14 rounded-xl md:rounded-2xl bg-white/20 border-white/30 focus:border-cyan-400/70 focus:ring-cyan-400/30 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 focus:bg-white/25" />
-                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 md:px-4 hover:bg-transparent text-white/70 hover:text-white" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                            {showConfirmPassword ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
-                          </Button>
-                        </div>
-                      </div>
-
-                      <Button type="submit" className="w-full h-12 md:h-14 lg:h-16 text-base md:text-lg font-bold rounded-xl md:rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-[1.02] relative overflow-hidden group" disabled={loading}>
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <span className="relative z-10 tracking-wide">
-                          {loading ? 'Inscription...' : 'Créer un compte'}
-                        </span>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
+                    <div className="relative">
+                      <Input
+                        id="confirm-password"
+                        name="confirmPassword"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        required
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        placeholder="••••••••"
+                        className="h-12 rounded-2xl pr-12"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
-                    </form>
+                    </div>
+                  </div>
+                </div>
 
-                    <p className="text-xs text-white/60 text-center mt-8 leading-relaxed">
-                      En créant un compte, vous acceptez nos{' '}
-                      <Link to="/mentions-legales" className="text-cyan-300 hover:text-cyan-200 font-semibold transition-colors">
-                        conditions d'utilisation
-                      </Link>{' '}
-                      et notre{' '}
-                      <Link to="/mentions-legales" className="text-cyan-300 hover:text-cyan-200 font-semibold transition-colors">
-                        politique de confidentialité
-                      </Link>.
-                    </p>
-                  </TabsContent>
-                </Tabs>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                  disabled={loading}
+                >
+                  {loading ? 'Mise à jour...' : 'Mettre à jour le mot de passe'}
+                </Button>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Main Auth UI
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10 flex relative overflow-hidden">
+      {/* Modern animated background */}
+      <div className="absolute inset-0">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-accent/20 to-secondary/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-32 left-20 w-72 h-72 bg-gradient-to-r from-secondary/20 to-primary/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      </div>
+
+      {/* Left side - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-card/50 via-primary/10 to-accent/10 backdrop-blur-sm"></div>
+        
+        {/* Floating elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-16 w-16 h-16 border border-primary/30 rounded-2xl rotate-12 animate-float"></div>
+          <div className="absolute bottom-32 right-20 w-12 h-12 bg-gradient-to-br from-accent/30 to-primary/30 rounded-full animate-float-delayed"></div>
+          <div className="absolute top-1/2 left-12 w-8 h-8 bg-secondary/40 rounded-lg rotate-45 animate-pulse"></div>
+        </div>
+
+        <div className="relative z-10 flex flex-col justify-center px-16 py-20">
+          <div className="mb-16">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
+                  <BarChart3 className="h-10 w-10 text-primary" />
+                </div>
               </div>
+              <div>
+                <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-secondary tracking-tight">
+                  Stocknix
+                </h1>
+                <div className="h-1 w-24 bg-gradient-to-r from-primary to-accent rounded-full mt-1"></div>
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-foreground leading-tight">
+                Accédez à votre espace
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent"> professionnel</span>
+              </h2>
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                Révolutionnez votre gestion d'entreprise avec notre solution de nouvelle génération. 
+                Gérez vos clients, suivez vos paiements et générez vos rapports financiers en toute simplicité.
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-6">
+            {[
+              { icon: TrendingUp, text: "Tableau de bord intuitif", gradient: "from-blue-500 to-cyan-500" },
+              { icon: Zap, text: "Gestion automatisée", gradient: "from-purple-500 to-pink-500" },
+              { icon: Sparkles, text: "Rapports en temps réel", gradient: "from-amber-500 to-orange-500" },
+              { icon: Shield, text: "Sécurité avancée", gradient: "from-emerald-500 to-teal-500" }
+            ].map((feature, index) => (
+              <div key={index} className="flex items-center gap-4 group cursor-pointer">
+                <div className="relative">
+                  <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-300`}></div>
+                  <div className={`relative w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20`}>
+                    <feature.icon className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+                <span className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">
+                  {feature.text}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Right side - Form */}
+      <div className="flex-1 flex items-center justify-center p-4 lg:p-8 relative z-10">
+        <div className="w-full max-w-md">
+          {/* Mobile logo */}
+          <div className="lg:hidden text-center mb-8">
+            <div className="inline-flex items-center gap-3 mb-4">
+              <div className="bg-gradient-to-r from-primary to-accent rounded-2xl p-3">
+                <BarChart3 className="h-8 w-8 text-white" />
+              </div>
+              <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                Stocknix
+              </h1>
+            </div>
+            <p className="text-muted-foreground">Votre plateforme de gestion moderne</p>
+          </div>
+
+          <div className="bg-card/80 backdrop-blur-xl border border-border/50 rounded-3xl shadow-2xl p-8">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-8 bg-muted/50 backdrop-blur-sm rounded-2xl p-1">
+                <TabsTrigger 
+                  value="login" 
+                  className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-white font-medium transition-all duration-200"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Connexion
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="register"
+                  className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-white font-medium transition-all duration-200"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Inscription
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="login" className="space-y-6">
+                <div className="text-center space-y-2 mb-6">
+                  <h2 className="text-2xl font-bold text-foreground">Bon retour !</h2>
+                  <p className="text-muted-foreground">Connectez-vous à votre compte</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {error && (
+                    <Alert variant="destructive" className="border-destructive/50 bg-destructive/10 rounded-2xl">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Adresse email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder="votre@email.com"
+                        className="h-12 rounded-2xl"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Mot de passe</Label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          name="password"
+                          type={showPassword ? 'text' : 'password'}
+                          required
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          placeholder="••••••••"
+                          className="h-12 rounded-2xl pr-12"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end">
+                    <Button
+                      type="button"
+                      variant="link"
+                      onClick={() => setResetStep('email')}
+                      className="p-0 h-auto text-primary hover:text-primary/80"
+                    >
+                      Mot de passe oublié ?
+                    </Button>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                    disabled={loading}
+                  >
+                    {loading ? 'Connexion...' : 'Se connecter'}
+                  </Button>
+                </form>
+              </TabsContent>
+
+              <TabsContent value="register" className="space-y-6">
+                <div className="text-center space-y-2 mb-6">
+                  <h2 className="text-2xl font-bold text-foreground">Créer un compte</h2>
+                  <p className="text-muted-foreground">Rejoignez-nous dès aujourd'hui</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {error && (
+                    <Alert variant="destructive" className="border-destructive/50 bg-destructive/10 rounded-2xl">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">Prénom</Label>
+                        <Input
+                          id="firstName"
+                          name="firstName"
+                          required
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          placeholder="Jean"
+                          className="h-12 rounded-2xl"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Nom</Label>
+                        <Input
+                          id="lastName"
+                          name="lastName"
+                          required
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          placeholder="Dupont"
+                          className="h-12 rounded-2xl"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="register-email">Adresse email</Label>
+                      <Input
+                        id="register-email"
+                        name="email"
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder="votre@email.com"
+                        className="h-12 rounded-2xl"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="register-password">Mot de passe</Label>
+                      <div className="relative">
+                        <Input
+                          id="register-password"
+                          name="password"
+                          type={showPassword ? 'text' : 'password'}
+                          required
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          placeholder="••••••••"
+                          className="h-12 rounded-2xl pr-12"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          required
+                          value={formData.confirmPassword}
+                          onChange={handleInputChange}
+                          placeholder="••••••••"
+                          className="h-12 rounded-2xl pr-12"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                    disabled={loading}
+                  >
+                    {loading ? 'Création...' : 'Créer mon compte'}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+
+            <div className="mt-8 pt-6 border-t border-border/50 text-center">
+              <p className="text-sm text-muted-foreground">
+                En continuant, vous acceptez nos{' '}
+                <Link to="/mentions-legales" className="text-primary hover:text-primary/80 transition-colors">
+                  conditions d'utilisation
+                </Link>
+              </p>
             </div>
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 }

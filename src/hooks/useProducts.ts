@@ -34,6 +34,7 @@ export const useProducts = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
+        console.error('Error fetching products:', error);
         throw error;
       }
 
@@ -41,8 +42,8 @@ export const useProducts = () => {
     },
     enabled: !!user,
     staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
-    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnMount: false,
   });
 
   const addProduct = useMutation({

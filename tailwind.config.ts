@@ -77,16 +77,12 @@ export default {
 				'gradient-success': 'var(--gradient-success)',
 				'gradient-warning': 'var(--gradient-warning)',
 				'gradient-surface': 'var(--gradient-surface)',
-				'gradient-dark-animated': 'var(--gradient-dark-animated)',
-				'gradient-neon': 'var(--gradient-neon)',
 			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',
 				'medium': 'var(--shadow-medium)',
 				'large': 'var(--shadow-large)',
 				'glow': 'var(--shadow-glow)',
-				'neon': 'var(--shadow-neon)',
-				'purple-glow': 'var(--shadow-purple-glow)',
 			},
 			transitionProperty: {
 				'smooth': 'var(--transition-smooth)',

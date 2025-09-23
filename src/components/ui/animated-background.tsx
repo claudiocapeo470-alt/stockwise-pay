@@ -25,11 +25,8 @@ const AnimatedBackground = memo(() => {
     };
   }, []);
 
-  // Calculate scroll-based transformations with safe division
-  const scrollHeight = document.documentElement.scrollHeight;
-  const windowHeight = window.innerHeight;
-  const maxScroll = Math.max(scrollHeight - windowHeight, 1); // Prevent division by zero
-  const scrollProgress = Math.min(scrollY / maxScroll, 1);
+  // Calculate scroll-based transformations
+  const scrollProgress = Math.min(scrollY / (document.documentElement.scrollHeight - window.innerHeight), 1);
   const scrollOffset = scrollY * 0.5;
 
   return (

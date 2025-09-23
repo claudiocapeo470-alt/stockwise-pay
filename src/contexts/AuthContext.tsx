@@ -27,7 +27,7 @@ interface AuthContextType {
   profile: Profile | null;
   userRole: UserRole | null;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any; needsConfirmation?: boolean; user?: User }>;
+  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
   isAdmin: boolean;
@@ -134,68 +134,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
-    try {
-      const redirectUrl = `${window.location.origin}/auth`;
-      
-      // Première tentative avec confirmation d'email
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-          }
+    const redirectUrl = `${window.location.origin}/auth`;
+    
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: {
+          first_name: firstName,
+          last_name: lastName,
         }
-      });
-
-      // Si l'inscription réussit avec un utilisateur créé
-      if (data?.user && !error) {
-        return { 
-          error: null, 
-          needsConfirmation: !data.user.email_confirmed_at,
-          user: data.user 
-        };
       }
-
-      // Si erreur liée à l'email, réessayer sans confirmation
-      if (error && (
-        error.message?.includes('Error sending confirmation email') || 
-        error.message?.includes('authentication failed') ||
-        error.message?.includes('SMTP') ||
-        error.message?.includes('email') ||
-        error.status === 422
-      )) {
-        console.log('Problème d\'email détecté, inscription sans confirmation...');
-        
-        const { data: retryData, error: retryError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              first_name: firstName,
-              last_name: lastName,
-            }
-          }
-        });
-        
-        if (retryData?.user && !retryError) {
-          return { 
-            error: null, 
-            needsConfirmation: false,
-            user: retryData.user 
-          };
-        }
-        
-        return { error: retryError, needsConfirmation: false };
-      }
-      
-      return { error, needsConfirmation: false };
-    } catch (err: any) {
-      console.error('Erreur inattendue lors de l\'inscription:', err);
-      return { error: err, needsConfirmation: false };
-    }
+    });
+    return { error };
   };
 
   const signOut = async () => {

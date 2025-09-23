@@ -170,10 +170,16 @@ export default function Auth() {
           });
         }
       } else {
-        const { error } = await signUp(formData.email, formData.password, formData.firstName, formData.lastName);
+        const { error, needsConfirmation, user } = await signUp(
+          formData.email,
+          formData.password,
+          formData.firstName,
+          formData.lastName
+        );
+        
         if (error) {
           if (error.message?.includes('User already registered')) {
-            setError('Un utilisateur avec cet email existe déjà');
+            setError('Un utilisateur avec cet email existe déjà. Essayez de vous connecter.');
           } else if (error.message?.includes('Invalid email')) {
             setError('Adresse email invalide');
           } else if (error.message?.includes('Password should be at least')) {
@@ -184,23 +190,31 @@ export default function Auth() {
             console.error('Erreur d\'inscription:', error);
             setError('Erreur lors de l\'inscription. Veuillez réessayer.');
           }
-        } else {
+        } else if (user) {
+          // Inscription réussie
+          const successMessage = needsConfirmation 
+            ? 'Inscription réussie ! Vérifiez votre email pour confirmer votre compte, puis connectez-vous.'
+            : 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
+          
           toast({
-            title: 'Inscription réussie !',
-            description: 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.',
-            duration: 5000
+            title: 'Bienvenue !',
+            description: successMessage,
+            duration: 6000
           });
-          // Rediriger automatiquement vers l'onglet de connexion
-          setActiveTab('login');
-          // Pré-remplir l'email pour la connexion
-          setFormData(prev => ({
-            ...prev,
-            email: formData.email,
-            password: '',
-            firstName: '',
-            lastName: '',
-            confirmPassword: ''
-          }));
+          
+          // Redirection automatique vers la connexion après 2 secondes
+          setTimeout(() => {
+            setActiveTab('login');
+            // Pré-remplir l'email pour la connexion
+            setFormData(prev => ({
+              ...prev,
+              email: formData.email,
+              password: '',
+              firstName: '',
+              lastName: '',
+              confirmPassword: ''
+            }));
+          }, 2000);
         }
       }
     } catch (err) {

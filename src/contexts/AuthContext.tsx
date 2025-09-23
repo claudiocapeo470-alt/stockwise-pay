@@ -27,7 +27,7 @@ interface AuthContextType {
   profile: Profile | null;
   userRole: UserRole | null;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any; needsConfirmation?: boolean; user?: User }>;
   signOut: () => Promise<void>;
   loading: boolean;
   isAdmin: boolean;
@@ -134,44 +134,68 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
-    // Tentative d'inscription avec confirmation d'email
-    const redirectUrl = `${window.location.origin}/auth`;
-    
-    let { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-        }
-      }
-    });
-
-    // Si l'erreur est liée à l'envoi d'email, réessayer sans confirmation
-    if (error && (error.message?.includes('Error sending confirmation email') || 
-                  error.message?.includes('authentication failed') ||
-                  error.message?.includes('SMTP'))) {
-      console.log('Erreur d\'email détectée, tentative sans confirmation...');
+    try {
+      const redirectUrl = `${window.location.origin}/auth`;
       
-      // Réessayer l'inscription en désactivant la confirmation d'email
-      const { error: retryError } = await supabase.auth.signUp({
+      // Première tentative avec confirmation d'email
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             first_name: firstName,
             last_name: lastName,
-          },
-          // Pas de emailRedirectTo pour éviter l'envoi d'email
+          }
         }
       });
+
+      // Si l'inscription réussit avec un utilisateur créé
+      if (data?.user && !error) {
+        return { 
+          error: null, 
+          needsConfirmation: !data.user.email_confirmed_at,
+          user: data.user 
+        };
+      }
+
+      // Si erreur liée à l'email, réessayer sans confirmation
+      if (error && (
+        error.message?.includes('Error sending confirmation email') || 
+        error.message?.includes('authentication failed') ||
+        error.message?.includes('SMTP') ||
+        error.message?.includes('email') ||
+        error.status === 422
+      )) {
+        console.log('Problème d\'email détecté, inscription sans confirmation...');
+        
+        const { data: retryData, error: retryError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              first_name: firstName,
+              last_name: lastName,
+            }
+          }
+        });
+        
+        if (retryData?.user && !retryError) {
+          return { 
+            error: null, 
+            needsConfirmation: false,
+            user: retryData.user 
+          };
+        }
+        
+        return { error: retryError, needsConfirmation: false };
+      }
       
-      error = retryError;
+      return { error, needsConfirmation: false };
+    } catch (err: any) {
+      console.error('Erreur inattendue lors de l\'inscription:', err);
+      return { error: err, needsConfirmation: false };
     }
-    
-    return { error };
   };
 
   const signOut = async () => {

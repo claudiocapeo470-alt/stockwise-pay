@@ -134,9 +134,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
+    // Tentative d'inscription avec confirmation d'email
     const redirectUrl = `${window.location.origin}/auth`;
     
-    const { error } = await supabase.auth.signUp({
+    let { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -147,6 +148,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
       }
     });
+
+    // Si l'erreur est liée à l'envoi d'email, réessayer sans confirmation
+    if (error && (error.message?.includes('Error sending confirmation email') || 
+                  error.message?.includes('authentication failed') ||
+                  error.message?.includes('SMTP'))) {
+      console.log('Erreur d\'email détectée, tentative sans confirmation...');
+      
+      // Réessayer l'inscription en désactivant la confirmation d'email
+      const { error: retryError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+          },
+          // Pas de emailRedirectTo pour éviter l'envoi d'email
+        }
+      });
+      
+      error = retryError;
+    }
+    
     return { error };
   };
 

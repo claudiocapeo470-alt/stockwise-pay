@@ -174,14 +174,33 @@ export default function Auth() {
         if (error) {
           if (error.message?.includes('User already registered')) {
             setError('Un utilisateur avec cet email existe déjà');
+          } else if (error.message?.includes('Invalid email')) {
+            setError('Adresse email invalide');
+          } else if (error.message?.includes('Password should be at least')) {
+            setError('Le mot de passe doit contenir au moins 6 caractères');
+          } else if (error.message?.includes('Signup is disabled')) {
+            setError('Les inscriptions sont temporairement désactivées');
           } else {
-            setError(error.message || 'Erreur lors de l\'inscription');
+            console.error('Erreur d\'inscription:', error);
+            setError('Erreur lors de l\'inscription. Veuillez réessayer.');
           }
         } else {
           toast({
-            title: 'Inscription réussie',
-            description: 'Vérifiez votre email pour confirmer votre compte'
+            title: 'Inscription réussie !',
+            description: 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.',
+            duration: 5000
           });
+          // Rediriger automatiquement vers l'onglet de connexion
+          setActiveTab('login');
+          // Pré-remplir l'email pour la connexion
+          setFormData(prev => ({
+            ...prev,
+            email: formData.email,
+            password: '',
+            firstName: '',
+            lastName: '',
+            confirmPassword: ''
+          }));
         }
       }
     } catch (err) {

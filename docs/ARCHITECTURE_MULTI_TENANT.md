@@ -8,7 +8,7 @@ Cette application implémente une architecture **multi-tenant parfaitement isol�
 
 ### 1. Row Level Security (RLS) Supabase
 
-**Toutes les tables** sont protégées par des politiques RLS strictes :
+**Toutes les ta bles** sont protégées par des politiques RLS strictes :
 
 ```sql
 -- Exemple : Table products

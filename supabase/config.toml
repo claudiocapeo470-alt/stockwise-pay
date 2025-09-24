@@ -43,3 +43,6 @@ verify_jwt = false
 
 [functions.reset-password]
 verify_jwt = false
+
+[functions.send-confirmation-email]
+verify_jwt = false

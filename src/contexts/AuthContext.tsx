@@ -135,9 +135,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
-      const redirectUrl = `${window.location.origin}/auth`;
+      const redirectUrl = `${window.location.origin}/auth?confirmed=true`;
       
-      // Première tentative avec confirmation d'email
+      // Inscription avec confirmation d'email
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -152,6 +152,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       // Si l'inscription réussit avec un utilisateur créé
       if (data?.user && !error) {
+        // Si l'email n'est pas encore confirmé, envoyer un email personnalisé
+        if (!data.user.email_confirmed_at) {
+          try {
+            // Construire l'URL de confirmation personnalisée
+            const confirmationUrl = data.user.confirmation_sent_at 
+              ? `${window.location.origin}/auth?token_hash=${data.user.id}&type=signup&redirect_to=${encodeURIComponent(window.location.origin + '/app')}`
+              : redirectUrl;
+
+            await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
+              },
+              body: JSON.stringify({
+                email,
+                firstName,
+                lastName,
+                confirmationUrl
+              })
+            });
+          } catch (emailError) {
+            console.warn('Erreur envoi email personnalisé, fallback sur email Supabase:', emailError);
+          }
+        }
+
         return { 
           error: null, 
           needsConfirmation: !data.user.email_confirmed_at,

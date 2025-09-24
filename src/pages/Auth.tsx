@@ -8,6 +8,44 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { z } from 'zod';
+
+// Schemas de validation
+const loginSchema = z.object({
+  email: z.string().email('Adresse email invalide'),
+  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères')
+});
+
+const signupSchema = z.object({
+  firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
+  lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  email: z.string().email('Adresse email invalide'),
+  password: z.string()
+    .min(6, 'Le mot de passe doit contenir au moins 6 caractères')
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre'),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Les mots de passe ne correspondent pas",
+  path: ["confirmPassword"]
+});
+
+const passwordResetEmailSchema = z.object({
+  email: z.string().email('Adresse email invalide')
+});
+
+const passwordResetCodeSchema = z.object({
+  resetCode: z.string().length(6, 'Le code doit contenir exactement 6 chiffres').regex(/^\d{6}$/, 'Le code doit contenir uniquement des chiffres')
+});
+
+const newPasswordSchema = z.object({
+  password: z.string()
+    .min(6, 'Le mot de passe doit contenir au moins 6 caractères')
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre'),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Les mots de passe ne correspondent pas",
+  path: ["confirmPassword"]
+});
 
 export default function Auth() {
   const [activeTab, setActiveTab] = useState('login');
@@ -22,6 +60,7 @@ export default function Auth() {
     resetCode: ''
   });
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'code' | 'password' | null>(null);
   const [resetEmail, setResetEmail] = useState('');
@@ -36,6 +75,20 @@ export default function Auth() {
     }
   }, [user, navigate]);
 
+  // Gérer les paramètres d'URL pour la confirmation
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('confirmed') === 'true') {
+      toast({
+        title: 'Compte confirmé !',
+        description: 'Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.',
+        duration: 5000
+      });
+      // Nettoyer l'URL
+      window.history.replaceState({}, '', '/auth');
+    }
+  }, [toast]);
+
   // Générer un code de réinitialisation de 6 chiffres
   const generateResetCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -44,10 +97,23 @@ export default function Auth() {
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setValidationErrors({});
     setLoading(true);
 
     try {
       if (resetStep === 'email') {
+        // Validation de l'email
+        const validationResult = passwordResetEmailSchema.safeParse({ email: resetEmail });
+        if (!validationResult.success) {
+          const errors: Record<string, string> = {};
+          validationResult.error.errors.forEach((err) => {
+            errors[err.path[0] as string] = err.message;
+          });
+          setValidationErrors(errors);
+          setLoading(false);
+          return;
+        }
+
         const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-password-reset`, {
           method: 'POST',
           headers: {
@@ -69,8 +135,15 @@ export default function Auth() {
           description: 'Vérifiez votre email pour le code de vérification'
         });
       } else if (resetStep === 'code') {
-        if (!formData.resetCode || formData.resetCode.length !== 6) {
-          setError('Veuillez saisir un code de 6 chiffres');
+        // Validation du code
+        const validationResult = passwordResetCodeSchema.safeParse({ resetCode: formData.resetCode });
+        if (!validationResult.success) {
+          const errors: Record<string, string> = {};
+          validationResult.error.errors.forEach((err) => {
+            errors[err.path[0] as string] = err.message;
+          });
+          setValidationErrors(errors);
+          setLoading(false);
           return;
         }
 
@@ -81,12 +154,18 @@ export default function Auth() {
           description: 'Vous pouvez maintenant saisir votre nouveau mot de passe'
         });
       } else if (resetStep === 'password') {
-        if (formData.password !== formData.confirmPassword) {
-          setError('Les mots de passe ne correspondent pas');
-          return;
-        }
-        if (formData.password.length < 6) {
-          setError('Le mot de passe doit contenir au moins 6 caractères');
+        // Validation du nouveau mot de passe
+        const validationResult = newPasswordSchema.safeParse({
+          password: formData.password,
+          confirmPassword: formData.confirmPassword
+        });
+        if (!validationResult.success) {
+          const errors: Record<string, string> = {};
+          validationResult.error.errors.forEach((err) => {
+            errors[err.path[0] as string] = err.message;
+          });
+          setValidationErrors(errors);
+          setLoading(false);
           return;
         }
 
@@ -152,14 +231,33 @@ export default function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setValidationErrors({});
     setLoading(true);
 
     try {
       if (activeTab === 'login') {
+        // Validation des données de connexion
+        const validationResult = loginSchema.safeParse({
+          email: formData.email,
+          password: formData.password
+        });
+        
+        if (!validationResult.success) {
+          const errors: Record<string, string> = {};
+          validationResult.error.errors.forEach((err) => {
+            errors[err.path[0] as string] = err.message;
+          });
+          setValidationErrors(errors);
+          setLoading(false);
+          return;
+        }
+
         const { error } = await signIn(formData.email, formData.password);
         if (error) {
           if (error.message?.includes('Invalid login credentials')) {
             setError('Email ou mot de passe incorrect');
+          } else if (error.message?.includes('Email not confirmed')) {
+            setError('Votre compte n\'est pas encore confirmé. Vérifiez votre email pour le lien de confirmation.');
           } else {
             setError(error.message || 'Erreur de connexion');
           }
@@ -170,6 +268,25 @@ export default function Auth() {
           });
         }
       } else {
+        // Validation des données d'inscription
+        const validationResult = signupSchema.safeParse({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword
+        });
+        
+        if (!validationResult.success) {
+          const errors: Record<string, string> = {};
+          validationResult.error.errors.forEach((err) => {
+            errors[err.path[0] as string] = err.message;
+          });
+          setValidationErrors(errors);
+          setLoading(false);
+          return;
+        }
+        
         const { error, needsConfirmation, user } = await signUp(
           formData.email,
           formData.password,
@@ -214,6 +331,7 @@ export default function Auth() {
               lastName: '',
               confirmPassword: ''
             }));
+            setValidationErrors({});
           }, 2000);
         }
       }
@@ -225,14 +343,34 @@ export default function Auth() {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
+    // Nettoyer l'erreur de validation pour ce champ quand l'utilisateur tape
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleResetEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setResetEmail(e.target.value);
+    // Nettoyer l'erreur de validation pour l'email
+    if (validationErrors.email) {
+      setValidationErrors(prev => ({
+        ...prev,
+        email: ''
+      }));
+    }
+  };
+
+  // Fonction utilitaire pour afficher les erreurs de validation
+  const getFieldError = (fieldName: string) => {
+    return validationErrors[fieldName] || '';
   };
 
   // Password Reset UI
@@ -284,8 +422,11 @@ export default function Auth() {
                     value={resetEmail}
                     onChange={handleResetEmailChange}
                     placeholder="votre@email.com"
-                    className="h-12 rounded-2xl"
+                    className={`h-12 rounded-2xl ${getFieldError('email') ? 'border-red-500' : ''}`}
                   />
+                  {getFieldError('email') && (
+                    <p className="text-sm text-red-500 mt-1">{getFieldError('email')}</p>
+                  )}
                 </div>
 
                 <Button 
@@ -316,9 +457,12 @@ export default function Auth() {
                     value={formData.resetCode}
                     onChange={handleInputChange}
                     placeholder="123456"
-                    className="h-12 text-center text-lg font-mono rounded-2xl"
+                    className={`h-12 text-center text-lg font-mono rounded-2xl ${getFieldError('resetCode') ? 'border-red-500' : ''}`}
                     maxLength={6}
                   />
+                  {getFieldError('resetCode') && (
+                    <p className="text-sm text-red-500 mt-1">{getFieldError('resetCode')}</p>
+                  )}
                 </div>
 
                 <Button 
@@ -351,7 +495,7 @@ export default function Auth() {
                         value={formData.password}
                         onChange={handleInputChange}
                         placeholder="••••••••"
-                        className="h-12 rounded-2xl pr-12"
+                        className={`h-12 rounded-2xl pr-12 ${getFieldError('password') ? 'border-red-500' : ''}`}
                       />
                       <Button
                         type="button"
@@ -363,6 +507,9 @@ export default function Auth() {
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>
+                    {getFieldError('password') && (
+                      <p className="text-sm text-red-500 mt-1">{getFieldError('password')}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -376,7 +523,7 @@ export default function Auth() {
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
                         placeholder="••••••••"
-                        className="h-12 rounded-2xl pr-12"
+                        className={`h-12 rounded-2xl pr-12 ${getFieldError('confirmPassword') ? 'border-red-500' : ''}`}
                       />
                       <Button
                         type="button"
@@ -388,6 +535,9 @@ export default function Auth() {
                         {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>
+                    {getFieldError('confirmPassword') && (
+                      <p className="text-sm text-red-500 mt-1">{getFieldError('confirmPassword')}</p>
+                    )}
                   </div>
                 </div>
 
@@ -538,8 +688,11 @@ export default function Auth() {
                         value={formData.email}
                         onChange={handleInputChange}
                         placeholder="votre@email.com"
-                        className="h-12 rounded-2xl"
+                        className={`h-12 rounded-2xl ${getFieldError('email') ? 'border-red-500' : ''}`}
                       />
+                      {getFieldError('email') && (
+                        <p className="text-sm text-red-500 mt-1">{getFieldError('email')}</p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -553,7 +706,7 @@ export default function Auth() {
                           value={formData.password}
                           onChange={handleInputChange}
                           placeholder="••••••••"
-                          className="h-12 rounded-2xl pr-12"
+                          className={`h-12 rounded-2xl pr-12 ${getFieldError('password') ? 'border-red-500' : ''}`}
                         />
                         <Button
                           type="button"
@@ -565,6 +718,9 @@ export default function Auth() {
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </Button>
                       </div>
+                      {getFieldError('password') && (
+                        <p className="text-sm text-red-500 mt-1">{getFieldError('password')}</p>
+                      )}
                     </div>
                   </div>
 
@@ -613,8 +769,11 @@ export default function Auth() {
                           value={formData.firstName}
                           onChange={handleInputChange}
                           placeholder="Jean"
-                          className="h-12 rounded-2xl"
+                          className={`h-12 rounded-2xl ${getFieldError('firstName') ? 'border-red-500' : ''}`}
                         />
+                        {getFieldError('firstName') && (
+                          <p className="text-sm text-red-500 mt-1">{getFieldError('firstName')}</p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="lastName">Nom</Label>
@@ -625,8 +784,11 @@ export default function Auth() {
                           value={formData.lastName}
                           onChange={handleInputChange}
                           placeholder="Dupont"
-                          className="h-12 rounded-2xl"
+                          className={`h-12 rounded-2xl ${getFieldError('lastName') ? 'border-red-500' : ''}`}
                         />
+                        {getFieldError('lastName') && (
+                          <p className="text-sm text-red-500 mt-1">{getFieldError('lastName')}</p>
+                        )}
                       </div>
                     </div>
 
@@ -640,8 +802,11 @@ export default function Auth() {
                         value={formData.email}
                         onChange={handleInputChange}
                         placeholder="votre@email.com"
-                        className="h-12 rounded-2xl"
+                        className={`h-12 rounded-2xl ${getFieldError('email') ? 'border-red-500' : ''}`}
                       />
+                      {getFieldError('email') && (
+                        <p className="text-sm text-red-500 mt-1">{getFieldError('email')}</p>
+                      )}
                     </div>
 
                     <div className="space-y-2">

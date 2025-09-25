@@ -135,14 +135,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
-      const redirectUrl = `${window.location.origin}/auth?confirmed=true`;
-      
-      // Inscription avec confirmation d'email
+      // Inscription directe sans confirmation d'email pour éviter les problèmes SMTP
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl,
           data: {
             first_name: firstName,
             last_name: lastName,
@@ -150,74 +147,42 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
       });
 
-      // Si l'inscription réussit avec un utilisateur créé
-      if (data?.user && !error) {
-        // Si l'email n'est pas encore confirmé, envoyer un email personnalisé
-        if (!data.user.email_confirmed_at) {
-          try {
-            // Construire l'URL de confirmation personnalisée
-            const confirmationUrl = data.user.confirmation_sent_at 
-              ? `${window.location.origin}/auth?token_hash=${data.user.id}&type=signup&redirect_to=${encodeURIComponent(window.location.origin + '/app')}`
-              : redirectUrl;
+      if (error) {
+        console.error('Erreur d\'inscription:', error);
+        return { error, needsConfirmation: false };
+      }
 
-            await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
-              },
-              body: JSON.stringify({
-                email,
-                firstName,
-                lastName,
-                confirmationUrl
-              })
-            });
-          } catch (emailError) {
-            console.warn('Erreur envoi email personnalisé, fallback sur email Supabase:', emailError);
-          }
+      if (data?.user) {
+        // Tentative d'envoi d'email de bienvenue personnalisé (non bloquant)
+        try {
+          const confirmationUrl = `${window.location.origin}/app`;
+          
+          await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
+            },
+            body: JSON.stringify({
+              email,
+              firstName,
+              lastName,
+              confirmationUrl
+            })
+          });
+        } catch (emailError) {
+          console.warn('Email de bienvenue non envoyé (non bloquant):', emailError);
+          // On ignore l'erreur d'email car l'inscription a réussi
         }
 
         return { 
           error: null, 
-          needsConfirmation: !data.user.email_confirmed_at,
+          needsConfirmation: false,
           user: data.user 
         };
       }
-
-      // Si erreur liée à l'email, réessayer sans confirmation
-      if (error && (
-        error.message?.includes('Error sending confirmation email') || 
-        error.message?.includes('authentication failed') ||
-        error.message?.includes('SMTP') ||
-        error.message?.includes('email') ||
-        error.status === 422
-      )) {
-        console.log('Problème d\'email détecté, inscription sans confirmation...');
-        
-        const { data: retryData, error: retryError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              first_name: firstName,
-              last_name: lastName,
-            }
-          }
-        });
-        
-        if (retryData?.user && !retryError) {
-          return { 
-            error: null, 
-            needsConfirmation: false,
-            user: retryData.user 
-          };
-        }
-        
-        return { error: retryError, needsConfirmation: false };
-      }
       
-      return { error, needsConfirmation: false };
+      return { error: new Error('Aucun utilisateur créé'), needsConfirmation: false };
     } catch (err: any) {
       console.error('Erreur inattendue lors de l\'inscription:', err);
       return { error: err, needsConfirmation: false };

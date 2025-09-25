@@ -153,11 +153,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       if (data?.user) {
-        // Tentative d'envoi d'email de bienvenue personnalisé (non bloquant)
+        // Envoi d'email de bienvenue personnalisé
         try {
-          const confirmationUrl = `${window.location.origin}/app`;
+          const confirmationUrl = `${window.location.origin}/dashboard`;
           
-          await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
+          const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -170,8 +170,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               confirmationUrl
             })
           });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.warn('Erreur lors de l\'envoi de l\'email de bienvenue:', errorData);
+          } else {
+            console.log('Email de bienvenue envoyé avec succès');
+          }
         } catch (emailError) {
-          console.warn('Email de bienvenue non envoyé (non bloquant):', emailError);
+          console.warn('Email de bienvenue non envoyé:', emailError);
           // On ignore l'erreur d'email car l'inscription a réussi
         }
 

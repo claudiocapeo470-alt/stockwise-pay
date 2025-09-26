@@ -577,15 +577,17 @@ export default function Auth() {
   // Main Auth UI
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10 flex relative overflow-hidden">
-      {/* Bouton de retour */}
+      {/* Bouton de retour élégant */}
       <div className="absolute top-6 left-6 z-20">
         <Button 
           variant="ghost" 
           onClick={() => navigate('/')} 
-          className="group flex items-center gap-2 text-foreground hover:bg-accent transition-all duration-200"
+          className="group flex items-center gap-3 px-4 py-2 rounded-xl bg-card/80 backdrop-blur-md border border-border/50 shadow-lg hover:shadow-xl hover:bg-card/90 transition-all duration-300 text-foreground hover:text-primary"
         >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          Retour à l'accueil
+          <div className="p-1 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-all duration-300">
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          </div>
+          <span className="font-medium">Retour à l'accueil</span>
         </Button>
       </div>
 

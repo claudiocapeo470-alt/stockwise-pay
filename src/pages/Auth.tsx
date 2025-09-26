@@ -578,6 +578,18 @@ export default function Auth() {
   // Main Auth UI
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10 flex relative overflow-hidden">
+      {/* Bouton de retour */}
+      <div className="absolute top-6 left-6 z-20">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')} 
+          className="group flex items-center gap-2 text-foreground hover:bg-accent transition-all duration-200"
+        >
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          Retour à l'accueil
+        </Button>
+      </div>
+
       {/* Modern animated background */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>

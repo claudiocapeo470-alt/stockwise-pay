@@ -7,16 +7,22 @@ import { BarChart3, Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle } 
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Dashboard() {
   const { products } = useProducts();
   const { sales } = useSales();
   const { payments } = usePayments();
-  const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
+  const { user } = useAuth();
 
   // Show welcome guide for completely new users
   const isNewUser = products.length === 0 && sales.length === 0 && payments.length === 0;
+  
+  // Check if user has seen the welcome guide
+  const hasSeenWelcomeGuide = localStorage.getItem(`welcome-guide-seen-${user?.id}`) === 'true';
+  
+  const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
 
   const metrics = useMemo(() => {
     const totalProducts = products.length;
@@ -41,6 +47,21 @@ export default function Dashboard() {
       totalPayments,
     };
   }, [products, sales, payments]);
+
+  // Auto-show welcome guide for new users who haven't seen it yet
+  useEffect(() => {
+    if (isNewUser && !hasSeenWelcomeGuide && user?.id) {
+      setShowWelcomeGuide(true);
+    }
+  }, [isNewUser, hasSeenWelcomeGuide, user?.id]);
+
+  // Handle closing the welcome guide and mark as seen
+  const handleCloseWelcomeGuide = () => {
+    if (user?.id) {
+      localStorage.setItem(`welcome-guide-seen-${user.id}`, 'true');
+    }
+    setShowWelcomeGuide(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -107,9 +128,9 @@ export default function Dashboard() {
         </Card>
       )}
 
-      {isNewUser && showWelcomeGuide && (
+      {showWelcomeGuide && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <WelcomeGuide onClose={() => setShowWelcomeGuide(false)} />
+          <WelcomeGuide onClose={handleCloseWelcomeGuide} />
         </div>
       )}
 

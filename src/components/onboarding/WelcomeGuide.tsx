@@ -19,28 +19,28 @@ export function WelcomeGuide({ onClose }: WelcomeGuideProps) {
       description: "Créez votre inventaire en ajoutant les produits que vous vendez",
       icon: Package,
       action: "Gérer les Stocks",
-      route: "/stocks"
+      route: "/app/stocks"
     },
     {
       title: "Enregistrez vos ventes",
       description: "Suivez vos transactions et générez vos factures automatiquement",
       icon: ShoppingCart,
       action: "Voir les Ventes", 
-      route: "/ventes"
+      route: "/app/ventes"
     },
     {
       title: "Gérez vos paiements",
       description: "Trackez vos encaissements et suivez les paiements en attente",
       icon: Receipt,
       action: "Gérer Paiements",
-      route: "/paiements"
+      route: "/app/paiements"
     },
     {
       title: "Analysez vos performances", 
       description: "Consultez vos rapports et exportez vos données",
       icon: BarChart3,
       action: "Voir Rapports",
-      route: "/rapports"
+      route: "/app/rapports"
     }
   ];
 

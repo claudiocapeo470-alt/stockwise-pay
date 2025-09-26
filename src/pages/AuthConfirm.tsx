@@ -36,6 +36,31 @@ export default function AuthConfirm() {
           setStatus('success');
           setMessage('Votre compte a été confirmé avec succès !');
           
+          // Envoyer l'email de bienvenue après confirmation
+          try {
+            const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-welcome-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
+              },
+              body: JSON.stringify({
+                email: data.user.email,
+                firstName: data.user.user_metadata?.first_name,
+                lastName: data.user.user_metadata?.last_name
+              })
+            });
+
+            if (response.ok) {
+              console.log('Email de bienvenue envoyé avec succès');
+            } else {
+              console.warn('Erreur lors de l\'envoi de l\'email de bienvenue');
+            }
+          } catch (emailError) {
+            console.warn('Email de bienvenue non envoyé:', emailError);
+            // L'erreur d'email n'affecte pas la confirmation
+          }
+          
           // Redirection automatique après 3 secondes
           setTimeout(() => {
             navigate('/app');
@@ -71,7 +96,7 @@ export default function AuthConfirm() {
                 <CheckCircle className="h-8 w-8 text-white" />
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Compte confirmé !</h2>
-              <p className="text-muted-foreground mb-6">{message}</p>
+              <p className="text-muted-foreground mb-6">Félicitations ! Votre compte est maintenant actif. Vous allez recevoir un email de bienvenue avec toutes les informations pour bien commencer.</p>
               <Alert className="border-green-200 bg-green-50 mb-4">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-green-800">

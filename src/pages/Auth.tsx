@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { BarChart3, Eye, EyeOff, LogIn, UserPlus, ArrowLeft, Sparkles, Shield, Zap, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -255,15 +256,19 @@ export default function Auth() {
         const { error } = await signIn(formData.email, formData.password);
         if (error) {
           if (error.message?.includes('Invalid login credentials')) {
-            setError('Email ou mot de passe incorrect');
-          } else if (error.message?.includes('Email not confirmed')) {
-            setError('Votre compte n\'est pas encore confirmé. Vérifiez votre email pour le lien de confirmation.');
+            setError('Email ou mot de passe incorrect. Vérifiez vos identifiants.');
+          } else if (error.message?.includes('Email not confirmed') || error.message?.includes('pas encore confirmé')) {
+            setError('Votre compte n\'est pas encore confirmé. Vérifiez votre email et cliquez sur le lien de confirmation.');
+          } else if (error.message?.includes('Invalid email')) {
+            setError('Format d\'email invalide.');
+          } else if (error.message?.includes('Too many requests')) {
+            setError('Trop de tentatives de connexion. Veuillez patienter avant de réessayer.');
           } else {
-            setError(error.message || 'Erreur de connexion');
+            setError(error.message || 'Erreur de connexion. Veuillez réessayer.');
           }
         } else {
           toast({
-            title: 'Connexion réussie',
+            title: 'Connexion réussie !',
             description: 'Bienvenue dans Stocknix !'
           });
         }
@@ -308,21 +313,20 @@ export default function Auth() {
             setError('Erreur lors de l\'inscription. Veuillez réessayer.');
           }
         } else if (user) {
-          // Inscription réussie
+          // Inscription réussie - confirmation d'email TOUJOURS nécessaire
           const successMessage = needsConfirmation 
-            ? 'Inscription réussie ! Vérifiez votre email pour confirmer votre compte, puis connectez-vous.'
-            : 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
+            ? 'Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte avant de vous connecter.'
+            : 'Compte créé et confirmé ! Vous pouvez maintenant vous connecter.';
           
           toast({
-            title: 'Bienvenue !',
+            title: 'Inscription réussie !',
             description: successMessage,
-            duration: 6000
+            duration: 8000
           });
           
-          // Redirection automatique vers la connexion après 2 secondes
-          setTimeout(() => {
+          if (needsConfirmation) {
+            // Rester sur l'onglet inscription avec un message clair
             setActiveTab('login');
-            // Pré-remplir l'email pour la connexion
             setFormData(prev => ({
               ...prev,
               email: formData.email,
@@ -332,7 +336,22 @@ export default function Auth() {
               confirmPassword: ''
             }));
             setValidationErrors({});
-          }, 2000);
+            setError('Vérifiez votre email et cliquez sur le lien de confirmation avant de vous connecter.');
+          } else {
+            // Si pas de confirmation nécessaire, basculer vers la connexion
+            setTimeout(() => {
+              setActiveTab('login');
+              setFormData(prev => ({
+                ...prev,
+                email: formData.email,
+                password: '',
+                firstName: '',
+                lastName: '',
+                confirmPassword: ''
+              }));
+              setValidationErrors({});
+            }, 2000);
+          }
         }
       }
     } catch (err) {
@@ -724,16 +743,52 @@ export default function Auth() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-end">
-                    <Button
-                      type="button"
-                      variant="link"
-                      onClick={() => setResetStep('email')}
-                      className="p-0 h-auto text-primary hover:text-primary/80"
-                    >
-                      Mot de passe oublié ?
-                    </Button>
-                  </div>
+                    <div className="flex items-center justify-between">
+                      <Button
+                        type="button"
+                        variant="link"
+                        onClick={() => setResetStep('email')}
+                        className="p-0 h-auto text-primary hover:text-primary/80"
+                      >
+                        Mot de passe oublié ?
+                      </Button>
+                      
+                      <Button
+                        type="button"
+                        variant="link"
+                        onClick={async () => {
+                          if (!formData.email) {
+                            setError('Veuillez saisir votre email pour renvoyer la confirmation.');
+                            return;
+                          }
+                          try {
+                            setLoading(true);
+                            const { error } = await supabase.auth.resend({
+                              type: 'signup',
+                              email: formData.email,
+                              options: {
+                                emailRedirectTo: `${window.location.origin}/auth/confirm`
+                              }
+                            });
+                            if (error) {
+                              setError('Erreur lors du renvoi de l\'email de confirmation.');
+                            } else {
+                              toast({
+                                title: 'Email renvoyé',
+                                description: 'Vérifiez votre boîte mail pour le nouveau lien de confirmation.'
+                              });
+                            }
+                          } catch (err) {
+                            setError('Erreur lors du renvoi de l\'email.');
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                        className="p-0 h-auto text-muted-foreground hover:text-foreground text-xs"
+                      >
+                        Renvoyer la confirmation
+                      </Button>
+                    </div>
 
                   <Button 
                     type="submit" 

@@ -126,20 +126,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    
+    // Vérifier si l'email est confirmé
+    if (data?.user && !data.user.email_confirmed_at) {
+      return { 
+        error: new Error('Votre compte n\'est pas encore confirmé. Vérifiez votre email pour le lien de confirmation.') 
+      };
+    }
+    
     return { error };
   };
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
-      // Inscription directe sans confirmation d'email pour éviter les problèmes SMTP
+      // Inscription avec confirmation d'email OBLIGATOIRE
+      const confirmationUrl = `${window.location.origin}/auth/confirm`;
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: confirmationUrl,
           data: {
             first_name: firstName,
             last_name: lastName,
@@ -153,38 +164,42 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       if (data?.user) {
-        // Envoi d'email de bienvenue personnalisé
-        try {
-          const confirmationUrl = `${window.location.origin}/dashboard`;
-          
-          const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
-            },
-            body: JSON.stringify({
-              email,
-              firstName,
-              lastName,
-              confirmationUrl
-            })
-          });
+        // L'utilisateur est créé mais doit confirmer son email
+        const needsConfirmation = !data.user.email_confirmed_at;
+        
+        // Envoi d'email de confirmation personnalisé via SMTP
+        if (needsConfirmation) {
+          try {
+            const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
+              },
+              body: JSON.stringify({
+                email,
+                firstName,
+                lastName,
+                confirmationUrl
+              })
+            });
 
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.warn('Erreur lors de l\'envoi de l\'email de bienvenue:', errorData);
-          } else {
-            console.log('Email de bienvenue envoyé avec succès');
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              console.warn('Erreur lors de l\'envoi de l\'email de confirmation:', errorData);
+            } else {
+              console.log('Email de confirmation envoyé avec succès');
+            }
+          } catch (emailError) {
+            console.warn('Email de confirmation non envoyé via SMTP:', emailError);
+            // L'inscription est réussie même si l'email SMTP échoue
+            // Supabase aura envoyé son propre email de confirmation
           }
-        } catch (emailError) {
-          console.warn('Email de bienvenue non envoyé:', emailError);
-          // On ignore l'erreur d'email car l'inscription a réussi
         }
 
         return { 
           error: null, 
-          needsConfirmation: false,
+          needsConfirmation,
           user: data.user 
         };
       }

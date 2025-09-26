@@ -163,7 +163,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { error, needsConfirmation: false };
       }
 
-      if (data?.user) {
+      if (data?.user && !error) {
         // L'utilisateur est créé mais doit confirmer son email
         const needsConfirmation = !data.user.email_confirmed_at;
         
@@ -212,7 +212,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      // Nettoyer d'abord les données locales
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      setUserRole(null);
+      
+      // Ensuite faire la déconnexion Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+      }
+      
+      // Forcer une redirection vers la page d'accueil
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Erreur inattendue lors de la déconnexion:', error);
+      // En cas d'erreur, forcer quand même le nettoyage local
+      localStorage.clear();
+      window.location.href = '/';
+    }
   };
 
   const value = {

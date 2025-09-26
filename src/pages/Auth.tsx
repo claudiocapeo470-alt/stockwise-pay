@@ -308,45 +308,25 @@ export default function Auth() {
             console.error('Erreur d\'inscription:', error);
             setError('Erreur lors de l\'inscription. Veuillez réessayer.');
           }
-        } else if (user) {
-          // Inscription réussie - confirmation d'email TOUJOURS nécessaire
-          const successMessage = needsConfirmation 
-            ? 'Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte avant de vous connecter.'
-            : 'Compte créé et confirmé ! Vous pouvez maintenant vous connecter.';
-          
+        } else if (user && !error) {
+          // Inscription réussie - confirmation d'email nécessaire
           toast({
             title: 'Inscription réussie !',
-            description: successMessage,
+            description: 'Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte avant de vous connecter.',
             duration: 8000
           });
           
-          if (needsConfirmation) {
-            // Rester sur l'onglet inscription avec un message clair
-            setActiveTab('login');
-            setFormData(prev => ({
-              ...prev,
-              email: formData.email,
-              password: '',
-              firstName: '',
-              lastName: '',
-              confirmPassword: ''
-            }));
-            setValidationErrors({});
-          } else {
-            // Si pas de confirmation nécessaire, basculer vers la connexion
-            setTimeout(() => {
-              setActiveTab('login');
-              setFormData(prev => ({
-                ...prev,
-                email: formData.email,
-                password: '',
-                firstName: '',
-                lastName: '',
-                confirmPassword: ''
-              }));
-              setValidationErrors({});
-            }, 2000);
-          }
+          // Basculer vers l'onglet connexion avec les données préremplies
+          setActiveTab('login');
+          setFormData(prev => ({
+            ...prev,
+            email: formData.email,
+            password: '',
+            firstName: '',
+            lastName: '',
+            confirmPassword: ''
+          }));
+          setValidationErrors({});
         }
       }
     } catch (err) {

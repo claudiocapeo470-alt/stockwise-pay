@@ -96,7 +96,7 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
 
   const renderSalesReport = () => (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Ventes totales</CardTitle>
@@ -130,14 +130,14 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
         <CardContent>
           <div className="space-y-2">
             {reportData.sales.topProducts.map((product, index) => (
-              <div key={product.id} className="flex items-center justify-between p-2 bg-muted/50 rounded">
+              <div key={product.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-2 bg-muted/50 rounded gap-2">
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">{index + 1}</Badge>
-                  <span className="font-medium">{product.name}</span>
+                  <span className="font-medium text-sm sm:text-base break-all">{product.name}</span>
                 </div>
                 <div className="text-right">
-                  <div className="font-medium">{formatPrice(product.salesRevenue)}</div>
-                  <div className="text-sm text-muted-foreground">{product.salesCount} vente(s)</div>
+                  <div className="font-medium text-sm sm:text-base">{formatPrice(product.salesRevenue)}</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">{product.salesCount} vente(s)</div>
                 </div>
               </div>
             ))}
@@ -149,7 +149,7 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
 
   const renderInventoryReport = () => (
     <div className="space-y-4">
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Total produits</CardTitle>
@@ -192,11 +192,11 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
           <CardContent>
             <div className="space-y-2">
               {reportData.inventory.lowStockProducts.map((product) => (
-                <div key={product.id} className="flex items-center justify-between p-2 bg-warning/10 rounded">
-                  <span className="font-medium">{product.name}</span>
+                <div key={product.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-2 bg-warning/10 rounded gap-2">
+                  <span className="font-medium text-sm sm:text-base break-all">{product.name}</span>
                   <div className="text-right">
-                    <div className="font-medium">Stock: {product.quantity}</div>
-                    <div className="text-sm text-muted-foreground">Min: {product.min_quantity}</div>
+                    <div className="font-medium text-sm sm:text-base">Stock: {product.quantity}</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Min: {product.min_quantity}</div>
                   </div>
                 </div>
               ))}
@@ -213,9 +213,9 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
           <CardContent>
             <div className="space-y-2">
               {reportData.inventory.outOfStockProducts.map((product) => (
-                <div key={product.id} className="flex items-center justify-between p-2 bg-destructive/10 rounded">
-                  <span className="font-medium">{product.name}</span>
-                  <Badge variant="destructive">Épuisé</Badge>
+                <div key={product.id} className="flex flex-col xs:flex-row xs:items-center justify-between p-2 bg-destructive/10 rounded gap-2">
+                  <span className="font-medium text-sm sm:text-base break-all">{product.name}</span>
+                  <Badge variant="destructive" className="self-start xs:self-center">Épuisé</Badge>
                 </div>
               ))}
             </div>
@@ -227,7 +227,7 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
 
   const renderPaymentsReport = () => (
     <div className="space-y-4">
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Total paiements</CardTitle>
@@ -262,7 +262,7 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
         </Card>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-success">Montant encaissé</CardTitle>
@@ -302,12 +302,14 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-7xl max-h-[85vh] overflow-y-auto w-[95vw]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            {getReportIcon()}
-            {getReportTitle()}
-            <Badge variant="secondary" className="ml-auto">
+          <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="flex items-center gap-2">
+              {getReportIcon()}
+              <span className="text-base sm:text-lg">{getReportTitle()}</span>
+            </div>
+            <Badge variant="secondary" className="self-start sm:ml-auto">
               {new Date().toLocaleDateString('fr-FR')}
             </Badge>
           </DialogTitle>

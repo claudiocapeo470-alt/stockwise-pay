@@ -392,7 +392,7 @@ export default function Rapports() {
       const stats = [
         { label: 'Nombre total de ventes', value: `${metrics.totalSales}`, color: primaryColor },
         { label: 'Chiffre d\'affaires total', value: `${metrics.totalRevenue.toLocaleString()} CFA`, color: successColor },
-        { label: 'Valeur moyenne par vente', value: `${metrics.totalSales > 0 ? Math.round(metrics.totalRevenue / metrics.totalSales).toLocaleString() : '0'} CFA`, color: primaryColor },
+        { label: 'Valeur moyenne par vente', value: `${metrics.totalSales > 0 ? formatAmountForPDF(Math.round(metrics.totalRevenue / metrics.totalSales)) : '0'} CFA`, color: primaryColor },
         { label: 'Nombre de produits vendus', value: `${sales.reduce((sum, sale) => sum + sale.quantity, 0)}`, color: secondaryColor }
       ]
       
@@ -407,8 +407,8 @@ export default function Rapports() {
           product?.name || 'Produit supprimé',
           sale.customer_name || 'Client anonyme',
           sale.quantity.toString(),
-          `${Number(sale.unit_price).toLocaleString()} CFA`,
-          `${Number(sale.total_amount).toLocaleString()} CFA`
+          `${formatAmountForPDF(Number(sale.unit_price))} CFA`,
+          `${formatAmountForPDF(Number(sale.total_amount))} CFA`
         ]
       })
 
@@ -468,7 +468,7 @@ export default function Rapports() {
           `${Number(product.price).toLocaleString()} CFA`,
           product.quantity.toString(),
           product.min_quantity.toString(),
-          `${stockValue.toLocaleString()} CFA`,
+          `${formatAmountForPDF(stockValue)} CFA`,
           status
         ]
       })
@@ -534,7 +534,7 @@ export default function Rapports() {
           new Date(payment.created_at).toLocaleDateString('fr-FR'),
           fullName,
           payment.customer_phone || 'N/A',
-          `${Number(payment.total_amount).toLocaleString()} CFA`,
+          `${formatAmountForPDF(Number(payment.total_amount))} CFA`,
           payment.payment_method,
           payment.status === 'completed' ? 'Terminé' : 
           payment.status === 'pending' ? 'En attente' : 
@@ -624,6 +624,14 @@ export default function Rapports() {
       default:
         return <FileText className="h-5 w-5 text-muted-foreground" />
     }
+  }
+
+  const formatAmountForPDF = (amount: number) => {
+    return new Intl.NumberFormat('fr-FR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+      useGrouping: true
+    }).format(amount).replace(/\s/g, ' '); // Remplace les espaces insécables par des espaces normaux
   }
 
   const formatPrice = (price: number) => {

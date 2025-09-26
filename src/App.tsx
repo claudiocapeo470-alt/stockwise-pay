@@ -15,7 +15,7 @@ import Rapports from "./pages/Rapports";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
-import AuthConfirm from "./pages/AuthConfirm";
+
 import HomePage from "./pages/HomePage";
 import MentionsLegales from "./pages/MentionsLegales";
 import NotFound from "./pages/NotFound";
@@ -61,7 +61,6 @@ const App = () => (
               
               {/* Auth Route */}
               <Route path="/auth" element={<Auth />} />
-              <Route path="/auth/confirm" element={<AuthConfirm />} />
               
               {/* Protected App Routes */}
               <Route path="/app/*" element={

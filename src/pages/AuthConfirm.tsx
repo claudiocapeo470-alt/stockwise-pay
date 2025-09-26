@@ -61,9 +61,9 @@ export default function AuthConfirm() {
             // L'erreur d'email n'affecte pas la confirmation
           }
           
-          // Redirection automatique après 3 secondes
+          // Redirection automatique après 3 secondes vers la page de connexion
           setTimeout(() => {
-            navigate('/app');
+            navigate('/auth');
           }, 3000);
         }
       } catch (err: any) {
@@ -92,30 +92,30 @@ export default function AuthConfirm() {
 
           {status === 'success' && (
             <>
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-white" />
+              <div className="w-16 h-16 bg-gradient-to-r from-success to-success rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="h-8 w-8 text-success-foreground" />
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Compte confirmé !</h2>
-              <p className="text-muted-foreground mb-6">Félicitations ! Votre compte est maintenant actif. Vous allez recevoir un email de bienvenue avec toutes les informations pour bien commencer.</p>
-              <Alert className="border-green-200 bg-green-50 mb-4">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
-                  Redirection automatique vers votre dashboard dans 3 secondes...
+              <p className="text-muted-foreground mb-6">Félicitations ! Votre compte est maintenant actif. Vous pouvez maintenant vous connecter à votre espace.</p>
+              <Alert className="border-success/30 bg-success/10 mb-4">
+                <CheckCircle className="h-4 w-4 text-success" />
+                <AlertDescription className="text-success">
+                  Redirection automatique vers la page de connexion dans 3 secondes...
                 </AlertDescription>
               </Alert>
               <Button 
-                onClick={() => navigate('/app')} 
+                onClick={() => navigate('/auth')} 
                 className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-medium"
               >
-                Accéder à mon dashboard
+                Se connecter maintenant
               </Button>
             </>
           )}
 
           {status === 'error' && (
             <>
-              <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <XCircle className="h-8 w-8 text-white" />
+              <div className="w-16 h-16 bg-gradient-to-r from-destructive to-destructive rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <XCircle className="h-8 w-8 text-destructive-foreground" />
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Erreur de confirmation</h2>
               <p className="text-muted-foreground mb-6">{message}</p>

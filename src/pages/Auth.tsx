@@ -336,7 +336,6 @@ export default function Auth() {
               confirmPassword: ''
             }));
             setValidationErrors({});
-            setError('Vérifiez votre email et cliquez sur le lien de confirmation avant de vous connecter.');
           } else {
             // Si pas de confirmation nécessaire, basculer vers la connexion
             setTimeout(() => {

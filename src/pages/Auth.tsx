@@ -80,6 +80,8 @@ export default function Auth() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('confirmed') === 'true') {
+      // S'assurer que l'utilisateur est sur l'onglet de connexion
+      setActiveTab('login');
       toast({
         title: 'Compte confirmé !',
         description: 'Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.',
@@ -200,27 +202,21 @@ export default function Auth() {
         localStorage.removeItem('resetCode');
         localStorage.removeItem('resetEmail');
 
-        const { error: signInError } = await signIn(storedEmail, formData.password);
-        if (signInError) {
-          setResetStep(null);
-          setActiveTab('login');
-          setFormData({
-            ...formData,
-            email: storedEmail,
-            password: '',
-            confirmPassword: '',
-            resetCode: ''
-          });
-          toast({
-            title: 'Mot de passe réinitialisé',
-            description: 'Vous pouvez maintenant vous connecter avec votre nouveau mot de passe'
-          });
-        } else {
-          toast({
-            title: 'Mot de passe réinitialisé',
-            description: 'Connexion automatique réussie'
-          });
-        }
+        // Toujours rediriger vers la page de connexion après réinitialisation
+        setResetStep(null);
+        setActiveTab('login');
+        setFormData({
+          ...formData,
+          email: storedEmail,
+          password: '',
+          confirmPassword: '',
+          resetCode: ''
+        });
+        toast({
+          title: 'Mot de passe réinitialisé avec succès !',
+          description: 'Veuillez vous connecter avec votre nouveau mot de passe.',
+          duration: 6000
+        });
       }
     } catch (err: any) {
       setError(err.message || 'Une erreur inattendue est survenue');

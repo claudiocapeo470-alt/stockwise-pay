@@ -143,8 +143,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
-      // Inscription avec confirmation d'email OBLIGATOIRE
-      const confirmationUrl = `${window.location.origin}/auth/confirm`;
+      // Inscription avec confirmation d'email OBLIGATOIRE - redirection vers l'onglet connexion
+      const confirmationUrl = `${window.location.origin}/auth?confirmed=true`;
       
       const { data, error } = await supabase.auth.signUp({
         email,

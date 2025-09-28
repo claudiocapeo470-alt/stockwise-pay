@@ -143,7 +143,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
-      // Inscription avec confirmation d'email OBLIGATOIRE - redirection vers l'onglet connexion
+      // Inscription simplifiée avec confirmation d'email
       const confirmationUrl = `${window.location.origin}/auth?confirmed=true`;
       
       const { data, error } = await supabase.auth.signUp({
@@ -152,8 +152,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         options: {
           emailRedirectTo: confirmationUrl,
           data: {
-            first_name: firstName,
-            last_name: lastName,
+            first_name: firstName || '',
+            last_name: lastName || '',
           }
         }
       });
@@ -164,13 +164,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       if (data?.user && !error) {
-        // L'utilisateur est créé mais doit confirmer son email
+        // L'utilisateur est créé, email de confirmation automatique par Supabase
         const needsConfirmation = !data.user.email_confirmed_at;
         
-        // Envoi d'email de confirmation personnalisé via SMTP
-        if (needsConfirmation) {
+        // Tentative d'envoi d'email personnalisé (optionnel, ne bloque pas l'inscription)
+        if (needsConfirmation && firstName && lastName) {
           try {
-            const response = await fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
+            fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -182,18 +182,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 lastName,
                 confirmationUrl
               })
+            }).catch(() => {
+              // Ignore les erreurs d'email personnalisé
             });
-
-            if (!response.ok) {
-              const errorData = await response.json().catch(() => ({}));
-              console.warn('Erreur lors de l\'envoi de l\'email de confirmation:', errorData);
-            } else {
-              console.log('Email de confirmation envoyé avec succès');
-            }
           } catch (emailError) {
-            console.warn('Email de confirmation non envoyé via SMTP:', emailError);
-            // L'inscription est réussie même si l'email SMTP échoue
-            // Supabase aura envoyé son propre email de confirmation
+            // Ignore les erreurs d'email personnalisé
           }
         }
 

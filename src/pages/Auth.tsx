@@ -18,12 +18,10 @@ const loginSchema = z.object({
 });
 
 const signupSchema = z.object({
-  firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
-  lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  firstName: z.string().min(1, 'Le prénom est requis').optional(),
+  lastName: z.string().min(1, 'Le nom est requis').optional(),
   email: z.string().email('Adresse email invalide'),
-  password: z.string()
-    .min(6, 'Le mot de passe doit contenir au moins 6 caractères')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre'),
+  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
   confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Les mots de passe ne correspondent pas",
@@ -39,9 +37,7 @@ const passwordResetCodeSchema = z.object({
 });
 
 const newPasswordSchema = z.object({
-  password: z.string()
-    .min(6, 'Le mot de passe doit contenir au moins 6 caractères')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre'),
+  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
   confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Les mots de passe ne correspondent pas",
@@ -804,11 +800,10 @@ export default function Auth() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="firstName">Prénom</Label>
+                        <Label htmlFor="firstName">Prénom (optionnel)</Label>
                         <Input
                           id="firstName"
                           name="firstName"
-                          required
                           value={formData.firstName}
                           onChange={handleInputChange}
                           placeholder="Jean"
@@ -819,11 +814,10 @@ export default function Auth() {
                         )}
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="lastName">Nom</Label>
+                        <Label htmlFor="lastName">Nom (optionnel)</Label>
                         <Input
                           id="lastName"
                           name="lastName"
-                          required
                           value={formData.lastName}
                           onChange={handleInputChange}
                           placeholder="Dupont"
@@ -853,7 +847,7 @@ export default function Auth() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="register-password">Mot de passe</Label>
+                      <Label htmlFor="register-password">Mot de passe (minimum 6 caractères)</Label>
                       <div className="relative">
                         <Input
                           id="register-password"
@@ -863,7 +857,7 @@ export default function Auth() {
                           value={formData.password}
                           onChange={handleInputChange}
                           placeholder="••••••••"
-                          className="h-12 rounded-2xl pr-12"
+                          className={`h-12 rounded-2xl pr-12 ${getFieldError('password') ? 'border-red-500' : ''}`}
                         />
                         <Button
                           type="button"
@@ -875,6 +869,9 @@ export default function Auth() {
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </Button>
                       </div>
+                      {getFieldError('password') && (
+                        <p className="text-sm text-red-500 mt-1">{getFieldError('password')}</p>
+                      )}
                     </div>
 
                     <div className="space-y-2">

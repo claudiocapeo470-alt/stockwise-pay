@@ -1,4 +1,4 @@
-import { BarChart3, Package, ShoppingCart, Receipt, FileText, LogOut, User } from "lucide-react"
+import { BarChart3, Package, ShoppingCart, Receipt, FileText, Settings, LogOut, User } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
 import {
@@ -21,6 +21,7 @@ const navigation = [
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart },
   { name: "Paiements", href: "/app/paiements", icon: Receipt },
   { name: "Rapports", href: "/app/rapports", icon: FileText },
+  { name: "Paramètres", href: "/app/settings", icon: Settings },
 ]
 
 export function AppSidebar() {

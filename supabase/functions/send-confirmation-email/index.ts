@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+import { Resend } from "npm:resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -25,21 +25,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Email de bienvenue pour: ${email}`);
 
-    // Configuration SMTP
-    const client = new SMTPClient({
-      connection: {
-        hostname: Deno.env.get("SMTP_HOST") || "",
-        port: parseInt(Deno.env.get("SMTP_PORT") || "587"),
-        tls: true,
-        auth: {
-          username: Deno.env.get("SMTP_USER") || "",
-          password: Deno.env.get("SMTP_PASSWORD") || "",
-        },
-      },
-    });
+    // Configuration Resend - plus fiable que SMTP
+    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-    if (!Deno.env.get("SMTP_HOST") || !Deno.env.get("SMTP_USER") || !Deno.env.get("SMTP_PASSWORD")) {
-      throw new Error("Configuration SMTP incomplète");
+    if (!Deno.env.get("RESEND_API_KEY")) {
+      throw new Error("RESEND_API_KEY non configurée");
     }
 
     const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'Nouvel utilisateur';
@@ -99,15 +89,16 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    await client.send({
-      from: "Stocknix <support@ulrichdeschampkossonou.online>",
-      to: email,
+    const { error: emailError } = await resend.emails.send({
+      from: "Stocknix <onboarding@resend.dev>",
+      to: [email],
       subject: `✉️ Confirmez votre compte Stocknix, ${fullName} !`,
-      content: htmlContent,
       html: htmlContent,
     });
 
-    await client.close();
+    if (emailError) {
+      throw new Error(`Erreur Resend: ${emailError.message}`);
+    }
 
     console.log(`Email de confirmation envoyé avec succès à ${email}`);
 

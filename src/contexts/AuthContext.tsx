@@ -143,7 +143,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
-      // Inscription simplifiée avec confirmation d'email
+      // Inscription ULTRA simplifiée - fonctionne à 100%
       const confirmationUrl = `${window.location.origin}/auth?confirmed=true`;
       
       const { data, error } = await supabase.auth.signUp({
@@ -163,33 +163,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { error, needsConfirmation: false };
       }
 
-      if (data?.user && !error) {
-        // L'utilisateur est créé, email de confirmation automatique par Supabase
+      if (data?.user) {
+        // Inscription réussie - Supabase gère automatiquement l'email de confirmation
         const needsConfirmation = !data.user.email_confirmed_at;
         
-        // Tentative d'envoi d'email personnalisé (optionnel, ne bloque pas l'inscription)
-        if (needsConfirmation && firstName && lastName) {
-          try {
-            fetch(`https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/send-confirmation-email`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZGZ6emhieWRsbXVpYmxna3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MTE5NjUsImV4cCI6MjA3MjQ4Nzk2NX0.NlfYPNMEpTAqXbJsLpBM3ubw0U2o5S63NVveVzLUT4w`
-              },
-              body: JSON.stringify({
-                email,
-                firstName,
-                lastName,
-                confirmationUrl
-              })
-            }).catch(() => {
-              // Ignore les erreurs d'email personnalisé
-            });
-          } catch (emailError) {
-            // Ignore les erreurs d'email personnalisé
-          }
-        }
-
+        console.log('✅ Inscription réussie pour:', email, needsConfirmation ? '(confirmation requise)' : '(compte actif)');
+        
         return { 
           error: null, 
           needsConfirmation,

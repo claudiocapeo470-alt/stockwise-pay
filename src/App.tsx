@@ -15,7 +15,7 @@ import Performance from "./pages/Performance";
 import Rapports from "./pages/Rapports";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import Auth from "./pages/Auth";
+import AuthSimple from "./pages/AuthSimple";
 
 import HomePage from "./pages/HomePage";
 import MentionsLegales from "./pages/MentionsLegales";
@@ -61,7 +61,7 @@ const App = () => (
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               
               {/* Auth Route */}
-              <Route path="/auth" element={<Auth />} />
+              <Route path="/auth" element={<AuthSimple />} />
               
               {/* Protected App Routes */}
               <Route path="/app/*" element={

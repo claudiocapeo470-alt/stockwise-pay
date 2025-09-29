@@ -16,11 +16,15 @@ export default function Dashboard() {
   const { payments } = usePayments();
   const { user } = useAuth();
 
-  // Show welcome guide for completely new users
+  // Show welcome guide for new users (either no data or haven't seen it yet)
   const isNewUser = products.length === 0 && sales.length === 0 && payments.length === 0;
   
   // Check if user has seen the welcome guide
   const hasSeenWelcomeGuide = localStorage.getItem(`welcome-guide-seen-${user?.id}`) === 'true';
+  
+  // Check if user just confirmed email (from URL params)
+  const urlParams = new URLSearchParams(window.location.search);
+  const isEmailConfirmed = urlParams.get('confirmed') === 'true';
   
   const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
 
@@ -48,12 +52,16 @@ export default function Dashboard() {
     };
   }, [products, sales, payments]);
 
-  // Auto-show welcome guide for new users who haven't seen it yet
+  // Auto-show welcome guide for new users or after email confirmation
   useEffect(() => {
-    if (isNewUser && !hasSeenWelcomeGuide && user?.id) {
+    if (user?.id && (!hasSeenWelcomeGuide || isEmailConfirmed || isNewUser)) {
       setShowWelcomeGuide(true);
+      // Clean URL after showing guide
+      if (isEmailConfirmed) {
+        window.history.replaceState(null, '', '/app');
+      }
     }
-  }, [isNewUser, hasSeenWelcomeGuide, user?.id]);
+  }, [user?.id, hasSeenWelcomeGuide, isEmailConfirmed, isNewUser]);
 
   // Handle closing the welcome guide and mark as seen
   const handleCloseWelcomeGuide = () => {

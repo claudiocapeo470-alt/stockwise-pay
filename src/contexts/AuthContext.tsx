@@ -101,6 +101,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setTimeout(() => {
             fetchProfile(session.user.id);
           }, 0);
+          
+          // Redirect to dashboard after email confirmation
+          if (event === 'SIGNED_IN' && window.location.pathname.includes('/auth')) {
+            setTimeout(() => {
+              window.location.href = '/app';
+            }, 100);
+          }
         } else {
           setProfile(null);
           setUserRole(null);

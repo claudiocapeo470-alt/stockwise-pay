@@ -52,19 +52,17 @@ export default function AuthSimple() {
   // Redirection si déjà connecté
   useEffect(() => {
     if (user && !loading) {
-      navigate('/app/dashboard');
+      navigate('/app');
     }
   }, [user, loading, navigate]);
 
-  // Gestion de la confirmation d'email
+  // Handle email confirmation redirect  
   useEffect(() => {
     const confirmed = searchParams.get('confirmed');
-    if (confirmed === 'true') {
-      toast.success('✅ Compte confirmé avec succès !', {
-        description: 'Vous pouvez maintenant vous connecter'
-      });
+    if (confirmed === 'true' && user) {
+      navigate('/app?confirmed=true');
     }
-  }, [searchParams]);
+  }, [searchParams, user, navigate]);
 
   // Réinitialisation de mot de passe SIMPLE avec Supabase natif
   const handlePasswordReset = async (e: React.FormEvent) => {
@@ -148,7 +146,7 @@ export default function AuthSimple() {
         }
 
         toast.success('✅ Connexion réussie !');
-        navigate('/app/dashboard');
+        navigate('/app');
         
       } else {
         // INSCRIPTION
@@ -189,7 +187,7 @@ export default function AuthSimple() {
           });
         } else {
           toast.success('✅ Compte créé et activé !');
-          navigate('/app/dashboard');
+          navigate('/app?confirmed=true');
         }
       }
     } catch (error: any) {

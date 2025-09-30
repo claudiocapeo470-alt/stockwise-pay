@@ -16,15 +16,12 @@ export default function Dashboard() {
   const { payments } = usePayments();
   const { user } = useAuth();
 
-  // Show welcome guide for new users (either no data or haven't seen it yet)
-  const isNewUser = products.length === 0 && sales.length === 0 && payments.length === 0;
-  
-  // Check if user has seen the welcome guide
-  const hasSeenWelcomeGuide = localStorage.getItem(`welcome-guide-seen-${user?.id}`) === 'true';
-  
   // Check if user just confirmed email (from URL params)
   const urlParams = new URLSearchParams(window.location.search);
   const isEmailConfirmed = urlParams.get('confirmed') === 'true';
+  
+  // Check if user has seen the welcome guide (unique per user)
+  const hasSeenWelcomeGuide = user?.id ? localStorage.getItem(`welcome-guide-seen-${user.id}`) === 'true' : false;
   
   const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
 
@@ -52,16 +49,20 @@ export default function Dashboard() {
     };
   }, [products, sales, payments]);
 
-  // Auto-show welcome guide for new users or after email confirmation
+  // Auto-show welcome guide ONLY for new users who haven't seen it OR after email confirmation
   useEffect(() => {
-    if (user?.id && (!hasSeenWelcomeGuide || isEmailConfirmed || isNewUser)) {
-      setShowWelcomeGuide(true);
-      // Clean URL after showing guide
-      if (isEmailConfirmed) {
-        window.history.replaceState(null, '', '/app');
+    if (user?.id) {
+      // Show guide if user confirmed email OR if they never saw it before
+      if (isEmailConfirmed || !hasSeenWelcomeGuide) {
+        setShowWelcomeGuide(true);
+        
+        // Clean URL after showing guide
+        if (isEmailConfirmed) {
+          window.history.replaceState(null, '', '/app');
+        }
       }
     }
-  }, [user?.id, hasSeenWelcomeGuide, isEmailConfirmed, isNewUser]);
+  }, [user?.id, hasSeenWelcomeGuide, isEmailConfirmed]);
 
   // Handle closing the welcome guide and mark as seen
   const handleCloseWelcomeGuide = () => {
@@ -148,26 +149,6 @@ export default function Dashboard() {
         </div>
         <div className="space-y-6">
           <QuickActions />
-          {isNewUser && (
-            <Card className="glass border-primary/20">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-primary">
-                  🚀 Nouveau Utilisateur
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground mb-3">
-                  Votre interface est vierge et se remplira avec votre activité
-                </p>
-                <button
-                  onClick={() => setShowWelcomeGuide(true)}
-                  className="text-xs text-primary hover:underline"
-                >
-                  Voir le guide de démarrage
-                </button>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
     </div>

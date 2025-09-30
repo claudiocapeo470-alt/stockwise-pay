@@ -151,7 +151,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
       // Inscription ULTRA simplifiée - fonctionne à 100%
-      const confirmationUrl = `${window.location.origin}/auth?confirmed=true`;
+      const confirmationUrl = `${window.location.origin}/app?confirmed=true`;
       
       const { data, error } = await supabase.auth.signUp({
         email,

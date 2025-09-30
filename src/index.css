@@ -496,39 +496,67 @@ All colors MUST be HSL.
     --sidebar-ring: 206 100% 55%;
   }
 
-  /* Light theme option for accessibility */
+  /* Light theme - Electric Blue & White */
   .light {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 4%;
+    /* Pure white background */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 13%;
+    
+    /* Cards - White with subtle shadow */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 4%;
+    --card-foreground: 0 0% 13%;
+    
+    /* Popovers */
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 4%;
-    --primary: 206 100% 45%;
+    --popover-foreground: 0 0% 13%;
+    
+    /* Electric Blue primary color - #007BFF equivalent */
+    --primary: 211 100% 50%;
     --primary-foreground: 0 0% 100%;
+    
+    /* Light gray secondary surfaces */
     --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 10%;
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 40%;
-    --accent: 258 84% 60%;
+    --secondary-foreground: 0 0% 13%;
+    
+    /* Muted areas */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 33%;
+    
+    /* Light Blue accent - #17A2B8 equivalent */
+    --accent: 188 77% 39%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 85% 55%;
+    
+    /* Error - Bright red #FF4D4F equivalent */
+    --destructive: 359 100% 65%;
     --destructive-foreground: 0 0% 100%;
-    --success: 160 100% 40%;
+    
+    /* Success - Soft green #28C76F equivalent */
+    --success: 145 63% 47%;
     --success-foreground: 0 0% 100%;
+    
+    /* Warning - remains same */
     --warning: 38 100% 50%;
     --warning-foreground: 0 0% 100%;
-    --border: 0 0% 88%;
+    
+    /* Borders - Light gray */
+    --border: 0 0% 90%;
     --input: 0 0% 100%;
-    --ring: 206 100% 45%;
+    --ring: 211 100% 50%;
+    
+    /* Sidebar - Pure white */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 10%;
-    --sidebar-primary: 206 100% 45%;
+    --sidebar-foreground: 0 0% 13%;
+    --sidebar-primary: 211 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 88%;
-    --sidebar-ring: 206 100% 45%;
+    --sidebar-accent-foreground: 0 0% 13%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 211 100% 50%;
+    
+    /* Light theme specific gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(211 100% 50%) 0%, hsl(188 77% 39%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 96%) 100%);
   }
 }
 

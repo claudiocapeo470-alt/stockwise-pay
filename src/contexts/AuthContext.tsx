@@ -205,13 +205,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.error('Erreur lors de la déconnexion:', error);
       }
       
-      // Forcer une redirection vers la page d'accueil
-      window.location.href = '/';
+      // Forcer une redirection vers la page de connexion
+      window.location.href = '/auth';
     } catch (error) {
       console.error('Erreur inattendue lors de la déconnexion:', error);
       // En cas d'erreur, forcer quand même le nettoyage local
       localStorage.clear();
-      window.location.href = '/';
+      window.location.href = '/auth';
     }
   };
 

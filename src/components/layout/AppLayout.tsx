@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { UserMenu } from "./UserMenu";
+import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface AppLayoutProps {
@@ -46,6 +47,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-foreground">Dashboard</h2>
               </div>
+              <ThemeToggle />
               {user && <UserMenu />}
             </div>
           </header>

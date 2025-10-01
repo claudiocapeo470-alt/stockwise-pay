@@ -766,7 +766,7 @@ export default function Rapports() {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-gradient-primary hover:opacity-90"
+                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                 onClick={() => {
                   setSelectedReportType('sales');
                   setShowReportDialog(true);
@@ -841,7 +841,7 @@ export default function Rapports() {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-gradient-primary hover:opacity-90"
+                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                 onClick={() => {
                   setSelectedReportType('inventory');
                   setShowReportDialog(true);
@@ -916,7 +916,7 @@ export default function Rapports() {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-gradient-primary hover:opacity-90"
+                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                 onClick={() => {
                   setSelectedReportType('payments');
                   setShowReportDialog(true);

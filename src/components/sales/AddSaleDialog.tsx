@@ -70,8 +70,8 @@ export function AddSaleDialog() {
           variant="ghost"
           className="w-full justify-start h-auto p-4 hover:bg-accent"
         >
-          <div className="p-2 rounded-lg mr-3 bg-gradient-primary hover:opacity-90">
-            <Plus className="h-4 w-4 text-white" />
+          <div className="p-2 rounded-lg mr-3 bg-primary hover:opacity-90">
+            <Plus className="h-4 w-4 text-primary-foreground" />
           </div>
           <div className="text-left">
             <div className="font-medium text-foreground">Nouvelle vente</div>

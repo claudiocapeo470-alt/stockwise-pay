@@ -13,6 +13,7 @@ export interface Sale {
   customer_name: string | null;
   customer_phone: string | null;
   sale_date: string;
+  payment_method: string | null;
   created_at: string;
   products?: {
     name: string;

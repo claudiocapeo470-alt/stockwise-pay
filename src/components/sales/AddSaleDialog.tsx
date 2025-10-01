@@ -15,6 +15,7 @@ export function AddSaleDialog() {
     quantity: "",
     customer_name: "",
     customer_phone: "",
+    payment_method: "",
   });
 
   const { products } = useProducts();
@@ -38,6 +39,7 @@ export function AddSaleDialog() {
         total_amount: totalAmount,
         customer_name: formData.customer_name || null,
         customer_phone: formData.customer_phone || null,
+        payment_method: formData.payment_method || null,
         sale_date: new Date().toISOString(),
       });
 
@@ -46,6 +48,7 @@ export function AddSaleDialog() {
         quantity: "",
         customer_name: "",
         customer_phone: "",
+        payment_method: "",
       });
       setOpen(false);
     } catch (error) {
@@ -157,6 +160,26 @@ export function AddSaleDialog() {
               onChange={handleInputChange}
               placeholder="+33 1 23 45 67 89"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="payment_method">Mode de paiement</Label>
+            <Select
+              value={formData.payment_method}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, payment_method: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un mode de paiement" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Espèces">Espèces</SelectItem>
+                <SelectItem value="Mobile Money">Mobile Money</SelectItem>
+                <SelectItem value="Carte bancaire">Carte bancaire</SelectItem>
+                <SelectItem value="Virement">Virement</SelectItem>
+                <SelectItem value="Chèque">Chèque</SelectItem>
+                <SelectItem value="Autre">Autre</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex justify-end gap-2 pt-4">

@@ -47,15 +47,15 @@ export function AppSidebar() {
 
   return (
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
-      <SidebarHeader className="border-b border-border p-4">
+      <SidebarHeader className="bg-primary p-4 border-b border-primary-foreground/20">
         <div className="flex items-center gap-3">
-          <div className="bg-gradient-primary rounded-lg p-2">
-            <BarChart3 className="h-6 w-6 text-primary-foreground" />
+          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+            <BarChart3 className="h-6 w-6 text-white" />
           </div>
           {!isCollapsed && (
             <div>
-              <h1 className="font-semibold text-foreground">Stocknix</h1>
-              <p className="text-xs text-muted-foreground">PME Dashboard</p>
+              <h1 className="font-semibold text-white">Stocknix</h1>
+              <p className="text-xs text-white/80">PME Dashboard</p>
             </div>
           )}
         </div>

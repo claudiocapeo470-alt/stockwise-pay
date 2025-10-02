@@ -64,12 +64,12 @@ export function AddProductDialog() {
           variant="ghost"
           className="w-full justify-start h-auto p-4 hover:bg-accent"
         >
-          <div className="p-2 rounded-lg mr-3 bg-gradient-success hover:opacity-90">
+          <div className="p-2 rounded-lg mr-3 bg-success dark:bg-gradient-success hover:opacity-90">
             <Plus className="h-4 w-4 text-white" />
           </div>
           <div className="text-left">
-            <div className="font-medium text-foreground">Ajouter produit</div>
-            <div className="text-sm text-muted-foreground">Ajouter au stock</div>
+            <div className="font-medium text-foreground dark:text-foreground">Ajouter produit</div>
+            <div className="text-sm text-gray-700 dark:text-muted-foreground">Ajouter au stock</div>
           </div>
         </Button>
       </DialogTrigger>

@@ -52,7 +52,7 @@ export default function Stocks() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Gestion des Stocks</h1>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Gestion des Stocks</h1>
           <p className="text-muted-foreground">Gérez vos produits et surveillez votre inventaire</p>
         </div>
         <AddProductDialog />

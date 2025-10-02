@@ -178,9 +178,9 @@ export default function Performance() {
       </div>
 
       {/* Filtres */}
-      <Card className="bg-gradient-surface border-border/50">
+      <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
         <CardHeader>
-          <CardTitle className="flex items-center text-foreground">
+          <CardTitle className="flex items-center text-blue-900 dark:text-blue-100">
             <Activity className="mr-2 h-5 w-5 text-primary" />
             Filtres d'analyse
           </CardTitle>

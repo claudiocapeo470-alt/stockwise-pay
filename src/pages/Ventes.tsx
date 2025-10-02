@@ -109,9 +109,9 @@ export default function Ventes() {
       </Card>
 
       {/* Sales Table */}
-      <Card>
+      <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
         <CardHeader>
-          <CardTitle>Historique des ventes</CardTitle>
+          <CardTitle className="text-blue-900 dark:text-blue-100">Historique des ventes</CardTitle>
         </CardHeader>
         <CardContent>
           {filteredSales.length === 0 ? (

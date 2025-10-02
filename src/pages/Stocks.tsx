@@ -118,9 +118,9 @@ export default function Stocks() {
       </Card>
 
       {/* Products Table */}
-      <Card>
+      <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
         <CardHeader>
-          <CardTitle>Liste des produits</CardTitle>
+          <CardTitle className="text-blue-900 dark:text-blue-100">Liste des produits</CardTitle>
         </CardHeader>
         <CardContent>
           {filteredProducts.length === 0 ? (

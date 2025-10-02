@@ -86,9 +86,9 @@ export function RecentActivity() {
   }, [products, sales, payments])
 
   return (
-    <Card>
+    <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">Activité récente</CardTitle>
+        <CardTitle className="text-lg font-semibold text-blue-900 dark:text-blue-100">Activité récente</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {activities.length === 0 ? (

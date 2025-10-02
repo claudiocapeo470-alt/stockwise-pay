@@ -112,7 +112,7 @@ export default function Paiements() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="hover-lift">
+        <Card className="hover-lift bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/20 dark:to-green-900/10 border-green-200 dark:border-green-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <CheckCircle className="h-5 w-5 text-success" />
@@ -125,7 +125,7 @@ export default function Paiements() {
           </CardContent>
         </Card>
 
-        <Card className="hover-lift">
+        <Card className="hover-lift bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-orange-200 dark:border-orange-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <Clock className="h-5 w-5 text-warning" />
@@ -140,7 +140,7 @@ export default function Paiements() {
           </CardContent>
         </Card>
 
-        <Card className="hover-lift">
+        <Card className="hover-lift bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/20 dark:to-red-900/10 border-red-200 dark:border-red-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <AlertCircle className="h-5 w-5 text-destructive" />
@@ -152,7 +152,7 @@ export default function Paiements() {
           </CardContent>
         </Card>
 
-        <Card className="hover-lift">
+        <Card className="hover-lift bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <TrendingUp className="h-5 w-5 text-accent-primary" />

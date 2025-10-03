@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X } from "lucide-react";
 import { useState } from "react";
+import stocknixLogo from '@/assets/stocknix-logo.png';
 const HomePage = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -34,7 +35,7 @@ const HomePage = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center space-x-2">
-              <BarChart3 className="h-8 w-8 text-primary" />
+              <img src={stocknixLogo} alt="Stocknix" className="h-8 w-8" />
               <span className="text-xl font-bold text-foreground">Stocknix</span>
             </div>
 
@@ -211,7 +212,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <BarChart3 className="h-6 w-6 text-primary" />
+              <img src={stocknixLogo} alt="Stocknix" className="h-6 w-6" />
               <span className="font-semibold text-foreground">Stocknix</span>
             </div>
             

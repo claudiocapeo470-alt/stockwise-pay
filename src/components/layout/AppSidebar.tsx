@@ -14,6 +14,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import stocknixLogo from "@/assets/stocknix-logo.png"
 
 const navigation = [
   { name: "Dashboard", href: "/app", icon: BarChart3 },
@@ -50,7 +51,7 @@ export function AppSidebar() {
       <SidebarHeader className="bg-gradient-to-r from-primary to-blue-600 dark:bg-primary p-4 border-b border-blue-500/20 dark:border-primary-foreground/20 shadow-lg">
         <div className="flex items-center gap-3">
           <div className="bg-white/30 dark:bg-white/20 backdrop-blur-sm rounded-lg p-2 shadow-lg ring-2 ring-white/50">
-            <BarChart3 className="h-6 w-6 text-white" />
+            <img src={stocknixLogo} alt="Stocknix" className="h-6 w-6" />
           </div>
           {!isCollapsed && (
             <div>

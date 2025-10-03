@@ -124,13 +124,15 @@ export default function Dashboard() {
 
       {/* Alerts */}
       {metrics.lowStockProducts > 0 && (
-        <Card className="border-warning bg-warning/5">
+        <Card className="bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/20 dark:to-red-900/10 border-2 border-red-200 dark:border-red-800/30">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-warning">
-              <AlertTriangle className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-red-500 to-red-600">
+                <AlertTriangle className="h-5 w-5 text-white" />
+              </div>
               Alerte Stock Critique
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-foreground/90">
               {metrics.lowStockProducts} produit(s) ont un stock critique et nécessitent un réapprovisionnement
             </CardDescription>
           </CardHeader>

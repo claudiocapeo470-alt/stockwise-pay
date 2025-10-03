@@ -661,10 +661,12 @@ export default function Rapports() {
       </div>
 
       {/* Quick Export Actions */}
-      <Card>
+      <Card className="bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-950/20 dark:to-cyan-900/10 border-2 border-cyan-200 dark:border-cyan-800/30">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Download className="h-5 w-5" />
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-md">
+              <Download className="h-5 w-5 text-white" />
+            </div>
             Exports rapides
           </CardTitle>
         </CardHeader>
@@ -672,11 +674,13 @@ export default function Rapports() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Button
               variant="outline"
-              className="h-auto p-4 flex flex-col items-start gap-2 hover:bg-accent"
+              className="h-auto p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/30 hover:shadow-lg transition-all"
               onClick={() => handleExport('csv', 'sales')}
             >
               <div className="flex items-center gap-2 w-full">
-                <BarChart3 className="h-4 w-4" />
+                <div className="p-1 rounded bg-gradient-to-br from-blue-500 to-blue-600">
+                  <BarChart3 className="h-4 w-4 text-white" />
+                </div>
                 <span className="font-medium">Ventes aujourd'hui</span>
                 <Badge variant="outline" className="ml-auto text-xs">CSV</Badge>
               </div>
@@ -687,11 +691,13 @@ export default function Rapports() {
             
             <Button
               variant="outline"
-              className="h-auto p-4 flex flex-col items-start gap-2 hover:bg-accent"
+              className="h-auto p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/20 dark:to-emerald-900/10 border-2 border-emerald-200 dark:border-emerald-800/30 hover:shadow-lg transition-all"
               onClick={() => handleExport('excel', 'products')}
             >
               <div className="flex items-center gap-2 w-full">
-                <PieChart className="h-4 w-4" />
+                <div className="p-1 rounded bg-gradient-to-br from-emerald-500 to-emerald-600">
+                  <PieChart className="h-4 w-4 text-white" />
+                </div>
                 <span className="font-medium">Stock complet</span>
                 <Badge variant="outline" className="ml-auto text-xs">Excel</Badge>
               </div>
@@ -702,11 +708,13 @@ export default function Rapports() {
             
             <Button
               variant="outline"
-              className="h-auto p-4 flex flex-col items-start gap-2 hover:bg-accent"
+              className="h-auto p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-2 border-orange-200 dark:border-orange-800/30 hover:shadow-lg transition-all"
               onClick={() => handleExport('pdf', 'payments')}
             >
               <div className="flex items-center gap-2 w-full">
-                <Calendar className="h-4 w-4" />
+                <div className="p-1 rounded bg-gradient-to-br from-orange-500 to-orange-600">
+                  <Calendar className="h-4 w-4 text-white" />
+                </div>
                 <span className="font-medium">Rapport paiements</span>
                 <Badge variant="outline" className="ml-auto text-xs">PDF</Badge>
               </div>
@@ -721,17 +729,19 @@ export default function Rapports() {
       {/* Detailed Reports */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales Report */}
-        <Card className="hover:shadow-medium transition-all">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/30 hover:shadow-lg transition-all">
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <TrendingUp className="h-5 w-5 text-primary" />
+                <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-md">
+                  <TrendingUp className="h-5 w-5 text-white" />
+                </div>
                 <div>
                   <CardTitle className="text-lg">Rapport des ventes</CardTitle>
                   <p className="text-sm text-muted-foreground">Analyse détaillée des ventes par période</p>
                 </div>
               </div>
-              <Badge className="bg-success text-success-foreground">Prêt</Badge>
+              <Badge className="bg-emerald-500 text-white">Prêt</Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -745,7 +755,7 @@ export default function Rapports() {
               <span className="font-medium text-foreground">{new Date().toLocaleDateString('fr-FR')}</span>
             </div>
 
-            <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+            <div className="bg-white/50 dark:bg-card/50 rounded-lg p-3 space-y-2 border border-blue-200 dark:border-blue-800/30">
               <h4 className="text-sm font-medium text-foreground">Aperçu des données</h4>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
@@ -758,7 +768,7 @@ export default function Rapports() {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Evolution</p>
-                  <p className="font-medium text-success">+0%</p>
+                  <p className="font-medium text-emerald-600 dark:text-emerald-400">+0%</p>
                 </div>
               </div>
             </div>
@@ -766,7 +776,7 @@ export default function Rapports() {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                className="flex-1 bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-lg"
                 onClick={() => {
                   setSelectedReportType('sales');
                   setShowReportDialog(true);
@@ -778,6 +788,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
+                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
                 onClick={() => handleExport('excel', 'sales')}
               >
                 <Download className="h-4 w-4 mr-1" />
@@ -786,6 +797,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
+                className="hover:bg-red-50 dark:hover:bg-red-950/20"
                 onClick={() => handleExport('pdf', 'sales')}
               >
                 <Download className="h-4 w-4 mr-1" />
@@ -796,17 +808,19 @@ export default function Rapports() {
         </Card>
 
         {/* Inventory Report */}
-        <Card className="hover:shadow-medium transition-all">
+        <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/20 dark:to-emerald-900/10 border-2 border-emerald-200 dark:border-emerald-800/30 hover:shadow-lg transition-all">
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <BarChart3 className="h-5 w-5 text-success" />
+                <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-md">
+                  <BarChart3 className="h-5 w-5 text-white" />
+                </div>
                 <div>
                   <CardTitle className="text-lg">État des stocks</CardTitle>
                   <p className="text-sm text-muted-foreground">Inventaire et mouvements de stock</p>
                 </div>
               </div>
-              <Badge className="bg-success text-success-foreground">Prêt</Badge>
+              <Badge className="bg-emerald-500 text-white">Prêt</Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -820,7 +834,7 @@ export default function Rapports() {
               <span className="font-medium text-foreground">{new Date().toLocaleDateString('fr-FR')}</span>
             </div>
 
-            <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+            <div className="bg-white/50 dark:bg-card/50 rounded-lg p-3 space-y-2 border border-emerald-200 dark:border-emerald-800/30">
               <h4 className="text-sm font-medium text-foreground">Aperçu des données</h4>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
@@ -829,11 +843,11 @@ export default function Rapports() {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Stock bas</p>
-                  <p className="font-medium text-warning">{metrics.lowStockProducts}</p>
+                  <p className="font-medium text-orange-600 dark:text-orange-400">{metrics.lowStockProducts}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Épuisé</p>
-                  <p className="font-medium text-destructive">{metrics.outOfStockProducts}</p>
+                  <p className="font-medium text-red-600 dark:text-red-400">{metrics.outOfStockProducts}</p>
                 </div>
               </div>
             </div>
@@ -841,7 +855,7 @@ export default function Rapports() {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                className="flex-1 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white hover:shadow-lg"
                 onClick={() => {
                   setSelectedReportType('inventory');
                   setShowReportDialog(true);
@@ -853,6 +867,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
+                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
                 onClick={() => handleExport('excel', 'products')}
               >
                 <Download className="h-4 w-4 mr-1" />
@@ -861,6 +876,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
+                className="hover:bg-red-50 dark:hover:bg-red-950/20"
                 onClick={() => handleExport('pdf', 'products')}
               >
                 <Download className="h-4 w-4 mr-1" />
@@ -871,17 +887,19 @@ export default function Rapports() {
         </Card>
 
         {/* Payments Report */}
-        <Card className="hover:shadow-medium transition-all">
+        <Card className="bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-2 border-orange-200 dark:border-orange-800/30 hover:shadow-lg transition-all">
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <PieChart className="h-5 w-5 text-warning" />
+                <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 shadow-md">
+                  <PieChart className="h-5 w-5 text-white" />
+                </div>
                 <div>
                   <CardTitle className="text-lg">Suivi des paiements</CardTitle>
                   <p className="text-sm text-muted-foreground">Paiements reçus et en attente</p>
                 </div>
               </div>
-              <Badge className="bg-success text-success-foreground">Prêt</Badge>
+              <Badge className="bg-emerald-500 text-white">Prêt</Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -895,20 +913,20 @@ export default function Rapports() {
               <span className="font-medium text-foreground">{new Date().toLocaleDateString('fr-FR')}</span>
             </div>
 
-            <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+            <div className="bg-white/50 dark:bg-card/50 rounded-lg p-3 space-y-2 border border-orange-200 dark:border-orange-800/30">
               <h4 className="text-sm font-medium text-foreground">Aperçu des données</h4>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
                   <p className="text-muted-foreground">Payé</p>
-                  <p className="font-medium text-success">{metrics.paymentRate}%</p>
+                  <p className="font-medium text-emerald-600 dark:text-emerald-400">{metrics.paymentRate}%</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">En attente</p>
-                  <p className="font-medium text-warning">{metrics.totalPending.toLocaleString()} CFA</p>
+                  <p className="font-medium text-orange-600 dark:text-orange-400">{metrics.totalPending.toLocaleString()} CFA</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Reçu</p>
-                  <p className="font-medium text-success">{metrics.totalPaid.toLocaleString()} CFA</p>
+                  <p className="font-medium text-emerald-600 dark:text-emerald-400">{metrics.totalPaid.toLocaleString()} CFA</p>
                 </div>
               </div>
             </div>
@@ -916,7 +934,7 @@ export default function Rapports() {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                className="flex-1 bg-gradient-to-br from-orange-500 to-orange-600 text-white hover:shadow-lg"
                 onClick={() => {
                   setSelectedReportType('payments');
                   setShowReportDialog(true);
@@ -928,6 +946,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
+                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
                 onClick={() => handleExport('excel', 'payments')}
               >
                 <Download className="h-4 w-4 mr-1" />
@@ -936,6 +955,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
+                className="hover:bg-red-50 dark:hover:bg-red-950/20"
                 onClick={() => handleExport('pdf', 'payments')}
               >
                 <Download className="h-4 w-4 mr-1" />

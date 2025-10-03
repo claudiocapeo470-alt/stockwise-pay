@@ -9,16 +9,15 @@ import { AddPaymentDialog } from "@/components/payments/AddPaymentDialog"
 export function QuickActions() {
   const navigate = useNavigate()
 
-  const gradientClasses = {
-    primary: "bg-gradient-primary hover:opacity-90",
-    success: "bg-gradient-success hover:opacity-90",
-    warning: "bg-gradient-warning hover:opacity-90"
-  }
-
   return (
-    <Card>
+    <Card className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/20 dark:to-purple-900/10 border-2 border-purple-200 dark:border-purple-800/30">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">Actions rapides</CardTitle>
+        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <div className="p-1.5 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600">
+            <Plus className="h-4 w-4 text-white" />
+          </div>
+          Actions rapides
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {/* Nouvelle vente */}
@@ -38,7 +37,7 @@ export function QuickActions() {
         
         <Button 
           variant="outline" 
-          className="w-full mt-4"
+          className="w-full mt-4 bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/20 dark:to-indigo-900/10 border-indigo-200 dark:border-indigo-800/30 hover:shadow-md transition-all"
           onClick={() => navigate("/app/rapports")}
         >
           <FileText className="h-4 w-4 mr-2" />

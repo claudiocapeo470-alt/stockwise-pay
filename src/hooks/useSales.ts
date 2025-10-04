@@ -10,6 +10,7 @@ export interface Sale {
   quantity: number;
   unit_price: number;
   total_amount: number;
+  paid_amount: number;
   customer_name: string | null;
   customer_phone: string | null;
   sale_date: string;

@@ -110,36 +110,35 @@ export function CustomReportDialog({ open, onOpenChange, onReportGenerated }: Cu
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-sm sm:max-w-xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-lg">
+            <FileText className="h-4 w-4" />
             Créer un rapport personnalisé
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Report Name */}
-          <div>
-            <Label htmlFor="reportName">Nom du rapport *</Label>
+          <div className="space-y-2">
+            <Label htmlFor="reportName" className="text-sm">Nom du rapport *</Label>
             <Input
               id="reportName"
               value={reportName}
               onChange={(e) => setReportName(e.target.value)}
               placeholder="Ex: Rapport mensuel des ventes"
-              className="mt-1"
             />
           </div>
 
           {/* Date Range */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Calendar className="h-3.5 w-3.5" />
                 Période d'analyse
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
               <div>
                 <Label htmlFor="dateRange">Sélectionner une période</Label>
                 <Select value={dateRange} onValueChange={setDateRange}>
@@ -184,8 +183,8 @@ export function CustomReportDialog({ open, onOpenChange, onReportGenerated }: Cu
 
           {/* Data Selection */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Types de données à inclure</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Types de données à inclure</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
@@ -220,9 +219,9 @@ export function CustomReportDialog({ open, onOpenChange, onReportGenerated }: Cu
 
           {/* Metrics Selection */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <TrendingUp className="h-3.5 w-3.5" />
                 Métriques et analyses
               </CardTitle>
             </CardHeader>
@@ -260,8 +259,8 @@ export function CustomReportDialog({ open, onOpenChange, onReportGenerated }: Cu
 
           {/* Preview */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Aperçu du rapport</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Aperçu du rapport</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -295,7 +294,7 @@ export function CustomReportDialog({ open, onOpenChange, onReportGenerated }: Cu
           </Card>
 
           {/* Actions */}
-          <div className="flex gap-2 pt-4">
+          <div className="flex gap-2 pt-2">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}

@@ -94,12 +94,12 @@ export function EditPaymentDialog({ payment, open, onOpenChange }: EditPaymentDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Modifier le paiement</DialogTitle>
+          <DialogTitle className="text-lg">Modifier le paiement</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="firstName">Prénom</Label>
@@ -198,7 +198,7 @@ export function EditPaymentDialog({ payment, open, onOpenChange }: EditPaymentDi
             />
           </div>
 
-          <div className="flex gap-2 pt-4">
+          <div className="flex gap-2 pt-2">
             <Button
               type="button"
               variant="outline"

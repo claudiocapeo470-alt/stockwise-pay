@@ -82,11 +82,11 @@ export function AddSaleDialog() {
           </div>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Enregistrer une vente</DialogTitle>
+          <DialogTitle className="text-lg">Enregistrer une vente</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div className="space-y-2">
             <Label htmlFor="product_id">Produit *</Label>
             <Select
@@ -127,7 +127,7 @@ export function AddSaleDialog() {
           </div>
 
           {selectedProduct && quantity > 0 && (
-            <div className="bg-muted p-3 rounded-lg space-y-2">
+            <div className="bg-muted p-2 rounded-lg space-y-1 text-sm">
               <div className="flex justify-between">
                 <span>Prix unitaire:</span>
                 <span>{unitPrice.toLocaleString()} FCFA</span>
@@ -211,7 +211,7 @@ export function AddSaleDialog() {
             </Select>
           </div>
 
-          <div className="flex justify-end gap-2 pt-4">
+          <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Annuler
             </Button>

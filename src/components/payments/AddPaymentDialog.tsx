@@ -102,17 +102,17 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-foreground">
+          <DialogTitle className="text-lg font-bold text-foreground">
             Nouveau paiement
           </DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Client Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-foreground border-b border-border pb-2">
+          <div className="space-y-3">
+            <h3 className="text-base font-medium text-foreground border-b border-border pb-1.5">
               Informations client
             </h3>
             
@@ -158,8 +158,8 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
           </div>
 
           {/* Payment Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-foreground border-b border-border pb-2">
+          <div className="space-y-3">
+            <h3 className="text-base font-medium text-foreground border-b border-border pb-1.5">
               Détails du paiement
             </h3>
             
@@ -215,7 +215,7 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
             </div>
             
             {formData.total_amount && (
-              <div className="p-4 bg-surface-secondary rounded-lg border border-border">
+              <div className="p-3 bg-surface-secondary rounded-lg border border-border text-sm">
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Reste à payer:</span>
                   <span className={cn(
@@ -246,8 +246,8 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
           </div>
 
           {/* Dates */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-foreground border-b border-border pb-2">
+          <div className="space-y-3">
+            <h3 className="text-base font-medium text-foreground border-b border-border pb-1.5">
               Dates
             </h3>
             
@@ -323,7 +323,7 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-border">
+          <div className="flex justify-end gap-2 pt-2 border-t border-border">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Annuler
             </Button>

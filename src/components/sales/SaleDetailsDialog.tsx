@@ -39,26 +39,26 @@ export function SaleDetailsDialog({ sale, open, onOpenChange }: SaleDetailsDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-sm sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-lg">
+            <Package className="h-4 w-4" />
             Détails de la vente
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Sale Summary */}
           <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Résumé de la vente</h3>
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-semibold">Résumé de la vente</h3>
                 <Badge variant="secondary" className="text-xs">
                   ID: {sale.id.slice(0, 8)}...
                 </Badge>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <div>
@@ -84,13 +84,13 @@ export function SaleDetailsDialog({ sale, open, onOpenChange }: SaleDetailsDialo
 
           {/* Customer Information */}
           <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-4">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 mb-3">
                 <User className="h-4 w-4 text-muted-foreground" />
-                <h3 className="font-semibold">Informations client</h3>
+                <h3 className="text-sm font-semibold">Informations client</h3>
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <div>
                   <p className="text-sm text-muted-foreground">Nom du client</p>
                   <p className="font-medium">{sale.customer_name || "Client anonyme"}</p>
@@ -111,14 +111,14 @@ export function SaleDetailsDialog({ sale, open, onOpenChange }: SaleDetailsDialo
 
           {/* Product Information */}
           <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-4">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 mb-3">
                 <Package className="h-4 w-4 text-muted-foreground" />
-                <h3 className="font-semibold">Informations produit</h3>
+                <h3 className="text-sm font-semibold">Informations produit</h3>
               </div>
               
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <p className="text-sm text-muted-foreground">Nom du produit</p>
                     <p className="font-medium">{sale.products?.name || "Produit supprimé"}</p>
@@ -139,7 +139,7 @@ export function SaleDetailsDialog({ sale, open, onOpenChange }: SaleDetailsDialo
                   </div>
                 )}
                 
-                <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+                <div className="grid grid-cols-3 gap-3 pt-3 border-t">
                   <div>
                     <p className="text-sm text-muted-foreground">Quantité</p>
                     <p className="font-medium text-lg">{sale.quantity}</p>

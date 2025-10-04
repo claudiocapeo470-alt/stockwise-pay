@@ -302,20 +302,20 @@ export function ReportDialog({ reportType, open, onOpenChange }: ReportDialogPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl max-h-[85vh] overflow-y-auto w-[95vw]">
+      <DialogContent className="max-w-[95vw] sm:max-w-4xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2">
             <div className="flex items-center gap-2">
               {getReportIcon()}
               <span className="text-base sm:text-lg">{getReportTitle()}</span>
             </div>
-            <Badge variant="secondary" className="self-start sm:ml-auto">
+            <Badge variant="secondary" className="self-start sm:ml-auto text-xs">
               {new Date().toLocaleDateString('fr-FR')}
             </Badge>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {renderReportContent()}
         </div>
       </DialogContent>

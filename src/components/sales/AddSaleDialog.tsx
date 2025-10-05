@@ -16,7 +16,6 @@ export function AddSaleDialog() {
     customer_name: "",
     customer_phone: "",
     payment_method: "",
-    paid_amount: "",
   });
 
   const { products } = useProducts();
@@ -38,7 +37,7 @@ export function AddSaleDialog() {
         quantity: quantity,
         unit_price: unitPrice,
         total_amount: totalAmount,
-        paid_amount: parseFloat(formData.paid_amount) || 0,
+        paid_amount: totalAmount,
         customer_name: formData.customer_name || null,
         customer_phone: formData.customer_phone || null,
         payment_method: formData.payment_method || null,
@@ -51,7 +50,6 @@ export function AddSaleDialog() {
         customer_name: "",
         customer_phone: "",
         payment_method: "",
-        paid_amount: "",
       });
       setOpen(false);
     } catch (error) {
@@ -142,32 +140,6 @@ export function AddSaleDialog() {
               </div>
             </div>
           )}
-
-          <div className="space-y-2">
-            <Label htmlFor="paid_amount">Montant payé *</Label>
-            <Input
-              id="paid_amount"
-              name="paid_amount"
-              type="number"
-              value={formData.paid_amount}
-              onChange={handleInputChange}
-              required
-              min="0"
-              max={totalAmount || 999999}
-              step="0.01"
-              placeholder="0"
-            />
-            {selectedProduct && quantity > 0 && parseFloat(formData.paid_amount) > 0 && parseFloat(formData.paid_amount) < totalAmount && (
-              <p className="text-sm text-orange-600 dark:text-orange-400">
-                Reste à payer : {(totalAmount - parseFloat(formData.paid_amount)).toLocaleString('fr-FR')} FCFA
-              </p>
-            )}
-            {selectedProduct && quantity > 0 && parseFloat(formData.paid_amount) >= totalAmount && (
-              <p className="text-sm text-green-600 dark:text-green-400">
-                ✓ Paiement complet
-              </p>
-            )}
-          </div>
 
           <div className="space-y-2">
             <Label htmlFor="customer_name">Nom du client</Label>

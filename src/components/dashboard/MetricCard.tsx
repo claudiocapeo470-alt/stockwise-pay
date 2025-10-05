@@ -19,15 +19,15 @@ export function MetricCard({
   gradient = "primary"
 }: MetricCardProps) {
   const gradientClasses = {
-    primary: "bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700",
-    success: "bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700", 
-    warning: "bg-gradient-to-br from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700"
+    primary: "bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 dark:from-violet-600 dark:to-fuchsia-600 shadow-lg shadow-purple-500/50",
+    success: "bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 dark:from-emerald-500 dark:to-cyan-600 shadow-lg shadow-teal-500/50", 
+    warning: "bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 dark:from-amber-500 dark:to-red-600 shadow-lg shadow-orange-500/50"
   }
 
   const cardGradientClasses = {
-    primary: "bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800/30",
-    success: "bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/20 dark:to-emerald-900/10 border-emerald-200 dark:border-emerald-800/30", 
-    warning: "bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-orange-200 dark:border-orange-800/30"
+    primary: "bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 dark:from-violet-950/30 dark:to-fuchsia-900/20 border-2 border-purple-300 dark:border-purple-700/50 shadow-xl shadow-purple-200/50 dark:shadow-purple-900/30",
+    success: "bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/30 dark:to-cyan-900/20 border-2 border-teal-300 dark:border-teal-700/50 shadow-xl shadow-teal-200/50 dark:shadow-teal-900/30", 
+    warning: "bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/30 dark:to-red-900/20 border-2 border-orange-300 dark:border-orange-700/50 shadow-xl shadow-orange-200/50 dark:shadow-orange-900/30"
   }
 
   const changeClasses = {
@@ -37,17 +37,17 @@ export function MetricCard({
   }
 
   return (
-    <Card className={`relative overflow-hidden transition-all hover:shadow-lg border-2 ${cardGradientClasses[gradient]}`}>
+    <Card className={`relative overflow-hidden transition-all hover:scale-105 hover:shadow-2xl ${cardGradientClasses[gradient]}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-foreground">
           {title}
         </CardTitle>
-        <div className={`p-2.5 rounded-xl shadow-md ${gradientClasses[gradient]}`}>
+        <div className={`p-2.5 rounded-xl shadow-lg ${gradientClasses[gradient]} animate-pulse`}>
           <Icon className="h-5 w-5 text-white" />
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-foreground">{value}</div>
+        <div className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">{value}</div>
         {change && (
           <p className={`text-xs ${changeClasses[changeType]} mt-1`}>
             {change}

@@ -7,8 +7,9 @@ import { BarChart3, Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle } 
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const { products } = useProducts();
@@ -24,6 +25,8 @@ export default function Dashboard() {
   const hasSeenWelcomeGuide = user?.id ? localStorage.getItem(`welcome-guide-seen-${user.id}`) === 'true' : false;
   
   const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
+  const alertAudioRef = useRef<HTMLAudioElement | null>(null);
+  const hasPlayedAlertRef = useRef(false);
 
   const metrics = useMemo(() => {
     const totalProducts = products.length;
@@ -71,6 +74,31 @@ export default function Dashboard() {
     }
     setShowWelcomeGuide(false);
   };
+
+  // Critical stock alert with sound
+  useEffect(() => {
+    if (metrics.lowStockProducts > 0 && !hasPlayedAlertRef.current) {
+      // Create audio element for alert sound
+      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjGH0fPTgjMGHm7A7+OZSA0PVK7o7KxZEwxEnN3yvmwhBjKI0PPTgjMGHm/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBjKI0fPTgjMGHm/A7+OZRw0QVa/n7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KtaEgxFnd3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KtaEgxFnd3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxE=');
+      alertAudioRef.current = audio;
+      
+      // Play alert sound
+      audio.play().catch(e => console.log('Audio play failed:', e));
+      
+      // Show toast notification
+      toast.error("⚠️ ALERTE STOCK CRITIQUE", {
+        description: `${metrics.lowStockProducts} produit(s) nécessitent un réapprovisionnement urgent !`,
+        duration: 5000,
+      });
+      
+      hasPlayedAlertRef.current = true;
+    }
+    
+    // Reset alert if stock is restored
+    if (metrics.lowStockProducts === 0) {
+      hasPlayedAlertRef.current = false;
+    }
+  }, [metrics.lowStockProducts]);
 
   return (
     <div className="space-y-6">
@@ -124,16 +152,16 @@ export default function Dashboard() {
 
       {/* Alerts */}
       {metrics.lowStockProducts > 0 && (
-        <Card className="bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/20 dark:to-red-900/10 border-2 border-red-200 dark:border-red-800/30">
+        <Card className="bg-gradient-to-br from-red-100 via-orange-100 to-red-100 dark:from-red-950/40 dark:to-orange-900/30 border-4 border-red-400 dark:border-red-600 shadow-2xl shadow-red-500/50 animate-heartbeat">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-red-500 to-red-600">
-                <AlertTriangle className="h-5 w-5 text-white" />
+            <CardTitle className="flex items-center gap-3 text-red-700 dark:text-red-300">
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-red-500 via-orange-500 to-red-600 shadow-lg shadow-red-500/50 animate-heartbeat">
+                <AlertTriangle className="h-6 w-6 text-white animate-pulse" />
               </div>
-              Alerte Stock Critique
+              <span className="text-2xl font-bold animate-pulse">⚠️ Alerte Stock Critique ⚠️</span>
             </CardTitle>
-            <CardDescription className="text-foreground/90">
-              {metrics.lowStockProducts} produit(s) ont un stock critique et nécessitent un réapprovisionnement
+            <CardDescription className="text-foreground font-semibold text-base mt-2">
+              🚨 {metrics.lowStockProducts} produit(s) ont un stock critique et nécessitent un réapprovisionnement URGENT !
             </CardDescription>
           </CardHeader>
         </Card>

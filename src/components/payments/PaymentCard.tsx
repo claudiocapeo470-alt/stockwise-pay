@@ -33,22 +33,34 @@ interface PaymentCardProps {
   onDelete?: (payment: Payment) => void
 }
 
-const paymentMethodIcons = {
+const paymentMethodIcons: Record<string, any> = {
   'especes': Banknote,
+  'Espèces': Banknote,
   'orange_money': Smartphone,
+  'Mobile Money': Smartphone,
   'mtn_money': Smartphone,
   'wave': Smartphone,
   'moov_money': Smartphone,
-  'carte_bancaire': CreditCard
+  'carte_bancaire': CreditCard,
+  'Carte bancaire': CreditCard,
+  'Virement': CreditCard,
+  'Chèque': Banknote,
+  'Autre': CreditCard
 }
 
-const paymentMethodLabels = {
+const paymentMethodLabels: Record<string, string> = {
   'especes': 'Espèces',
+  'Espèces': 'Espèces',
   'orange_money': 'Orange Money',
+  'Mobile Money': 'Mobile Money',
   'mtn_money': 'MTN Money',
   'wave': 'Wave',
   'moov_money': 'Moov Money',
-  'carte_bancaire': 'Carte Bancaire'
+  'carte_bancaire': 'Carte Bancaire',
+  'Carte bancaire': 'Carte bancaire',
+  'Virement': 'Virement',
+  'Chèque': 'Chèque',
+  'Autre': 'Autre'
 }
 
 const statusConfig = {
@@ -81,9 +93,10 @@ const statusConfig = {
 export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const { deletePayment } = usePayments();
-  const status = statusConfig[payment.status]
+  const status = statusConfig[payment.status] || statusConfig['pending']
   const StatusIcon = status.icon
-  const MethodIcon = paymentMethodIcons[payment.payment_method]
+  const MethodIcon = paymentMethodIcons[payment.payment_method] || CreditCard
+  const methodLabel = paymentMethodLabels[payment.payment_method] || payment.payment_method
 
   const formatAmount = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -129,10 +142,12 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
                 <Badge className={cn("text-xs", status.className)}>
                   {status.label}
                 </Badge>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <MethodIcon className="h-3 w-3" />
-                  <span>{paymentMethodLabels[payment.payment_method]}</span>
-                </div>
+                {payment.payment_method && (
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <MethodIcon className="h-3 w-3" />
+                    <span>{methodLabel}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

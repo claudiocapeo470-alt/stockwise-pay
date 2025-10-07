@@ -30,7 +30,8 @@ export default function Dashboard() {
 
   const metrics = useMemo(() => {
     const totalProducts = products.length;
-    const lowStockProducts = products.filter(p => p.quantity <= p.min_quantity).length;
+    const lowStockProductsList = products.filter(p => p.quantity <= p.min_quantity);
+    const lowStockProducts = lowStockProductsList.length;
     
     const totalSales = sales.reduce((sum, sale) => sum + sale.total_amount, 0);
     const todaySales = sales.filter(sale => {
@@ -45,6 +46,7 @@ export default function Dashboard() {
     return {
       totalProducts,
       lowStockProducts,
+      lowStockProductsList,
       totalSales,
       todaySales,
       pendingPayments,
@@ -164,6 +166,22 @@ export default function Dashboard() {
               🚨 {metrics.lowStockProducts} produit(s) ont un stock critique et nécessitent un réapprovisionnement URGENT !
             </CardDescription>
           </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-red-700 dark:text-red-300">Produits concernés :</p>
+              <ul className="space-y-1">
+                {metrics.lowStockProductsList.map((product) => (
+                  <li key={product.id} className="text-sm text-foreground flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                    <span className="font-semibold">{product.name}</span>
+                    <span className="text-muted-foreground">
+                      (Stock: {product.quantity} / Min: {product.min_quantity})
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
         </Card>
       )}
 

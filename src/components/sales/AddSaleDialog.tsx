@@ -40,7 +40,7 @@ export function AddSaleDialog() {
         paid_amount: totalAmount,
         customer_name: formData.customer_name || null,
         customer_phone: formData.customer_phone || null,
-        payment_method: formData.payment_method || null,
+        payment_method: formData.payment_method,
         sale_date: new Date().toISOString(),
       });
 
@@ -164,10 +164,11 @@ export function AddSaleDialog() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="payment_method">Mode de paiement</Label>
+            <Label htmlFor="payment_method">Mode de paiement *</Label>
             <Select
               value={formData.payment_method}
               onValueChange={(value) => setFormData(prev => ({ ...prev, payment_method: value }))}
+              required
             >
               <SelectTrigger>
                 <SelectValue placeholder="Sélectionner un mode de paiement" />
@@ -189,7 +190,7 @@ export function AddSaleDialog() {
             </Button>
             <Button 
               type="submit" 
-              disabled={addSale.isPending || !selectedProduct || quantity <= 0}
+              disabled={addSale.isPending || !selectedProduct || quantity <= 0 || !formData.payment_method}
             >
               {addSale.isPending ? "Enregistrement..." : "Enregistrer la vente"}
             </Button>

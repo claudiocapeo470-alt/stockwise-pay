@@ -118,6 +118,11 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
   };
 
   const getFullName = () => {
+    // Si customer_name existe (vente), l'utiliser en priorité
+    if (payment.customer_name) {
+      return payment.customer_name;
+    }
+    // Sinon utiliser first_name et last_name
     return `${payment.customer_first_name || ''} ${payment.customer_last_name || ''}`.trim()
   }
 
@@ -135,10 +140,17 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
               <StatusIcon className={cn("h-5 w-5", status.iconColor)} />
             </div>
             <div>
-              <h4 className="font-semibold text-foreground text-lg">
-                {getFullName() || 'Client inconnu'}
-              </h4>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="font-semibold text-foreground text-lg">
+                  {getFullName() || 'Client inconnu'}
+                </h4>
+                {payment.sale_id && (
+                  <Badge className="bg-blue-500 hover:bg-blue-600 text-white">
+                    Vente
+                  </Badge>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
                 <Badge className={cn("text-xs", status.className)}>
                   {status.label}
                 </Badge>

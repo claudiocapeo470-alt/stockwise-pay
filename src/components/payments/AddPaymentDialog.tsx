@@ -52,6 +52,7 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
     }
 
     const paymentData = {
+      customer_name: null,
       customer_first_name: formData.customer_first_name,
       customer_last_name: formData.customer_last_name,
       customer_phone: formData.customer_phone || null,

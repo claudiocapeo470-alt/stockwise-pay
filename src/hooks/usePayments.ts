@@ -7,6 +7,7 @@ export interface Payment {
   id: string;
   user_id: string;
   sale_id: string | null;
+  customer_name: string | null;
   customer_first_name: string | null;
   customer_last_name: string | null;
   payment_method: 'especes' | 'orange_money' | 'mtn_money' | 'wave' | 'moov_money' | 'carte_bancaire';

@@ -7,9 +7,8 @@ import { BarChart3, Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle } 
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
 
 export default function Dashboard() {
   const { products } = useProducts();
@@ -25,8 +24,6 @@ export default function Dashboard() {
   const hasSeenWelcomeGuide = user?.id ? localStorage.getItem(`welcome-guide-seen-${user.id}`) === 'true' : false;
   
   const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
-  const alertAudioRef = useRef<HTMLAudioElement | null>(null);
-  const hasPlayedAlertRef = useRef(false);
 
   const metrics = useMemo(() => {
     const totalProducts = products.length;
@@ -77,30 +74,6 @@ export default function Dashboard() {
     setShowWelcomeGuide(false);
   };
 
-  // Critical stock alert with sound
-  useEffect(() => {
-    if (metrics.lowStockProducts > 0 && !hasPlayedAlertRef.current) {
-      // Create audio element for alert sound
-      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjGH0fPTgjMGHm7A7+OZSA0PVK7o7KxZEwxEnN3yvmwhBjKI0PPTgjMGHm/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBjKI0fPTgjMGHm/A7+OZRw0QVa/n7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KtaEgxFnd3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KtaEgxFnd3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxEnN3yv2wgBTOI0fPTgjMGHW/A7+OZSA0PVK7o7KxZEwxE=');
-      alertAudioRef.current = audio;
-      
-      // Play alert sound
-      audio.play().catch(e => console.log('Audio play failed:', e));
-      
-      // Show toast notification
-      toast.error("⚠️ ALERTE STOCK CRITIQUE", {
-        description: `${metrics.lowStockProducts} produit(s) nécessitent un réapprovisionnement urgent !`,
-        duration: 5000,
-      });
-      
-      hasPlayedAlertRef.current = true;
-    }
-    
-    // Reset alert if stock is restored
-    if (metrics.lowStockProducts === 0) {
-      hasPlayedAlertRef.current = false;
-    }
-  }, [metrics.lowStockProducts]);
 
   return (
     <div className="space-y-6">

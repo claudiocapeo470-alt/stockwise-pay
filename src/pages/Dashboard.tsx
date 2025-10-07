@@ -154,32 +154,36 @@ export default function Dashboard() {
 
       {/* Alerts */}
       {metrics.lowStockProducts > 0 && (
-        <Card className="bg-gradient-to-br from-red-100 via-orange-100 to-red-100 dark:from-red-950/40 dark:to-orange-900/30 border-4 border-red-400 dark:border-red-600 shadow-2xl shadow-red-500/50 animate-heartbeat">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-red-700 dark:text-red-300">
-              <div className="p-2.5 rounded-xl bg-gradient-to-br from-red-500 via-orange-500 to-red-600 shadow-lg shadow-red-500/50 animate-heartbeat">
-                <AlertTriangle className="h-6 w-6 text-white animate-pulse" />
+        <Card className="bg-gradient-to-br from-red-100 via-orange-100 to-red-100 dark:from-red-950/40 dark:to-orange-900/30 border-2 border-red-400 dark:border-red-600 shadow-xl shadow-red-500/30 animate-heartbeat">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 via-orange-500 to-red-600 shadow-lg shadow-red-500/50 animate-heartbeat shrink-0">
+                <AlertTriangle className="h-8 w-8 text-white animate-pulse" />
               </div>
-              <span className="text-2xl font-bold animate-pulse">⚠️ Alerte Stock Critique ⚠️</span>
-            </CardTitle>
-            <CardDescription className="text-foreground font-semibold text-base mt-2">
-              🚨 {metrics.lowStockProducts} produit(s) ont un stock critique et nécessitent un réapprovisionnement URGENT !
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-red-700 dark:text-red-300">Produits concernés :</p>
-              <ul className="space-y-1">
-                {metrics.lowStockProductsList.map((product) => (
-                  <li key={product.id} className="text-sm text-foreground flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                    <span className="font-semibold">{product.name}</span>
-                    <span className="text-muted-foreground">
-                      (Stock: {product.quantity} / Min: {product.min_quantity})
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              
+              <div className="flex-1 min-w-0">
+                <h3 className="text-xl font-bold text-red-700 dark:text-red-300 mb-2 flex items-center gap-2">
+                  Alerte Stock Critique
+                  <span className="text-base font-normal bg-red-600 text-white px-2.5 py-0.5 rounded-full">
+                    {metrics.lowStockProducts}
+                  </span>
+                </h3>
+                
+                <div className="flex flex-wrap gap-2">
+                  {metrics.lowStockProductsList.map((product) => (
+                    <div 
+                      key={product.id}
+                      className="inline-flex items-center gap-2 bg-white/80 dark:bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-red-300 dark:border-red-700"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                      <span className="font-semibold text-foreground">{product.name}</span>
+                      <span className="text-xs text-muted-foreground bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded">
+                        {product.quantity}/{product.min_quantity}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

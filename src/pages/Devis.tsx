@@ -85,41 +85,46 @@ export default function Devis() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold truncate">Devis</h1>
-          <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Devis</h1>
+          <p className="text-muted-foreground">
             Gérez vos devis clients
           </p>
         </div>
         <Button 
-          onClick={() => navigate('/app/devis/new')} 
-          size={isMobile ? "sm" : "lg"}
-          className="w-full sm:w-auto shrink-0"
+          onClick={() => navigate('/app/devis/new')}
+          className="shrink-0"
         >
           <Plus className="mr-2 h-4 w-4" />
-          {isMobile ? "Nouveau" : "Nouveau Devis"}
+          Nouveau Devis
         </Button>
       </div>
 
-      <Card className="overflow-hidden">
-        <CardHeader className="space-y-3 sm:space-y-0">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <FileText className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-              <span className="truncate">Liste des Devis</span>
-            </CardTitle>
-            <div className="relative w-full sm:w-64 lg:w-72">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Rechercher..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 text-sm"
-              />
-            </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Recherche
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher par client ou numéro..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
+        <CardHeader>
+          <CardTitle className="text-blue-900 dark:text-blue-100">Liste des Devis</CardTitle>
         </CardHeader>
         <CardContent>
           {filteredInvoices.length === 0 ? (
@@ -135,16 +140,16 @@ export default function Devis() {
               </Button>
             </div>
           ) : isMobile ? (
-            <div className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredInvoices.map((invoice) => (
-                <Card key={invoice.id} className="hover:shadow-md transition-all bg-gradient-to-br from-background to-muted/5 border-border/50 overflow-hidden">
-                  <CardHeader className="pb-3 px-4">
-                    <div className="flex justify-between items-start gap-3">
+                <Card key={invoice.id} className="hover:shadow-lg transition-shadow bg-background/50">
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start">
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-sm font-semibold truncate mb-1">
+                        <CardTitle className="text-base font-semibold text-foreground truncate">
                           {invoice.document_number}
                         </CardTitle>
-                        <p className="text-xs text-muted-foreground truncate">
+                        <p className="text-xs text-muted-foreground mt-1 truncate">
                           {invoice.client_name}
                         </p>
                       </div>
@@ -154,7 +159,7 @@ export default function Devis() {
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => navigate(`/app/devis/${invoice.id}/preview`)}>
                             <Eye className="mr-2 h-4 w-4" />
                             Voir
@@ -185,25 +190,26 @@ export default function Devis() {
                       </DropdownMenu>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-2 px-4 pb-4">
-                    <div className="flex justify-between items-center py-2 border-b border-border/30">
-                      <span className="text-xs text-muted-foreground">Date</span>
-                      <span className="text-xs font-medium">
+                  <CardContent className="space-y-3">
+                    <div className="flex justify-between items-center py-2 border-b border-border/50">
+                      <span className="text-sm text-muted-foreground">Date</span>
+                      <span className="text-sm font-medium">
                         {format(new Date(invoice.issue_date), 'dd/MM/yyyy', { locale: fr })}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center py-2 border-b border-border/30">
-                      <span className="text-xs text-muted-foreground">Montant</span>
-                      <span className="text-xs font-semibold truncate ml-2">
+                    <div className="flex justify-between items-center py-2 border-b border-border/50">
+                      <span className="text-sm text-muted-foreground">Montant</span>
+                      <span className="text-sm font-semibold">
                         {new Intl.NumberFormat('fr-FR', {
                           style: 'currency',
                           currency: 'XOF',
-                        }).format(invoice.total_amount)}
+                          minimumFractionDigits: 0
+                        }).format(invoice.total_amount).replace('XOF', 'FCFA')}
                       </span>
                     </div>
                     <div className="flex justify-between items-center pt-2">
-                      <span className="text-xs text-muted-foreground">Statut</span>
-                      <Badge className={`${statusColors[invoice.status]} text-xs px-2 py-0.5`}>
+                      <span className="text-sm text-muted-foreground">Statut</span>
+                      <Badge className={statusColors[invoice.status]}>
                         {statusLabels[invoice.status]}
                       </Badge>
                     </div>

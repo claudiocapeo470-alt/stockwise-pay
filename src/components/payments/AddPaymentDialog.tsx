@@ -90,15 +90,13 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          variant="ghost"
-          className="w-full justify-start h-auto p-4 hover:bg-accent"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-medium hover:shadow-glow transition-all duration-300 rounded-xl h-auto py-3 px-4 sm:py-3.5 sm:px-5 flex items-center justify-center gap-2 sm:gap-3 group"
         >
-          <div className="p-2 rounded-lg mr-3 bg-warning dark:bg-gradient-warning hover:opacity-90">
-            <Receipt className="h-4 w-4 text-white" />
-          </div>
-          <div className="text-left">
-            <div className="font-medium text-foreground dark:text-foreground">Paiement reçu</div>
-            <div className="text-sm text-gray-700 dark:text-muted-foreground">Marquer comme payé</div>
+          <Plus className="h-4 w-4 sm:h-5 sm:w-5 group-hover:rotate-90 transition-transform duration-300" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2 text-center sm:text-left">
+            <span className="font-semibold text-sm sm:text-base">Paiement reçu</span>
+            <span className="hidden sm:inline text-xs sm:text-sm opacity-90">•</span>
+            <span className="text-xs sm:text-sm opacity-90">Marquer comme payé</span>
           </div>
         </Button>
       </DialogTrigger>

@@ -160,20 +160,12 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
           <Button 
-            variant="outline" 
-            onClick={() => handleSave('brouillon')}
-            size={isMobile ? "sm" : "default"}
-            className="w-full sm:w-auto"
-          >
-            <Save className="h-4 w-4 mr-2" />
-            {isMobile ? "Enregistrer" : "Enregistrer"}
-          </Button>
-          <Button 
             onClick={() => handleSave('envoye')}
             size={isMobile ? "sm" : "default"}
             className="w-full sm:w-auto"
           >
-            {isMobile ? "Envoyer" : "Enregistrer et Envoyer"}
+            <Save className="h-4 w-4 mr-2" />
+            {documentType === 'facture' ? 'Créer une Facture' : 'Créer un Devis'}
           </Button>
         </div>
       </div>
@@ -489,6 +481,18 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
             />
           </CardContent>
         </Card>
+      </div>
+
+      {/* Bottom Save Button */}
+      <div className="flex justify-end pb-6">
+        <Button 
+          onClick={() => handleSave('envoye')}
+          size={isMobile ? "sm" : "lg"}
+          className="w-full sm:w-auto min-w-[200px]"
+        >
+          <Save className="h-4 w-4 mr-2" />
+          {documentType === 'facture' ? 'Créer une Facture' : 'Créer un Devis'}
+        </Button>
       </div>
     </div>
   );

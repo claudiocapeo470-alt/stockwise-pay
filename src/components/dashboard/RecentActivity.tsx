@@ -86,8 +86,11 @@ export function RecentActivity() {
   }, [products, sales, payments])
 
   return (
-    <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
-      <CardHeader>
+    <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/40 hover:shadow-lg transition-all duration-300">
+      {/* Bordure colorée en haut */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+      
+      <CardHeader className="pt-5">
         <CardTitle className="text-lg font-semibold text-blue-900 dark:text-blue-100">Activité récente</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

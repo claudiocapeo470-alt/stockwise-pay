@@ -50,15 +50,18 @@ export function AppSidebar() {
 
   return (
     <Sidebar className={`${isCollapsed ? "w-16" : "w-64"} bg-gradient-to-b from-blue-50 to-white dark:from-background dark:to-background border-r border-blue-100 dark:border-border`} collapsible="icon">
-      <SidebarHeader className="bg-gradient-to-r from-primary to-blue-600 dark:bg-primary p-4 border-b border-blue-500/20 dark:border-primary-foreground/20 shadow-lg">
-        <div className="flex items-center gap-3">
-          <div className="bg-white/30 dark:bg-white/20 backdrop-blur-sm rounded-lg p-2 shadow-lg ring-2 ring-white/50">
+      <SidebarHeader className="bg-gradient-to-br from-gray-900 via-gray-800 to-black dark:from-gray-950 dark:via-black dark:to-gray-900 p-4 border-b border-gray-700/50 dark:border-gray-800/50 shadow-2xl relative overflow-hidden">
+        {/* Effet de brillance animé */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
+        
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 shadow-xl ring-2 ring-white/20 hover:ring-white/40 transition-all duration-300 hover:scale-110">
             <img src={stocknixLogo} alt="Stocknix" className="h-6 w-6" />
           </div>
           {!isCollapsed && (
             <div>
-              <h1 className="font-bold text-white text-lg">Stocknix</h1>
-              <p className="text-xs text-white/90 font-medium">PME Dashboard</p>
+              <h1 className="font-bold text-white text-lg tracking-tight">Stocknix</h1>
+              <p className="text-xs text-gray-300 font-medium">PME Dashboard</p>
             </div>
           )}
         </div>

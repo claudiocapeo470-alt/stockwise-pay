@@ -86,10 +86,13 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
 
       const documentNumber = await generateDocumentNumber(invoice.document_type);
 
-      const { data: invoiceData, error: invoiceError } = await supabase
+      // Extract items from invoice object
+      const { items, ...invoiceData } = invoice;
+
+      const { data: newInvoice, error: invoiceError } = await supabase
         .from("invoices")
         .insert({
-          ...invoice,
+          ...invoiceData,
           user_id: user.id,
           document_number: documentNumber,
         })
@@ -98,10 +101,10 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
 
       if (invoiceError) throw invoiceError;
 
-      if (invoice.items && invoice.items.length > 0) {
-        const itemsToInsert = invoice.items.map((item, index) => ({
+      if (items && items.length > 0) {
+        const itemsToInsert = items.map((item, index) => ({
           ...item,
-          invoice_id: invoiceData.id,
+          invoice_id: newInvoice.id,
           position: index,
         }));
 
@@ -112,7 +115,7 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
         if (itemsError) throw itemsError;
       }
 
-      return invoiceData;
+      return newInvoice;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
@@ -127,19 +130,22 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
     mutationFn: async ({ id, ...invoice }: Invoice) => {
       if (!user?.id || !id) throw new Error("Missing required data");
 
+      // Extract items from invoice object
+      const { items, ...invoiceData } = invoice;
+
       const { error: invoiceError } = await supabase
         .from("invoices")
-        .update(invoice)
+        .update(invoiceData)
         .eq("id", id)
         .eq("user_id", user.id);
 
       if (invoiceError) throw invoiceError;
 
-      if (invoice.items) {
+      if (items) {
         await supabase.from("invoice_items").delete().eq("invoice_id", id);
 
-        if (invoice.items.length > 0) {
-          const itemsToInsert = invoice.items.map((item, index) => ({
+        if (items.length > 0) {
+          const itemsToInsert = items.map((item, index) => ({
             ...item,
             invoice_id: id,
             position: index,

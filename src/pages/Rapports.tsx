@@ -11,6 +11,7 @@ import { ReportDialog } from "@/components/reports/ReportDialog"
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const reports = [
   {
@@ -98,6 +99,7 @@ export default function Rapports() {
   const { payments = [] } = usePayments()
   const [selectedReportType, setSelectedReportType] = useState<string | null>(null)
   const [showReportDialog, setShowReportDialog] = useState(false)
+  const isMobile = useIsMobile()
 
   // Calculate real metrics
   const metrics = useMemo(() => {
@@ -651,76 +653,84 @@ export default function Rapports() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Rapports et analyses</h1>
-        <p className="text-muted-foreground">
-          Générez et consultez vos rapports d'activité
+      <div className="min-w-0">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent truncate">
+          {isMobile ? "Rapports" : "Rapports et analyses"}
+        </h1>
+        <p className="text-sm text-muted-foreground truncate">
+          {isMobile ? "Vos rapports d'activité" : "Générez et consultez vos rapports d'activité"}
         </p>
       </div>
 
       {/* Quick Export Actions */}
       <Card className="bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-950/20 dark:to-cyan-900/10 border-2 border-cyan-200 dark:border-cyan-800/30">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-md">
-              <Download className="h-5 w-5 text-white" />
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-md shrink-0">
+              <Download className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
-            Exports rapides
+            <span className="truncate">Exports rapides</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <CardContent className="p-4 sm:p-6 pt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             <Button
               variant="outline"
-              className="h-auto p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/30 hover:shadow-lg transition-all"
+              className="h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/30 hover:shadow-lg transition-all min-w-0"
               onClick={() => handleExport('csv', 'sales')}
             >
-              <div className="flex items-center gap-2 w-full">
-                <div className="p-1 rounded bg-gradient-to-br from-blue-500 to-blue-600">
-                  <BarChart3 className="h-4 w-4 text-white" />
+              <div className="flex items-center gap-2 w-full min-w-0">
+                <div className="p-1 rounded bg-gradient-to-br from-blue-500 to-blue-600 shrink-0">
+                  <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
-                <span className="font-medium">Ventes aujourd'hui</span>
-                <Badge variant="outline" className="ml-auto text-xs">CSV</Badge>
+                <span className="font-medium text-sm sm:text-base truncate">{isMobile ? "Ventes" : "Ventes aujourd'hui"}</span>
+                <Badge variant="outline" className="ml-auto text-xs shrink-0">CSV</Badge>
               </div>
-              <p className="text-sm text-muted-foreground text-left">
-                Export CSV des ventes d'aujourd'hui
-              </p>
+              {!isMobile && (
+                <p className="text-xs sm:text-sm text-muted-foreground text-left">
+                  Export CSV des ventes d'aujourd'hui
+                </p>
+              )}
             </Button>
             
             <Button
               variant="outline"
-              className="h-auto p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/20 dark:to-emerald-900/10 border-2 border-emerald-200 dark:border-emerald-800/30 hover:shadow-lg transition-all"
+              className="h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/20 dark:to-emerald-900/10 border-2 border-emerald-200 dark:border-emerald-800/30 hover:shadow-lg transition-all min-w-0"
               onClick={() => handleExport('excel', 'products')}
             >
-              <div className="flex items-center gap-2 w-full">
-                <div className="p-1 rounded bg-gradient-to-br from-emerald-500 to-emerald-600">
-                  <PieChart className="h-4 w-4 text-white" />
+              <div className="flex items-center gap-2 w-full min-w-0">
+                <div className="p-1 rounded bg-gradient-to-br from-emerald-500 to-emerald-600 shrink-0">
+                  <PieChart className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
-                <span className="font-medium">Stock complet</span>
-                <Badge variant="outline" className="ml-auto text-xs">Excel</Badge>
+                <span className="font-medium text-sm sm:text-base truncate">{isMobile ? "Stock" : "Stock complet"}</span>
+                <Badge variant="outline" className="ml-auto text-xs shrink-0">Excel</Badge>
               </div>
-              <p className="text-sm text-muted-foreground text-left">
-                Export Excel de l'inventaire complet
-              </p>
+              {!isMobile && (
+                <p className="text-xs sm:text-sm text-muted-foreground text-left">
+                  Export Excel de l'inventaire complet
+                </p>
+              )}
             </Button>
             
             <Button
               variant="outline"
-              className="h-auto p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-2 border-orange-200 dark:border-orange-800/30 hover:shadow-lg transition-all"
+              className="h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-2 border-orange-200 dark:border-orange-800/30 hover:shadow-lg transition-all min-w-0 sm:col-span-2 lg:col-span-1"
               onClick={() => handleExport('pdf', 'payments')}
             >
-              <div className="flex items-center gap-2 w-full">
-                <div className="p-1 rounded bg-gradient-to-br from-orange-500 to-orange-600">
-                  <Calendar className="h-4 w-4 text-white" />
+              <div className="flex items-center gap-2 w-full min-w-0">
+                <div className="p-1 rounded bg-gradient-to-br from-orange-500 to-orange-600 shrink-0">
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
-                <span className="font-medium">Rapport paiements</span>
-                <Badge variant="outline" className="ml-auto text-xs">PDF</Badge>
+                <span className="font-medium text-sm sm:text-base truncate">{isMobile ? "Paiements" : "Rapport paiements"}</span>
+                <Badge variant="outline" className="ml-auto text-xs shrink-0">PDF</Badge>
               </div>
-              <p className="text-sm text-muted-foreground text-left">
-                Export PDF des paiements
-              </p>
+              {!isMobile && (
+                <p className="text-xs sm:text-sm text-muted-foreground text-left">
+                  Export PDF des paiements
+                </p>
+              )}
             </Button>
           </div>
         </CardContent>
@@ -776,32 +786,33 @@ export default function Rapports() {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-lg"
+                className="flex-1 bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-lg min-w-0"
                 onClick={() => {
                   setSelectedReportType('sales');
                   setShowReportDialog(true);
                 }}
               >
-                <Eye className="h-4 w-4 mr-1" />
-                Voir le rapport
+                <Eye className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
+                <span className="hidden sm:inline truncate">Voir le rapport</span>
+                <span className="sm:hidden truncate">Voir</span>
               </Button>
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
+                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20 shrink-0"
                 onClick={() => handleExport('excel', 'sales')}
               >
-                <Download className="h-4 w-4 mr-1" />
-                Excel
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
+                <span className="hidden sm:inline">Excel</span>
               </Button>
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-red-50 dark:hover:bg-red-950/20"
+                className="hover:bg-red-50 dark:hover:bg-red-950/20 shrink-0"
                 onClick={() => handleExport('pdf', 'sales')}
               >
-                <Download className="h-4 w-4 mr-1" />
-                PDF
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
+                <span className="hidden sm:inline">PDF</span>
               </Button>
             </div>
           </CardContent>
@@ -855,32 +866,33 @@ export default function Rapports() {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white hover:shadow-lg"
+                className="flex-1 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white hover:shadow-lg min-w-0"
                 onClick={() => {
                   setSelectedReportType('inventory');
                   setShowReportDialog(true);
                 }}
               >
-                <Eye className="h-4 w-4 mr-1" />
-                Voir le rapport
+                <Eye className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
+                <span className="hidden sm:inline truncate">Voir le rapport</span>
+                <span className="sm:hidden truncate">Voir</span>
               </Button>
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
+                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20 shrink-0"
                 onClick={() => handleExport('excel', 'products')}
               >
-                <Download className="h-4 w-4 mr-1" />
-                Excel
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
+                <span className="hidden sm:inline">Excel</span>
               </Button>
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-red-50 dark:hover:bg-red-950/20"
+                className="hover:bg-red-50 dark:hover:bg-red-950/20 shrink-0"
                 onClick={() => handleExport('pdf', 'products')}
               >
-                <Download className="h-4 w-4 mr-1" />
-                PDF
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
+                <span className="hidden sm:inline">PDF</span>
               </Button>
             </div>
           </CardContent>
@@ -934,32 +946,33 @@ export default function Rapports() {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-gradient-to-br from-orange-500 to-orange-600 text-white hover:shadow-lg"
+                className="flex-1 bg-gradient-to-br from-orange-500 to-orange-600 text-white hover:shadow-lg min-w-0"
                 onClick={() => {
                   setSelectedReportType('payments');
                   setShowReportDialog(true);
                 }}
               >
-                <Eye className="h-4 w-4 mr-1" />
-                Voir le rapport
+                <Eye className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
+                <span className="hidden sm:inline truncate">Voir le rapport</span>
+                <span className="sm:hidden truncate">Voir</span>
               </Button>
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
+                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20 shrink-0"
                 onClick={() => handleExport('excel', 'payments')}
               >
-                <Download className="h-4 w-4 mr-1" />
-                Excel
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
+                <span className="hidden sm:inline">Excel</span>
               </Button>
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-red-50 dark:hover:bg-red-950/20"
+                className="hover:bg-red-50 dark:hover:bg-red-950/20 shrink-0"
                 onClick={() => handleExport('pdf', 'payments')}
               >
-                <Download className="h-4 w-4 mr-1" />
-                PDF
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
+                <span className="hidden sm:inline">PDF</span>
               </Button>
             </div>
           </CardContent>

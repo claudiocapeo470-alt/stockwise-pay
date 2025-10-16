@@ -18,6 +18,7 @@ import { TopCustomers } from "@/components/performance/TopCustomers";
 import { DateRange } from "react-day-picker";
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type PeriodType = "today" | "week" | "month" | "custom";
 
@@ -26,6 +27,7 @@ export default function Performance() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedProduct, setSelectedProduct] = useState<string>("all");
   const [selectedCustomer, setSelectedCustomer] = useState<string>("all");
+  const isMobile = useIsMobile();
 
   const { products, isLoading: productsLoading } = useProducts();
   const { sales, isLoading: salesLoading } = useSales();
@@ -144,57 +146,57 @@ export default function Performance() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-4 sm:space-y-6 p-4 sm:p-6 max-w-full overflow-hidden">
       {/* En-tête */}
-      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">
-            Tableau de bord Performance
+      <div className="flex flex-col space-y-3 sm:space-y-4 md:flex-row md:items-start md:justify-between md:space-y-0">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent truncate">
+            {isMobile ? "Performance" : "Tableau de bord Performance"}
           </h2>
-          <p className="text-muted-foreground">
-            Visualisez vos indicateurs clés de performance en temps réel
+          <p className="text-sm text-muted-foreground truncate">
+            {isMobile ? "Indicateurs clés" : "Visualisez vos indicateurs clés de performance en temps réel"}
           </p>
         </div>
-        <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+        <div className="flex flex-row gap-2 shrink-0">
           <Button 
             variant="outline" 
-            size="sm" 
+            size={isMobile ? "sm" : "sm"}
             onClick={() => handleExport('pdf')}
-            className="border-primary/20 hover:border-primary"
+            className="border-primary/20 hover:border-primary flex-1 sm:flex-none"
           >
-            <Download className="mr-2 h-4 w-4" />
-            Export PDF
+            <Download className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">PDF</span>
           </Button>
           <Button 
             variant="outline" 
-            size="sm" 
+            size={isMobile ? "sm" : "sm"}
             onClick={() => handleExport('excel')}
-            className="border-primary/20 hover:border-primary"
+            className="border-primary/20 hover:border-primary flex-1 sm:flex-none"
           >
-            <Download className="mr-2 h-4 w-4" />
-            Export Excel
+            <Download className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Excel</span>
           </Button>
         </div>
       </div>
 
       {/* Filtres */}
       <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
-        <CardHeader>
-          <CardTitle className="flex items-center text-blue-900 dark:text-blue-100">
-            <Activity className="mr-2 h-5 w-5 text-primary" />
-            Filtres d'analyse
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="flex items-center text-sm sm:text-base text-blue-900 dark:text-blue-100">
+            <Activity className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
+            <span className="truncate">Filtres d'analyse</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <CardContent className="p-4 sm:p-6 pt-0">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Période */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Période</label>
+            <div className="space-y-2 min-w-0">
+              <label className="text-xs sm:text-sm font-medium text-foreground">Période</label>
               <Select value={period} onValueChange={(value: PeriodType) => setPeriod(value)}>
-                <SelectTrigger className="bg-input border-border">
+                <SelectTrigger className="bg-input border-border h-9 text-sm">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="w-[200px]">
                   <SelectItem value="today">Aujourd'hui</SelectItem>
                   <SelectItem value="week">Cette semaine</SelectItem>
                   <SelectItem value="month">Ce mois</SelectItem>
@@ -205,27 +207,32 @@ export default function Performance() {
 
             {/* Date personnalisée */}
             {period === "custom" && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Dates personnalisées</label>
+              <div className="space-y-2 min-w-0 sm:col-span-2 lg:col-span-1">
+                <label className="text-xs sm:text-sm font-medium text-foreground">Dates</label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-start text-left font-normal bg-input border-border"
+                      className="w-full justify-start text-left font-normal bg-input border-border h-9 text-xs sm:text-sm"
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange?.from ? (
-                        dateRange.to ? (
-                          <>
-                            {format(dateRange.from, "LLL dd, y", { locale: fr })} -{" "}
-                            {format(dateRange.to, "LLL dd, y", { locale: fr })}
-                          </>
+                      <CalendarIcon className="mr-2 h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+                      <span className="truncate">
+                        {dateRange?.from ? (
+                          dateRange.to ? (
+                            isMobile ? (
+                              `${format(dateRange.from, "dd/MM", { locale: fr })} - ${format(dateRange.to, "dd/MM", { locale: fr })}`
+                            ) : (
+                              <>
+                                {format(dateRange.from, "dd MMM", { locale: fr })} - {format(dateRange.to, "dd MMM", { locale: fr })}
+                              </>
+                            )
+                          ) : (
+                            format(dateRange.from, isMobile ? "dd/MM/yy" : "dd MMM y", { locale: fr })
+                          )
                         ) : (
-                          format(dateRange.from, "LLL dd, y", { locale: fr })
-                        )
-                      ) : (
-                        <span>Sélectionner les dates</span>
-                      )}
+                          <span>Sélectionner</span>
+                        )}
+                      </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -235,7 +242,7 @@ export default function Performance() {
                       defaultMonth={dateRange?.from}
                       selected={dateRange}
                       onSelect={setDateRange}
-                      numberOfMonths={2}
+                      numberOfMonths={isMobile ? 1 : 2}
                       locale={fr}
                     />
                   </PopoverContent>
@@ -244,17 +251,17 @@ export default function Performance() {
             )}
 
             {/* Filtre produit */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Produit</label>
+            <div className="space-y-2 min-w-0">
+              <label className="text-xs sm:text-sm font-medium text-foreground">Produit</label>
               <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                <SelectTrigger className="bg-input border-border">
+                <SelectTrigger className="bg-input border-border h-9 text-sm">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les produits</SelectItem>
+                <SelectContent className="w-[200px]">
+                  <SelectItem value="all">Tous</SelectItem>
                   {products?.map(product => (
                     <SelectItem key={product.id} value={product.id}>
-                      {product.name}
+                      <span className="truncate">{product.name}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -262,17 +269,17 @@ export default function Performance() {
             </div>
 
             {/* Filtre client */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Client</label>
+            <div className="space-y-2 min-w-0">
+              <label className="text-xs sm:text-sm font-medium text-foreground">Client</label>
               <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
-                <SelectTrigger className="bg-input border-border">
+                <SelectTrigger className="bg-input border-border h-9 text-sm">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les clients</SelectItem>
+                <SelectContent className="w-[200px]">
+                  <SelectItem value="all">Tous</SelectItem>
                   {uniqueCustomers.map(customer => (
                     <SelectItem key={customer} value={customer}>
-                      {customer}
+                      <span className="truncate">{customer}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -286,16 +293,25 @@ export default function Performance() {
       <PerformanceMetrics metrics={metrics} />
 
       {/* Contenu principal avec onglets */}
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="bg-card border border-border">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            Vue d'ensemble
+      <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
+        <TabsList className="bg-card border border-border w-full sm:w-auto grid grid-cols-3 sm:flex">
+          <TabsTrigger 
+            value="overview" 
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs sm:text-sm px-2 sm:px-4"
+          >
+            {isMobile ? "Vue" : "Vue d'ensemble"}
           </TabsTrigger>
-          <TabsTrigger value="products" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            Top Produits
+          <TabsTrigger 
+            value="products" 
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs sm:text-sm px-2 sm:px-4"
+          >
+            Produits
           </TabsTrigger>
-          <TabsTrigger value="customers" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            Top Clients
+          <TabsTrigger 
+            value="customers" 
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs sm:text-sm px-2 sm:px-4"
+          >
+            Clients
           </TabsTrigger>
         </TabsList>
 

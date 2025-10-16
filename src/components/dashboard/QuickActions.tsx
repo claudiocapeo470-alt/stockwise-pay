@@ -10,37 +10,37 @@ export function QuickActions() {
   const navigate = useNavigate()
 
   return (
-    <Card className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/20 dark:to-purple-900/10 border-2 border-purple-200 dark:border-purple-800/30">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600">
-            <Plus className="h-4 w-4 text-white" />
+    <Card className="bg-background/95 backdrop-blur-sm border-2 shadow-lg hover:shadow-xl transition-all duration-300">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-bold flex items-center gap-3">
+          <div className="p-2 rounded-full bg-primary shadow-md">
+            <Plus className="h-5 w-5 text-primary-foreground" />
           </div>
-          Actions rapides
+          <span className="text-foreground">Actions rapides</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {/* Nouvelle vente */}
-        <div className="relative">
+        <div className="relative group">
           <AddSaleDialog />
         </div>
 
         {/* Ajouter produit */}
-        <div className="relative">
+        <div className="relative group">
           <AddProductDialog />
         </div>
 
         {/* Paiement reçu */}
-        <div className="relative">
+        <div className="relative group">
           <AddPaymentDialog />
         </div>
         
         <Button 
           variant="outline" 
-          className="w-full mt-4 bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/20 dark:to-indigo-900/10 border-indigo-200 dark:border-indigo-800/30 hover:shadow-md transition-all"
+          className="w-full mt-4 bg-background hover:bg-accent border-2 hover:border-primary/50 hover:shadow-md transition-all duration-300 h-12 rounded-xl font-medium group"
           onClick={() => navigate("/app/rapports")}
         >
-          <FileText className="h-4 w-4 mr-2" />
+          <FileText className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
           Voir tous les rapports
         </Button>
       </CardContent>

@@ -60,30 +60,39 @@ export function PerformanceMetrics({ metrics }: MetricsProps) {
   };
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 sm:gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {metricsData.map((metric, index) => (
-        <Card key={index} className="relative overflow-hidden transition-all hover:shadow-medium bg-gradient-surface border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+        <Card 
+          key={index} 
+          className="relative overflow-hidden group transition-all duration-500 hover:scale-[1.02] bg-gradient-to-br from-card via-card to-card/90 border-primary/20 shadow-medium hover:shadow-glow hover:border-primary/40"
+        >
+          {/* Effet de lumière animée */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          
+          {/* Bordure lumineuse supérieure */}
+          <div className={`absolute top-0 left-0 w-full h-1 ${gradientClasses[metric.gradient]}`}></div>
+          
+          <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3 pt-5">
+            <CardTitle className="text-xs sm:text-sm font-semibold text-muted-foreground uppercase tracking-wider">
               {metric.title}
             </CardTitle>
-            <div className={`p-2 rounded-lg ${gradientClasses[metric.gradient]}`}>
-              <metric.icon className="h-4 w-4 text-white" />
+            <div className={`p-2.5 rounded-xl ${gradientClasses[metric.gradient]} shadow-glow group-hover:scale-110 transition-transform duration-300`}>
+              <metric.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground mb-1">
+          <CardContent className="relative">
+            <div className="text-2xl sm:text-3xl font-black bg-gradient-secondary bg-clip-text text-transparent mb-2">
               {metric.value}
             </div>
             {metric.change && (
-              <div className="flex items-center text-xs">
+              <div className="flex items-center text-xs sm:text-sm font-medium">
                 {metric.changeType === "positive" ? (
-                  <TrendingUp className="mr-1 h-3 w-3 text-success" />
+                  <TrendingUp className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4 text-success animate-bounce" />
                 ) : (
-                  <TrendingDown className="mr-1 h-3 w-3 text-destructive" />
+                  <TrendingDown className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4 text-destructive" />
                 )}
                 <span className={changeClasses[metric.changeType]}>
-                  {metric.change} vs période précédente
+                  {metric.change} vs période
                 </span>
               </div>
             )}

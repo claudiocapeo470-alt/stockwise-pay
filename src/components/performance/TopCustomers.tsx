@@ -114,49 +114,54 @@ export function TopCustomers({ sales, payments }: TopCustomersProps) {
     const maxValue = customers.length > 0 ? Math.max(...customers.map(c => c[valueKey])) : 0;
 
     return (
-      <Card className="bg-gradient-surface border-border/50">
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card via-card to-card/90 border-primary/20 shadow-medium hover:shadow-glow transition-all duration-500 group">
+        {/* Bordure supérieure animée */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-secondary"></div>
+        
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center text-foreground">
-            {icon}
-            {title}
+          <CardTitle className="flex items-center text-base sm:text-lg font-bold">
+            <div className="p-2 rounded-lg bg-primary/10 mr-2 group-hover:bg-primary/20 transition-colors">
+              {icon}
+            </div>
+            <span className="truncate">{title}</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 sm:space-y-4">
           {customers.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">
+            <div className="text-muted-foreground text-center py-8 text-sm">
+              <Users className="h-12 w-12 mx-auto mb-2 opacity-30" />
               Aucune donnée disponible
-            </p>
+            </div>
           ) : (
             customers.map((customer, index) => (
-              <div key={customer.name} className="flex items-center space-x-4">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                  <span className="text-sm font-semibold text-primary">
-                    {index + 1}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      {customer.name}
-                    </p>
-                    <Badge variant="secondary" className="ml-2">
-                      {valueKey === 'frequency' && `${customer.frequency} achats`}
-                      {valueKey === 'revenue' && formatCurrency(customer.revenue)}
-                    </Badge>
+              <div key={customer.name} className="group/item hover:bg-muted/30 p-2 rounded-lg transition-all duration-300">
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-secondary shadow-glow flex-shrink-0">
+                    <span className="text-sm sm:text-base font-black text-white">
+                      {index + 1}
+                    </span>
                   </div>
-                  <div className="mt-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <p className="text-sm sm:text-base font-semibold text-foreground truncate">
+                        {customer.name}
+                      </p>
+                      <Badge variant="secondary" className="ml-2 flex-shrink-0 bg-primary/10 text-primary border-primary/20 font-bold">
+                        {valueKey === 'frequency' && `${customer.frequency}`}
+                        {valueKey === 'revenue' && formatCurrency(customer.revenue)}
+                      </Badge>
+                    </div>
                     <Progress 
                       value={maxValue > 0 ? (customer[valueKey] / maxValue) * 100 : 0} 
-                      className="h-2"
+                      className="h-2 sm:h-2.5 mb-2"
                     />
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>
-                      {customer.totalQuantity} articles
-                    </span>
-                    <span>
-                      Moy: {formatCurrency(customer.averageOrderValue)}
-                    </span>
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <ShoppingBag className="h-3 w-3" />
+                        {customer.totalQuantity} articles
+                      </span>
+                      <span className="font-medium">Moy: {formatCurrency(customer.averageOrderValue)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -168,18 +173,18 @@ export function TopCustomers({ sales, payments }: TopCustomersProps) {
   };
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
       {renderCustomerList(
         topCustomersData.topFrequent,
         "Clients les Plus Fidèles",
         "frequency",
-        <Users className="mr-2 h-5 w-5 text-primary" />
+        <Users className="h-5 w-5 text-primary" />
       )}
       {renderCustomerList(
         topCustomersData.topRevenue,
         "Clients les Plus Rentables",
         "revenue",
-        <Crown className="mr-2 h-5 w-5 text-warning" />
+        <Crown className="h-5 w-5 text-warning" />
       )}
     </div>
   );

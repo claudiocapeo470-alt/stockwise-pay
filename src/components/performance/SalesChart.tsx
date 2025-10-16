@@ -122,48 +122,57 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
   const totalSales = chartData.reduce((sum, data) => sum + data.count, 0);
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
       {/* Évolution du chiffre d'affaires */}
-      <Card className="bg-gradient-surface border-border/50">
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card via-card to-card/90 border-primary/20 shadow-medium hover:shadow-glow transition-all duration-500 group">
+        {/* Bordure supérieure animée */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-secondary"></div>
+        
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center text-foreground">
-            <TrendingUp className="mr-2 h-5 w-5 text-primary" />
-            Évolution du Chiffre d'Affaires
+          <CardTitle className="flex items-center text-base sm:text-lg font-bold">
+            <div className="p-2 rounded-lg bg-primary/10 mr-2 group-hover:bg-primary/20 transition-colors">
+              <TrendingUp className="h-5 w-5 text-primary" />
+            </div>
+            <span className="truncate">Chiffre d'Affaires</span>
           </CardTitle>
-          <div className="text-2xl font-bold text-primary">
+          <div className="text-xl sm:text-2xl md:text-3xl font-black bg-gradient-secondary bg-clip-text text-transparent mt-1">
             {new Intl.NumberFormat('fr-FR', {
               style: 'currency',
-              currency: 'XOF'
+              currency: 'XOF',
+              notation: 'compact',
+              compactDisplay: 'short'
             }).format(totalRevenue)}
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
-          <ChartContainer config={chartConfig} className="h-[300px]">
+        <CardContent className="pt-0 pb-4">
+          <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
                 <XAxis 
                   dataKey="date" 
                   stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
+                  fontSize={11}
+                  tickLine={false}
                 />
                 <YAxis 
                   stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  tickFormatter={(value) => `${value / 1000}k`}
+                  fontSize={11}
+                  tickLine={false}
+                  tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Area 
                   type="monotone" 
                   dataKey="revenue" 
                   stroke="hsl(var(--primary))" 
-                  strokeWidth={2}
+                  strokeWidth={3}
                   fill="url(#revenueGradient)"
                 />
               </AreaChart>
@@ -173,35 +182,42 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
       </Card>
 
       {/* Nombre de ventes */}
-      <Card className="bg-gradient-surface border-border/50">
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card via-card to-card/90 border-success/20 shadow-medium hover:shadow-glow transition-all duration-500 group">
+        {/* Bordure supérieure animée */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-success"></div>
+        
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center text-foreground">
-            <TrendingUp className="mr-2 h-5 w-5 text-success" />
-            Nombre de Ventes
+          <CardTitle className="flex items-center text-base sm:text-lg font-bold">
+            <div className="p-2 rounded-lg bg-success/10 mr-2 group-hover:bg-success/20 transition-colors">
+              <TrendingUp className="h-5 w-5 text-success" />
+            </div>
+            <span className="truncate">Nombre de Ventes</span>
           </CardTitle>
-          <div className="text-2xl font-bold text-success">
+          <div className="text-xl sm:text-2xl md:text-3xl font-black text-success mt-1">
             {totalSales} ventes
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
-          <ChartContainer config={chartConfig} className="h-[300px]">
+        <CardContent className="pt-0 pb-4">
+          <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
                 <XAxis 
                   dataKey="date" 
                   stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
+                  fontSize={11}
+                  tickLine={false}
                 />
                 <YAxis 
                   stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
+                  fontSize={11}
+                  tickLine={false}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar 
                   dataKey="count" 
                   fill="hsl(var(--success))" 
-                  radius={[4, 4, 0, 0]}
+                  radius={[8, 8, 0, 0]}
                 />
               </BarChart>
             </ResponsiveContainer>

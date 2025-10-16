@@ -112,6 +112,8 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
       ...totals,
       status: status || invoice.status as Invoice['status'],
       items: calculatedItems,
+      // Convert empty strings to null for optional date fields
+      due_date: invoice.due_date || null,
     };
 
     try {

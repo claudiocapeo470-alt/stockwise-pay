@@ -91,6 +91,22 @@ export const exportInvoiceToPDF = async (
   // Informations entreprise (à droite)
   let yPos = 25;
   if (company) {
+    // Logo de l'entreprise
+    if (company.logo_url) {
+      try {
+        const img = new Image();
+        img.src = company.logo_url;
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+        doc.addImage(img, 'PNG', pageWidth - 40, yPos, 20, 20);
+        yPos += 25;
+      } catch (error) {
+        console.error('Erreur lors du chargement du logo:', error);
+      }
+    }
+
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text(company.company_name, pageWidth - 20, yPos, { align: 'right' });

@@ -113,7 +113,14 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
             </div>
 
             {company && (
-              <div className="text-right">
+              <div className="text-right flex flex-col items-end gap-2">
+                {company.logo_url && (
+                  <img 
+                    src={company.logo_url} 
+                    alt="Logo entreprise" 
+                    className="h-16 w-16 object-contain mb-2"
+                  />
+                )}
                 <h3 className="font-bold text-lg">{company.company_name}</h3>
                 {company.company_address && <p className="text-sm">{company.company_address}</p>}
                 {(company.company_postal_code || company.company_city) && (

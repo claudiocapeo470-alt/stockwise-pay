@@ -12,6 +12,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/contexts/AuthContext"
+import { useCompanySettings } from "@/hooks/useCompanySettings"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import stocknixLogo from "@/assets/stocknix-logo.png"
@@ -30,6 +31,7 @@ const navigation = [
 export function AppSidebar() {
   const { state, isMobile } = useSidebar()
   const { signOut, user, profile, isAdmin } = useAuth()
+  const { settings } = useCompanySettings()
   const location = useLocation()
   const isCollapsed = state === "collapsed"
 
@@ -55,12 +57,16 @@ export function AppSidebar() {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
         
         <div className="flex items-center gap-3 relative z-10">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 shadow-xl ring-2 ring-white/20 hover:ring-white/40 transition-all duration-300 hover:scale-110">
-            <img src={stocknixLogo} alt="Stocknix" className="h-6 w-6" />
-          </div>
+          <img 
+            src={settings?.logo_url || stocknixLogo} 
+            alt={settings?.company_name || "Stocknix"} 
+            className="h-12 w-12 object-cover rounded-lg"
+          />
           {!isCollapsed && (
             <div>
-              <h1 className="font-bold text-white text-lg tracking-tight">Stocknix</h1>
+              <h1 className="font-bold text-white text-lg tracking-tight">
+                {settings?.company_name || "Stocknix"}
+              </h1>
               <p className="text-xs text-gray-300 font-medium">PME Dashboard</p>
             </div>
           )}

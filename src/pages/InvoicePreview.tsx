@@ -59,42 +59,48 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between print:hidden">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(`/app/${documentType === 'facture' ? 'factures' : 'devis'}`)}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour
-          </Button>
-          <h1 className="text-3xl font-bold">
-            {documentType === 'facture' ? 'Facture' : 'Devis'} {invoice.document_number}
-          </h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handlePrint}>
-            <Printer className="h-4 w-4 mr-2" />
-            Imprimer
-          </Button>
-          <Button onClick={handleDownload}>
-            <Download className="h-4 w-4 mr-2" />
-            Télécharger PDF
-          </Button>
+    <div className="space-y-4 md:space-y-6 max-w-4xl mx-auto px-4 md:px-6">
+      {/* Header Actions - Responsive */}
+      <div className="print:hidden space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(`/app/${documentType === 'facture' ? 'factures' : 'devis'}`)}
+              className="self-start"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour
+            </Button>
+            <h1 className="text-2xl sm:text-3xl font-bold">
+              {documentType === 'facture' ? 'Facture' : 'Devis'} {invoice.document_number}
+            </h1>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button variant="outline" onClick={handlePrint} className="flex-1 sm:flex-none">
+              <Printer className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Imprimer</span>
+              <span className="sm:hidden">Impr.</span>
+            </Button>
+            <Button onClick={handleDownload} className="flex-1 sm:flex-none">
+              <Download className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Télécharger PDF</span>
+              <span className="sm:hidden">PDF</span>
+            </Button>
+          </div>
         </div>
       </div>
 
       <Card className="print:shadow-none print:border-0">
-        <CardContent className="p-8">
-          {/* Header */}
-          <div className="flex justify-between items-start mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-primary mb-2">
+        <CardContent className="p-4 sm:p-6 md:p-8">
+          {/* Header - Responsive Layout */}
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 mb-6 md:mb-8">
+            <div className="flex-1">
+              <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2">
                 {documentType === 'facture' ? 'FACTURE' : 'DEVIS'}
               </h2>
-              <p className="text-lg font-semibold">N° {invoice.document_number}</p>
+              <p className="text-base md:text-lg font-semibold">N° {invoice.document_number}</p>
               <p className="text-sm text-muted-foreground mt-1">
                 Date: {format(new Date(invoice.issue_date), 'dd/MM/yyyy', { locale: fr })}
               </p>
@@ -111,63 +117,63 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
             </div>
 
             {invoice.company_name && (
-              <div className="text-right flex flex-col items-end gap-2">
+              <div className="md:text-right flex flex-col md:items-end gap-1 md:gap-2 border-t md:border-t-0 pt-4 md:pt-0">
                 {invoice.company_logo_url && (
                   <img 
                     src={invoice.company_logo_url} 
                     alt="Logo entreprise" 
-                    className="h-16 w-16 object-cover rounded mb-2"
+                    className="h-14 w-14 md:h-16 md:w-16 object-cover rounded mb-2"
                   />
                 )}
-                <h3 className="font-bold text-lg">{invoice.company_name}</h3>
-                {invoice.company_address && <p className="text-sm">{invoice.company_address}</p>}
+                <h3 className="font-bold text-base md:text-lg">{invoice.company_name}</h3>
+                {invoice.company_address && <p className="text-xs md:text-sm">{invoice.company_address}</p>}
                 {(invoice.company_postal_code || invoice.company_city) && (
-                  <p className="text-sm">{invoice.company_postal_code} {invoice.company_city}</p>
+                  <p className="text-xs md:text-sm">{invoice.company_postal_code} {invoice.company_city}</p>
                 )}
-                {invoice.company_phone && <p className="text-sm">Tél: {invoice.company_phone}</p>}
-                {invoice.company_email && <p className="text-sm">{invoice.company_email}</p>}
-                {invoice.company_siret && <p className="text-sm">SIRET: {invoice.company_siret}</p>}
-                {invoice.company_tva && <p className="text-sm">TVA: {invoice.company_tva}</p>}
+                {invoice.company_phone && <p className="text-xs md:text-sm">Tél: {invoice.company_phone}</p>}
+                {invoice.company_email && <p className="text-xs md:text-sm">{invoice.company_email}</p>}
+                {invoice.company_siret && <p className="text-xs md:text-sm">SIRET: {invoice.company_siret}</p>}
+                {invoice.company_tva && <p className="text-xs md:text-sm">TVA: {invoice.company_tva}</p>}
               </div>
             )}
           </div>
 
           {/* Client */}
-          <div className="bg-muted p-4 rounded-lg mb-8">
-            <h4 className="font-semibold mb-2">CLIENT</h4>
-            <p className="font-medium">{invoice.client_name}</p>
-            {invoice.client_address && <p className="text-sm">{invoice.client_address}</p>}
+          <div className="bg-muted p-3 md:p-4 rounded-lg mb-6 md:mb-8">
+            <h4 className="font-semibold mb-2 text-sm md:text-base">CLIENT</h4>
+            <p className="font-medium text-sm md:text-base">{invoice.client_name}</p>
+            {invoice.client_address && <p className="text-xs md:text-sm">{invoice.client_address}</p>}
             {(invoice.client_postal_code || invoice.client_city) && (
-              <p className="text-sm">{invoice.client_postal_code} {invoice.client_city}</p>
+              <p className="text-xs md:text-sm">{invoice.client_postal_code} {invoice.client_city}</p>
             )}
-            {invoice.client_email && <p className="text-sm">{invoice.client_email}</p>}
-            {invoice.client_phone && <p className="text-sm">{invoice.client_phone}</p>}
+            {invoice.client_email && <p className="text-xs md:text-sm">{invoice.client_email}</p>}
+            {invoice.client_phone && <p className="text-xs md:text-sm">{invoice.client_phone}</p>}
           </div>
 
-          {/* Items Table */}
-          <div className="mb-8">
+          {/* Items Table - Desktop View */}
+          <div className="mb-6 md:mb-8 hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead className="bg-primary text-primary-foreground">
                 <tr>
-                  <th className="text-left p-3">Description</th>
-                  <th className="text-center p-3">Qté</th>
-                  <th className="text-right p-3">Prix Unit.</th>
-                  <th className="text-center p-3">Remise</th>
-                  <th className="text-center p-3">TVA</th>
-                  <th className="text-right p-3">Total</th>
+                  <th className="text-left p-3 text-sm">Description</th>
+                  <th className="text-center p-3 text-sm">Qté</th>
+                  <th className="text-right p-3 text-sm">Prix Unit.</th>
+                  <th className="text-center p-3 text-sm">Remise</th>
+                  <th className="text-center p-3 text-sm">TVA</th>
+                  <th className="text-right p-3 text-sm">Total</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.items?.map((item, index) => (
                   <tr key={index} className={index % 2 === 0 ? 'bg-muted/50' : ''}>
-                    <td className="p-3">{item.description}</td>
-                    <td className="text-center p-3">{item.quantity}</td>
-                    <td className="text-right p-3">
+                    <td className="p-3 text-sm">{item.description}</td>
+                    <td className="text-center p-3 text-sm">{item.quantity}</td>
+                    <td className="text-right p-3 text-sm">
                       {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(item.unit_price)}
                     </td>
-                    <td className="text-center p-3">{item.discount_rate}%</td>
-                    <td className="text-center p-3">{item.tax_rate}%</td>
-                    <td className="text-right p-3 font-medium">
+                    <td className="text-center p-3 text-sm">{item.discount_rate}%</td>
+                    <td className="text-center p-3 text-sm">{item.tax_rate}%</td>
+                    <td className="text-right p-3 text-sm font-medium">
                       {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(item.total_amount)}
                     </td>
                   </tr>
@@ -176,32 +182,67 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
             </table>
           </div>
 
-          {/* Totals */}
-          <div className="flex justify-end mb-8">
-            <div className="w-80 space-y-2">
-              <div className="flex justify-between text-sm">
+          {/* Items List - Mobile View */}
+          <div className="mb-6 md:hidden space-y-3">
+            {invoice.items?.map((item, index) => (
+              <div key={index} className="bg-muted/50 p-3 rounded-lg space-y-2">
+                <div className="font-medium text-sm">{item.description}</div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span className="text-muted-foreground">Quantité:</span>
+                    <span className="ml-1 font-medium">{item.quantity}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Prix unit.:</span>
+                    <span className="ml-1 font-medium">
+                      {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(item.unit_price)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Remise:</span>
+                    <span className="ml-1 font-medium">{item.discount_rate}%</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">TVA:</span>
+                    <span className="ml-1 font-medium">{item.tax_rate}%</span>
+                  </div>
+                </div>
+                <div className="pt-2 border-t border-border flex justify-between items-center">
+                  <span className="text-xs font-semibold text-muted-foreground">Total:</span>
+                  <span className="text-sm font-bold">
+                    {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(item.total_amount)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Totals - Responsive */}
+          <div className="flex justify-end mb-6 md:mb-8">
+            <div className="w-full md:w-80 space-y-2 bg-muted/30 p-4 rounded-lg">
+              <div className="flex justify-between text-xs md:text-sm">
                 <span className="text-muted-foreground">Sous-total HT:</span>
                 <span className="font-medium">
                   {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.subtotal)}
                 </span>
               </div>
               {invoice.discount_amount > 0 && (
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs md:text-sm">
                   <span className="text-muted-foreground">Remise:</span>
-                  <span className="font-medium">
-                    {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.discount_amount)}
+                  <span className="font-medium text-red-500">
+                    -{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.discount_amount)}
                   </span>
                 </div>
               )}
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-xs md:text-sm">
                 <span className="text-muted-foreground">TVA:</span>
                 <span className="font-medium">
                   {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.tax_amount)}
                 </span>
               </div>
-              <div className="flex justify-between text-lg font-bold border-t pt-2">
+              <div className="flex justify-between text-base md:text-lg font-bold border-t pt-2 mt-2">
                 <span>TOTAL TTC:</span>
-                <span>
+                <span className="text-primary">
                   {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.total_amount)}
                 </span>
               </div>
@@ -211,15 +252,15 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
           {/* Notes and Terms */}
           {invoice.notes && (
             <div className="mb-4">
-              <h4 className="font-semibold mb-2">Notes:</h4>
-              <p className="text-sm whitespace-pre-wrap">{invoice.notes}</p>
+              <h4 className="font-semibold mb-2 text-sm md:text-base">Notes:</h4>
+              <p className="text-xs md:text-sm whitespace-pre-wrap text-muted-foreground">{invoice.notes}</p>
             </div>
           )}
 
           {invoice.terms && (
             <div>
-              <h4 className="font-semibold mb-2">Conditions:</h4>
-              <p className="text-sm whitespace-pre-wrap">{invoice.terms}</p>
+              <h4 className="font-semibold mb-2 text-sm md:text-base">Conditions:</h4>
+              <p className="text-xs md:text-sm whitespace-pre-wrap text-muted-foreground">{invoice.terms}</p>
             </div>
           )}
         </CardContent>

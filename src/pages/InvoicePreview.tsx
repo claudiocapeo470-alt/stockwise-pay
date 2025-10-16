@@ -116,7 +116,7 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
                   <img 
                     src={invoice.company_logo_url} 
                     alt="Logo entreprise" 
-                    className="h-16 w-16 object-contain mb-2"
+                    className="h-16 w-16 object-cover rounded mb-2"
                   />
                 )}
                 <h3 className="font-bold text-lg">{invoice.company_name}</h3>

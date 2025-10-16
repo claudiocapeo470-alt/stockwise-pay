@@ -8,7 +8,7 @@ import { CompanySettings } from '@/hooks/useCompanySettings';
 export const calculateItemTotals = (item: Partial<InvoiceItem>): InvoiceItem => {
   const quantity = item.quantity || 0;
   const unitPrice = item.unit_price || 0;
-  const taxRate = item.tax_rate || 20;
+  const taxRate = item.tax_rate ?? 0;
   const discountRate = item.discount_rate || 0;
 
   const subtotal = quantity * unitPrice;

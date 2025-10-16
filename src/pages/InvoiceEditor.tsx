@@ -50,7 +50,7 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
       description: '',
       quantity: 1,
       unit_price: 0,
-      tax_rate: 20,
+      tax_rate: 0,
       discount_rate: 0,
       position: 0,
     }
@@ -83,7 +83,7 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
       description: '',
       quantity: 1,
       unit_price: 0,
-      tax_rate: 20,
+      tax_rate: 0,
       discount_rate: 0,
       position: items.length,
     }]);
@@ -360,14 +360,15 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
                     />
                   </div>
                   <div>
-                    <Label>TVA (%)</Label>
+                    <Label>TVA (%) - Optionnel</Label>
                     <Input
                       type="number"
                       min="0"
                       max="100"
                       step="0.1"
-                      value={item.tax_rate}
-                      onChange={(e) => updateItem(index, 'tax_rate', parseFloat(e.target.value) || 0)}
+                      value={item.tax_rate || ''}
+                      onChange={(e) => updateItem(index, 'tax_rate', e.target.value === '' ? 0 : parseFloat(e.target.value))}
+                      placeholder="0"
                     />
                   </div>
                   <div>

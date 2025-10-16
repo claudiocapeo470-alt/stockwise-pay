@@ -84,13 +84,11 @@ export default function Dashboard() {
           <p className="text-muted-foreground">Vue d'ensemble de votre activité</p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-md border border-gray-200 dark:border-gray-700">
-            <img 
-              src={stocknixLogo} 
-              alt="Stocknix" 
-              className="h-8 w-8 object-contain"
-            />
-          </div>
+          <img 
+            src={stocknixLogo} 
+            alt="Stocknix" 
+            className="h-12 w-12 object-contain"
+          />
         </div>
       </div>
 

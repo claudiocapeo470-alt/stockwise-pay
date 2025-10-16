@@ -62,37 +62,46 @@ export default function Stocks() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-2 border-blue-200 dark:border-blue-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Produits</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100">Total Produits</CardTitle>
+            <div className="p-2 rounded-lg bg-blue-500 shadow-md group-hover:scale-110 transition-transform">
+              <Package className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{products.length}</div>
+            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{products.length}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-2 border-amber-200 dark:border-amber-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-600"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Stock Critique</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-warning" />
+            <CardTitle className="text-sm font-medium text-amber-900 dark:text-amber-100">Stock Critique</CardTitle>
+            <div className="p-2 rounded-lg bg-amber-500 shadow-md group-hover:scale-110 transition-transform">
+              <AlertTriangle className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">{lowStockProducts.length}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">{lowStockProducts.length}</div>
+            <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
               Produits sous le seuil minimum
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-2 border-red-200 dark:border-red-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Rupture de Stock</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <CardTitle className="text-sm font-medium text-red-900 dark:text-red-100">Rupture de Stock</CardTitle>
+            <div className="p-2 rounded-lg bg-red-500 shadow-md group-hover:scale-110 transition-transform">
+              <AlertTriangle className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">{outOfStockProducts.length}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-bold text-red-600 dark:text-red-400">{outOfStockProducts.length}</div>
+            <p className="text-xs text-red-700 dark:text-red-300 mt-1">
               Produits épuisés
             </p>
           </CardContent>

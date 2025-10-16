@@ -18,6 +18,11 @@ export function PerformanceMetrics({ metrics }: MetricsProps) {
       value: metrics.totalSales.toString(),
       icon: ShoppingBag,
       gradient: "primary",
+      bgGradient: "from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20",
+      borderColor: "border-blue-200 dark:border-blue-800/40",
+      iconBg: "bg-blue-500",
+      textColor: "text-blue-600 dark:text-blue-400",
+      topBorder: "from-blue-500 to-blue-600",
       change: "+12%",
       changeType: "positive" as const
     },
@@ -26,6 +31,11 @@ export function PerformanceMetrics({ metrics }: MetricsProps) {
       value: formatCurrency(metrics.totalRevenue),
       icon: DollarSign,
       gradient: "success" as const,
+      bgGradient: "from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20",
+      borderColor: "border-emerald-200 dark:border-emerald-800/40",
+      iconBg: "bg-emerald-500",
+      textColor: "text-emerald-600 dark:text-emerald-400",
+      topBorder: "from-emerald-500 to-emerald-600",
       change: "+8.2%",
       changeType: "positive" as const
     },
@@ -34,6 +44,11 @@ export function PerformanceMetrics({ metrics }: MetricsProps) {
       value: formatCurrency(metrics.grossMargin),
       icon: Target,
       gradient: "warning" as const,
+      bgGradient: "from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20",
+      borderColor: "border-orange-200 dark:border-orange-800/40",
+      iconBg: "bg-orange-500",
+      textColor: "text-orange-600 dark:text-orange-400",
+      topBorder: "from-orange-500 to-orange-600",
       change: "+5.4%",
       changeType: "positive" as const
     },
@@ -42,6 +57,11 @@ export function PerformanceMetrics({ metrics }: MetricsProps) {
       value: formatCurrency(metrics.totalPayments),
       icon: Wallet,
       gradient: "primary" as const,
+      bgGradient: "from-violet-50 to-violet-100/50 dark:from-violet-950/30 dark:to-violet-900/20",
+      borderColor: "border-violet-200 dark:border-violet-800/40",
+      iconBg: "bg-violet-500",
+      textColor: "text-violet-600 dark:text-violet-400",
+      topBorder: "from-violet-500 to-violet-600",
       change: "+15.7%",
       changeType: "positive" as const
     }
@@ -64,30 +84,27 @@ export function PerformanceMetrics({ metrics }: MetricsProps) {
       {metricsData.map((metric, index) => (
         <Card 
           key={index} 
-          className="relative overflow-hidden group transition-all duration-500 hover:scale-[1.02] bg-gradient-to-br from-card via-card to-card/90 border-primary/20 shadow-medium hover:shadow-glow hover:border-primary/40"
+          className={`relative overflow-hidden group transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br ${metric.bgGradient} border-2 ${metric.borderColor} hover:shadow-lg`}
         >
-          {/* Effet de lumière animée */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          
           {/* Bordure lumineuse supérieure */}
-          <div className={`absolute top-0 left-0 w-full h-1 ${gradientClasses[metric.gradient]}`}></div>
+          <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${metric.topBorder}`}></div>
           
           <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3 pt-5">
-            <CardTitle className="text-xs sm:text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            <CardTitle className="text-xs sm:text-sm font-semibold uppercase tracking-wider">
               {metric.title}
             </CardTitle>
-            <div className={`p-2.5 rounded-xl ${gradientClasses[metric.gradient]} shadow-glow group-hover:scale-110 transition-transform duration-300`}>
+            <div className={`p-2.5 rounded-xl ${metric.iconBg} shadow-md group-hover:scale-110 transition-transform duration-300`}>
               <metric.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-2xl sm:text-3xl font-black bg-gradient-secondary bg-clip-text text-transparent mb-2">
+            <div className={`text-2xl sm:text-3xl font-black ${metric.textColor} mb-2`}>
               {metric.value}
             </div>
             {metric.change && (
               <div className="flex items-center text-xs sm:text-sm font-medium">
                 {metric.changeType === "positive" ? (
-                  <TrendingUp className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4 text-success animate-bounce" />
+                  <TrendingUp className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4 text-success" />
                 ) : (
                   <TrendingDown className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4 text-destructive" />
                 )}

@@ -53,40 +53,49 @@ export default function Ventes() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 border-2 border-purple-200 dark:border-purple-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-600"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ventes Totales</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-purple-900 dark:text-purple-100">Ventes Totales</CardTitle>
+            <div className="p-2 rounded-lg bg-purple-500 shadow-md group-hover:scale-110 transition-transform">
+              <ShoppingCart className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{sales.length}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{sales.length}</div>
+            <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
               Transactions enregistrées
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ventes Aujourd'hui</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-success" />
+            <CardTitle className="text-sm font-medium text-green-900 dark:text-green-100">Ventes Aujourd'hui</CardTitle>
+            <div className="p-2 rounded-lg bg-green-500 shadow-md group-hover:scale-110 transition-transform">
+              <ShoppingCart className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">{todaySales.length}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-bold text-green-600 dark:text-green-400">{todaySales.length}</div>
+            <p className="text-xs text-green-700 dark:text-green-300 mt-1">
               {todayTotal.toLocaleString()} FCFA
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-indigo-600"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Chiffre d'Affaires</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-primary" />
+            <CardTitle className="text-sm font-medium text-indigo-900 dark:text-indigo-100">Chiffre d'Affaires</CardTitle>
+            <div className="p-2 rounded-lg bg-indigo-500 shadow-md group-hover:scale-110 transition-transform">
+              <ShoppingCart className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{totalSales.toLocaleString()} FCFA</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{totalSales.toLocaleString()} FCFA</div>
+            <p className="text-xs text-indigo-700 dark:text-indigo-300 mt-1">
               Total des ventes
             </p>
           </CardContent>

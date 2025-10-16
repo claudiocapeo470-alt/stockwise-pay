@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Target, CreditCard } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Target, Wallet } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 interface MetricsProps {
@@ -16,7 +16,7 @@ export function PerformanceMetrics({ metrics }: MetricsProps) {
     {
       title: "Ventes Totales",
       value: metrics.totalSales.toString(),
-      icon: ShoppingCart,
+      icon: ShoppingBag,
       gradient: "primary",
       change: "+12%",
       changeType: "positive" as const
@@ -40,7 +40,7 @@ export function PerformanceMetrics({ metrics }: MetricsProps) {
     {
       title: "Paiements Reçus",
       value: formatCurrency(metrics.totalPayments),
-      icon: CreditCard,
+      icon: Wallet,
       gradient: "primary" as const,
       change: "+15.7%",
       changeType: "positive" as const

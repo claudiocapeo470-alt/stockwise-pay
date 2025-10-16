@@ -112,27 +112,33 @@ export default function Paiements() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="hover-lift bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/20 dark:to-green-900/10 border-green-200 dark:border-green-800">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <CheckCircle className="h-5 w-5 text-success" />
+              <div className="p-2 rounded-lg bg-green-500 shadow-md group-hover:scale-110 transition-transform">
+                <CheckCircle className="h-5 w-5 text-white" />
+              </div>
               <div>
-                <p className="text-sm text-muted-foreground">Payés</p>
-                <p className="text-xl font-bold text-success">{paymentStats.completedPayments}</p>
-                <p className="text-xs text-muted-foreground">{formatAmount(paymentStats.paidAmount)}</p>
+                <p className="text-sm font-medium text-green-900 dark:text-green-100">Payés</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{paymentStats.completedPayments}</p>
+                <p className="text-xs text-green-700 dark:text-green-300">{formatAmount(paymentStats.paidAmount)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover-lift bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-orange-200 dark:border-orange-800">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-2 border-amber-200 dark:border-amber-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <Clock className="h-5 w-5 text-warning" />
+              <div className="p-2 rounded-lg bg-amber-500 shadow-md group-hover:scale-110 transition-transform">
+                <Clock className="h-5 w-5 text-white" />
+              </div>
               <div>
-                <p className="text-sm text-muted-foreground">En attente</p>
-                <p className="text-xl font-bold text-warning">{paymentStats.pendingPayments}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm font-medium text-amber-900 dark:text-amber-100">En attente</p>
+                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{paymentStats.pendingPayments}</p>
+                <p className="text-xs text-amber-700 dark:text-amber-300">
                   {paymentStats.partialPayments > 0 && `+ ${paymentStats.partialPayments} partiels`}
                 </p>
               </div>
@@ -140,26 +146,32 @@ export default function Paiements() {
           </CardContent>
         </Card>
 
-        <Card className="hover-lift bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/20 dark:to-red-900/10 border-red-200 dark:border-red-800">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-2 border-red-200 dark:border-red-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-destructive" />
+              <div className="p-2 rounded-lg bg-red-500 shadow-md group-hover:scale-110 transition-transform">
+                <AlertCircle className="h-5 w-5 text-white" />
+              </div>
               <div>
-                <p className="text-sm text-muted-foreground">En retard</p>
-                <p className="text-xl font-bold text-destructive">{paymentStats.overduePayments}</p>
+                <p className="text-sm font-medium text-red-900 dark:text-red-100">En retard</p>
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400">{paymentStats.overduePayments}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover-lift bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800/40 hover:shadow-lg transition-all duration-300 group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-indigo-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <TrendingUp className="h-5 w-5 text-accent-primary" />
+              <div className="p-2 rounded-lg bg-indigo-500 shadow-md group-hover:scale-110 transition-transform">
+                <TrendingUp className="h-5 w-5 text-white" />
+              </div>
               <div>
-                <p className="text-sm text-muted-foreground">Reste à recevoir</p>
-                <p className="text-lg font-bold text-foreground">{formatAmount(paymentStats.remainingAmount)}</p>
-                <p className="text-xs text-success">
+                <p className="text-sm font-medium text-indigo-900 dark:text-indigo-100">Reste à recevoir</p>
+                <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">{formatAmount(paymentStats.remainingAmount)}</p>
+                <p className="text-xs text-green-600 dark:text-green-400">
                   {paymentStats.totalAmount > 0 ? 
                     `${((paymentStats.paidAmount / paymentStats.totalAmount) * 100).toFixed(1)}% reçu` :
                     '0% reçu'

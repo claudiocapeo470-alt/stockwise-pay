@@ -665,7 +665,8 @@ export default function Rapports() {
       </div>
 
       {/* Quick Export Actions */}
-      <Card className="bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-950/20 dark:to-cyan-900/10 border-2 border-cyan-200 dark:border-cyan-800/30">
+      <Card className="relative overflow-hidden bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-950/30 dark:to-cyan-900/20 border-2 border-cyan-200 dark:border-cyan-800/40 hover:shadow-lg transition-all duration-300">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-cyan-600"></div>
         <CardHeader className="p-4 sm:p-6">
           <CardTitle className="text-base sm:text-lg flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-md shrink-0">
@@ -678,18 +679,19 @@ export default function Rapports() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             <Button
               variant="outline"
-              className="h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/30 hover:shadow-lg transition-all min-w-0"
+              className="relative overflow-hidden h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-2 border-blue-200 dark:border-blue-800/40 hover:shadow-lg hover:scale-105 transition-all min-w-0 group"
               onClick={() => handleExport('csv', 'sales')}
             >
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-500 to-blue-600"></div>
               <div className="flex items-center gap-2 w-full min-w-0">
-                <div className="p-1 rounded bg-gradient-to-br from-blue-500 to-blue-600 shrink-0">
+                <div className="p-1 rounded bg-gradient-to-br from-blue-500 to-blue-600 shrink-0 group-hover:scale-110 transition-transform">
                   <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
-                <span className="font-medium text-sm sm:text-base truncate">{isMobile ? "Ventes" : "Ventes aujourd'hui"}</span>
-                <Badge variant="outline" className="ml-auto text-xs shrink-0">CSV</Badge>
+                <span className="font-semibold text-sm sm:text-base truncate text-blue-900 dark:text-blue-100">{isMobile ? "Ventes" : "Ventes aujourd'hui"}</span>
+                <Badge variant="outline" className="ml-auto text-xs shrink-0 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300">CSV</Badge>
               </div>
               {!isMobile && (
-                <p className="text-xs sm:text-sm text-muted-foreground text-left">
+                <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-300 text-left">
                   Export CSV des ventes d'aujourd'hui
                 </p>
               )}
@@ -697,18 +699,19 @@ export default function Rapports() {
             
             <Button
               variant="outline"
-              className="h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/20 dark:to-emerald-900/10 border-2 border-emerald-200 dark:border-emerald-800/30 hover:shadow-lg transition-all min-w-0"
+              className="relative overflow-hidden h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20 border-2 border-emerald-200 dark:border-emerald-800/40 hover:shadow-lg hover:scale-105 transition-all min-w-0 group"
               onClick={() => handleExport('excel', 'products')}
             >
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-500 to-emerald-600"></div>
               <div className="flex items-center gap-2 w-full min-w-0">
-                <div className="p-1 rounded bg-gradient-to-br from-emerald-500 to-emerald-600 shrink-0">
+                <div className="p-1 rounded bg-gradient-to-br from-emerald-500 to-emerald-600 shrink-0 group-hover:scale-110 transition-transform">
                   <PieChart className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
-                <span className="font-medium text-sm sm:text-base truncate">{isMobile ? "Stock" : "Stock complet"}</span>
-                <Badge variant="outline" className="ml-auto text-xs shrink-0">Excel</Badge>
+                <span className="font-semibold text-sm sm:text-base truncate text-emerald-900 dark:text-emerald-100">{isMobile ? "Stock" : "Stock complet"}</span>
+                <Badge variant="outline" className="ml-auto text-xs shrink-0 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300">Excel</Badge>
               </div>
               {!isMobile && (
-                <p className="text-xs sm:text-sm text-muted-foreground text-left">
+                <p className="text-xs sm:text-sm text-emerald-700 dark:text-emerald-300 text-left">
                   Export Excel de l'inventaire complet
                 </p>
               )}
@@ -716,18 +719,19 @@ export default function Rapports() {
             
             <Button
               variant="outline"
-              className="h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-2 border-orange-200 dark:border-orange-800/30 hover:shadow-lg transition-all min-w-0 sm:col-span-2 lg:col-span-1"
+              className="relative overflow-hidden h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20 border-2 border-orange-200 dark:border-orange-800/40 hover:shadow-lg hover:scale-105 transition-all min-w-0 sm:col-span-2 lg:col-span-1 group"
               onClick={() => handleExport('pdf', 'payments')}
             >
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-orange-500 to-orange-600"></div>
               <div className="flex items-center gap-2 w-full min-w-0">
-                <div className="p-1 rounded bg-gradient-to-br from-orange-500 to-orange-600 shrink-0">
+                <div className="p-1 rounded bg-gradient-to-br from-orange-500 to-orange-600 shrink-0 group-hover:scale-110 transition-transform">
                   <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
-                <span className="font-medium text-sm sm:text-base truncate">{isMobile ? "Paiements" : "Rapport paiements"}</span>
-                <Badge variant="outline" className="ml-auto text-xs shrink-0">PDF</Badge>
+                <span className="font-semibold text-sm sm:text-base truncate text-orange-900 dark:text-orange-100">{isMobile ? "Paiements" : "Rapport paiements"}</span>
+                <Badge variant="outline" className="ml-auto text-xs shrink-0 border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-300">PDF</Badge>
               </div>
               {!isMobile && (
-                <p className="text-xs sm:text-sm text-muted-foreground text-left">
+                <p className="text-xs sm:text-sm text-orange-700 dark:text-orange-300 text-left">
                   Export PDF des paiements
                 </p>
               )}

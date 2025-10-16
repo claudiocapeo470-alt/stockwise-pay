@@ -3,19 +3,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ShoppingCart, Search, Plus, Eye } from "lucide-react";
+import { ShoppingCart, Search, Plus, Eye, Grid3x3, List } from "lucide-react";
 import { useState } from "react";
 import { useSales } from "@/hooks/useSales";
 import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
 import { SaleDetailsDialog } from "@/components/sales/SaleDetailsDialog";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Ventes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [showSaleDetails, setShowSaleDetails] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { sales, isLoading } = useSales();
+  const isMobile = useIsMobile();
 
   const filteredSales = sales.filter(sale =>
     (sale.customer_name && sale.customer_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -90,25 +93,45 @@ export default function Ventes() {
         </Card>
       </div>
 
-      {/* Search */}
+      {/* Search and View Controls */}
       <Card>
         <CardHeader>
           <CardTitle>Recherche</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Rechercher par client ou produit..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Rechercher par client ou produit..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            {!isMobile && (
+              <div className="flex gap-2">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("grid")}
+                >
+                  <Grid3x3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("list")}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Sales Table */}
+      {/* Sales Display */}
       <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
         <CardHeader>
           <CardTitle className="text-blue-900 dark:text-blue-100">Historique des ventes</CardTitle>
@@ -125,56 +148,119 @@ export default function Ventes() {
               </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Produit</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Quantité</TableHead>
-                  <TableHead>Prix Unitaire</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSales.map((sale) => (
-                  <TableRow key={sale.id}>
-                    <TableCell>
-                      {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
-                    </TableCell>
-                    <TableCell>
-                      {sale.products?.name || "Produit supprimé"}
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{sale.customer_name || "Client anonyme"}</p>
-                        {sale.customer_phone && (
-                          <p className="text-sm text-muted-foreground">{sale.customer_phone}</p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{sale.quantity}</TableCell>
-                    <TableCell>{sale.unit_price.toLocaleString()} FCFA</TableCell>
-                    <TableCell>
-                      <span className="font-semibold">{sale.total_amount.toLocaleString()} FCFA</span>
-                    </TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="icon"
-                        onClick={() => {
-                          setSelectedSale(sale);
-                          setShowSaleDetails(true);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <>
+              {/* Grid View for Mobile or when selected */}
+              {(isMobile || viewMode === "grid") && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredSales.map((sale) => (
+                    <Card key={sale.id} className="hover:shadow-lg transition-shadow bg-background/50">
+                      <CardHeader className="pb-3">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <CardTitle className="text-base font-semibold text-foreground">
+                              {sale.products?.name || "Produit supprimé"}
+                            </CardTitle>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
+                            </p>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => {
+                              setSelectedSale(sale);
+                              setShowSaleDetails(true);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="flex justify-between items-center py-2 border-b border-border/50">
+                          <span className="text-sm text-muted-foreground">Client</span>
+                          <div className="text-right">
+                            <p className="text-sm font-medium">{sale.customer_name || "Client anonyme"}</p>
+                            {sale.customer_phone && (
+                              <p className="text-xs text-muted-foreground">{sale.customer_phone}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center py-2 border-b border-border/50">
+                          <span className="text-sm text-muted-foreground">Quantité</span>
+                          <Badge variant="secondary">{sale.quantity}</Badge>
+                        </div>
+                        <div className="flex justify-between items-center py-2 border-b border-border/50">
+                          <span className="text-sm text-muted-foreground">Prix Unitaire</span>
+                          <span className="text-sm font-medium">{sale.unit_price.toLocaleString()} FCFA</span>
+                        </div>
+                        <div className="flex justify-between items-center pt-2">
+                          <span className="text-sm font-medium">Total</span>
+                          <span className="text-lg font-bold text-primary">{sale.total_amount.toLocaleString()} FCFA</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+
+              {/* Table View for Desktop */}
+              {!isMobile && viewMode === "list" && (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Produit</TableHead>
+                        <TableHead>Client</TableHead>
+                        <TableHead>Quantité</TableHead>
+                        <TableHead>Prix Unitaire</TableHead>
+                        <TableHead>Total</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredSales.map((sale) => (
+                        <TableRow key={sale.id}>
+                          <TableCell>
+                            {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
+                          </TableCell>
+                          <TableCell>
+                            {sale.products?.name || "Produit supprimé"}
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">{sale.customer_name || "Client anonyme"}</p>
+                              {sale.customer_phone && (
+                                <p className="text-sm text-muted-foreground">{sale.customer_phone}</p>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>{sale.quantity}</TableCell>
+                          <TableCell>{sale.unit_price.toLocaleString()} FCFA</TableCell>
+                          <TableCell>
+                            <span className="font-semibold">{sale.total_amount.toLocaleString()} FCFA</span>
+                          </TableCell>
+                          <TableCell>
+                            <Button 
+                              variant="outline" 
+                              size="icon"
+                              onClick={() => {
+                                setSelectedSale(sale);
+                                setShowSaleDetails(true);
+                              }}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>

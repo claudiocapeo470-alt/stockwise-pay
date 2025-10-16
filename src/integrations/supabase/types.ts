@@ -120,6 +120,7 @@ export type Database = {
           client_address: string | null
           client_city: string | null
           client_email: string | null
+          client_logo_url: string | null
           client_name: string
           client_phone: string | null
           client_postal_code: string | null
@@ -143,6 +144,7 @@ export type Database = {
           client_address?: string | null
           client_city?: string | null
           client_email?: string | null
+          client_logo_url?: string | null
           client_name: string
           client_phone?: string | null
           client_postal_code?: string | null
@@ -166,6 +168,7 @@ export type Database = {
           client_address?: string | null
           client_city?: string | null
           client_email?: string | null
+          client_logo_url?: string | null
           client_name?: string
           client_phone?: string | null
           client_postal_code?: string | null

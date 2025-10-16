@@ -13,6 +13,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { calculateItemTotals, calculateInvoiceTotals } from "@/lib/invoiceUtils";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ClientLogoUpload } from "@/components/invoices/ClientLogoUpload";
 
 interface InvoiceEditorProps {
   documentType: 'facture' | 'devis';
@@ -37,6 +38,7 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
     client_postal_code: '',
     client_email: '',
     client_phone: '',
+    client_logo_url: '',
     subtotal: 0,
     tax_amount: 0,
     discount_amount: 0,
@@ -244,6 +246,12 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
                   className="text-sm"
                 />
               </div>
+            </div>
+            <div className="pt-2">
+              <ClientLogoUpload
+                currentLogoUrl={invoice.client_logo_url || undefined}
+                onLogoChange={(url) => setInvoice({ ...invoice, client_logo_url: url || '' })}
+              />
             </div>
           </CardContent>
         </Card>

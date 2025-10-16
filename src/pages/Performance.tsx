@@ -146,57 +146,57 @@ export default function Performance() {
   }
 
   return (
-    <div className="flex-1 space-y-4 sm:space-y-6 p-4 sm:p-6 max-w-full overflow-hidden">
+    <div className="space-y-4 sm:space-y-6">
       {/* En-tête */}
-      <div className="flex flex-col space-y-3 sm:space-y-4 md:flex-row md:items-start md:justify-between md:space-y-0">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent truncate">
+      <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <div className="min-w-0">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">
             {isMobile ? "Performance" : "Tableau de bord Performance"}
           </h2>
-          <p className="text-sm text-muted-foreground truncate">
-            {isMobile ? "Indicateurs clés" : "Visualisez vos indicateurs clés de performance en temps réel"}
+          <p className="text-sm text-muted-foreground mt-1">
+            {isMobile ? "Indicateurs clés" : "Visualisez vos indicateurs clés de performance"}
           </p>
         </div>
-        <div className="flex flex-row gap-2 shrink-0">
+        <div className="flex gap-2">
           <Button 
             variant="outline" 
-            size={isMobile ? "sm" : "sm"}
+            size="sm"
             onClick={() => handleExport('pdf')}
-            className="border-primary/20 hover:border-primary flex-1 sm:flex-none"
+            className="border-primary/20 hover:border-primary"
           >
-            <Download className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">PDF</span>
+            <Download className="h-4 w-4 mr-2" />
+            {isMobile ? "PDF" : "Exporter PDF"}
           </Button>
           <Button 
             variant="outline" 
-            size={isMobile ? "sm" : "sm"}
+            size="sm"
             onClick={() => handleExport('excel')}
-            className="border-primary/20 hover:border-primary flex-1 sm:flex-none"
+            className="border-primary/20 hover:border-primary"
           >
-            <Download className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Excel</span>
+            <Download className="h-4 w-4 mr-2" />
+            {isMobile ? "Excel" : "Exporter Excel"}
           </Button>
         </div>
       </div>
 
       {/* Filtres */}
       <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
-        <CardHeader className="p-4 sm:p-6">
-          <CardTitle className="flex items-center text-sm sm:text-base text-blue-900 dark:text-blue-100">
-            <Activity className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
-            <span className="truncate">Filtres d'analyse</span>
+        <CardHeader>
+          <CardTitle className="flex items-center text-base text-blue-900 dark:text-blue-100">
+            <Activity className="mr-2 h-5 w-5 text-primary" />
+            Filtres d'analyse
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6 pt-0">
-          <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Période */}
-            <div className="space-y-2 min-w-0">
-              <label className="text-xs sm:text-sm font-medium text-foreground">Période</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Période</label>
               <Select value={period} onValueChange={(value: PeriodType) => setPeriod(value)}>
-                <SelectTrigger className="bg-input border-border h-9 text-sm">
+                <SelectTrigger className="bg-background border-border">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="w-[200px]">
+                <SelectContent>
                   <SelectItem value="today">Aujourd'hui</SelectItem>
                   <SelectItem value="week">Cette semaine</SelectItem>
                   <SelectItem value="month">Ce mois</SelectItem>
@@ -207,32 +207,26 @@ export default function Performance() {
 
             {/* Date personnalisée */}
             {period === "custom" && (
-              <div className="space-y-2 min-w-0 sm:col-span-2 lg:col-span-1">
-                <label className="text-xs sm:text-sm font-medium text-foreground">Dates</label>
+              <div className="space-y-2 sm:col-span-2 lg:col-span-1">
+                <label className="text-sm font-medium text-foreground">Dates</label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-start text-left font-normal bg-input border-border h-9 text-xs sm:text-sm"
+                      className="w-full justify-start text-left font-normal bg-background border-border"
                     >
-                      <CalendarIcon className="mr-2 h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                      <span className="truncate">
-                        {dateRange?.from ? (
-                          dateRange.to ? (
-                            isMobile ? (
-                              `${format(dateRange.from, "dd/MM", { locale: fr })} - ${format(dateRange.to, "dd/MM", { locale: fr })}`
-                            ) : (
-                              <>
-                                {format(dateRange.from, "dd MMM", { locale: fr })} - {format(dateRange.to, "dd MMM", { locale: fr })}
-                              </>
-                            )
-                          ) : (
-                            format(dateRange.from, isMobile ? "dd/MM/yy" : "dd MMM y", { locale: fr })
-                          )
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateRange?.from ? (
+                        dateRange.to ? (
+                          <>
+                            {format(dateRange.from, "dd MMM", { locale: fr })} - {format(dateRange.to, "dd MMM", { locale: fr })}
+                          </>
                         ) : (
-                          <span>Sélectionner</span>
-                        )}
-                      </span>
+                          format(dateRange.from, "dd MMM y", { locale: fr })
+                        )
+                      ) : (
+                        <span>Sélectionner</span>
+                      )}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -251,17 +245,17 @@ export default function Performance() {
             )}
 
             {/* Filtre produit */}
-            <div className="space-y-2 min-w-0">
-              <label className="text-xs sm:text-sm font-medium text-foreground">Produit</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Produit</label>
               <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                <SelectTrigger className="bg-input border-border h-9 text-sm">
+                <SelectTrigger className="bg-background border-border">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="w-[200px]">
+                <SelectContent>
                   <SelectItem value="all">Tous</SelectItem>
                   {products?.map(product => (
                     <SelectItem key={product.id} value={product.id}>
-                      <span className="truncate">{product.name}</span>
+                      {product.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -269,17 +263,17 @@ export default function Performance() {
             </div>
 
             {/* Filtre client */}
-            <div className="space-y-2 min-w-0">
-              <label className="text-xs sm:text-sm font-medium text-foreground">Client</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Client</label>
               <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
-                <SelectTrigger className="bg-input border-border h-9 text-sm">
+                <SelectTrigger className="bg-background border-border">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="w-[200px]">
+                <SelectContent>
                   <SelectItem value="all">Tous</SelectItem>
                   {uniqueCustomers.map(customer => (
                     <SelectItem key={customer} value={customer}>
-                      <span className="truncate">{customer}</span>
+                      {customer}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -294,22 +288,22 @@ export default function Performance() {
 
       {/* Contenu principal avec onglets */}
       <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
-        <TabsList className="bg-card border border-border w-full sm:w-auto grid grid-cols-3 sm:flex">
+        <TabsList className="bg-card border border-border grid grid-cols-3">
           <TabsTrigger 
             value="overview" 
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs sm:text-sm px-2 sm:px-4"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             {isMobile ? "Vue" : "Vue d'ensemble"}
           </TabsTrigger>
           <TabsTrigger 
             value="products" 
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs sm:text-sm px-2 sm:px-4"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             Produits
           </TabsTrigger>
           <TabsTrigger 
             value="customers" 
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs sm:text-sm px-2 sm:px-4"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             Clients
           </TabsTrigger>

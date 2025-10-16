@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { AppLayout } from "./components/layout/AppLayout";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ScrollToTop } from "./components/ScrollToTop";
 import Dashboard from "./pages/Dashboard";
 import Stocks from "./pages/Stocks";
 import Ventes from "./pages/Ventes";
@@ -56,6 +57,7 @@ const App = () => (
             v7_relativeSplatPath: true,
           }}
         >
+          <ScrollToTop />
           <AuthProvider>
             <Routes>
               {/* Landing Page */}

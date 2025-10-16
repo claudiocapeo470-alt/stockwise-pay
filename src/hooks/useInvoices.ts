@@ -29,6 +29,15 @@ export interface Invoice {
   client_email?: string;
   client_phone?: string;
   client_logo_url?: string;
+  company_name?: string;
+  company_address?: string;
+  company_city?: string;
+  company_postal_code?: string;
+  company_phone?: string;
+  company_email?: string;
+  company_siret?: string;
+  company_tva?: string;
+  company_logo_url?: string;
   subtotal: number;
   tax_amount: number;
   discount_amount: number;

@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useInvoiceDetails } from "@/hooks/useInvoices";
-import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Printer } from "lucide-react";
@@ -18,11 +17,10 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: invoice, isLoading } = useInvoiceDetails(id);
-  const { settings: company } = useCompanySettings();
 
   const handleDownload = () => {
     if (invoice && invoice.items) {
-      exportInvoiceToPDF(invoice, company || null, invoice.items);
+      exportInvoiceToPDF(invoice, invoice.items);
     }
   };
 
@@ -112,24 +110,24 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
               </div>
             </div>
 
-            {company && (
+            {invoice.company_name && (
               <div className="text-right flex flex-col items-end gap-2">
-                {company.logo_url && (
+                {invoice.company_logo_url && (
                   <img 
-                    src={company.logo_url} 
+                    src={invoice.company_logo_url} 
                     alt="Logo entreprise" 
                     className="h-16 w-16 object-contain mb-2"
                   />
                 )}
-                <h3 className="font-bold text-lg">{company.company_name}</h3>
-                {company.company_address && <p className="text-sm">{company.company_address}</p>}
-                {(company.company_postal_code || company.company_city) && (
-                  <p className="text-sm">{company.company_postal_code} {company.company_city}</p>
+                <h3 className="font-bold text-lg">{invoice.company_name}</h3>
+                {invoice.company_address && <p className="text-sm">{invoice.company_address}</p>}
+                {(invoice.company_postal_code || invoice.company_city) && (
+                  <p className="text-sm">{invoice.company_postal_code} {invoice.company_city}</p>
                 )}
-                {company.company_phone && <p className="text-sm">Tél: {company.company_phone}</p>}
-                {company.company_email && <p className="text-sm">{company.company_email}</p>}
-                {company.company_siret && <p className="text-sm">SIRET: {company.company_siret}</p>}
-                {company.company_tva && <p className="text-sm">TVA: {company.company_tva}</p>}
+                {invoice.company_phone && <p className="text-sm">Tél: {invoice.company_phone}</p>}
+                {invoice.company_email && <p className="text-sm">{invoice.company_email}</p>}
+                {invoice.company_siret && <p className="text-sm">SIRET: {invoice.company_siret}</p>}
+                {invoice.company_tva && <p className="text-sm">TVA: {invoice.company_tva}</p>}
               </div>
             )}
           </div>

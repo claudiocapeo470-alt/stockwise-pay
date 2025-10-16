@@ -124,6 +124,15 @@ export type Database = {
           client_name: string
           client_phone: string | null
           client_postal_code: string | null
+          company_address: string | null
+          company_city: string | null
+          company_email: string | null
+          company_logo_url: string | null
+          company_name: string | null
+          company_phone: string | null
+          company_postal_code: string | null
+          company_siret: string | null
+          company_tva: string | null
           created_at: string
           discount_amount: number
           document_number: string
@@ -148,6 +157,15 @@ export type Database = {
           client_name: string
           client_phone?: string | null
           client_postal_code?: string | null
+          company_address?: string | null
+          company_city?: string | null
+          company_email?: string | null
+          company_logo_url?: string | null
+          company_name?: string | null
+          company_phone?: string | null
+          company_postal_code?: string | null
+          company_siret?: string | null
+          company_tva?: string | null
           created_at?: string
           discount_amount?: number
           document_number: string
@@ -172,6 +190,15 @@ export type Database = {
           client_name?: string
           client_phone?: string | null
           client_postal_code?: string | null
+          company_address?: string | null
+          company_city?: string | null
+          company_email?: string | null
+          company_logo_url?: string | null
+          company_name?: string | null
+          company_phone?: string | null
+          company_postal_code?: string | null
+          company_siret?: string | null
+          company_tva?: string | null
           created_at?: string
           discount_amount?: number
           document_number?: string

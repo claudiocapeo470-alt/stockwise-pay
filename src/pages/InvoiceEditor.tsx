@@ -39,6 +39,15 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
     client_email: '',
     client_phone: '',
     client_logo_url: '',
+    company_name: '',
+    company_address: '',
+    company_city: '',
+    company_postal_code: '',
+    company_phone: '',
+    company_email: '',
+    company_siret: '',
+    company_tva: '',
+    company_logo_url: '',
     subtotal: 0,
     tax_amount: 0,
     discount_amount: 0,
@@ -60,14 +69,29 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
     }
   ]);
 
+  // Charger la facture existante ou pré-remplir avec les infos de l'entreprise
   useEffect(() => {
     if (existingInvoice && !isNew) {
       setInvoice(existingInvoice);
       if (existingInvoice.items) {
         setItems(existingInvoice.items);
       }
+    } else if (isNew && settings) {
+      // Pré-remplir automatiquement les infos de l'entreprise lors de la création
+      setInvoice(prev => ({
+        ...prev,
+        company_name: settings.company_name || '',
+        company_address: settings.company_address || '',
+        company_city: settings.company_city || '',
+        company_postal_code: settings.company_postal_code || '',
+        company_phone: settings.company_phone || '',
+        company_email: settings.company_email || '',
+        company_siret: settings.company_siret || '',
+        company_tva: settings.company_tva || '',
+        company_logo_url: settings.logo_url || '',
+      }));
     }
-  }, [existingInvoice, isNew]);
+  }, [existingInvoice, isNew, settings]);
 
   useEffect(() => {
     const calculatedItems = items.map((item, index) => ({

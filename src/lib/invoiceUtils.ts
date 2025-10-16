@@ -3,7 +3,6 @@ import autoTable from 'jspdf-autotable';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Invoice, InvoiceItem } from '@/hooks/useInvoices';
-import { CompanySettings } from '@/hooks/useCompanySettings';
 
 export const calculateItemTotals = (item: Partial<InvoiceItem>): InvoiceItem => {
   const quantity = item.quantity || 0;
@@ -49,7 +48,6 @@ export const calculateInvoiceTotals = (items: InvoiceItem[]) => {
 
 export const exportInvoiceToPDF = async (
   invoice: Invoice,
-  company: CompanySettings | null,
   items: InvoiceItem[]
 ) => {
   const doc = new jsPDF();
@@ -90,12 +88,12 @@ export const exportInvoiceToPDF = async (
 
   // Informations entreprise (à droite)
   let yPos = 25;
-  if (company) {
+  if (invoice.company_name) {
     // Logo de l'entreprise
-    if (company.logo_url) {
+    if (invoice.company_logo_url) {
       try {
         const img = new Image();
-        img.src = company.logo_url;
+        img.src = invoice.company_logo_url;
         await new Promise((resolve, reject) => {
           img.onload = resolve;
           img.onerror = reject;
@@ -109,33 +107,33 @@ export const exportInvoiceToPDF = async (
 
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text(company.company_name, pageWidth - 20, yPos, { align: 'right' });
+    doc.text(invoice.company_name, pageWidth - 20, yPos, { align: 'right' });
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     yPos += 6;
 
-    if (company.company_address) {
-      doc.text(company.company_address, pageWidth - 20, yPos, { align: 'right' });
+    if (invoice.company_address) {
+      doc.text(invoice.company_address, pageWidth - 20, yPos, { align: 'right' });
       yPos += 5;
     }
-    if (company.company_postal_code || company.company_city) {
-      doc.text(`${company.company_postal_code || ''} ${company.company_city || ''}`, pageWidth - 20, yPos, { align: 'right' });
+    if (invoice.company_postal_code || invoice.company_city) {
+      doc.text(`${invoice.company_postal_code || ''} ${invoice.company_city || ''}`, pageWidth - 20, yPos, { align: 'right' });
       yPos += 5;
     }
-    if (company.company_phone) {
-      doc.text(`Tél: ${company.company_phone}`, pageWidth - 20, yPos, { align: 'right' });
+    if (invoice.company_phone) {
+      doc.text(`Tél: ${invoice.company_phone}`, pageWidth - 20, yPos, { align: 'right' });
       yPos += 5;
     }
-    if (company.company_email) {
-      doc.text(company.company_email, pageWidth - 20, yPos, { align: 'right' });
+    if (invoice.company_email) {
+      doc.text(invoice.company_email, pageWidth - 20, yPos, { align: 'right' });
       yPos += 5;
     }
-    if (company.company_siret) {
-      doc.text(`SIRET: ${company.company_siret}`, pageWidth - 20, yPos, { align: 'right' });
+    if (invoice.company_siret) {
+      doc.text(`SIRET: ${invoice.company_siret}`, pageWidth - 20, yPos, { align: 'right' });
       yPos += 5;
     }
-    if (company.company_tva) {
-      doc.text(`TVA: ${company.company_tva}`, pageWidth - 20, yPos, { align: 'right' });
+    if (invoice.company_tva) {
+      doc.text(`TVA: ${invoice.company_tva}`, pageWidth - 20, yPos, { align: 'right' });
     }
   }
 

@@ -1,4 +1,4 @@
-import { BarChart3, Package, ShoppingCart, Receipt, FileText, TrendingUp, LogOut, User } from "lucide-react"
+import { BarChart3, Package, ShoppingCart, Receipt, FileText, TrendingUp, LogOut, User, FileCheck } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
 import {
@@ -21,6 +21,8 @@ const navigation = [
   { name: "Stocks", href: "/app/stocks", icon: Package },
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart },
   { name: "Paiements", href: "/app/paiements", icon: Receipt },
+  { name: "Factures", href: "/app/factures", icon: FileText },
+  { name: "Devis", href: "/app/devis", icon: FileCheck },
   { name: "Performance", href: "/app/performance", icon: TrendingUp },
   { name: "Rapports", href: "/app/rapports", icon: FileText },
 ]

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Settings as SettingsIcon, Palette, Shield, Database, Globe, Bell, Smartphone } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { CompanySettings } from "@/components/settings/CompanySettings";
 
 export default function Settings() {
   const { user, profile, isAdmin } = useAuth();
@@ -20,6 +21,9 @@ export default function Settings() {
           Configuration et préférences de votre application Stocknix
         </p>
       </div>
+
+      {/* Company Settings */}
+      <CompanySettings />
 
       {/* Application Settings */}
       <Card>

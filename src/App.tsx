@@ -16,6 +16,10 @@ import Rapports from "./pages/Rapports";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AuthSimple from "./pages/AuthSimple";
+import Factures from "./pages/Factures";
+import Devis from "./pages/Devis";
+import InvoiceEditor from "./pages/InvoiceEditor";
+import InvoicePreview from "./pages/InvoicePreview";
 
 import HomePage from "./pages/HomePage";
 import MentionsLegales from "./pages/MentionsLegales";
@@ -72,6 +76,14 @@ const App = () => (
                       <Route path="/stocks" element={<Stocks />} />
                       <Route path="/ventes" element={<Ventes />} />
                       <Route path="/paiements" element={<Paiements />} />
+                      <Route path="/factures" element={<Factures />} />
+                      <Route path="/factures/new" element={<InvoiceEditor documentType="facture" />} />
+                      <Route path="/factures/:id" element={<InvoiceEditor documentType="facture" />} />
+                      <Route path="/factures/:id/preview" element={<InvoicePreview documentType="facture" />} />
+                      <Route path="/devis" element={<Devis />} />
+                      <Route path="/devis/new" element={<InvoiceEditor documentType="devis" />} />
+                      <Route path="/devis/:id" element={<InvoiceEditor documentType="devis" />} />
+                      <Route path="/devis/:id/preview" element={<InvoicePreview documentType="devis" />} />
                       <Route path="/performance" element={<Performance />} />
                       <Route path="/rapports" element={<Rapports />} />
                       <Route path="/profile" element={<Profile />} />

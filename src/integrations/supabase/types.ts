@@ -14,6 +14,179 @@ export type Database = {
   }
   public: {
     Tables: {
+      company_settings: {
+        Row: {
+          company_address: string | null
+          company_city: string | null
+          company_email: string | null
+          company_name: string
+          company_phone: string | null
+          company_postal_code: string | null
+          company_siret: string | null
+          company_tva: string | null
+          created_at: string
+          id: string
+          logo_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_address?: string | null
+          company_city?: string | null
+          company_email?: string | null
+          company_name: string
+          company_phone?: string | null
+          company_postal_code?: string | null
+          company_siret?: string | null
+          company_tva?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_address?: string | null
+          company_city?: string | null
+          company_email?: string | null
+          company_name?: string
+          company_phone?: string | null
+          company_postal_code?: string | null
+          company_siret?: string | null
+          company_tva?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      invoice_items: {
+        Row: {
+          created_at: string
+          description: string
+          discount_rate: number
+          id: string
+          invoice_id: string
+          position: number
+          quantity: number
+          subtotal: number
+          tax_amount: number
+          tax_rate: number
+          total_amount: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          discount_rate?: number
+          id?: string
+          invoice_id: string
+          position?: number
+          quantity?: number
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number
+          total_amount?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          discount_rate?: number
+          id?: string
+          invoice_id?: string
+          position?: number
+          quantity?: number
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number
+          total_amount?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          client_address: string | null
+          client_city: string | null
+          client_email: string | null
+          client_name: string
+          client_phone: string | null
+          client_postal_code: string | null
+          created_at: string
+          discount_amount: number
+          document_number: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          due_date: string | null
+          id: string
+          issue_date: string
+          notes: string | null
+          status: Database["public"]["Enums"]["document_status"]
+          subtotal: number
+          tax_amount: number
+          terms: string | null
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          client_address?: string | null
+          client_city?: string | null
+          client_email?: string | null
+          client_name: string
+          client_phone?: string | null
+          client_postal_code?: string | null
+          created_at?: string
+          discount_amount?: number
+          document_number: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          due_date?: string | null
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          subtotal?: number
+          tax_amount?: number
+          terms?: string | null
+          total_amount?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          client_address?: string | null
+          client_city?: string | null
+          client_email?: string | null
+          client_name?: string
+          client_phone?: string | null
+          client_postal_code?: string | null
+          created_at?: string
+          discount_amount?: number
+          document_number?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          due_date?: string | null
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          subtotal?: number
+          tax_amount?: number
+          terms?: string | null
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       password_reset_codes: {
         Row: {
           code: string
@@ -324,6 +497,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      generate_document_number: {
+        Args: {
+          _document_type: Database["public"]["Enums"]["document_type"]
+          _user_id: string
+          _year?: number
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -344,6 +525,14 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      document_status:
+        | "brouillon"
+        | "envoye"
+        | "paye"
+        | "annule"
+        | "accepte"
+        | "refuse"
+      document_type: "facture" | "devis"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -472,6 +661,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      document_status: [
+        "brouillon",
+        "envoye",
+        "paye",
+        "annule",
+        "accepte",
+        "refuse",
+      ],
+      document_type: ["facture", "devis"],
     },
   },
 } as const

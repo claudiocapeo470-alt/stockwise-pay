@@ -12,6 +12,7 @@ import { Plus, Trash2, Save, ArrowLeft } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { calculateItemTotals, calculateInvoiceTotals } from "@/lib/invoiceUtils";
 import { format } from "date-fns";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface InvoiceEditorProps {
   documentType: 'facture' | 'devis';
@@ -24,6 +25,7 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
   const { addInvoice, updateInvoice } = useInvoices(documentType);
   const { data: existingInvoice, isLoading: loadingInvoice } = useInvoiceDetails(id);
   const { settings } = useCompanySettings();
+  const isMobile = useIsMobile();
 
   const [invoice, setInvoice] = useState<Partial<Invoice>>({
     document_type: documentType,
@@ -141,96 +143,113 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
     : `Modifier ${documentType === 'facture' ? 'Facture' : 'Devis'} ${invoice.document_number}`;
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+    <div className="space-y-4 sm:space-y-6 max-w-6xl mx-auto px-2 sm:px-4">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Button
             variant="ghost"
-            size="sm"
+            size={isMobile ? "icon" : "sm"}
             onClick={() => navigate(`/app/${documentType === 'facture' ? 'factures' : 'devis'}`)}
+            className="shrink-0"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour
+            <ArrowLeft className="h-4 w-4" />
+            {!isMobile && <span className="ml-2">Retour</span>}
           </Button>
-          <h1 className="text-3xl font-bold">{title}</h1>
+          <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold truncate">{title}</h1>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => handleSave('brouillon')}>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => handleSave('brouillon')}
+            size={isMobile ? "sm" : "default"}
+            className="w-full sm:w-auto"
+          >
             <Save className="h-4 w-4 mr-2" />
-            Enregistrer
+            {isMobile ? "Enregistrer" : "Enregistrer"}
           </Button>
-          <Button onClick={() => handleSave('envoye')}>
-            Enregistrer et Envoyer
+          <Button 
+            onClick={() => handleSave('envoye')}
+            size={isMobile ? "sm" : "default"}
+            className="w-full sm:w-auto"
+          >
+            {isMobile ? "Envoyer" : "Enregistrer et Envoyer"}
           </Button>
         </div>
       </div>
 
       {!settings && (
-        <Card className="border-yellow-500 bg-yellow-50">
-          <CardContent className="pt-6">
-            <p className="text-sm text-yellow-800">
+        <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20">
+          <CardContent className="pt-4 sm:pt-6">
+            <p className="text-xs sm:text-sm text-yellow-800 dark:text-yellow-200">
               ⚠️ Configurez vos informations d'entreprise dans les paramètres pour qu'elles apparaissent sur vos documents.
             </p>
           </CardContent>
         </Card>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Client Information */}
         <Card>
-          <CardHeader>
-            <CardTitle>Informations Client</CardTitle>
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="text-base sm:text-lg">Informations Client</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div>
-              <Label htmlFor="client_name">Nom du client *</Label>
+              <Label htmlFor="client_name" className="text-xs sm:text-sm">Nom du client *</Label>
               <Input
                 id="client_name"
                 value={invoice.client_name}
                 onChange={(e) => setInvoice({ ...invoice, client_name: e.target.value })}
                 required
+                className="text-sm"
               />
             </div>
             <div>
-              <Label htmlFor="client_email">Email</Label>
+              <Label htmlFor="client_email" className="text-xs sm:text-sm">Email</Label>
               <Input
                 id="client_email"
                 type="email"
                 value={invoice.client_email}
                 onChange={(e) => setInvoice({ ...invoice, client_email: e.target.value })}
+                className="text-sm"
               />
             </div>
             <div>
-              <Label htmlFor="client_phone">Téléphone</Label>
+              <Label htmlFor="client_phone" className="text-xs sm:text-sm">Téléphone</Label>
               <Input
                 id="client_phone"
                 value={invoice.client_phone}
                 onChange={(e) => setInvoice({ ...invoice, client_phone: e.target.value })}
+                className="text-sm"
               />
             </div>
             <div>
-              <Label htmlFor="client_address">Adresse</Label>
+              <Label htmlFor="client_address" className="text-xs sm:text-sm">Adresse</Label>
               <Input
                 id="client_address"
                 value={invoice.client_address}
                 onChange={(e) => setInvoice({ ...invoice, client_address: e.target.value })}
+                className="text-sm"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <Label htmlFor="client_postal_code">Code postal</Label>
+                <Label htmlFor="client_postal_code" className="text-xs sm:text-sm">Code postal</Label>
                 <Input
                   id="client_postal_code"
                   value={invoice.client_postal_code}
                   onChange={(e) => setInvoice({ ...invoice, client_postal_code: e.target.value })}
+                  className="text-sm"
                 />
               </div>
               <div>
-                <Label htmlFor="client_city">Ville</Label>
+                <Label htmlFor="client_city" className="text-xs sm:text-sm">Ville</Label>
                 <Input
                   id="client_city"
                   value={invoice.client_city}
                   onChange={(e) => setInvoice({ ...invoice, client_city: e.target.value })}
+                  className="text-sm"
                 />
               </div>
             </div>
@@ -239,12 +258,12 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
 
         {/* Document Information */}
         <Card>
-          <CardHeader>
-            <CardTitle>Informations du Document</CardTitle>
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="text-base sm:text-lg">Informations du Document</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div>
-              <Label htmlFor="status">Statut</Label>
+              <Label htmlFor="status" className="text-xs sm:text-sm">Statut</Label>
               <Select
                 value={invoice.status}
                 onValueChange={(value) => setInvoice({ ...invoice, status: value as Invoice['status'] })}
@@ -271,22 +290,24 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
               </Select>
             </div>
             <div>
-              <Label htmlFor="issue_date">Date d'émission *</Label>
+              <Label htmlFor="issue_date" className="text-xs sm:text-sm">Date d'émission *</Label>
               <Input
                 id="issue_date"
                 type="date"
                 value={invoice.issue_date}
                 onChange={(e) => setInvoice({ ...invoice, issue_date: e.target.value })}
                 required
+                className="text-sm"
               />
             </div>
             <div>
-              <Label htmlFor="due_date">Date d'échéance</Label>
+              <Label htmlFor="due_date" className="text-xs sm:text-sm">Date d'échéance</Label>
               <Input
                 id="due_date"
                 type="date"
                 value={invoice.due_date}
                 onChange={(e) => setInvoice({ ...invoice, due_date: e.target.value })}
+                className="text-sm"
               />
             </div>
           </CardContent>
@@ -295,63 +316,66 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
 
       {/* Items */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Articles / Prestations</CardTitle>
-            <Button onClick={addItem} size="sm">
+        <CardHeader className="pb-3 sm:pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <CardTitle className="text-base sm:text-lg">Articles / Prestations</CardTitle>
+            <Button onClick={addItem} size={isMobile ? "sm" : "default"} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
-              Ajouter une ligne
+              Ajouter
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {items.map((item, index) => (
-              <div key={index} className="border rounded-lg p-4 space-y-3">
-                <div className="flex items-start gap-4">
-                  <div className="flex-1">
-                    <Label>Description *</Label>
+              <div key={index} className="border rounded-lg p-3 sm:p-4 space-y-3">
+                <div className="flex items-start gap-2 sm:gap-4">
+                  <div className="flex-1 min-w-0">
+                    <Label className="text-xs sm:text-sm">Description *</Label>
                     <Input
                       value={item.description}
                       onChange={(e) => updateItem(index, 'description', e.target.value)}
-                      placeholder="Description de l'article..."
+                      placeholder="Description..."
                       required
+                      className="text-sm"
                     />
                   </div>
                   {items.length > 1 && (
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="icon"
                       onClick={() => removeItem(index)}
-                      className="mt-6"
+                      className="mt-5 sm:mt-6 h-8 w-8 shrink-0"
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   )}
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
                   <div>
-                    <Label>Quantité</Label>
+                    <Label className="text-xs">Quantité</Label>
                     <Input
                       type="number"
                       min="1"
                       step="0.01"
                       value={item.quantity}
                       onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
                   <div>
-                    <Label>Prix Unit. (XOF)</Label>
+                    <Label className="text-xs">Prix Unit.</Label>
                     <Input
                       type="number"
                       min="0"
                       step="0.01"
                       value={item.unit_price}
                       onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
                   <div>
-                    <Label>Remise (%)</Label>
+                    <Label className="text-xs">Remise (%)</Label>
                     <Input
                       type="number"
                       min="0"
@@ -359,10 +383,11 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
                       step="0.1"
                       value={item.discount_rate}
                       onChange={(e) => updateItem(index, 'discount_rate', parseFloat(e.target.value) || 0)}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
                   <div>
-                    <Label>TVA (%) - Optionnel</Label>
+                    <Label className="text-xs">TVA (%)</Label>
                     <Input
                       type="number"
                       min="0"
@@ -371,16 +396,19 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
                       value={item.tax_rate || ''}
                       onChange={(e) => updateItem(index, 'tax_rate', e.target.value === '' ? 0 : parseFloat(e.target.value))}
                       placeholder="0"
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div>
-                    <Label>Total TTC</Label>
+                  <div className="col-span-2 sm:col-span-1">
+                    <Label className="text-xs">Total TTC</Label>
                     <Input
-                      value={new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(
-                        calculateItemTotals(item).total_amount
-                      )}
+                      value={isMobile 
+                        ? `${Math.round(calculateItemTotals(item).total_amount).toLocaleString()} F`
+                        : new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(
+                          calculateItemTotals(item).total_amount
+                        )}
                       disabled
-                      className="bg-muted"
+                      className="bg-muted text-xs sm:text-sm font-medium"
                     />
                   </div>
                 </div>
@@ -389,32 +417,40 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
           </div>
 
           {/* Totals */}
-          <div className="mt-6 border-t pt-6">
+          <div className="mt-4 sm:mt-6 border-t pt-4 sm:pt-6">
             <div className="max-w-md ml-auto space-y-2">
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-xs sm:text-sm">
                 <span className="text-muted-foreground">Sous-total HT:</span>
                 <span className="font-medium">
-                  {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.subtotal || 0)}
+                  {isMobile 
+                    ? `${Math.round(invoice.subtotal || 0).toLocaleString()} F`
+                    : new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.subtotal || 0)}
                 </span>
               </div>
               {(invoice.discount_amount || 0) > 0 && (
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-muted-foreground">Remise:</span>
                   <span className="font-medium text-green-600">
-                    -{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.discount_amount || 0)}
+                    -{isMobile 
+                      ? `${Math.round(invoice.discount_amount || 0).toLocaleString()} F`
+                      : new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.discount_amount || 0)}
                   </span>
                 </div>
               )}
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-xs sm:text-sm">
                 <span className="text-muted-foreground">TVA:</span>
                 <span className="font-medium">
-                  {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.tax_amount || 0)}
+                  {isMobile 
+                    ? `${Math.round(invoice.tax_amount || 0).toLocaleString()} F`
+                    : new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.tax_amount || 0)}
                 </span>
               </div>
-              <div className="flex justify-between text-lg font-bold border-t pt-2">
+              <div className="flex justify-between text-base sm:text-lg font-bold border-t pt-2">
                 <span>TOTAL TTC:</span>
                 <span>
-                  {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.total_amount || 0)}
+                  {isMobile 
+                    ? `${Math.round(invoice.total_amount || 0).toLocaleString()} F`
+                    : new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.total_amount || 0)}
                 </span>
               </div>
             </div>
@@ -423,10 +459,10 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
       </Card>
 
       {/* Notes and Terms */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Notes</CardTitle>
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="text-base sm:text-lg">Notes</CardTitle>
           </CardHeader>
           <CardContent>
             <Textarea
@@ -434,20 +470,22 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
               onChange={(e) => setInvoice({ ...invoice, notes: e.target.value })}
               placeholder="Notes complémentaires..."
               rows={4}
+              className="text-xs sm:text-sm"
             />
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Conditions de paiement</CardTitle>
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="text-base sm:text-lg">Conditions de paiement</CardTitle>
           </CardHeader>
           <CardContent>
             <Textarea
               value={invoice.terms}
               onChange={(e) => setInvoice({ ...invoice, terms: e.target.value })}
-              placeholder="Conditions et modalités de paiement..."
+              placeholder="Conditions et modalités..."
               rows={4}
+              className="text-xs sm:text-sm"
             />
           </CardContent>
         </Card>

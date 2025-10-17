@@ -15,7 +15,7 @@ import teamWorkingInventory from '@/assets/team-working-inventory.jpg';
 import inventoryFeature from '@/assets/3d-inventory-feature.png';
 import analyticsFeature from '@/assets/3d-analytics-feature.png';
 import paymentFeature from '@/assets/3d-payment-feature.png';
-import supportTeam from '@/assets/support-team-illustration.png';
+import supportSimple from '@/assets/support-simple.png';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -604,86 +604,93 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Support Section - Blue Background */}
-      <section className="py-24 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
-        
+      {/* Support Section - Simplified */}
+      <section className="py-24 lg:py-32 bg-gradient-to-br from-blue-50 to-white relative overflow-hidden">
         <div className="container mx-auto px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
-            {/* Left - Image */}
+          <div className="max-w-4xl mx-auto text-center">
             <ScrollReveal>
-              <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 bg-white/10 blur-3xl rounded-full"></div>
+              <div className="mb-12">
                 <img 
-                  src={supportTeam} 
-                  alt="Équipe support Stocknix" 
-                  className="relative z-10 w-full max-w-lg h-auto"
+                  src={supportSimple} 
+                  alt="Support Stocknix" 
+                  className="w-48 h-48 mx-auto mb-8"
                 />
               </div>
-            </ScrollReveal>
-
-            {/* Right - Content */}
-            <ScrollReveal delay={200}>
-              <div className="space-y-8">
-                <Badge className="bg-white/20 text-white border-0 px-6 py-3 text-sm font-semibold backdrop-blur-md inline-flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  Support Premium
-                </Badge>
-                
-                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  Une équipe à vos côtés 24h/24 et 7j/7
-                </h2>
-                
-                <p className="text-white/95 text-lg sm:text-xl leading-relaxed">
-                  Notre équipe d'experts est toujours disponible pour vous accompagner dans votre réussite. Support par chat, email ou téléphone.
-                </p>
-
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                      <Clock className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-2">Disponibilité totale</h3>
-                      <p className="text-white/90">Assistance 24/7 pour répondre à toutes vos questions</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                      <Users className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-2">Experts dédiés</h3>
-                      <p className="text-white/90">Des spécialistes qui connaissent votre secteur</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                      <Zap className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-2">Réponse rapide</h3>
-                      <p className="text-white/90">Temps de réponse moyen inférieur à 2 minutes</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <Button 
-                    size="lg" 
-                    onClick={() => navigate('/auth')} 
-                    className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-lg px-10 py-7 rounded-xl font-bold transition-transform hover:scale-105"
-                  >
-                    Contacter le support
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
+              
+              <Badge className="mb-6 bg-blue-600 text-white border-0 px-6 py-3 text-sm font-semibold">
+                Support 24/7
+              </Badge>
+              
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+                Une équipe à vos côtés 24h/24 et 7j/7
+              </h2>
+              
+              <p className="text-xl text-gray-600 leading-relaxed mb-8 max-w-2xl mx-auto">
+                Notre équipe d'experts est disponible à tout moment pour vous accompagner. Support par chat, email ou téléphone.
+              </p>
             </ScrollReveal>
           </div>
+        </div>
+      </section>
+
+      {/* Quick Account Creation Section */}
+      <section className="py-24 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_70%)]"></div>
+        
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
+          <ScrollReveal>
+            <div className="max-w-4xl mx-auto text-center">
+              <Badge className="mb-8 bg-white/20 text-white border-0 px-6 py-3 text-sm font-semibold backdrop-blur-md inline-flex items-center gap-2">
+                <Zap className="h-4 w-4" />
+                Rapide et facile
+              </Badge>
+              
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
+                Votre compte créé en ligne en 2 minutes
+              </h2>
+              
+              <p className="text-xl text-white/95 leading-relaxed mb-12 max-w-2xl mx-auto">
+                Quelques clics suffisent pour commencer à gérer votre entreprise professionnellement
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                <div className="flex items-center gap-3 text-white">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-lg font-bold">
+                    1
+                  </div>
+                  <span className="text-lg">Inscrivez-vous</span>
+                </div>
+                <ArrowRight className="h-6 w-6 text-white rotate-90 sm:rotate-0" />
+                <div className="flex items-center gap-3 text-white">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-lg font-bold">
+                    2
+                  </div>
+                  <span className="text-lg">Configurez</span>
+                </div>
+                <ArrowRight className="h-6 w-6 text-white rotate-90 sm:rotate-0" />
+                <div className="flex items-center gap-3 text-white">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-lg font-bold">
+                    3
+                  </div>
+                  <span className="text-lg">C'est parti !</span>
+                </div>
+              </div>
+
+              <Button 
+                size="lg" 
+                onClick={() => navigate('/auth')} 
+                className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-xl px-12 py-8 rounded-xl font-bold transition-transform hover:scale-105"
+              >
+                Créer un compte gratuitement
+                <ArrowRight className="ml-2 h-6 w-6" />
+              </Button>
+
+              <p className="text-white/90 text-sm mt-6">
+                Sans carte bancaire • Sans engagement • 1 mois gratuit
+              </p>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 

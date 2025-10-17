@@ -164,7 +164,7 @@ const HomePage = () => {
             {/* Logo */}
             <div className="flex items-center gap-3">
               <img src={stocknixLogo} alt="Stocknix" className="h-10 sm:h-12" />
-              <span className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+              <span className="text-2xl sm:text-3xl font-black text-black dark:text-white font-futura">
                 Stocknix
               </span>
             </div>
@@ -740,7 +740,7 @@ const HomePage = () => {
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-3 mb-6">
                 <img src={stocknixLogo} alt="Stocknix" className="h-10" />
-                <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                <span className="text-xl font-black text-white font-futura">
                   Stocknix
                 </span>
               </div>

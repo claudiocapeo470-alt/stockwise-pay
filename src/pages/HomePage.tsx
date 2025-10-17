@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import stocknixLogo from '@/assets/stocknix-logo.png';
-import dashboardHero from '@/assets/3d-dashboard-hero.png';
+import warehouseInventory from '@/assets/african-warehouse-inventory.png';
 import inventoryFeature from '@/assets/3d-inventory-feature.png';
 import analyticsFeature from '@/assets/3d-analytics-feature.png';
 import paymentFeature from '@/assets/3d-payment-feature.png';
@@ -47,7 +47,7 @@ const HomePage = () => {
       icon: BarChart3,
       title: "Rapports & Analytics",
       description: "Analysez votre activité avec des rapports détaillés et des graphiques interactifs",
-      image: dashboardHero,
+      image: analyticsFeature,
       benefits: ["Graphiques en temps réel", "Exports personnalisés", "Métriques clés"]
     }
   ];
@@ -278,8 +278,8 @@ const HomePage = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 blur-3xl rounded-full"></div>
                 <img 
-                  src={dashboardHero} 
-                  alt="Dashboard Stocknix" 
+                  src={warehouseInventory} 
+                  alt="Gestion d'inventaire en entrepôt" 
                   className="relative z-10 w-full h-auto rounded-2xl shadow-2xl"
                 />
               </div>

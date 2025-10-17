@@ -3,6 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { 
   BarChart3, Package, CreditCard, TrendingUp, Users, Shield, 
   Smartphone, ArrowRight, CheckCircle, Menu, X, Star, 
@@ -413,7 +420,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Benefits Section - White Background */}
+      {/* Benefits Section - White Background with Carousel */}
       <section className="py-24 lg:py-32 bg-white relative">
         <div className="container mx-auto px-6 lg:px-8">
           <ScrollReveal>
@@ -430,22 +437,36 @@ const HomePage = () => {
             </div>
           </ScrollReveal>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 max-w-7xl mx-auto">
-            {benefits.map((benefit, index) => (
-              <ScrollReveal key={index} delay={index * 100}>
-                <div className="text-center space-y-6 p-6 rounded-2xl hover:bg-gray-50 transition-all group">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl shadow-xl shadow-blue-500/30 group-hover:scale-110 transition-transform">
-                    <benefit.icon className="h-10 w-10 text-white" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                    {benefit.description}
-                  </p>
-                </div>
-              </ScrollReveal>
-            ))}
+          <div className="max-w-6xl mx-auto">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4">
+                {benefits.map((benefit, index) => (
+                  <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                    <Card className="h-full p-8 text-center space-y-6 border-2 border-gray-100 hover:border-blue-200 hover:shadow-2xl transition-all group bg-gradient-to-br from-white to-gray-50">
+                      <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-500 rounded-3xl shadow-xl shadow-blue-500/30 group-hover:scale-110 transition-transform">
+                        <benefit.icon className="h-12 w-12 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-gray-600 text-base leading-relaxed">
+                        {benefit.description}
+                      </p>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex justify-center gap-4 mt-12">
+                <CarouselPrevious className="static translate-y-0 bg-blue-600 hover:bg-blue-700 text-white border-0 h-12 w-12" />
+                <CarouselNext className="static translate-y-0 bg-blue-600 hover:bg-blue-700 text-white border-0 h-12 w-12" />
+              </div>
+            </Carousel>
           </div>
         </div>
       </section>

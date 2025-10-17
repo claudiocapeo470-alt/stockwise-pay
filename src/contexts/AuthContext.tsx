@@ -105,6 +105,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           // Redirect to dashboard after email confirmation
           if (event === 'SIGNED_IN' && window.location.pathname.includes('/auth')) {
             setTimeout(() => {
+              // Forcer le mode jour
+              localStorage.setItem('theme', 'light');
+              document.documentElement.classList.remove('dark');
+              document.documentElement.classList.add('light');
               window.location.href = '/app';
             }, 100);
           }

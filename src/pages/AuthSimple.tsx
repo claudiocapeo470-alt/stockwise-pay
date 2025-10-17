@@ -146,6 +146,10 @@ export default function AuthSimple() {
         }
 
         toast.success('✅ Connexion réussie !');
+        // Forcer le mode jour
+        localStorage.setItem('theme', 'light');
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
         navigate('/app');
         
       } else {
@@ -187,6 +191,10 @@ export default function AuthSimple() {
           });
         } else {
           toast.success('✅ Compte créé et activé !');
+          // Forcer le mode jour
+          localStorage.setItem('theme', 'light');
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
           navigate('/app?confirmed=true');
         }
       }

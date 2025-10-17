@@ -135,7 +135,7 @@ export default function Paiements() {
 
         <ScrollReveal delay={150}>
           <Card className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-2 border-amber-200 dark:border-amber-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-600"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-500 shadow-md group-hover:scale-110 transition-transform">
@@ -150,9 +150,11 @@ export default function Paiements() {
               </div>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </ScrollReveal>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-2 border-red-200 dark:border-red-800/40 hover:shadow-lg transition-all duration-300 group">
+        <ScrollReveal delay={200}>
+          <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-2 border-red-200 dark:border-red-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -165,9 +167,11 @@ export default function Paiements() {
               </div>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </ScrollReveal>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800/40 hover:shadow-lg transition-all duration-300 group">
+        <ScrollReveal delay={250}>
+          <Card className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-indigo-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -186,10 +190,12 @@ export default function Paiements() {
               </div>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </ScrollReveal>
       </div>
 
       {/* Filters */}
+      <ScrollReveal delay={300}>
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
@@ -269,8 +275,10 @@ export default function Paiements() {
           </div>
         </CardContent>
       </Card>
+      </ScrollReveal>
 
       {/* Payments List */}
+      <ScrollReveal delay={350}>
       <div className="space-y-4">
         {filteredPayments.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -313,6 +321,7 @@ export default function Paiements() {
           </Card>
         )}
       </div>
+      </ScrollReveal>
     </div>
   )
 }

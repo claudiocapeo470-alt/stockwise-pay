@@ -120,7 +120,7 @@ export default function Stocks() {
       {/* Search and Filters */}
       <ScrollReveal delay={250}>
         <Card>
-        <CardContent className="pt-6">
+          <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -153,7 +153,8 @@ export default function Stocks() {
             )}
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </ScrollReveal>
 
       {/* Products Display */}
       <div>

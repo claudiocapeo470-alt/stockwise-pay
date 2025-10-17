@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { z } from 'zod';
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Loader2, Eye, EyeOff, ArrowLeft, Package, TrendingUp, BarChart3, Wallet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { z } from "zod";
+import stocknixLogo from "@/assets/stocknix-logo-text.png";
+import authIllustration from "@/assets/auth-3d-illustration.png";
 
 // Schémas de validation ultra-simples
 const loginSchema = z.object({
@@ -218,8 +219,8 @@ export default function AuthSimple() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-blue-600 to-slate-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
       </div>
     );
   }
@@ -227,24 +228,30 @@ export default function AuthSimple() {
   // Interface de réinitialisation de mot de passe
   if (resetStep) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-blue-600 to-slate-900 p-4">
+        <div className="w-full max-w-md bg-background/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-primary/20">
+          <div className="text-center space-y-6">
+            <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
               {resetStep === 'success' ? (
-                <CheckCircle className="h-6 w-6 text-green-600" />
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
               ) : (
-                <AlertCircle className="h-6 w-6 text-primary" />
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
               )}
             </div>
-            <CardTitle>
-              {resetStep === 'success' ? 'Email envoyé !' : 'Réinitialiser le mot de passe'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            
+            <div>
+              <h2 className="text-2xl font-bold">
+                {resetStep === 'success' ? 'Email envoyé !' : 'Réinitialiser le mot de passe'}
+              </h2>
+            </div>
+
             {resetStep === 'email' && (
               <form onSubmit={handlePasswordReset} className="space-y-4">
-                <div>
+                <div className="text-left">
                   <Label htmlFor="resetEmail">Email</Label>
                   <Input
                     id="resetEmail"
@@ -259,18 +266,18 @@ export default function AuthSimple() {
                   )}
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Envoi...' : 'Envoyer le lien de réinitialisation'}
+                  {isLoading ? 'Envoi...' : 'Envoyer le lien'}
                 </Button>
               </form>
             )}
             
             {resetStep === 'success' && (
-              <div className="text-center space-y-4">
+              <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
                   Un email avec les instructions a été envoyé à <strong>{resetEmail}</strong>
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Vérifiez aussi votre dossier spam/courrier indésirable
+                  Vérifiez aussi votre dossier spam
                 </p>
               </div>
             )}
@@ -282,197 +289,280 @@ export default function AuthSimple() {
             >
               Retour à la connexion
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   // Interface principale d'authentification
   return (
-    <div className="min-h-screen flex">
-      {/* Partie gauche - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-primary items-center justify-center p-8">
-        <div className="text-center text-white space-y-6">
-          <h1 className="text-4xl font-bold">Stocknix</h1>
-          <p className="text-xl opacity-90">
-            Gérez votre business en toute simplicité
-          </p>
-          <div className="space-y-4 text-left max-w-md">
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 bg-white rounded-full"></div>
-              <span>Gestion de stock intelligente</span>
+    <div className="min-h-screen flex overflow-hidden">
+      {/* Left Side - Branding & Illustration */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-primary via-blue-600 to-slate-900 p-12 flex-col justify-between overflow-hidden">
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-transparent to-white/10 animate-pulse"></div>
+        
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 1px)',
+            backgroundSize: '40px 40px'
+          }}></div>
+        </div>
+
+        <div className="relative z-10">
+          <Link to="/" className="inline-block">
+            <img src={stocknixLogo} alt="Stocknix" className="h-10 brightness-0 invert" />
+          </Link>
+        </div>
+
+        <div className="relative z-10 space-y-8">
+          <div className="space-y-4">
+            <h1 className="text-5xl font-bold text-white leading-tight">
+              Gérez votre business en toute simplicité
+            </h1>
+            <p className="text-xl text-blue-100">
+              La solution complète pour piloter votre entreprise avec intelligence
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-start gap-3 text-white">
+              <div className="mt-1 p-2 rounded-lg bg-white/10 backdrop-blur-sm">
+                <Package className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Gestion de stock intelligente</h3>
+                <p className="text-sm text-blue-100">Suivez vos stocks en temps réel avec précision</p>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 bg-white rounded-full"></div>
-              <span>Suivi des ventes en temps réel</span>
+            <div className="flex items-start gap-3 text-white">
+              <div className="mt-1 p-2 rounded-lg bg-white/10 backdrop-blur-sm">
+                <TrendingUp className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Suivi des ventes en temps réel</h3>
+                <p className="text-sm text-blue-100">Analysez vos performances instantanément</p>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 bg-white rounded-full"></div>
-              <span>Rapports et analytics</span>
+            <div className="flex items-start gap-3 text-white">
+              <div className="mt-1 p-2 rounded-lg bg-white/10 backdrop-blur-sm">
+                <BarChart3 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Rapports et analytics</h3>
+                <p className="text-sm text-blue-100">Prenez des décisions éclairées avec nos tableaux de bord</p>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 bg-white rounded-full"></div>
-              <span>Gestion des paiements</span>
+            <div className="flex items-start gap-3 text-white">
+              <div className="mt-1 p-2 rounded-lg bg-white/10 backdrop-blur-sm">
+                <Wallet className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Gestion des paiements</h3>
+                <p className="text-sm text-blue-100">Gérez vos factures et paiements efficacement</p>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* 3D Illustration */}
+        <div className="absolute -right-20 top-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-30">
+          <img 
+            src={authIllustration} 
+            alt="3D Illustration" 
+            className="w-full h-full object-contain drop-shadow-2xl"
+          />
+        </div>
+
+        <div className="relative z-10 text-sm text-blue-100">
+          © 2025 Stocknix. Tous droits réservés.
+        </div>
       </div>
 
-      {/* Partie droite - Formulaires */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">
-              {activeTab === 'login' ? 'Connexion' : 'Créer un compte'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Connexion</TabsTrigger>
-                <TabsTrigger value="register">Inscription</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="login" className="space-y-4 mt-4">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="votre@email.com"
-                      className={getFieldError('email') ? 'border-destructive' : ''}
-                    />
-                    {getFieldError('email') && (
-                      <p className="text-sm text-destructive mt-1">{getFieldError('email')}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="password">Mot de passe</Label>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        placeholder="••••••••"
-                        className={getFieldError('password') ? 'border-destructive' : ''}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                    {getFieldError('password') && (
-                      <p className="text-sm text-destructive mt-1">{getFieldError('password')}</p>
-                    )}
-                  </div>
-                  
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Connexion...' : 'Se connecter'}
-                  </Button>
-                </form>
-                
-                <div className="text-center">
-                  <Button 
-                    variant="link" 
-                    onClick={() => setResetStep('email')}
-                    className="text-sm"
-                  >
-                    Mot de passe oublié ?
-                  </Button>
+      {/* Right Side - Auth Forms */}
+      <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
+        {/* Back button for mobile */}
+        <Link 
+          to="/" 
+          className="absolute top-6 left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Retour
+        </Link>
+
+        <div className="w-full max-w-md space-y-8">
+          {/* Mobile logo */}
+          <div className="lg:hidden text-center">
+            <img src={stocknixLogo} alt="Stocknix" className="h-8 mx-auto mb-4" />
+          </div>
+
+          <div className="text-center space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight">Bienvenue</h1>
+            <p className="text-muted-foreground">
+              Connectez-vous ou créez un compte pour continuer
+            </p>
+          </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="login">Connexion</TabsTrigger>
+              <TabsTrigger value="register">Inscription</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="login" className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    placeholder="votre@email.com"
+                    className={getFieldError('email') ? 'border-destructive' : ''}
+                  />
+                  {getFieldError('email') && (
+                    <p className="text-sm text-destructive">{getFieldError('email')}</p>
+                  )}
                 </div>
-              </TabsContent>
-              
-              <TabsContent value="register" className="space-y-4 mt-4">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName">Prénom (optionnel)</Label>
-                      <Input
-                        id="firstName"
-                        value={formData.firstName}
-                        onChange={(e) => handleInputChange('firstName', e.target.value)}
-                        placeholder="John"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName">Nom (optionnel)</Label>
-                      <Input
-                        id="lastName"
-                        value={formData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        placeholder="Doe"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="registerEmail">Email</Label>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="password">Mot de passe</Label>
+                  <div className="relative">
                     <Input
-                      id="registerEmail"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="votre@email.com"
-                      className={getFieldError('email') ? 'border-destructive' : ''}
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={formData.password}
+                      onChange={(e) => handleInputChange('password', e.target.value)}
+                      placeholder="••••••••"
+                      className={getFieldError('password') ? 'border-destructive' : ''}
                     />
-                    {getFieldError('email') && (
-                      <p className="text-sm text-destructive mt-1">{getFieldError('email')}</p>
-                    )}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
                   </div>
-                  
-                  <div>
-                    <Label htmlFor="registerPassword">Mot de passe</Label>
-                    <div className="relative">
-                      <Input
-                        id="registerPassword"
-                        type={showPassword ? 'text' : 'password'}
-                        value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        placeholder="Minimum 6 caractères"
-                        className={getFieldError('password') ? 'border-destructive' : ''}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                    {getFieldError('password') && (
-                      <p className="text-sm text-destructive mt-1">{getFieldError('password')}</p>
-                    )}
+                  {getFieldError('password') && (
+                    <p className="text-sm text-destructive">{getFieldError('password')}</p>
+                  )}
+                </div>
+                
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Connexion...
+                    </>
+                  ) : (
+                    'Se connecter'
+                  )}
+                </Button>
+              </form>
+              
+              <div className="text-center">
+                <Button 
+                  variant="link" 
+                  onClick={() => setResetStep('email')}
+                  className="text-sm"
+                >
+                  Mot de passe oublié ?
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="register" className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">Prénom (optionnel)</Label>
+                    <Input
+                      id="firstName"
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      placeholder="John"
+                    />
                   </div>
-                  
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Création...' : 'Créer mon compte'}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Nom (optionnel)</Label>
+                    <Input
+                      id="lastName"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      placeholder="Doe"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="registerEmail">Email</Label>
+                  <Input
+                    id="registerEmail"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    placeholder="votre@email.com"
+                    className={getFieldError('email') ? 'border-destructive' : ''}
+                  />
+                  {getFieldError('email') && (
+                    <p className="text-sm text-destructive">{getFieldError('email')}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="registerPassword">Mot de passe</Label>
+                  <div className="relative">
+                    <Input
+                      id="registerPassword"
+                      type={showPassword ? 'text' : 'password'}
+                      value={formData.password}
+                      onChange={(e) => handleInputChange('password', e.target.value)}
+                      placeholder="Minimum 6 caractères"
+                      className={getFieldError('password') ? 'border-destructive' : ''}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                  {getFieldError('password') && (
+                    <p className="text-sm text-destructive">{getFieldError('password')}</p>
+                  )}
+                </div>
+                
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Inscription...
+                    </>
+                  ) : (
+                    'Créer un compte'
+                  )}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

@@ -154,7 +154,6 @@ export default function Stocks() {
           </div>
         </CardContent>
       </Card>
-      </ScrollReveal>
 
       {/* Products Display */}
       <div>

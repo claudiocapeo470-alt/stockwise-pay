@@ -3,6 +3,7 @@ import { MetricCard } from "@/components/dashboard/MetricCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { WelcomeGuide } from "@/components/onboarding/WelcomeGuide";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { BarChart3, Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
@@ -77,92 +78,104 @@ export default function Dashboard() {
 
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Dashboard</h1>
-          <p className="text-muted-foreground">Vue d'ensemble de votre activité</p>
+    <div className="space-y-6 page-transition">
+      <ScrollReveal>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Dashboard</h1>
+            <p className="text-muted-foreground">Vue d'ensemble de votre activité</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <img 
+              src={stocknixLogo} 
+              alt="Stocknix" 
+              className="h-12 w-12 object-contain"
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <img 
-            src={stocknixLogo} 
-            alt="Stocknix" 
-            className="h-12 w-12 object-contain"
-          />
-        </div>
-      </div>
+      </ScrollReveal>
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard
-          title="Produits en stock"
-          value={metrics.totalProducts.toString()}
-          change={metrics.lowStockProducts > 0 ? `${metrics.lowStockProducts} en rupture` : "Stock normal"}
-          changeType={metrics.lowStockProducts > 0 ? "negative" : "positive"}
-          icon={Package}
-          gradient="success"
-        />
-        <MetricCard
-          title="Ventes aujourd'hui"
-          value={`${metrics.todaySales.toLocaleString()} FCFA`}
-          change="+12% vs hier"
-          changeType="positive"
-          icon={ShoppingCart}
-          gradient="primary"
-        />
-        <MetricCard
-          title="Paiements en attente"
-          value={metrics.pendingPayments.toString()}
-          change={`${metrics.pendingPayments} factures`}
-          changeType="neutral"
-          icon={Receipt}
-          gradient="warning"
-        />
-        <MetricCard
-          title="Chiffre d'affaires"
-          value={`${metrics.totalPayments.toLocaleString()} FCFA`}
-          change="+8% vs mois dernier"
-          changeType="positive"
-          icon={TrendingUp}
-          gradient="primary"
-        />
+        <ScrollReveal delay={100}>
+          <MetricCard
+            title="Produits en stock"
+            value={metrics.totalProducts.toString()}
+            change={metrics.lowStockProducts > 0 ? `${metrics.lowStockProducts} en rupture` : "Stock normal"}
+            changeType={metrics.lowStockProducts > 0 ? "negative" : "positive"}
+            icon={Package}
+            gradient="success"
+          />
+        </ScrollReveal>
+        <ScrollReveal delay={150}>
+          <MetricCard
+            title="Ventes aujourd'hui"
+            value={`${metrics.todaySales.toLocaleString()} FCFA`}
+            change="+12% vs hier"
+            changeType="positive"
+            icon={ShoppingCart}
+            gradient="primary"
+          />
+        </ScrollReveal>
+        <ScrollReveal delay={200}>
+          <MetricCard
+            title="Paiements en attente"
+            value={metrics.pendingPayments.toString()}
+            change={`${metrics.pendingPayments} factures`}
+            changeType="neutral"
+            icon={Receipt}
+            gradient="warning"
+          />
+        </ScrollReveal>
+        <ScrollReveal delay={250}>
+          <MetricCard
+            title="Chiffre d'affaires"
+            value={`${metrics.totalPayments.toLocaleString()} FCFA`}
+            change="+8% vs mois dernier"
+            changeType="positive"
+            icon={TrendingUp}
+            gradient="primary"
+          />
+        </ScrollReveal>
       </div>
 
       {/* Alerts */}
       {metrics.lowStockProducts > 0 && (
-        <Card className="bg-gradient-to-br from-red-100 via-orange-100 to-red-100 dark:from-red-950/40 dark:to-orange-900/30 border-2 border-red-400 dark:border-red-600 shadow-xl shadow-red-500/30 animate-heartbeat">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 via-orange-500 to-red-600 shadow-lg shadow-red-500/50 animate-heartbeat shrink-0">
-                <AlertTriangle className="h-8 w-8 text-white animate-pulse" />
-              </div>
-              
-              <div className="flex-1 min-w-0">
-                <h3 className="text-xl font-bold text-red-700 dark:text-red-300 mb-2 flex items-center gap-2">
-                  Alerte Stock Critique
-                  <span className="text-base font-normal bg-red-600 text-white px-2.5 py-0.5 rounded-full">
-                    {metrics.lowStockProducts}
-                  </span>
-                </h3>
+        <ScrollReveal delay={300}>
+          <Card className="bg-gradient-to-br from-red-100 via-orange-100 to-red-100 dark:from-red-950/40 dark:to-orange-900/30 border-2 border-red-400 dark:border-red-600 shadow-xl shadow-red-500/30 animate-heartbeat">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 via-orange-500 to-red-600 shadow-lg shadow-red-500/50 animate-heartbeat shrink-0">
+                  <AlertTriangle className="h-8 w-8 text-white animate-pulse" />
+                </div>
                 
-                <div className="flex flex-wrap gap-2">
-                  {metrics.lowStockProductsList.map((product) => (
-                    <div 
-                      key={product.id}
-                      className="inline-flex items-center gap-2 bg-white/80 dark:bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-red-300 dark:border-red-700"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                      <span className="font-semibold text-foreground">{product.name}</span>
-                      <span className="text-xs text-muted-foreground bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded">
-                        {product.quantity}/{product.min_quantity}
-                      </span>
-                    </div>
-                  ))}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-xl font-bold text-red-700 dark:text-red-300 mb-2 flex items-center gap-2">
+                    Alerte Stock Critique
+                    <span className="text-base font-normal bg-red-600 text-white px-2.5 py-0.5 rounded-full">
+                      {metrics.lowStockProducts}
+                    </span>
+                  </h3>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {metrics.lowStockProductsList.map((product) => (
+                      <div 
+                        key={product.id}
+                        className="inline-flex items-center gap-2 bg-white/80 dark:bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-red-300 dark:border-red-700"
+                      >
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <span className="font-semibold text-foreground">{product.name}</span>
+                        <span className="text-xs text-muted-foreground bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded">
+                          {product.quantity}/{product.min_quantity}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </ScrollReveal>
       )}
 
       {showWelcomeGuide && (
@@ -172,12 +185,12 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+        <ScrollReveal delay={350} className="lg:col-span-2">
           <RecentActivity />
-        </div>
-        <div className="space-y-6">
+        </ScrollReveal>
+        <ScrollReveal delay={400} className="space-y-6">
           <QuickActions />
-        </div>
+        </ScrollReveal>
       </div>
     </div>
   );

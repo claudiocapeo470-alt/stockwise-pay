@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ScrollReveal } from "@/components/ui/scroll-reveal"
 import { EmptyStateCard } from "@/components/onboarding/EmptyStateCard"
 import { AddPaymentDialog } from "@/components/payments/AddPaymentDialog"
 import { PaymentCard } from "@/components/payments/PaymentCard"
@@ -97,38 +98,43 @@ export default function Paiements() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Gestion des paiements</h1>
-          <p className="text-muted-foreground">
-            Suivez et gérez tous vos paiements clients
-          </p>
+      <ScrollReveal>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Gestion des paiements</h1>
+            <p className="text-muted-foreground">
+              Suivez et gérez tous vos paiements clients
+            </p>
+          </div>
+          
+          <AddPaymentDialog />
         </div>
-        
-        <AddPaymentDialog />
-      </div>
+      </ScrollReveal>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40 hover:shadow-lg transition-all duration-300 group">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-green-500 shadow-md group-hover:scale-110 transition-transform">
-                <CheckCircle className="h-5 w-5 text-white" />
+        <ScrollReveal delay={100}>
+          <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-green-500 shadow-md group-hover:scale-110 transition-transform">
+                  <CheckCircle className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-green-900 dark:text-green-100">Payés</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{paymentStats.completedPayments}</p>
+                  <p className="text-xs text-green-700 dark:text-green-300">{formatAmount(paymentStats.paidAmount)}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-green-900 dark:text-green-100">Payés</p>
-                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{paymentStats.completedPayments}</p>
-                <p className="text-xs text-green-700 dark:text-green-300">{formatAmount(paymentStats.paidAmount)}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </ScrollReveal>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-2 border-amber-200 dark:border-amber-800/40 hover:shadow-lg transition-all duration-300 group">
+        <ScrollReveal delay={150}>
+          <Card className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-2 border-amber-200 dark:border-amber-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">

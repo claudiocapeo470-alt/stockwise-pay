@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { ShoppingCart, Search, Plus, Eye, Grid3x3, List } from "lucide-react";
 import { useState } from "react";
 import { useSales } from "@/hooks/useSales";
@@ -42,32 +43,36 @@ export default function Ventes() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Gestion des Ventes</h1>
-          <p className="text-muted-foreground">Enregistrez et suivez toutes vos ventes</p>
+    <div className="space-y-6 page-transition">
+      <ScrollReveal>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Gestion des Ventes</h1>
+            <p className="text-muted-foreground">Enregistrez et suivez toutes vos ventes</p>
+          </div>
+          <AddSaleDialog />
         </div>
-        <AddSaleDialog />
-      </div>
+      </ScrollReveal>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 border-2 border-purple-200 dark:border-purple-800/40 hover:shadow-lg transition-all duration-300 group">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-600"></div>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-purple-900 dark:text-purple-100">Ventes Totales</CardTitle>
-            <div className="p-2 rounded-lg bg-purple-500 shadow-md group-hover:scale-110 transition-transform">
-              <ShoppingCart className="h-4 w-4 text-white" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{sales.length}</div>
-            <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
-              Transactions enregistrées
-            </p>
-          </CardContent>
-        </Card>
+        <ScrollReveal delay={100}>
+          <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 border-2 border-purple-200 dark:border-purple-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-600"></div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-purple-900 dark:text-purple-100">Ventes Totales</CardTitle>
+              <div className="p-2 rounded-lg bg-purple-500 shadow-md group-hover:scale-110 transition-transform">
+                <ShoppingCart className="h-4 w-4 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{sales.length}</div>
+              <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
+                Transactions enregistrées
+              </p>
+            </CardContent>
+          </Card>
+        </ScrollReveal>
 
         <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40 hover:shadow-lg transition-all duration-300 group">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>

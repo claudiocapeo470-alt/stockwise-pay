@@ -638,15 +638,15 @@ export default function Auth() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="inline-flex items-center gap-4 mb-4">
-              <div className="bg-gradient-to-r from-primary to-accent rounded-2xl p-4 md:p-5">
-                <BarChart3 className="h-12 w-12 md:h-16 md:w-16 text-white" />
+            <div className="inline-flex items-center gap-6 mb-6">
+              <div className="bg-gradient-to-r from-primary to-accent rounded-3xl p-8 md:p-10">
+                <BarChart3 className="h-32 w-32 md:h-40 md:w-40 text-white" />
               </div>
-              <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+              <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
                 Stocknix
               </h1>
             </div>
-            <p className="text-muted-foreground text-base md:text-lg">Votre plateforme de gestion moderne</p>
+            <p className="text-muted-foreground text-lg md:text-xl">Votre plateforme de gestion moderne</p>
           </div>
 
           <div className="bg-card/80 backdrop-blur-xl border border-border/50 rounded-3xl shadow-2xl p-8">

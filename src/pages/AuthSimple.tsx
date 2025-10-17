@@ -327,7 +327,7 @@ export default function AuthSimple() {
         <div className="relative z-10 space-y-6">
           <div className="space-y-3">
             <h1 className="text-5xl font-bold text-white leading-tight">
-              Pilotez votre PME avec confiance
+              Pilotez votre PME/TPE avec confiance
             </h1>
             <p className="text-lg text-blue-100">
               Stock • Ventes • Paiements • Analytics

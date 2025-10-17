@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import stocknixLogo from "@/assets/stocknix-logo-text.png";
-import authIllustration from "@/assets/auth-3d-illustration.png";
+import entrepreneursImage from "@/assets/african-entrepreneurs.png";
 
 // Schémas de validation ultra-simples
 const loginSchema = z.object({
@@ -317,62 +317,23 @@ export default function AuthSimple() {
           </Link>
         </div>
 
-        <div className="relative z-10 space-y-8">
-          <div className="space-y-4">
+        <div className="relative z-10 space-y-6">
+          <div className="space-y-3">
             <h1 className="text-5xl font-bold text-white leading-tight">
-              Gérez votre business en toute simplicité
+              Pilotez votre PME avec confiance
             </h1>
-            <p className="text-xl text-blue-100">
-              La solution complète pour piloter votre entreprise avec intelligence
+            <p className="text-lg text-blue-100">
+              Stock • Ventes • Paiements • Analytics
             </p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-start gap-3 text-white">
-              <div className="mt-1 p-2 rounded-lg bg-white/10 backdrop-blur-sm">
-                <Package className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Gestion de stock intelligente</h3>
-                <p className="text-sm text-blue-100">Suivez vos stocks en temps réel avec précision</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 text-white">
-              <div className="mt-1 p-2 rounded-lg bg-white/10 backdrop-blur-sm">
-                <TrendingUp className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Suivi des ventes en temps réel</h3>
-                <p className="text-sm text-blue-100">Analysez vos performances instantanément</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 text-white">
-              <div className="mt-1 p-2 rounded-lg bg-white/10 backdrop-blur-sm">
-                <BarChart3 className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Rapports et analytics</h3>
-                <p className="text-sm text-blue-100">Prenez des décisions éclairées avec nos tableaux de bord</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 text-white">
-              <div className="mt-1 p-2 rounded-lg bg-white/10 backdrop-blur-sm">
-                <Wallet className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Gestion des paiements</h3>
-                <p className="text-sm text-blue-100">Gérez vos factures et paiements efficacement</p>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* 3D Illustration */}
-        <div className="absolute -right-20 top-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-30">
+        {/* Image entrepreneurs africains */}
+        <div className="absolute right-0 top-0 bottom-0 w-3/5 overflow-hidden opacity-40">
           <img 
-            src={authIllustration} 
-            alt="3D Illustration" 
-            className="w-full h-full object-contain drop-shadow-2xl"
+            src={entrepreneursImage} 
+            alt="Entrepreneurs africains" 
+            className="w-full h-full object-cover"
           />
         </div>
 

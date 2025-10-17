@@ -2,13 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { AnimatedBackground } from "@/components/ui/animated-background";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { 
   BarChart3, Package, CreditCard, TrendingUp, Users, Shield, 
   Smartphone, ArrowRight, CheckCircle, Menu, X, Star, 
   Zap, Clock, Target, Store, ShoppingBag, Building2,
-  Check, Sparkles
+  Check, Sparkles, ChevronDown
 } from "lucide-react";
 import { useState } from "react";
 import stocknixLogo from '@/assets/stocknix-logo.png';
@@ -25,30 +24,30 @@ const HomePage = () => {
     {
       icon: Package,
       title: "Gestion des Stocks",
-      description: "Suivez vos inventaires en temps réel avec des alertes automatiques de réapprovisionnement",
+      description: "Suivez vos inventaires en temps réel avec des alertes automatiques de réapprovisionnement et un contrôle total sur vos produits",
       image: inventoryFeature,
-      benefits: ["Alertes de stock bas", "Suivi en temps réel", "Import/Export Excel"]
+      benefits: ["Alertes de stock bas", "Suivi en temps réel", "Import/Export Excel", "Code-barres"]
     },
     {
       icon: TrendingUp,
       title: "Ventes & Facturation",
-      description: "Gérez vos ventes et générez des factures professionnelles en quelques clics",
+      description: "Créez des devis et factures professionnels en quelques clics avec un suivi complet de vos transactions",
       image: analyticsFeature,
-      benefits: ["Devis & Factures", "Historique complet", "Exports PDF"]
+      benefits: ["Devis & Factures", "Historique complet", "Exports PDF", "Multi-devises"]
     },
     {
       icon: CreditCard,
       title: "Gestion des Paiements",
-      description: "Suivez tous vos paiements clients et fournisseurs avec un tableau de bord centralisé",
+      description: "Suivez tous vos paiements clients et fournisseurs avec un tableau de bord centralisé et des rappels automatiques",
       image: paymentFeature,
-      benefits: ["Suivi en temps réel", "Rappels automatiques", "Multiple devises"]
+      benefits: ["Suivi en temps réel", "Rappels automatiques", "Multiple devises", "Rapprochement bancaire"]
     },
     {
       icon: BarChart3,
       title: "Rapports & Analytics",
-      description: "Analysez votre activité avec des rapports détaillés et des graphiques interactifs",
+      description: "Analysez votre activité avec des rapports détaillés, des graphiques interactifs et des prévisions intelligentes",
       image: analyticsFeature,
-      benefits: ["Graphiques en temps réel", "Exports personnalisés", "Métriques clés"]
+      benefits: ["Graphiques en temps réel", "Exports personnalisés", "Métriques clés", "Prévisions IA"]
     }
   ];
 
@@ -56,22 +55,22 @@ const HomePage = () => {
     {
       icon: Store,
       title: "Boutiques & Magasins",
-      description: "Gérez votre commerce de détail efficacement"
+      description: "Gérez votre commerce de détail avec efficacité et professionnalisme"
     },
     {
       icon: ShoppingBag,
       title: "E-commerce",
-      description: "Suivez vos ventes en ligne et vos stocks"
+      description: "Suivez vos ventes en ligne et synchronisez vos stocks automatiquement"
     },
     {
       icon: Building2,
       title: "PME/TPE",
-      description: "Solution adaptée aux petites entreprises"
+      description: "Solution complète adaptée aux besoins des petites et moyennes entreprises"
     },
     {
       icon: Users,
       title: "Grossistes",
-      description: "Gérez vos commandes en gros"
+      description: "Gérez vos commandes en gros et vos relations fournisseurs"
     }
   ];
 
@@ -79,22 +78,22 @@ const HomePage = () => {
     {
       icon: Zap,
       title: "Simplicité d'utilisation",
-      description: "Interface intuitive conçue pour les entrepreneurs africains"
+      description: "Interface intuitive et moderne, aucune formation nécessaire"
     },
     {
       icon: Clock,
-      title: "Gain de temps",
-      description: "Automatisez vos tâches répétitives et focalisez sur votre croissance"
+      title: "Gain de temps massif",
+      description: "Automatisez vos tâches répétitives et gagnez jusqu'à 15h par semaine"
     },
     {
       icon: Shield,
-      title: "Sécurité garantie",
-      description: "Vos données sont protégées et sauvegardées dans le cloud"
+      title: "Sécurité maximale",
+      description: "Vos données sont cryptées et sauvegardées automatiquement dans le cloud"
     },
     {
       icon: Smartphone,
       title: "Accessible partout",
-      description: "Gérez votre entreprise depuis mobile, tablette ou ordinateur"
+      description: "Application 100% responsive - mobile, tablette et ordinateur"
     }
   ];
 
@@ -123,83 +122,98 @@ const HomePage = () => {
   ];
 
   const pricingFeatures = [
-    "1 mois d'essai gratuit",
+    "1 mois d'essai gratuit complet",
     "Gestion illimitée des produits",
     "Ventes et factures illimitées",
     "Rapports et analytics en temps réel",
-    "Support client prioritaire",
-    "Sauvegardes automatiques",
-    "Mises à jour gratuites",
-    "Accès mobile et desktop"
+    "Support client prioritaire 24/7",
+    "Sauvegardes automatiques quotidiennes",
+    "Mises à jour gratuites à vie",
+    "Accès mobile, tablette et desktop"
   ];
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       
-      {/* Navigation */}
-      <header className="border-b border-gray-100 bg-white/95 backdrop-blur sticky top-0 z-50 relative shadow-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Navigation - Fixed Header */}
+      <header className="border-b border-gray-100 bg-white/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            <div className="flex items-center space-x-3">
-              <img src={stocknixLogo} alt="Stocknix" className="h-12" />
+            {/* Logo */}
+            <div className="flex items-center">
+              <img src={stocknixLogo} alt="Stocknix" className="h-10 sm:h-12" />
             </div>
 
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#accueil" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center space-x-8">
+              <a href="#accueil" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
                 Accueil
               </a>
-              <a href="#fonctionnalites" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+              <a href="#fonctionnalites" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
                 Fonctionnalités
               </a>
-              <a href="#pour-qui" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+              <a href="#pour-qui" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
                 Pour qui ?
               </a>
-              <a href="#tarifs" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+              <a href="#tarifs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
                 Tarifs
               </a>
-              <a href="#avis" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+              <a href="#avis" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
                 Avis
               </a>
             </nav>
 
-            <div className="hidden md:flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate('/auth')} className="text-gray-700 hover:text-blue-600">
+            {/* CTA Buttons */}
+            <div className="hidden lg:flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/auth')} 
+                className="text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+              >
                 Se connecter
               </Button>
-              <Button onClick={() => navigate('/auth')} className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg shadow-blue-500/30">
+              <Button 
+                onClick={() => navigate('/auth')} 
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30"
+              >
                 Essai gratuit
                 <Sparkles className="ml-2 h-4 w-4" />
               </Button>
             </div>
 
-            <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {/* Mobile Menu Button */}
+            <button 
+              className="lg:hidden p-2 text-gray-700" 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
 
+          {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-200">
+            <div className="lg:hidden py-6 border-t border-gray-100">
               <nav className="flex flex-col space-y-4">
-                <a href="#accueil" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+                <a href="#accueil" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
                   Accueil
                 </a>
-                <a href="#fonctionnalites" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+                <a href="#fonctionnalites" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
                   Fonctionnalités
                 </a>
-                <a href="#pour-qui" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+                <a href="#pour-qui" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
                   Pour qui ?
                 </a>
-                <a href="#tarifs" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+                <a href="#tarifs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
                   Tarifs
                 </a>
-                <a href="#avis" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+                <a href="#avis" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
                   Avis
                 </a>
-                <div className="flex flex-col space-y-2 pt-4">
-                  <Button variant="ghost" onClick={() => navigate('/auth')} className="w-full">
+                <div className="flex flex-col gap-3 pt-4">
+                  <Button variant="outline" onClick={() => navigate('/auth')} className="w-full">
                     Se connecter
                   </Button>
-                  <Button onClick={() => navigate('/auth')} className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white">
+                  <Button onClick={() => navigate('/auth')} className="w-full bg-blue-600 text-white">
                     Essai gratuit
                   </Button>
                 </div>
@@ -210,30 +224,35 @@ const HomePage = () => {
       </header>
 
       {/* Hero Section - Blue Background */}
-      <section id="accueil" className="py-20 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <section id="accueil" className="relative py-20 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,255,255,0.08),transparent_50%)]"></div>
+        
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
+            {/* Left Column - Content */}
             <ScrollReveal>
-              <div className="space-y-8">
-                <Badge className="bg-white/20 text-white border-0 px-5 py-2.5 text-sm font-semibold backdrop-blur">
-                  <Sparkles className="h-4 w-4 mr-2" />
+              <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
+                <Badge className="bg-white/20 text-white border-0 px-6 py-2.5 text-sm font-semibold backdrop-blur-sm inline-flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
                   1 mois gratuit • Sans engagement
                 </Badge>
                 
-                <h1 className="text-white font-extrabold text-5xl lg:text-7xl leading-tight">
+                <h1 className="font-extrabold text-white text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight max-w-2xl">
                   Transformez votre business en quelques clics
                 </h1>
                 
-                <p className="text-blue-50 text-xl sm:text-2xl max-w-2xl leading-relaxed">
+                <p className="text-blue-50 text-lg sm:text-xl lg:text-2xl max-w-xl leading-relaxed">
                   Gérez stocks, ventes et finances intelligemment. La plateforme moderne qui accompagne votre croissance.
                 </p>
                 
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                {/* CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-4">
                   <Button 
                     size="lg" 
                     onClick={() => navigate('/auth')} 
-                    className="bg-white text-blue-600 hover:bg-blue-50 shadow-xl text-lg px-10 py-7 rounded-xl font-bold"
+                    className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-lg px-10 py-7 rounded-xl font-bold transition-transform hover:scale-105"
                   >
                     Démarrer gratuitement
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -242,76 +261,87 @@ const HomePage = () => {
                     size="lg" 
                     variant="outline" 
                     onClick={() => navigate('/auth')}
-                    className="text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 px-10 py-7 rounded-xl bg-transparent"
+                    className="text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 px-10 py-7 rounded-xl bg-transparent transition-all"
                   >
                     Voir la démo
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-3 gap-8 pt-8 bg-white/10 backdrop-blur rounded-2xl p-6">
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-white">500+</div>
-                    <div className="text-sm text-blue-100 font-medium mt-1">Entreprises</div>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-3 gap-6 w-full max-w-lg bg-white/10 backdrop-blur-md rounded-2xl p-6 lg:p-8 mt-8">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">500+</div>
+                    <div className="text-xs sm:text-sm text-blue-100 font-medium mt-2">Entreprises</div>
                   </div>
-                  <div className="text-center border-l border-r border-white/20">
-                    <div className="text-4xl font-bold text-white">4.9/5</div>
-                    <div className="text-sm text-blue-100 font-medium flex items-center gap-1 justify-center mt-1">
+                  <div className="flex flex-col items-center justify-center text-center border-l border-r border-white/20">
+                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">4.9/5</div>
+                    <div className="text-xs sm:text-sm text-blue-100 font-medium flex items-center gap-1 justify-center mt-2">
                       <Star className="h-4 w-4 fill-amber-300 text-amber-300" />
                       Satisfaction
                     </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-white">24/7</div>
-                    <div className="text-sm text-blue-100 font-medium mt-1">Support</div>
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">24/7</div>
+                    <div className="text-xs sm:text-sm text-blue-100 font-medium mt-2">Support</div>
                   </div>
                 </div>
               </div>
             </ScrollReveal>
 
+            {/* Right Column - Image */}
             <ScrollReveal delay={200}>
-              <div className="relative">
+              <div className="relative flex items-center justify-center">
                 <div className="absolute inset-0 bg-white/10 blur-3xl rounded-full"></div>
                 <img 
                   src={heroDashboard} 
                   alt="Dashboard moderne Stocknix" 
-                  className="relative z-10 w-full h-auto rounded-3xl shadow-2xl"
+                  className="relative z-10 w-full max-w-2xl h-auto rounded-3xl shadow-2xl"
                 />
               </div>
             </ScrollReveal>
           </div>
         </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+          <span className="text-white/80 text-sm font-medium">Découvrir</span>
+          <ChevronDown className="h-6 w-6 text-white/80" />
+        </div>
       </section>
 
-      {/* Features Section */}
-      <section id="fonctionnalites" className="py-24 bg-white relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Features Section - White Background */}
+      <section id="fonctionnalites" className="py-24 lg:py-32 bg-white relative">
+        <div className="container mx-auto px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center mb-20">
-              <Badge className="mb-6 bg-blue-100 text-blue-700 border-0 px-4 py-2 text-sm font-semibold">
+            <div className="text-center mb-20 max-w-3xl mx-auto">
+              <Badge className="mb-6 bg-blue-100 text-blue-700 border-0 px-5 py-2.5 text-sm font-semibold">
                 Fonctionnalités
               </Badge>
-              <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
                 Tout ce dont vous avez besoin
               </h2>
-              <p className="text-xl max-w-3xl mx-auto text-gray-600">
-                Des outils puissants et intuitifs pour gérer votre entreprise avec simplicité
+              <p className="text-xl text-gray-600 leading-relaxed">
+                Des outils puissants et intuitifs pour gérer votre entreprise avec simplicité et efficacité
               </p>
             </div>
           </ScrollReveal>
 
-          <div className="space-y-32">
+          <div className="space-y-32 max-w-7xl mx-auto">
             {features.map((feature, index) => (
               <ScrollReveal key={index} delay={index * 100}>
-                <div className={`grid lg:grid-cols-2 gap-16 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
-                  <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
+                <div className={`grid lg:grid-cols-2 gap-12 lg:gap-16 items-center ${
+                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                }`}>
+                  {/* Content */}
+                  <div className={`flex flex-col justify-center ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
                     <div className="space-y-6">
                       <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl">
                         <feature.icon className="h-8 w-8 text-blue-600" />
                       </div>
-                      <h3 className="text-4xl font-bold text-gray-900">
+                      <h3 className="text-3xl sm:text-4xl font-bold text-gray-900">
                         {feature.title}
                       </h3>
-                      <p className="text-xl text-gray-600 leading-relaxed">
+                      <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
                         {feature.description}
                       </p>
                       <div className="space-y-4 pt-4">
@@ -320,14 +350,16 @@ const HomePage = () => {
                             <div className="flex-shrink-0 w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center">
                               <Check className="h-4 w-4 text-white" />
                             </div>
-                            <span className="text-gray-700 text-lg">{benefit}</span>
+                            <span className="text-gray-700 text-base sm:text-lg font-medium">{benefit}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
-                  <div className={index % 2 === 1 ? 'lg:order-1' : ''}>
-                    <div className="relative p-8 bg-gradient-to-br from-gray-50 to-blue-50 rounded-3xl">
+
+                  {/* Image */}
+                  <div className={`flex items-center justify-center ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                    <div className="relative w-full max-w-xl p-8 bg-gradient-to-br from-gray-50 to-blue-50/50 rounded-3xl">
                       <img 
                         src={feature.image} 
                         alt={feature.title} 
@@ -343,34 +375,36 @@ const HomePage = () => {
       </section>
 
       {/* Target Audience Section - Black Background */}
-      <section id="pour-qui" className="py-24 bg-gradient-to-b from-gray-900 via-black to-gray-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white-pattern opacity-5"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <section id="pour-qui" className="py-24 lg:py-32 bg-gradient-to-b from-gray-900 via-black to-gray-900 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1),transparent_70%)]"></div>
+        
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
           <ScrollReveal>
-            <div className="text-center mb-20">
-              <Badge className="mb-6 bg-blue-500/20 text-blue-300 border-0 px-4 py-2 text-sm font-semibold">
+            <div className="text-center mb-20 max-w-3xl mx-auto">
+              <Badge className="mb-6 bg-blue-500/20 text-blue-300 border-0 px-5 py-2.5 text-sm font-semibold">
                 Pour qui ?
               </Badge>
-              <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
                 Conçu pour votre entreprise
               </h2>
-              <p className="text-xl max-w-3xl mx-auto text-gray-300">
+              <p className="text-xl text-gray-300 leading-relaxed">
                 Des commerçants aux grossistes, une solution qui grandit avec vous
               </p>
             </div>
           </ScrollReveal>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto">
             {targetAudience.map((target, index) => (
               <ScrollReveal key={index} delay={index * 100}>
-                <Card className="p-8 text-center bg-white/5 backdrop-blur border-white/10 hover:bg-white/10 transition-all group hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/20">
+                <Card className="p-8 text-center bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all group hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/20 h-full flex flex-col items-center justify-center">
                   <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-6 group-hover:scale-110 transition-transform shadow-lg">
                     <target.icon className="h-10 w-10 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">
+                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
                     {target.title}
                   </h3>
-                  <p className="text-gray-300">
+                  <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
                     {target.description}
                   </p>
                 </Card>
@@ -381,33 +415,33 @@ const HomePage = () => {
       </section>
 
       {/* Benefits Section - White Background */}
-      <section className="py-24 bg-white relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-24 lg:py-32 bg-white relative">
+        <div className="container mx-auto px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center mb-20">
-              <Badge className="mb-6 bg-blue-100 text-blue-700 border-0 px-4 py-2 text-sm font-semibold">
+            <div className="text-center mb-20 max-w-3xl mx-auto">
+              <Badge className="mb-6 bg-blue-100 text-blue-700 border-0 px-5 py-2.5 text-sm font-semibold">
                 Bénéfices
               </Badge>
-              <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
                 Pourquoi choisir Stocknix ?
               </h2>
-              <p className="text-xl max-w-3xl mx-auto text-gray-600">
+              <p className="text-xl text-gray-600 leading-relaxed">
                 Une plateforme pensée pour simplifier votre quotidien d'entrepreneur
               </p>
             </div>
           </ScrollReveal>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 max-w-7xl mx-auto">
             {benefits.map((benefit, index) => (
               <ScrollReveal key={index} delay={index * 100}>
-                <div className="text-center space-y-6 p-6">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl shadow-xl shadow-blue-500/30">
+                <div className="text-center space-y-6 p-6 rounded-2xl hover:bg-gray-50 transition-all group">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl shadow-xl shadow-blue-500/30 group-hover:scale-110 transition-transform">
                     <benefit.icon className="h-10 w-10 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
                     {benefit.title}
                   </h3>
-                  <p className="text-gray-600 text-lg">
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
                     {benefit.description}
                   </p>
                 </div>
@@ -417,112 +451,118 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Pricing Section - Light Blue Background */}
-      <section id="tarifs" className="py-24 bg-gradient-to-br from-blue-50 via-white to-blue-50 relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Pricing Section - Blue Background */}
+      <section id="tarifs" className="py-24 lg:py-32 bg-gradient-to-br from-blue-50 via-blue-100/50 to-white relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(59,130,246,0.15),transparent_50%)]"></div>
+        
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
           <ScrollReveal>
-            <div className="text-center mb-20">
-              <Badge className="mb-6 bg-amber-100 text-amber-700 border-0 px-4 py-2 text-sm font-semibold">
-                Tarifs
+            <div className="text-center mb-20 max-w-3xl mx-auto">
+              <Badge className="mb-6 bg-blue-600 text-white border-0 px-5 py-2.5 text-sm font-semibold">
+                Tarification
               </Badge>
-              <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-                Un tarif simple et transparent
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+                Un prix simple et transparent
               </h2>
-              <p className="text-xl max-w-3xl mx-auto text-gray-600">
-                Commencez gratuitement, continuez pour le prix d'un café par jour
+              <p className="text-xl text-gray-700 leading-relaxed">
+                Essayez gratuitement pendant 1 mois, sans engagement
               </p>
             </div>
           </ScrollReveal>
 
-          <ScrollReveal delay={200}>
-            <div className="max-w-3xl mx-auto">
-              <Card className="relative overflow-hidden border-2 border-blue-200 shadow-2xl bg-white">
-                <div className="absolute top-0 right-0 bg-gradient-to-br from-blue-600 to-blue-500 text-white px-8 py-3 rounded-bl-3xl">
-                  <span className="font-bold text-lg">Recommandé</span>
+          <ScrollReveal delay={100}>
+            <Card className="max-w-4xl mx-auto p-8 lg:p-12 bg-white border-2 border-blue-100 shadow-2xl">
+              <div className="text-center mb-10">
+                <Badge className="mb-6 bg-green-100 text-green-700 border-0 px-4 py-2 text-sm font-semibold">
+                  Le plus populaire
+                </Badge>
+                <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                  Plan Professionnel
+                </h3>
+                <div className="flex items-baseline justify-center gap-2 mb-6">
+                  <span className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-blue-600">
+                    15€
+                  </span>
+                  <span className="text-2xl text-gray-600">/mois</span>
                 </div>
-                
-                <div className="p-10 lg:p-16">
-                  <div className="text-center mb-12">
-                    <h3 className="text-3xl font-bold text-gray-900 mb-4">Plan Professionnel</h3>
-                    <div className="flex items-baseline justify-center gap-3">
-                      <span className="text-7xl font-extrabold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-                        1000
-                      </span>
-                      <span className="text-3xl text-gray-500 font-semibold">FCFA</span>
-                      <span className="text-xl text-gray-500">/mois</span>
-                    </div>
-                    <Badge className="mt-6 bg-green-100 text-green-700 border-0 px-4 py-2 text-base">
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      1er mois GRATUIT
-                    </Badge>
+                <p className="text-lg text-gray-600">
+                  Tout ce dont vous avez besoin pour réussir
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4 mb-10">
+                {pricingFeatures.map((feature, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <CheckCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700 text-base font-medium">{feature}</span>
                   </div>
+                ))}
+              </div>
 
-                  <div className="space-y-5 mb-10">
-                    {pricingFeatures.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-4">
-                        <div className="flex-shrink-0 w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center">
-                          <Check className="h-4 w-4 text-white" />
-                        </div>
-                        <span className="text-gray-700 text-lg">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate('/auth')} 
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-xl text-lg px-12 py-7 rounded-xl font-bold transition-transform hover:scale-105"
+                >
+                  Commencer gratuitement
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  onClick={() => navigate('/auth')}
+                  className="text-lg border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-12 py-7 rounded-xl font-bold"
+                >
+                  Voir la démo
+                </Button>
+              </div>
 
-                  <Button 
-                    size="lg" 
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-xl shadow-blue-500/30 text-xl py-8 rounded-xl"
-                    onClick={() => navigate('/auth')}
-                  >
-                    Commencer mon essai gratuit
-                    <ArrowRight className="ml-3 h-6 w-6" />
-                  </Button>
-
-                  <p className="text-center text-gray-500 mt-6 text-base">
-                    Sans engagement • Annulez à tout moment
-                  </p>
-                </div>
-              </Card>
-            </div>
+              <p className="text-center text-sm text-gray-500 mt-8">
+                Sans engagement • Annulez à tout moment • Support inclus
+              </p>
+            </Card>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section id="avis" className="py-24 bg-gradient-to-b from-gray-50 to-white relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Testimonials Section - White Background */}
+      <section id="avis" className="py-24 lg:py-32 bg-white relative">
+        <div className="container mx-auto px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center mb-20">
-              <Badge className="mb-6 bg-blue-100 text-blue-700 border-0 px-4 py-2 text-sm font-semibold">
+            <div className="text-center mb-20 max-w-3xl mx-auto">
+              <Badge className="mb-6 bg-blue-100 text-blue-700 border-0 px-5 py-2.5 text-sm font-semibold">
                 Témoignages
               </Badge>
-              <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
                 Ils nous font confiance
               </h2>
-              <p className="text-xl max-w-3xl mx-auto text-gray-600">
-                Rejoignez des centaines d'entrepreneurs satisfaits
+              <p className="text-xl text-gray-600 leading-relaxed">
+                Découvrez les retours de nos utilisateurs satisfaits
               </p>
             </div>
           </ScrollReveal>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {testimonials.map((testimonial, index) => (
               <ScrollReveal key={index} delay={index * 100}>
-                <Card className="p-8 hover:shadow-2xl transition-all border-gray-200 h-full bg-white hover:border-blue-300">
-                  <div className="flex items-center gap-1 mb-6">
+                <Card className="p-8 bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all h-full flex flex-col">
+                  <div className="flex gap-1 mb-6">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-6 w-6 fill-amber-400 text-amber-400" />
+                      <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <p className="text-gray-600 mb-8 text-lg italic leading-relaxed">
+                  <p className="text-gray-700 text-base leading-relaxed mb-8 flex-grow">
                     "{testimonial.content}"
                   </p>
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                    <div className="flex items-center justify-center w-14 h-14 bg-blue-600 rounded-full text-white text-lg font-bold">
                       {testimonial.avatar}
                     </div>
                     <div>
-                      <div className="font-bold text-gray-900 text-lg">{testimonial.name}</div>
-                      <div className="text-gray-500">{testimonial.role}</div>
+                      <p className="font-bold text-gray-900">{testimonial.name}</p>
+                      <p className="text-sm text-gray-600">{testimonial.role}</p>
                     </div>
                   </div>
                 </Card>
@@ -532,33 +572,36 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Final CTA Section - Blue Background */}
+      <section className="py-24 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
+        
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
           <ScrollReveal>
-            <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 rounded-3xl p-16 lg:p-24 text-center relative overflow-hidden shadow-2xl">
-              <div className="absolute inset-0 bg-black/10"></div>
-              <div className="absolute inset-0 bg-grid-white-pattern opacity-10"></div>
-              <div className="relative z-10 space-y-8">
-                <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6">
-                  Prêt à transformer votre business ?
-                </h2>
-                <p className="text-xl lg:text-2xl text-white/95 max-w-3xl mx-auto mb-10 leading-relaxed">
-                  Rejoignez des centaines d'entrepreneurs qui font déjà confiance à Stocknix
-                </p>
-                <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                  <Button 
-                    size="lg" 
-                    onClick={() => navigate('/auth')} 
-                    className="bg-white text-blue-600 hover:bg-gray-50 px-12 py-8 text-xl rounded-xl shadow-2xl font-semibold"
-                  >
-                    Créer mon compte gratuitement
-                    <ArrowRight className="ml-3 h-6 w-6" />
-                  </Button>
-                </div>
-                <p className="text-white/90 text-lg pt-4">
-                  ✨ 1 mois gratuit • Sans carte bancaire • Support 24/7
-                </p>
+            <div className="text-center max-w-4xl mx-auto">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8">
+                Prêt à transformer votre entreprise ?
+              </h2>
+              <p className="text-xl sm:text-2xl text-blue-50 mb-12 leading-relaxed">
+                Rejoignez plus de 500 entreprises qui font confiance à Stocknix
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate('/auth')} 
+                  className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-lg px-12 py-7 rounded-xl font-bold transition-transform hover:scale-105"
+                >
+                  Démarrer gratuitement
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  onClick={() => navigate('/auth')}
+                  className="text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 px-12 py-7 rounded-xl bg-transparent"
+                >
+                  Contacter l'équipe
+                </Button>
               </div>
             </div>
           </ScrollReveal>
@@ -566,53 +609,60 @@ const HomePage = () => {
       </section>
 
       {/* Footer - Black Background */}
-      <footer className="bg-black text-gray-300 py-16 relative border-t border-gray-800">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div className="space-y-5">
-              <div className="flex items-center space-x-3">
-                <img src={stocknixLogo} alt="Stocknix" className="h-12" />
-              </div>
-              <p className="text-gray-400 leading-relaxed">
-                La solution moderne de gestion pour PME/TPE en Afrique
+      <footer className="bg-black text-white py-16 lg:py-20">
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mb-12">
+            <div className="col-span-2 md:col-span-1">
+              <img src={stocknixLogo} alt="Stocknix" className="h-10 mb-6" />
+              <p className="text-gray-400 text-sm leading-relaxed">
+                La solution de gestion d'entreprise pensée pour les entrepreneurs africains
               </p>
             </div>
-
+            
             <div>
-              <h4 className="font-bold text-white mb-5 text-lg">Produit</h4>
+              <h4 className="font-bold text-white mb-4 text-sm">Produit</h4>
               <ul className="space-y-3">
-                <li><a href="#fonctionnalites" className="text-gray-400 hover:text-blue-400 transition-colors">Fonctionnalités</a></li>
-                <li><a href="#tarifs" className="text-gray-400 hover:text-blue-400 transition-colors">Tarifs</a></li>
-                <li><a href="#avis" className="text-gray-400 hover:text-blue-400 transition-colors">Témoignages</a></li>
+                <li><a href="#fonctionnalites" className="text-gray-400 hover:text-white transition-colors text-sm">Fonctionnalités</a></li>
+                <li><a href="#tarifs" className="text-gray-400 hover:text-white transition-colors text-sm">Tarifs</a></li>
+                <li><a href="#avis" className="text-gray-400 hover:text-white transition-colors text-sm">Témoignages</a></li>
               </ul>
             </div>
-
+            
             <div>
-              <h4 className="font-bold text-white mb-5 text-lg">Entreprise</h4>
+              <h4 className="font-bold text-white mb-4 text-sm">Entreprise</h4>
               <ul className="space-y-3">
-                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">À propos</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Blog</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Carrières</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">À propos</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Contact</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Blog</a></li>
               </ul>
             </div>
-
+            
             <div>
-              <h4 className="font-bold text-white mb-5 text-lg">Support</h4>
+              <h4 className="font-bold text-white mb-4 text-sm">Légal</h4>
               <ul className="space-y-3">
-                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Centre d'aide</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Contact</a></li>
-                <li><a href="/mentions-legales" className="text-gray-400 hover:text-blue-400 transition-colors">Mentions légales</a></li>
+                <li><a href="/mentions-legales" className="text-gray-400 hover:text-white transition-colors text-sm">Mentions légales</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Confidentialité</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">CGU</a></li>
               </ul>
             </div>
           </div>
-
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between">
-            <p className="text-gray-400">
-              © 2025 Stocknix. Tous droits réservés.
-            </p>
-            <div className="flex items-center gap-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Politique de confidentialité</a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">CGU</a>
+          
+          <div className="border-t border-gray-800 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="text-gray-400 text-sm text-center md:text-left">
+                © 2025 Stocknix. Tous droits réservés.
+              </p>
+              <div className="flex gap-6">
+                <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Twitter
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  LinkedIn
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Facebook
+                </a>
+              </div>
             </div>
           </div>
         </div>

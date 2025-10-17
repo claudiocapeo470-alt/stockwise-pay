@@ -3,13 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { 
   BarChart3, Package, CreditCard, TrendingUp, Users, Shield, 
   Smartphone, ArrowRight, CheckCircle, Menu, X, Star, 
@@ -22,6 +15,7 @@ import teamWorkingInventory from '@/assets/team-working-inventory.jpg';
 import inventoryFeature from '@/assets/3d-inventory-feature.png';
 import analyticsFeature from '@/assets/3d-analytics-feature.png';
 import paymentFeature from '@/assets/3d-payment-feature.png';
+import supportTeam from '@/assets/support-team-illustration.png';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -125,6 +119,27 @@ const HomePage = () => {
       content: "Interface simple et efficace. Même sans compétences techniques, j'ai pu démarrer en quelques minutes. Je recommande !",
       rating: 5,
       avatar: "FM"
+    },
+    {
+      name: "Ibrahim Touré",
+      role: "Grossiste, Lomé",
+      content: "La gestion multi-devises et les rapports détaillés m'ont permis de mieux piloter mon activité. Excellent outil !",
+      rating: 5,
+      avatar: "IT"
+    },
+    {
+      name: "Mariam Keita",
+      role: "Boutique e-commerce, Ouagadougou",
+      content: "Le suivi des paiements et la facturation automatique m'ont fait gagner énormément de temps. Support réactif en plus !",
+      rating: 5,
+      avatar: "MK"
+    },
+    {
+      name: "Youssouf Cissé",
+      role: "Pharmacie, Niamey",
+      content: "Idéal pour gérer mes stocks de médicaments avec les dates de péremption. La solution qu'il me fallait !",
+      rating: 5,
+      avatar: "YC"
     }
   ];
 
@@ -420,12 +435,18 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Benefits Section - White Background with Carousel */}
-      <section className="py-24 lg:py-32 bg-white relative">
-        <div className="container mx-auto px-6 lg:px-8">
+      {/* Benefits Section - White Background with Modern Carousel */}
+      <section className="py-24 lg:py-32 bg-white relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-72 h-72 bg-blue-400 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
           <ScrollReveal>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <Badge className="mb-6 bg-blue-100 text-blue-700 border-0 px-5 py-2.5 text-sm font-semibold">
+            <div className="text-center mb-16 max-w-3xl mx-auto">
+              <Badge className="mb-6 bg-blue-600 text-white border-0 px-5 py-2.5 text-sm font-semibold">
                 Bénéfices
               </Badge>
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
@@ -437,36 +458,27 @@ const HomePage = () => {
             </div>
           </ScrollReveal>
 
-          <div className="max-w-6xl mx-auto">
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-4">
-                {benefits.map((benefit, index) => (
-                  <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                    <Card className="h-full p-8 text-center space-y-6 border-2 border-gray-100 hover:border-blue-200 hover:shadow-2xl transition-all group bg-gradient-to-br from-white to-gray-50">
-                      <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-500 rounded-3xl shadow-xl shadow-blue-500/30 group-hover:scale-110 transition-transform">
-                        <benefit.icon className="h-12 w-12 text-white" />
+          <div className="max-w-7xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {benefits.map((benefit, index) => (
+                <ScrollReveal key={index} delay={index * 100}>
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-400 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
+                    <Card className="relative h-full p-8 text-center space-y-6 border-0 bg-white shadow-lg hover:shadow-2xl transition-all rounded-3xl">
+                      <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
+                        <benefit.icon className="h-10 w-10 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-900">
+                      <h3 className="text-xl font-bold text-gray-900">
                         {benefit.title}
                       </h3>
-                      <p className="text-gray-600 text-base leading-relaxed">
+                      <p className="text-gray-600 text-sm leading-relaxed">
                         {benefit.description}
                       </p>
                     </Card>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <div className="flex justify-center gap-4 mt-12">
-                <CarouselPrevious className="static translate-y-0 bg-blue-600 hover:bg-blue-700 text-white border-0 h-12 w-12" />
-                <CarouselNext className="static translate-y-0 bg-blue-600 hover:bg-blue-700 text-white border-0 h-12 w-12" />
-              </div>
-            </Carousel>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -502,9 +514,9 @@ const HomePage = () => {
                 </h3>
                 <div className="flex items-baseline justify-center gap-2 mb-6">
                   <span className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-blue-600">
-                    15€
+                    2000
                   </span>
-                  <span className="text-2xl text-gray-600">/mois</span>
+                  <span className="text-2xl text-gray-600">FCFA/mois</span>
                 </div>
                 <p className="text-lg text-gray-600">
                   Tout ce dont vous avez besoin pour réussir
@@ -559,7 +571,7 @@ const HomePage = () => {
                 Ils nous font confiance
               </h2>
               <p className="text-xl text-gray-600 leading-relaxed">
-                Découvrez les retours de nos utilisateurs satisfaits
+                Découvrez les retours de nos utilisateurs satisfaits partout en Afrique
               </p>
             </div>
           </ScrollReveal>
@@ -588,6 +600,89 @@ const HomePage = () => {
                 </Card>
               </ScrollReveal>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Support Section - Blue Background */}
+      <section className="py-24 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
+        
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
+            {/* Left - Image */}
+            <ScrollReveal>
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 bg-white/10 blur-3xl rounded-full"></div>
+                <img 
+                  src={supportTeam} 
+                  alt="Équipe support Stocknix" 
+                  className="relative z-10 w-full max-w-lg h-auto"
+                />
+              </div>
+            </ScrollReveal>
+
+            {/* Right - Content */}
+            <ScrollReveal delay={200}>
+              <div className="space-y-8">
+                <Badge className="bg-white/20 text-white border-0 px-6 py-3 text-sm font-semibold backdrop-blur-md inline-flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  Support Premium
+                </Badge>
+                
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                  Une équipe à vos côtés 24h/24 et 7j/7
+                </h2>
+                
+                <p className="text-white/95 text-lg sm:text-xl leading-relaxed">
+                  Notre équipe d'experts est toujours disponible pour vous accompagner dans votre réussite. Support par chat, email ou téléphone.
+                </p>
+
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <Clock className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-2">Disponibilité totale</h3>
+                      <p className="text-white/90">Assistance 24/7 pour répondre à toutes vos questions</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <Users className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-2">Experts dédiés</h3>
+                      <p className="text-white/90">Des spécialistes qui connaissent votre secteur</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <Zap className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-2">Réponse rapide</h3>
+                      <p className="text-white/90">Temps de réponse moyen inférieur à 2 minutes</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <Button 
+                    size="lg" 
+                    onClick={() => navigate('/auth')} 
+                    className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-lg px-10 py-7 rounded-xl font-bold transition-transform hover:scale-105"
+                  >
+                    Contacter le support
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>

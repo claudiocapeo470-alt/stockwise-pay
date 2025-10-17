@@ -560,6 +560,154 @@ All colors MUST be HSL.
   }
 }
 
+/* Windmills & Parachutes Background Animations */
+.light-mode-only {
+  display: none;
+}
+
+.light .light-mode-only {
+  display: block;
+}
+
+/* Windmill rotation */
+@keyframes windmill-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.windmill-rotate {
+  animation: windmill-rotate 20s linear infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.windmill-blades {
+  animation: windmill-rotate 20s linear infinite;
+  will-change: transform;
+}
+
+/* Parachute float down */
+@keyframes parachute-float {
+  0% {
+    transform: translateY(-100px) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(calc(100vh + 100px)) translateX(0);
+    opacity: 0;
+  }
+}
+
+/* Parachute swing animation */
+@keyframes parachute-swing {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-15px) rotate(-3deg);
+  }
+  75% {
+    transform: translateX(15px) rotate(3deg);
+  }
+}
+
+.parachute-float {
+  position: absolute;
+  top: -100px;
+  animation: parachute-float 25s ease-in-out infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.parachute-swing {
+  animation: parachute-swing 4s ease-in-out infinite;
+  transform-origin: 50% 20%;
+}
+
+/* Cloud animations for depth */
+.cloud {
+  position: absolute;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    hsl(var(--primary) / 0.05) 50%, 
+    transparent 100%);
+  border-radius: 100px;
+  opacity: 0.6;
+  animation: cloud-drift 60s linear infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+
+@keyframes cloud-drift {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
+}
+
+.cloud-1 {
+  width: 200px;
+  height: 60px;
+  top: 15%;
+  animation-duration: 80s;
+  animation-delay: 0s;
+}
+
+.cloud-2 {
+  width: 300px;
+  height: 80px;
+  top: 35%;
+  animation-duration: 100s;
+  animation-delay: 10s;
+}
+
+.cloud-3 {
+  width: 250px;
+  height: 70px;
+  top: 60%;
+  animation-duration: 90s;
+  animation-delay: 20s;
+}
+
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+  .windmill-rotate,
+  .windmill-blades,
+  .parachute-float,
+  .parachute-swing,
+  .cloud {
+    animation: none !important;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .parachute-float {
+    animation-duration: 20s;
+  }
+  
+  .cloud {
+    animation-duration: 40s;
+  }
+  
+  .windmill-rotate,
+  .windmill-blades {
+    animation-duration: 15s;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

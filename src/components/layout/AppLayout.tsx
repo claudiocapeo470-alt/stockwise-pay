@@ -5,6 +5,7 @@ import { AppSidebar } from "./AppSidebar";
 import { UserMenu } from "./UserMenu";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { WindmillsParachutesBackground } from "@/components/ui/windmills-parachutes-background";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -38,6 +39,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <SidebarProvider>
+      <WindmillsParachutesBackground />
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main className="flex-1 flex flex-col">

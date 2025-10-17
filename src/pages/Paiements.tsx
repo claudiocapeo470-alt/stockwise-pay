@@ -114,7 +114,7 @@ export default function Paiements() {
       </ScrollReveal>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <ScrollReveal delay={100}>
           <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
@@ -151,8 +151,10 @@ export default function Paiements() {
             </div>
           </CardContent>
         </Card>
+        </ScrollReveal>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-2 border-red-200 dark:border-red-800/40 hover:shadow-lg transition-all duration-300 group">
+        <ScrollReveal delay={200}>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-2 border-red-200 dark:border-red-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -166,8 +168,10 @@ export default function Paiements() {
             </div>
           </CardContent>
         </Card>
+        </ScrollReveal>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800/40 hover:shadow-lg transition-all duration-300 group">
+        <ScrollReveal delay={250}>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-indigo-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -187,6 +191,7 @@ export default function Paiements() {
             </div>
           </CardContent>
         </Card>
+        </ScrollReveal>
       </div>
 
       {/* Filters */}
@@ -273,7 +278,7 @@ export default function Paiements() {
       {/* Payments List */}
       <div className="space-y-4">
         {filteredPayments.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
             {filteredPayments.map((payment) => (
               <PaymentCard
                 key={payment.id}

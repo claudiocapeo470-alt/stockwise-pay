@@ -11,11 +11,11 @@ import {
   Check, Sparkles
 } from "lucide-react";
 import { useState } from "react";
-import modernLogo from '@/assets/logo-modern.png';
-import heroDashboard from '@/assets/hero-dashboard-modern.png';
-import inventoryFeature from '@/assets/feature-inventory-modern.png';
-import analyticsFeature from '@/assets/feature-analytics-modern.png';
-import paymentFeature from '@/assets/feature-payment-modern.png';
+import stocknixLogo from '@/assets/stocknix-logo.png';
+import heroDashboard from '@/assets/3d-dashboard-hero.png';
+import inventoryFeature from '@/assets/3d-inventory-feature.png';
+import analyticsFeature from '@/assets/3d-analytics-feature.png';
+import paymentFeature from '@/assets/3d-payment-feature.png';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -141,10 +141,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center space-x-3">
-              <img src={modernLogo} alt="Stocknix" className="h-10 w-10" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-                Stocknix
-              </span>
+              <img src={stocknixLogo} alt="Stocknix" className="h-12" />
             </div>
 
             <nav className="hidden md:flex items-center space-x-8">
@@ -212,25 +209,23 @@ const HomePage = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section id="accueil" className="py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-white to-gray-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      {/* Hero Section - Blue Background */}
+      <section id="accueil" className="py-20 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <ScrollReveal>
               <div className="space-y-8">
-                <Badge className="bg-blue-100 text-blue-700 border-0 px-4 py-2 text-sm font-semibold">
+                <Badge className="bg-white/20 text-white border-0 px-5 py-2.5 text-sm font-semibold backdrop-blur">
                   <Sparkles className="h-4 w-4 mr-2" />
                   1 mois gratuit • Sans engagement
                 </Badge>
                 
-                <h1 className="text-gray-900 font-extrabold text-5xl lg:text-7xl leading-tight">
-                  Transformez votre 
-                  <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 bg-clip-text text-transparent"> business </span>
-                  en quelques clics
+                <h1 className="text-white font-extrabold text-5xl lg:text-7xl leading-tight">
+                  Transformez votre business en quelques clics
                 </h1>
                 
-                <p className="text-gray-600 text-xl sm:text-2xl max-w-2xl leading-relaxed">
+                <p className="text-blue-50 text-xl sm:text-2xl max-w-2xl leading-relaxed">
                   Gérez stocks, ventes et finances intelligemment. La plateforme moderne qui accompagne votre croissance.
                 </p>
                 
@@ -238,7 +233,7 @@ const HomePage = () => {
                   <Button 
                     size="lg" 
                     onClick={() => navigate('/auth')} 
-                    className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-xl shadow-blue-500/30 text-lg px-10 py-7 rounded-xl"
+                    className="bg-white text-blue-600 hover:bg-blue-50 shadow-xl text-lg px-10 py-7 rounded-xl font-bold"
                   >
                     Démarrer gratuitement
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -247,27 +242,27 @@ const HomePage = () => {
                     size="lg" 
                     variant="outline" 
                     onClick={() => navigate('/auth')}
-                    className="text-lg border-2 border-gray-200 hover:border-blue-500 hover:text-blue-600 px-10 py-7 rounded-xl bg-white"
+                    className="text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 px-10 py-7 rounded-xl bg-transparent"
                   >
                     Voir la démo
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-3 gap-6 pt-8">
+                <div className="grid grid-cols-3 gap-8 pt-8 bg-white/10 backdrop-blur rounded-2xl p-6">
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900">500+</div>
-                    <div className="text-sm text-gray-500 font-medium">Entreprises</div>
+                    <div className="text-4xl font-bold text-white">500+</div>
+                    <div className="text-sm text-blue-100 font-medium mt-1">Entreprises</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900">4.9/5</div>
-                    <div className="text-sm text-gray-500 font-medium flex items-center gap-1 justify-center">
-                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  <div className="text-center border-l border-r border-white/20">
+                    <div className="text-4xl font-bold text-white">4.9/5</div>
+                    <div className="text-sm text-blue-100 font-medium flex items-center gap-1 justify-center mt-1">
+                      <Star className="h-4 w-4 fill-amber-300 text-amber-300" />
                       Satisfaction
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900">24/7</div>
-                    <div className="text-sm text-gray-500 font-medium">Support</div>
+                    <div className="text-4xl font-bold text-white">24/7</div>
+                    <div className="text-sm text-blue-100 font-medium mt-1">Support</div>
                   </div>
                 </div>
               </div>
@@ -275,7 +270,7 @@ const HomePage = () => {
 
             <ScrollReveal delay={200}>
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-blue-300/20 blur-3xl"></div>
+                <div className="absolute inset-0 bg-white/10 blur-3xl rounded-full"></div>
                 <img 
                   src={heroDashboard} 
                   alt="Dashboard moderne Stocknix" 
@@ -347,8 +342,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Target Audience Section */}
-      <section id="pour-qui" className="py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+      {/* Target Audience Section - Black Background */}
+      <section id="pour-qui" className="py-24 bg-gradient-to-b from-gray-900 via-black to-gray-900 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-white-pattern opacity-5"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal>
@@ -385,8 +380,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-50 via-white to-gray-50 relative">
+      {/* Benefits Section - White Background */}
+      <section className="py-24 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-20">
@@ -422,8 +417,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="tarifs" className="py-24 bg-white relative">
+      {/* Pricing Section - Light Blue Background */}
+      <section id="tarifs" className="py-24 bg-gradient-to-br from-blue-50 via-white to-blue-50 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-20">
@@ -570,57 +565,54 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white py-16 relative">
+      {/* Footer - Black Background */}
+      <footer className="bg-black text-gray-300 py-16 relative border-t border-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div className="space-y-5">
               <div className="flex items-center space-x-3">
-                <img src={modernLogo} alt="Stocknix" className="h-10 w-10" />
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-                  Stocknix
-                </span>
+                <img src={stocknixLogo} alt="Stocknix" className="h-12" />
               </div>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-400 leading-relaxed">
                 La solution moderne de gestion pour PME/TPE en Afrique
               </p>
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-900 mb-5 text-lg">Produit</h4>
+              <h4 className="font-bold text-white mb-5 text-lg">Produit</h4>
               <ul className="space-y-3">
-                <li><a href="#fonctionnalites" className="text-gray-600 hover:text-blue-600 transition-colors">Fonctionnalités</a></li>
-                <li><a href="#tarifs" className="text-gray-600 hover:text-blue-600 transition-colors">Tarifs</a></li>
-                <li><a href="#avis" className="text-gray-600 hover:text-blue-600 transition-colors">Témoignages</a></li>
+                <li><a href="#fonctionnalites" className="text-gray-400 hover:text-blue-400 transition-colors">Fonctionnalités</a></li>
+                <li><a href="#tarifs" className="text-gray-400 hover:text-blue-400 transition-colors">Tarifs</a></li>
+                <li><a href="#avis" className="text-gray-400 hover:text-blue-400 transition-colors">Témoignages</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-900 mb-5 text-lg">Entreprise</h4>
+              <h4 className="font-bold text-white mb-5 text-lg">Entreprise</h4>
               <ul className="space-y-3">
-                <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">À propos</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Blog</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Carrières</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">À propos</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Blog</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Carrières</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-900 mb-5 text-lg">Support</h4>
+              <h4 className="font-bold text-white mb-5 text-lg">Support</h4>
               <ul className="space-y-3">
-                <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Centre d'aide</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Contact</a></li>
-                <li><a href="/mentions-legales" className="text-gray-600 hover:text-blue-600 transition-colors">Mentions légales</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Centre d'aide</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Contact</a></li>
+                <li><a href="/mentions-legales" className="text-gray-400 hover:text-blue-400 transition-colors">Mentions légales</a></li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row items-center justify-between">
-            <p className="text-gray-600">
+          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between">
+            <p className="text-gray-400">
               © 2025 Stocknix. Tous droits réservés.
             </p>
             <div className="flex items-center gap-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Politique de confidentialité</a>
-              <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">CGU</a>
+              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Politique de confidentialité</a>
+              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">CGU</a>
             </div>
           </div>
         </div>

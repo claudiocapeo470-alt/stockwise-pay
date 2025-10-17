@@ -223,36 +223,45 @@ const HomePage = () => {
         </div>
       </header>
 
-      {/* Hero Section - Blue Background */}
-      <section id="accueil" className="relative py-20 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,255,255,0.08),transparent_50%)]"></div>
+      {/* Hero Section - Background Image */}
+      <section id="accueil" className="relative min-h-[90vh] flex items-center overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={teamWorkingInventory} 
+            alt="Équipe PME utilisant Stocknix" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/95 via-blue-800/90 to-blue-900/70"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-blue-900/40"></div>
+        </div>
         
-        <div className="container mx-auto px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
-            {/* Left Column - Content */}
+        <div className="container mx-auto px-6 lg:px-8 relative z-10 py-20">
+          <div className="max-w-7xl mx-auto">
             <ScrollReveal>
-              <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
-                <Badge className="bg-white/20 text-white border-0 px-6 py-2.5 text-sm font-semibold backdrop-blur-sm inline-flex items-center gap-2">
+              <div className="max-w-2xl">
+                {/* Badge */}
+                <Badge className="bg-white/20 text-white border-0 px-6 py-3 text-sm font-semibold backdrop-blur-md inline-flex items-center gap-2 mb-8">
                   <Sparkles className="h-4 w-4" />
                   1 mois gratuit • Sans engagement
                 </Badge>
                 
-                <h1 className="font-extrabold text-white text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight max-w-2xl">
+                {/* Title */}
+                <h1 className="font-extrabold text-white text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight mb-8">
                   Transformez votre business en quelques clics
                 </h1>
                 
-                <p className="text-blue-50 text-lg sm:text-xl lg:text-2xl max-w-xl leading-relaxed">
+                {/* Description */}
+                <p className="text-white/95 text-lg sm:text-xl lg:text-2xl leading-relaxed mb-10">
                   Gérez stocks, ventes et finances intelligemment. La plateforme moderne qui accompagne votre croissance.
                 </p>
                 
                 {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-16">
                   <Button 
                     size="lg" 
                     onClick={() => navigate('/auth')} 
-                    className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-lg px-10 py-7 rounded-xl font-bold transition-transform hover:scale-105"
+                    className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-lg px-10 py-7 rounded-xl font-bold transition-all hover:scale-105"
                   >
                     Démarrer gratuitement
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -261,44 +270,31 @@ const HomePage = () => {
                     size="lg" 
                     variant="outline" 
                     onClick={() => navigate('/auth')}
-                    className="text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 px-10 py-7 rounded-xl bg-transparent transition-all"
+                    className="text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 px-10 py-7 rounded-xl bg-white/10 backdrop-blur-sm transition-all hover:scale-105"
                   >
                     Voir la démo
                   </Button>
                 </div>
-
-                {/* Stats Grid */}
-                <div className="grid grid-cols-3 gap-6 w-full max-w-lg bg-white/10 backdrop-blur-md rounded-2xl p-6 lg:p-8 mt-8">
-                  <div className="flex flex-col items-center justify-center text-center">
-                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">500+</div>
-                    <div className="text-xs sm:text-sm text-blue-100 font-medium mt-2">Entreprises</div>
-                  </div>
-                  <div className="flex flex-col items-center justify-center text-center border-l border-r border-white/20">
-                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">4.9/5</div>
-                    <div className="text-xs sm:text-sm text-blue-100 font-medium flex items-center gap-1 justify-center mt-2">
-                      <Star className="h-4 w-4 fill-amber-300 text-amber-300" />
-                      Satisfaction
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-center justify-center text-center">
-                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">24/7</div>
-                    <div className="text-xs sm:text-sm text-blue-100 font-medium mt-2">Support</div>
-                  </div>
-                </div>
               </div>
             </ScrollReveal>
 
-            {/* Right Column - Image */}
+            {/* Stats Section - Bottom */}
             <ScrollReveal delay={200}>
-              <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full"></div>
-                <div className="relative z-10 w-full max-w-2xl overflow-hidden rounded-3xl shadow-2xl">
-                  <img 
-                    src={teamWorkingInventory} 
-                    alt="Équipe PME utilisant Stocknix pour la gestion de stock" 
-                    className="w-full h-auto object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-transparent"></div>
+              <div className="grid grid-cols-3 gap-8 max-w-4xl bg-white/10 backdrop-blur-lg rounded-2xl p-8 lg:p-10 border border-white/20">
+                <div className="text-center">
+                  <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-3">500+</div>
+                  <div className="text-sm sm:text-base text-white/90 font-medium">Entreprises</div>
+                </div>
+                <div className="text-center border-l border-r border-white/30">
+                  <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-3">4.9/5</div>
+                  <div className="text-sm sm:text-base text-white/90 font-medium flex items-center gap-2 justify-center">
+                    <Star className="h-5 w-5 fill-amber-300 text-amber-300" />
+                    Satisfaction
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-3">24/7</div>
+                  <div className="text-sm sm:text-base text-white/90 font-medium">Support</div>
                 </div>
               </div>
             </ScrollReveal>
@@ -306,9 +302,9 @@ const HomePage = () => {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-          <span className="text-white/80 text-sm font-medium">Découvrir</span>
-          <ChevronDown className="h-6 w-6 text-white/80" />
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce z-20">
+          <span className="text-white/90 text-sm font-medium">Découvrir</span>
+          <ChevronDown className="h-6 w-6 text-white/90" />
         </div>
       </section>
 

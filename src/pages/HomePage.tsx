@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import stocknixLogo from '@/assets/stocknix-logo.png';
-import heroDashboard from '@/assets/3d-dashboard-hero.png';
+import teamWorkingInventory from '@/assets/team-working-inventory.jpg';
 import inventoryFeature from '@/assets/3d-inventory-feature.png';
 import analyticsFeature from '@/assets/3d-analytics-feature.png';
 import paymentFeature from '@/assets/3d-payment-feature.png';
@@ -291,12 +291,15 @@ const HomePage = () => {
             {/* Right Column - Image */}
             <ScrollReveal delay={200}>
               <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 bg-white/10 blur-3xl rounded-full"></div>
-                <img 
-                  src={heroDashboard} 
-                  alt="Dashboard moderne Stocknix" 
-                  className="relative z-10 w-full max-w-2xl h-auto rounded-3xl shadow-2xl"
-                />
+                <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full"></div>
+                <div className="relative z-10 w-full max-w-2xl overflow-hidden rounded-3xl shadow-2xl">
+                  <img 
+                    src={teamWorkingInventory} 
+                    alt="Équipe PME utilisant Stocknix pour la gestion de stock" 
+                    className="w-full h-auto object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-transparent"></div>
+                </div>
               </div>
             </ScrollReveal>
           </div>

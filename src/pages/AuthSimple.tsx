@@ -311,10 +311,17 @@ export default function AuthSimple() {
           }}></div>
         </div>
 
-        <div className="relative z-10">
-          <Link to="/" className="inline-block">
-            <img src={stocknixLogo} alt="Stocknix" className="h-10 brightness-0 invert" />
+        <div className="relative z-10 flex items-center justify-between">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 text-white hover:text-blue-100 transition-colors group"
+          >
+            <div className="p-2 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
+              <ArrowLeft className="h-5 w-5" />
+            </div>
+            <span className="font-medium">Retour</span>
           </Link>
+          <img src={stocknixLogo} alt="Stocknix" className="h-10 brightness-0 invert" />
         </div>
 
         <div className="relative z-10 space-y-6">

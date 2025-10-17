@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import stocknixLogo from "@/assets/stocknix-logo-text.png";
-import entrepreneursImage from "@/assets/african-entrepreneurs.png";
+import entrepreneursImage from "@/assets/african-entrepreneur-tablet.png";
 
 // Schémas de validation ultra-simples
 const loginSchema = z.object({

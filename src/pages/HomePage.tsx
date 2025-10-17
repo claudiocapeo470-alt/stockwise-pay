@@ -162,8 +162,11 @@ const HomePage = () => {
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
               <img src={stocknixLogo} alt="Stocknix" className="h-10 sm:h-12" />
+              <span className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                Stocknix
+              </span>
             </div>
 
             {/* Desktop Navigation */}
@@ -735,7 +738,12 @@ const HomePage = () => {
         <div className="container mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mb-12">
             <div className="col-span-2 md:col-span-1">
-              <img src={stocknixLogo} alt="Stocknix" className="h-10 mb-6" />
+              <div className="flex items-center gap-3 mb-6">
+                <img src={stocknixLogo} alt="Stocknix" className="h-10" />
+                <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                  Stocknix
+                </span>
+              </div>
               <p className="text-gray-400 text-sm leading-relaxed">
                 La solution de gestion d'entreprise pensée pour les entrepreneurs africains
               </p>

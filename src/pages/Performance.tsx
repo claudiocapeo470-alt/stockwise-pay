@@ -170,7 +170,7 @@ export default function Performance() {
               variant="outline" 
               size={isMobile ? "sm" : "default"}
               onClick={() => handleExport('pdf')}
-              className="border-primary/30 bg-card/80 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 shadow-soft hover:shadow-glow"
+              className="border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300 shadow-soft hover:shadow-lg text-red-700 dark:text-red-400 hover:dark:text-white"
             >
               <Download className="h-4 w-4 sm:mr-2" />
               {!isMobile && "PDF"}
@@ -179,7 +179,7 @@ export default function Performance() {
               variant="outline" 
               size={isMobile ? "sm" : "default"}
               onClick={() => handleExport('excel')}
-              className="border-accent/30 bg-card/80 backdrop-blur-sm hover:bg-accent hover:text-accent-foreground hover:border-accent transition-all duration-300 shadow-soft hover:shadow-purple-glow"
+              className="border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/20 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all duration-300 shadow-soft hover:shadow-lg text-green-700 dark:text-green-400 hover:dark:text-white"
             >
               <Download className="h-4 w-4 sm:mr-2" />
               {!isMobile && "Excel"}

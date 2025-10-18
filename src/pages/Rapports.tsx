@@ -803,7 +803,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20 shrink-0"
+                className="border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/20 hover:bg-green-600 hover:text-white text-green-700 dark:text-green-400 hover:dark:text-white transition-all shrink-0"
                 onClick={() => handleExport('excel', 'sales')}
               >
                 <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
@@ -812,7 +812,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-red-50 dark:hover:bg-red-950/20 shrink-0"
+                className="border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 hover:text-white text-red-700 dark:text-red-400 hover:dark:text-white transition-all shrink-0"
                 onClick={() => handleExport('pdf', 'sales')}
               >
                 <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
@@ -883,7 +883,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20 shrink-0"
+                className="border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/20 hover:bg-green-600 hover:text-white text-green-700 dark:text-green-400 hover:dark:text-white transition-all shrink-0"
                 onClick={() => handleExport('excel', 'products')}
               >
                 <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
@@ -892,7 +892,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-red-50 dark:hover:bg-red-950/20 shrink-0"
+                className="border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 hover:text-white text-red-700 dark:text-red-400 hover:dark:text-white transition-all shrink-0"
                 onClick={() => handleExport('pdf', 'products')}
               >
                 <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
@@ -963,7 +963,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-emerald-50 dark:hover:bg-emerald-950/20 shrink-0"
+                className="border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/20 hover:bg-green-600 hover:text-white text-green-700 dark:text-green-400 hover:dark:text-white transition-all shrink-0"
                 onClick={() => handleExport('excel', 'payments')}
               >
                 <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />
@@ -972,7 +972,7 @@ export default function Rapports() {
               <Button 
                 size="sm" 
                 variant="outline"
-                className="hover:bg-red-50 dark:hover:bg-red-950/20 shrink-0"
+                className="border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 hover:text-white text-red-700 dark:text-red-400 hover:dark:text-white transition-all shrink-0"
                 onClick={() => handleExport('pdf', 'payments')}
               >
                 <Download className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1 shrink-0" />

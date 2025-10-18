@@ -6,10 +6,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'XOF',
+  const formatted = amount.toLocaleString('fr-FR', {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(amount);
+    maximumFractionDigits: 0,
+    useGrouping: true
+  }).replace(/\s/g, '.').replace(',', '.');
+  
+  return `${formatted} FCFA`;
 }

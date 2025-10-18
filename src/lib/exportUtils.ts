@@ -18,64 +18,144 @@ interface ExportData {
   dateRange: { from: Date; to: Date };
 }
 
+const formatAmount = (amount: number): string => {
+  const formatted = amount.toLocaleString('fr-FR', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+    useGrouping: true
+  }).replace(/\s/g, '.').replace(',', '.');
+  
+  return `${formatted} FCFA`;
+};
+
 export const exportToPDF = async (data: ExportData, filename: string) => {
   const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.width;
   
-  // En-tête
-  doc.setFontSize(20);
-  doc.setTextColor(40, 40, 40);
-  doc.text('Rapport de Performance', 20, 20);
+  // Couleurs professionnelles
+  const primaryColor: [number, number, number] = [41, 98, 255];
+  const accentColor: [number, number, number] = [16, 185, 129];
+  const textColor: [number, number, number] = [30, 30, 30];
+  const lightGray: [number, number, number] = [248, 250, 252];
   
-  // Période
-  doc.setFontSize(12);
-  doc.setTextColor(100, 100, 100);
+  // En-tête avec style professionnel
+  doc.setFillColor(...primaryColor);
+  doc.rect(0, 0, pageWidth, 45, 'F');
+  
+  doc.setFontSize(24);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.text('RAPPORT DE PERFORMANCE', pageWidth / 2, 20, { align: 'center' });
+  
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
   const periodText = `Période: ${format(data.dateRange.from, 'dd/MM/yyyy', { locale: fr })} - ${format(data.dateRange.to, 'dd/MM/yyyy', { locale: fr })}`;
-  doc.text(periodText, 20, 30);
+  doc.text(periodText, pageWidth / 2, 30, { align: 'center' });
   
-  // Date de génération
-  doc.text(`Généré le: ${format(new Date(), 'dd/MM/yyyy à HH:mm', { locale: fr })}`, 20, 40);
+  doc.setFontSize(9);
+  doc.text(`Généré le ${format(new Date(), 'dd/MM/yyyy à HH:mm', { locale: fr })}`, pageWidth / 2, 38, { align: 'center' });
   
-  // Métriques principales
+  // Métriques principales avec design moderne
   doc.setFontSize(16);
-  doc.setTextColor(40, 40, 40);
-  doc.text('Métriques Principales', 20, 60);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...textColor);
+  doc.text('Indicateurs Clés', 20, 60);
   
   const metricsData = [
     ['Indicateur', 'Valeur'],
-    ['Ventes Totales', data.metrics.totalSales.toString()],
-    ['Chiffre d\'Affaires', new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(data.metrics.totalRevenue)],
-    ['Marge Brute', new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(data.metrics.grossMargin)],
-    ['Paiements Reçus', new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(data.metrics.totalPayments)]
+    ['Nombre de Ventes', data.metrics.totalSales.toString() + ' ventes'],
+    ['Chiffre d\'Affaires', formatAmount(data.metrics.totalRevenue)],
+    ['Marge Brute', formatAmount(data.metrics.grossMargin)],
+    ['Paiements Reçus', formatAmount(data.metrics.totalPayments)]
   ];
   
   autoTable(doc, {
     head: [metricsData[0]],
     body: metricsData.slice(1),
-    startY: 70,
-    headStyles: { fillColor: [66, 139, 202] },
-    alternateRowStyles: { fillColor: [245, 245, 245] }
+    startY: 68,
+    theme: 'grid',
+    headStyles: { 
+      fillColor: primaryColor,
+      textColor: [255, 255, 255],
+      fontSize: 11,
+      fontStyle: 'bold',
+      halign: 'left'
+    },
+    bodyStyles: {
+      fontSize: 10,
+      textColor: textColor
+    },
+    alternateRowStyles: { 
+      fillColor: lightGray
+    },
+    columnStyles: {
+      0: { fontStyle: 'bold', cellWidth: 80 },
+      1: { halign: 'right', cellWidth: 'auto' }
+    },
+    margin: { left: 20, right: 20 }
   });
   
-  // Tableau des ventes
+  // Tableau des ventes avec style amélioré
   if (data.sales.length > 0) {
     doc.addPage();
-    doc.setFontSize(16);
-    doc.text('Détail des Ventes', 20, 20);
+    
+    // En-tête de section
+    doc.setFillColor(...accentColor);
+    doc.rect(0, 0, pageWidth, 35, 'F');
+    
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255, 255, 255);
+    doc.text('DÉTAIL DES VENTES', pageWidth / 2, 22, { align: 'center' });
     
     const salesData = data.sales.map(sale => [
       format(new Date(sale.sale_date), 'dd/MM/yyyy', { locale: fr }),
-      sale.customer_name || 'N/A',
-      sale.quantity.toString(),
-      new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(sale.total_amount)
+      sale.customer_name || 'Client non renseigné',
+      sale.quantity.toString() + ' unités',
+      formatAmount(sale.total_amount)
     ]);
     
     autoTable(doc, {
-      head: [['Date', 'Client', 'Quantité', 'Montant']],
+      head: [['Date', 'Client', 'Quantité', 'Montant Total']],
       body: salesData,
-      startY: 30,
-      headStyles: { fillColor: [66, 139, 202] },
-      alternateRowStyles: { fillColor: [245, 245, 245] }
+      startY: 45,
+      theme: 'striped',
+      headStyles: { 
+        fillColor: primaryColor,
+        textColor: [255, 255, 255],
+        fontSize: 11,
+        fontStyle: 'bold',
+        halign: 'center'
+      },
+      bodyStyles: {
+        fontSize: 9,
+        textColor: textColor
+      },
+      alternateRowStyles: { 
+        fillColor: lightGray
+      },
+      columnStyles: {
+        0: { halign: 'center', cellWidth: 30 },
+        1: { halign: 'left', cellWidth: 'auto' },
+        2: { halign: 'center', cellWidth: 35 },
+        3: { halign: 'right', cellWidth: 50 }
+      },
+      margin: { left: 20, right: 20 }
     });
+  }
+  
+  // Pied de page professionnel
+  const totalPages = doc.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text(
+      `Page ${i} sur ${totalPages}`,
+      pageWidth / 2,
+      doc.internal.pageSize.height - 10,
+      { align: 'center' }
+    );
   }
   
   // Sauvegarder le PDF

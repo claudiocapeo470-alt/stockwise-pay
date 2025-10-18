@@ -639,8 +639,8 @@ export default function Auth() {
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-8">
             <div className="inline-flex items-center gap-6 mb-6">
-              <div className="bg-gradient-to-r from-primary to-accent rounded-3xl p-10 md:p-12">
-                <BarChart3 className="h-40 w-40 md:h-52 md:w-52 text-white" />
+              <div className="bg-gradient-to-r from-primary to-accent rounded-3xl p-8 md:p-10">
+                <BarChart3 className="h-32 w-32 md:h-40 md:w-40 text-white" />
               </div>
               <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
                 Stocknix

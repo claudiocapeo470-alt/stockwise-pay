@@ -4,7 +4,9 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { UserMenu } from "./UserMenu";
 import { ThemeToggle } from "./ThemeToggle";
+import { BottomNav } from "./BottomNav";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { WindmillsParachutesBackground } from "@/components/ui/windmills-parachutes-background";
 
 interface AppLayoutProps {
@@ -15,6 +17,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!loading && !user && location.pathname !== '/auth') {
@@ -41,11 +44,14 @@ export function AppLayout({ children }: AppLayoutProps) {
     <SidebarProvider>
       <WindmillsParachutesBackground />
       <div className="flex min-h-screen w-full">
-        <AppSidebar />
+        {/* Sidebar - masquée sur mobile/tablette */}
+        {!isMobile && <AppSidebar />}
+        
         <main className="flex-1 flex flex-col">
           <header className="relative border-b border-blue-200 dark:border-blue-800/40 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 dark:from-blue-700 dark:via-blue-600 dark:to-blue-700 px-4 py-3 shadow-md">
             <div className="flex items-center gap-4">
-              <SidebarTrigger className="-ml-1 text-white hover:bg-blue-700/30" />
+              {/* Trigger sidebar uniquement sur desktop */}
+              {!isMobile && <SidebarTrigger className="-ml-1 text-white hover:bg-blue-700/30" />}
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-white">Dashboard</h2>
               </div>
@@ -53,11 +59,14 @@ export function AppLayout({ children }: AppLayoutProps) {
               {user && <UserMenu />}
             </div>
           </header>
-          <div className="flex-1 p-6">
+          <div className={`flex-1 p-4 md:p-6 ${isMobile ? 'pb-20' : ''}`}>
             {children}
           </div>
         </main>
       </div>
+      
+      {/* Bottom Navigation - visible uniquement sur mobile/tablette */}
+      {isMobile && <BottomNav />}
     </SidebarProvider>
   );
 }

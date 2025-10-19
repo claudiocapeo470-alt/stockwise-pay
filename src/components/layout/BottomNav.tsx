@@ -6,7 +6,7 @@ const navigation = [
   { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks" },
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes" },
   { name: "Facturation", href: "/app/facturation", icon: Receipt, label: "Factures" },
-  { name: "Performance", href: "/app/performance", icon: TrendingUp, label: "Stats" },
+  { name: "Performance", href: "/app/performance", icon: TrendingUp, label: "Perf." },
 ];
 
 export function BottomNav() {

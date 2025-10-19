@@ -12,8 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Stocks from "./pages/Stocks";
 import Ventes from "./pages/Ventes";
 import Facturation from "./pages/Facturation";
-import Performance from "./pages/Performance";
-import Rapports from "./pages/Rapports";
+import PerformanceRapports from "./pages/PerformanceRapports";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AuthSimple from "./pages/AuthSimple";
@@ -82,8 +81,7 @@ const App = () => (
                       <Route path="/devis/new" element={<InvoiceEditor documentType="devis" />} />
                       <Route path="/devis/:id" element={<InvoiceEditor documentType="devis" />} />
                       <Route path="/devis/:id/preview" element={<InvoicePreview documentType="devis" />} />
-                      <Route path="/performance" element={<Performance />} />
-                      <Route path="/rapports" element={<Rapports />} />
+                      <Route path="/performance" element={<PerformanceRapports />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<NotFound />} />

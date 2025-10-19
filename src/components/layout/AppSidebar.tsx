@@ -1,4 +1,4 @@
-import { BarChart3, Package, ShoppingCart, Receipt, FileText, TrendingUp, LogOut, User, FileCheck } from "lucide-react"
+import { BarChart3, Package, ShoppingCart, Receipt, TrendingUp, LogOut, User, Settings as SettingsIcon } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
 import {
@@ -18,12 +18,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import stocknixLogo from "@/assets/stocknix-logo.png"
 
 const navigation = [
-  { name: "Dashboard", href: "/app", icon: BarChart3 },
-  { name: "Stocks", href: "/app/stocks", icon: Package },
-  { name: "Ventes", href: "/app/ventes", icon: ShoppingCart },
+  { name: "Tableau de bord", href: "/app", icon: BarChart3 },
+  { name: "Gestion des stocks", href: "/app/stocks", icon: Package },
+  { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart },
   { name: "Facturation", href: "/app/facturation", icon: Receipt },
-  { name: "Performance", href: "/app/performance", icon: TrendingUp },
-  { name: "Rapports", href: "/app/rapports", icon: FileText },
+  { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp },
+  { name: "Profil", href: "/app/profile", icon: User },
+  { name: "Paramètres", href: "/app/settings", icon: SettingsIcon },
 ]
 
 export function AppSidebar() {

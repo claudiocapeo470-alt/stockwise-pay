@@ -48,12 +48,12 @@ export function AppLayout({ children }: AppLayoutProps) {
         {!isMobile && <AppSidebar />}
         
         <main className="flex-1 flex flex-col">
-          <header className="relative border-b border-blue-200 dark:border-blue-800/40 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 dark:from-blue-700 dark:via-blue-600 dark:to-blue-700 px-4 py-3 shadow-md">
+          <header className="sticky top-0 z-40 relative border-b border-blue-200 dark:border-blue-800/40 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 dark:from-blue-700 dark:via-blue-600 dark:to-blue-700 px-4 py-3 shadow-md backdrop-blur-lg">
             <div className="flex items-center gap-4">
               {/* Trigger sidebar uniquement sur desktop */}
               {!isMobile && <SidebarTrigger className="-ml-1 text-white hover:bg-blue-700/30" />}
               <div className="flex-1">
-                <h2 className="text-lg font-semibold text-white">Dashboard</h2>
+                <h2 className="text-lg font-semibold text-white">Stocknix</h2>
               </div>
               <ThemeToggle />
               {user && <UserMenu />}

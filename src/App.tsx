@@ -11,14 +11,12 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import Dashboard from "./pages/Dashboard";
 import Stocks from "./pages/Stocks";
 import Ventes from "./pages/Ventes";
-import Paiements from "./pages/Paiements";
+import Facturation from "./pages/Facturation";
 import Performance from "./pages/Performance";
 import Rapports from "./pages/Rapports";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AuthSimple from "./pages/AuthSimple";
-import Factures from "./pages/Factures";
-import Devis from "./pages/Devis";
 import InvoiceEditor from "./pages/InvoiceEditor";
 import InvoicePreview from "./pages/InvoicePreview";
 
@@ -77,12 +75,10 @@ const App = () => (
                       <Route path="/" element={<Dashboard />} />
                       <Route path="/stocks" element={<Stocks />} />
                       <Route path="/ventes" element={<Ventes />} />
-                      <Route path="/paiements" element={<Paiements />} />
-                      <Route path="/factures" element={<Factures />} />
+                      <Route path="/facturation" element={<Facturation />} />
                       <Route path="/factures/new" element={<InvoiceEditor documentType="facture" />} />
                       <Route path="/factures/:id" element={<InvoiceEditor documentType="facture" />} />
                       <Route path="/factures/:id/preview" element={<InvoicePreview documentType="facture" />} />
-                      <Route path="/devis" element={<Devis />} />
                       <Route path="/devis/new" element={<InvoiceEditor documentType="devis" />} />
                       <Route path="/devis/:id" element={<InvoiceEditor documentType="devis" />} />
                       <Route path="/devis/:id/preview" element={<InvoicePreview documentType="devis" />} />

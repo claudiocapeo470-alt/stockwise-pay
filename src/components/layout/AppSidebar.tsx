@@ -21,9 +21,7 @@ const navigation = [
   { name: "Dashboard", href: "/app", icon: BarChart3 },
   { name: "Stocks", href: "/app/stocks", icon: Package },
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart },
-  { name: "Paiements", href: "/app/paiements", icon: Receipt },
-  { name: "Factures", href: "/app/factures", icon: FileText },
-  { name: "Devis", href: "/app/devis", icon: FileCheck },
+  { name: "Facturation", href: "/app/facturation", icon: Receipt },
   { name: "Performance", href: "/app/performance", icon: TrendingUp },
   { name: "Rapports", href: "/app/rapports", icon: FileText },
 ]

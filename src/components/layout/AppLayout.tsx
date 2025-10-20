@@ -59,7 +59,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               {user && <UserMenu />}
             </div>
           </header>
-          <div className={`flex-1 p-4 md:p-6 ${isMobile ? 'pb-20' : ''}`}>
+          <div className={`flex-1 p-4 md:p-6 ${isMobile ? 'pb-20' : 'md:px-12 lg:px-16'}`}>
             {children}
           </div>
         </main>

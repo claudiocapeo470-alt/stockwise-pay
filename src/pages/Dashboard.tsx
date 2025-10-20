@@ -142,11 +142,11 @@ export default function Dashboard() {
       {/* Alerts */}
       {metrics.lowStockProducts > 0 && (
         <ScrollReveal delay={300}>
-          <Card className="bg-gradient-to-br from-red-100 via-orange-100 to-red-100 dark:from-red-950/40 dark:to-orange-900/30 border-2 border-red-400 dark:border-red-600 shadow-xl shadow-red-500/30 animate-heartbeat">
+          <Card className="bg-red-50 dark:bg-red-950/40 border-2 border-red-400 dark:border-red-600 shadow-xl shadow-red-500/30">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 via-orange-500 to-red-600 shadow-lg shadow-red-500/50 animate-heartbeat shrink-0">
-                  <AlertTriangle className="h-8 w-8 text-white animate-pulse" />
+                <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 via-orange-500 to-red-600 shadow-lg shadow-red-500/50 shrink-0">
+                  <AlertTriangle className="h-8 w-8 text-white" />
                 </div>
                 
                 <div className="flex-1 min-w-0">
@@ -163,7 +163,7 @@ export default function Dashboard() {
                         key={product.id}
                         className="inline-flex items-center gap-2 bg-white/80 dark:bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-red-300 dark:border-red-700"
                       >
-                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <span className="w-2 h-2 rounded-full bg-red-500"></span>
                         <span className="font-semibold text-foreground">{product.name}</span>
                         <span className="text-xs text-muted-foreground bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded">
                           {product.quantity}/{product.min_quantity}

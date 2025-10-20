@@ -69,11 +69,6 @@ export function AppLayout({ children }: AppLayoutProps) {
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-white">{pageTitle}</h2>
               </div>
-              <img 
-                src={stocknixLogo} 
-                alt="Stocknix" 
-                className="h-12 w-12 object-contain"
-              />
               <ThemeToggle />
               {user && <UserMenu />}
             </div>

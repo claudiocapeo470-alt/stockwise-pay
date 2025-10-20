@@ -10,12 +10,9 @@ export default function Facturation() {
 
   return (
     <div className="space-y-6">
-      {/* En-tête principal */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">
-          Facturation
-        </h1>
-        <p className="text-muted-foreground mt-1">
+      {/* En-tête simplifié - Description seulement */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/40 rounded-lg p-6">
+        <p className="text-lg text-blue-900 dark:text-blue-100 font-medium">
           Gérez vos factures, devis et paiements en un seul endroit
         </p>
       </div>

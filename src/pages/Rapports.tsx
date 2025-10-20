@@ -654,18 +654,18 @@ export default function Rapports() {
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden">
-      {/* Header */}
-      <div className="min-w-0">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent truncate">
+      {/* Header Block with Description */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/40 rounded-lg p-6">
+        <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-2">
           {isMobile ? "Rapports" : "Rapports et analyses"}
-        </h1>
-        <p className="text-sm text-muted-foreground truncate">
+        </h2>
+        <p className="text-blue-700 dark:text-blue-300">
           {isMobile ? "Vos rapports d'activité" : "Générez et consultez vos rapports d'activité"}
         </p>
       </div>
 
       {/* Quick Export Actions */}
-      <Card className="relative overflow-hidden bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-950/30 dark:to-cyan-900/20 border-2 border-cyan-200 dark:border-cyan-800/40 hover:shadow-lg transition-all duration-300">
+      <Card className="relative overflow-hidden bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-950/30 dark:to-cyan-900/20 border-2 border-cyan-200 dark:border-cyan-800/40">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-cyan-600"></div>
         <CardHeader className="p-4 sm:p-6">
           <CardTitle className="text-base sm:text-lg flex items-center gap-2">
@@ -679,7 +679,7 @@ export default function Rapports() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             <Button
               variant="outline"
-              className="relative overflow-hidden h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-2 border-blue-200 dark:border-blue-800/40 hover:shadow-lg hover:scale-105 transition-all min-w-0 group"
+              className="relative overflow-hidden h-auto p-3 sm:p-4 flex flex-col items-start gap-2 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-2 border-blue-200 dark:border-blue-800/40 min-w-0 group"
               onClick={() => handleExport('csv', 'sales')}
             >
               <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-500 to-blue-600"></div>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ScrollReveal } from "@/components/ui/scroll-reveal"
+
 import { EmptyStateCard } from "@/components/onboarding/EmptyStateCard"
 import { AddPaymentDialog } from "@/components/payments/AddPaymentDialog"
 import { PaymentCard } from "@/components/payments/PaymentCard"
@@ -98,47 +98,39 @@ export default function Paiements() {
   }
 
   return (
-    <div className="space-y-6 page-transition">
-      {/* Header */}
-      <ScrollReveal>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Gestion des paiements</h1>
-            <p className="text-muted-foreground">
-              Suivez et gérez tous vos paiements clients
-            </p>
-          </div>
-          
-          <AddPaymentDialog />
+    <div className="space-y-6">
+      {/* Header Block with Description and Button */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/40 rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-2">Gestion des paiements</h2>
+          <p className="text-blue-700 dark:text-blue-300">Suivez et gérez tous vos paiements clients</p>
         </div>
-      </ScrollReveal>
+        <AddPaymentDialog />
+      </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <ScrollReveal delay={100}>
-          <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500 shadow-md group-hover:scale-110 transition-transform">
-                  <CheckCircle className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-green-900 dark:text-green-100">Payés</p>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{paymentStats.completedPayments}</p>
-                  <p className="text-xs text-green-700 dark:text-green-300">{formatAmount(paymentStats.paidAmount)}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </ScrollReveal>
-
-        <ScrollReveal delay={150}>
-          <Card className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-2 border-amber-200 dark:border-amber-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-600"></div>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-500 shadow-md group-hover:scale-110 transition-transform">
+              <div className="p-2 rounded-lg bg-green-500 shadow-md">
+                <CheckCircle className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-green-900 dark:text-green-100">Payés</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{paymentStats.completedPayments}</p>
+                <p className="text-xs text-green-700 dark:text-green-300">{formatAmount(paymentStats.paidAmount)}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-2 border-amber-200 dark:border-amber-800/40">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-600"></div>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-amber-500 shadow-md">
                 <Clock className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -150,15 +142,13 @@ export default function Paiements() {
               </div>
             </div>
           </CardContent>
-          </Card>
-        </ScrollReveal>
+        </Card>
 
-        <ScrollReveal delay={200}>
-          <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-2 border-red-200 dark:border-red-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-2 border-red-200 dark:border-red-800/40">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-red-500 shadow-md group-hover:scale-110 transition-transform">
+              <div className="p-2 rounded-lg bg-red-500 shadow-md">
                 <AlertCircle className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -167,15 +157,13 @@ export default function Paiements() {
               </div>
             </div>
           </CardContent>
-          </Card>
-        </ScrollReveal>
+        </Card>
 
-        <ScrollReveal delay={250}>
-          <Card className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800/40 hover:shadow-lg transition-all duration-300 group card-smooth">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800/40">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-indigo-600"></div>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-indigo-500 shadow-md group-hover:scale-110 transition-transform">
+              <div className="p-2 rounded-lg bg-indigo-500 shadow-md">
                 <TrendingUp className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -190,12 +178,10 @@ export default function Paiements() {
               </div>
             </div>
           </CardContent>
-          </Card>
-        </ScrollReveal>
+        </Card>
       </div>
 
       {/* Filters */}
-      <ScrollReveal delay={300}>
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
@@ -275,10 +261,8 @@ export default function Paiements() {
           </div>
         </CardContent>
       </Card>
-      </ScrollReveal>
 
       {/* Payments List */}
-      <ScrollReveal delay={350}>
       <div className="space-y-4">
         {filteredPayments.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -321,7 +305,6 @@ export default function Paiements() {
           </Card>
         )}
       </div>
-      </ScrollReveal>
     </div>
   )
 }

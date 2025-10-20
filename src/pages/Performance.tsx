@@ -147,59 +147,44 @@ export default function Performance() {
 
   return (
     <div className="space-y-4 sm:space-y-6 pb-6">
-      {/* En-tête avec design moderne */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 border border-primary/20 p-4 sm:p-6 shadow-glow">
-        {/* Blobs d'arrière-plan animés */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-1/2 -left-1/4 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-1/2 -right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      {/* Header Block with Description and Export Buttons */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/40 rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-2">
+            {isMobile ? "Performance" : "Tableau de bord Performance"}
+          </h2>
+          <p className="text-blue-700 dark:text-blue-300">
+            {isMobile ? "Indicateurs clés" : "✨ Visualisez vos indicateurs clés de performance en temps réel"}
+          </p>
         </div>
-        
-        <div className="relative flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-          <div className="min-w-0">
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight bg-gradient-secondary bg-clip-text text-transparent flex items-center gap-3">
-              <Activity className="h-6 w-6 sm:h-8 sm:w-8 text-primary animate-pulse" />
-              {isMobile ? "Performance" : "Tableau de bord Performance"}
-            </h2>
-            <p className="text-sm sm:text-base text-muted-foreground mt-2 font-medium">
-              {isMobile ? "Indicateurs clés" : "✨ Visualisez vos indicateurs clés de performance en temps réel"}
-            </p>
-          </div>
-          <div className="flex gap-2 flex-shrink-0">
-            <Button 
-              variant="outline" 
-              size={isMobile ? "sm" : "default"}
-              onClick={() => handleExport('pdf')}
-              className="border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300 shadow-soft hover:shadow-lg text-red-700 dark:text-red-400 hover:dark:text-white"
-            >
-              <Download className="h-4 w-4 sm:mr-2" />
-              {!isMobile && "PDF"}
-            </Button>
-            <Button 
-              variant="outline" 
-              size={isMobile ? "sm" : "default"}
-              onClick={() => handleExport('excel')}
-              className="border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/20 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all duration-300 shadow-soft hover:shadow-lg text-green-700 dark:text-green-400 hover:dark:text-white"
-            >
-              <Download className="h-4 w-4 sm:mr-2" />
-              {!isMobile && "Excel"}
-            </Button>
-          </div>
+        <div className="flex gap-2 flex-shrink-0">
+          <Button 
+            variant="outline" 
+            size={isMobile ? "sm" : "default"}
+            onClick={() => handleExport('pdf')}
+            className="bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
+          >
+            <Download className="h-4 w-4 sm:mr-2" />
+            {!isMobile && "PDF"}
+          </Button>
+          <Button 
+            variant="outline" 
+            size={isMobile ? "sm" : "default"}
+            onClick={() => handleExport('excel')}
+            className="bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
+          >
+            <Download className="h-4 w-4 sm:mr-2" />
+            {!isMobile && "Excel"}
+          </Button>
         </div>
       </div>
 
-      {/* Filtres avec design moderne */}
-      <Card className="relative overflow-hidden bg-gradient-to-br from-card via-card/95 to-card border-primary/20 shadow-medium hover:shadow-glow transition-all duration-500">
-        {/* Effet de lumière subtile */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-secondary"></div>
+      {/* Filtres */}
+      <Card>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
         
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center text-base sm:text-lg font-bold">
-            <div className="p-2 rounded-lg bg-primary/10 mr-3">
-              <Activity className="h-5 w-5 text-primary" />
-            </div>
-            <span className="bg-gradient-secondary bg-clip-text text-transparent">Filtres d'analyse</span>
-          </CardTitle>
+          <CardTitle className="text-base sm:text-lg font-bold">Filtres d'analyse</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -207,7 +192,7 @@ export default function Performance() {
             <div className="space-y-2">
               <label className="text-xs sm:text-sm font-semibold text-muted-foreground uppercase tracking-wider">Période</label>
               <Select value={period} onValueChange={(value: PeriodType) => setPeriod(value)}>
-                <SelectTrigger className="bg-background/50 backdrop-blur-sm border-border hover:border-primary transition-colors shadow-soft">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -227,7 +212,7 @@ export default function Performance() {
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-start text-left font-normal bg-background/50 backdrop-blur-sm border-border hover:border-primary transition-colors shadow-soft"
+                      className="w-full justify-start text-left font-normal"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {dateRange?.from ? (
@@ -262,7 +247,7 @@ export default function Performance() {
             <div className="space-y-2">
               <label className="text-xs sm:text-sm font-semibold text-muted-foreground uppercase tracking-wider">Produit</label>
               <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                <SelectTrigger className="bg-background/50 backdrop-blur-sm border-border hover:border-primary transition-colors shadow-soft">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -280,7 +265,7 @@ export default function Performance() {
             <div className="space-y-2">
               <label className="text-xs sm:text-sm font-semibold text-muted-foreground uppercase tracking-wider">Client</label>
               <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
-                <SelectTrigger className="bg-background/50 backdrop-blur-sm border-border hover:border-primary transition-colors shadow-soft">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -300,25 +285,16 @@ export default function Performance() {
       {/* Métriques principales */}
       <PerformanceMetrics metrics={metrics} />
 
-      {/* Contenu principal avec onglets modernes */}
+      {/* Contenu principal avec onglets */}
       <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
-        <TabsList className="bg-card/50 backdrop-blur-sm border-2 border-border shadow-medium grid grid-cols-3 p-1 h-auto">
-          <TabsTrigger 
-            value="overview" 
-            className="data-[state=active]:bg-gradient-secondary data-[state=active]:text-white data-[state=active]:shadow-glow transition-all duration-300 rounded-md font-semibold text-xs sm:text-sm py-2"
-          >
+        <TabsList className="grid grid-cols-3 p-1 h-auto">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm py-2">
             {isMobile ? "Vue" : "Vue d'ensemble"}
           </TabsTrigger>
-          <TabsTrigger 
-            value="products" 
-            className="data-[state=active]:bg-gradient-secondary data-[state=active]:text-white data-[state=active]:shadow-glow transition-all duration-300 rounded-md font-semibold text-xs sm:text-sm py-2"
-          >
+          <TabsTrigger value="products" className="text-xs sm:text-sm py-2">
             Produits
           </TabsTrigger>
-          <TabsTrigger 
-            value="customers" 
-            className="data-[state=active]:bg-gradient-secondary data-[state=active]:text-white data-[state=active]:shadow-glow transition-all duration-300 rounded-md font-semibold text-xs sm:text-sm py-2"
-          >
+          <TabsTrigger value="customers" className="text-xs sm:text-sm py-2">
             Clients
           </TabsTrigger>
         </TabsList>

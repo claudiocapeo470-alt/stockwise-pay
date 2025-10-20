@@ -53,7 +53,7 @@ export function AppSidebar() {
     <Sidebar className={`${isCollapsed ? "w-16" : "w-64"} bg-gradient-to-b from-blue-50 to-white dark:from-background dark:to-background border-r border-blue-100 dark:border-border`} collapsible="icon">
       <SidebarHeader className="bg-gradient-to-br from-gray-900 via-gray-800 to-black dark:from-gray-950 dark:via-black dark:to-gray-900 p-4 border-b border-gray-700/50 dark:border-gray-800/50 shadow-2xl relative overflow-hidden">
         {/* Effet de brillance animé */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
         
         <div className="flex items-center gap-3 relative z-10">
           <img 

@@ -52,7 +52,7 @@ export function BottomNav() {
                 {item.label}
               </span>
               {active && (
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-t-full animate-scale-in" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-t-full transition-all duration-300" />
               )}
             </NavLink>
           );

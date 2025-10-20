@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
@@ -8,6 +8,7 @@ import { BottomNav } from "./BottomNav";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WindmillsParachutesBackground } from "@/components/ui/windmills-parachutes-background";
+import stocknixLogo from "@/assets/stocknix-logo.png";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,19 @@ export function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation();
   const isMobile = useIsMobile();
 
+  // Mapping des routes vers les titres
+  const pageTitle = useMemo(() => {
+    const path = location.pathname;
+    if (path === '/app' || path === '/app/') return 'Tableau de bord';
+    if (path.includes('/stocks')) return 'Gestion des stocks';
+    if (path.includes('/ventes')) return 'Suivi des ventes';
+    if (path.includes('/facturation')) return 'Facturation';
+    if (path.includes('/performance')) return 'Performance & Rapports';
+    if (path.includes('/profile')) return 'Profil';
+    if (path.includes('/settings')) return 'Paramètres';
+    return 'Tableau de bord';
+  }, [location.pathname]);
+
   useEffect(() => {
     if (!loading && !user && location.pathname !== '/auth') {
       navigate('/auth');
@@ -29,7 +43,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Chargement...</p>
         </div>
       </div>
@@ -53,8 +67,13 @@ export function AppLayout({ children }: AppLayoutProps) {
               {/* Trigger sidebar uniquement sur desktop */}
               {!isMobile && <SidebarTrigger className="-ml-1 text-white hover:bg-blue-700/30" />}
               <div className="flex-1">
-                <h2 className="text-lg font-semibold text-white">Stocknix</h2>
+                <h2 className="text-lg font-semibold text-white">{pageTitle}</h2>
               </div>
+              <img 
+                src={stocknixLogo} 
+                alt="Stocknix" 
+                className="h-12 w-12 object-contain"
+              />
               <ThemeToggle />
               {user && <UserMenu />}
             </div>

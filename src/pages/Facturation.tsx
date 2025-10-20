@@ -6,7 +6,7 @@ import Devis from "./Devis";
 import Paiements from "./Paiements";
 
 export default function Facturation() {
-  const [activeTab, setActiveTab] = useState("factures");
+  const [activeTab, setActiveTab] = useState("paiements");
 
   return (
     <div className="space-y-6">
@@ -24,6 +24,13 @@ export default function Facturation() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid bg-muted/50 p-1">
           <TabsTrigger 
+            value="paiements"
+            className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
+            <Receipt className="h-4 w-4" />
+            <span className="hidden sm:inline">Paiements</span>
+          </TabsTrigger>
+          <TabsTrigger 
             value="factures" 
             className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
@@ -37,14 +44,11 @@ export default function Facturation() {
             <FileCheck className="h-4 w-4" />
             <span className="hidden sm:inline">Devis</span>
           </TabsTrigger>
-          <TabsTrigger 
-            value="paiements"
-            className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm"
-          >
-            <Receipt className="h-4 w-4" />
-            <span className="hidden sm:inline">Paiements</span>
-          </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="paiements" className="mt-6">
+          <Paiements />
+        </TabsContent>
 
         <TabsContent value="factures" className="mt-6">
           <Factures />
@@ -52,10 +56,6 @@ export default function Facturation() {
 
         <TabsContent value="devis" className="mt-6">
           <Devis />
-        </TabsContent>
-
-        <TabsContent value="paiements" className="mt-6">
-          <Paiements />
         </TabsContent>
       </Tabs>
     </div>

@@ -24,6 +24,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const pageTitle = useMemo(() => {
     const path = location.pathname;
     if (path === '/app' || path === '/app/') return 'Tableau de bord';
+    if (path.includes('/caisse')) return 'Caisse';
     if (path.includes('/stocks')) return 'Gestion des stocks';
     if (path.includes('/ventes')) return 'Suivi des ventes';
     if (path.includes('/facturation')) return 'Facturation';

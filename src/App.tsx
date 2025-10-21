@@ -18,6 +18,7 @@ import Settings from "./pages/Settings";
 import AuthSimple from "./pages/AuthSimple";
 import InvoiceEditor from "./pages/InvoiceEditor";
 import InvoicePreview from "./pages/InvoicePreview";
+import Caisse from "./pages/Caisse";
 
 import HomePage from "./pages/HomePage";
 import MentionsLegales from "./pages/MentionsLegales";
@@ -72,6 +73,7 @@ const App = () => (
                   <AppLayout>
                     <Routes>
                       <Route path="/" element={<Dashboard />} />
+                      <Route path="/caisse" element={<Caisse />} />
                       <Route path="/stocks" element={<Stocks />} />
                       <Route path="/ventes" element={<Ventes />} />
                       <Route path="/facturation" element={<Facturation />} />

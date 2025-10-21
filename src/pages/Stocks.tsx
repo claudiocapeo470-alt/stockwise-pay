@@ -178,7 +178,9 @@ export default function Stocks() {
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold text-lg truncate">{product.name}</h3>
                           {product.sku && (
-                            <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
+                            <p className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded inline-block">
+                              Code: {product.sku}
+                            </p>
                           )}
                         </div>
                         {product.quantity === 0 ? (

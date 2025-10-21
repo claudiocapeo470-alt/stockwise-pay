@@ -4,14 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import { ShoppingCart, Search, Plus, Eye, Grid3x3, List } from "lucide-react";
+import { ShoppingCart, Search, Plus, Eye, Grid3x3, List, Printer, Download } from "lucide-react";
 import { useState } from "react";
 import { useSales } from "@/hooks/useSales";
+import { useProducts } from "@/hooks/useProducts";
 import { AddSaleDialog } from "@/components/sales/AddSaleDialog";
 import { SaleDetailsDialog } from "@/components/sales/SaleDetailsDialog";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useIsMobile } from "@/hooks/use-mobile";
+import jsPDF from "jspdf";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Ventes() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,6 +22,8 @@ export default function Ventes() {
   const [showSaleDetails, setShowSaleDetails] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { sales, isLoading } = useSales();
+  const { products } = useProducts();
+  const { toast } = useToast();
   const isMobile = useIsMobile();
 
   const filteredSales = sales.filter(sale =>
@@ -33,6 +38,84 @@ export default function Ventes() {
     return saleDate.toDateString() === today.toDateString();
   });
   const todayTotal = todaySales.reduce((sum, sale) => sum + sale.total_amount, 0);
+
+  // Réimprimer le reçu
+  const reprintReceipt = (sale: any) => {
+    const product = products.find(p => p.id === sale.product_id);
+    const printWindow = window.open('', '', 'width=300,height=600');
+    if (!printWindow) return;
+
+    const receiptContent = `
+      <html>
+        <head>
+          <title>Reçu - SIGR SUPERMARCHÉ</title>
+          <style>
+            body { font-family: monospace; font-size: 12px; width: 300px; margin: 0 auto; padding: 10px; }
+            h3 { text-align: center; margin: 10px 0; }
+            .line { border-bottom: 1px dashed #000; margin: 5px 0; }
+            .item { display: flex; justify-content: space-between; margin: 3px 0; }
+            .total { font-weight: bold; font-size: 14px; text-align: right; margin-top: 10px; }
+            .footer { text-align: center; margin-top: 20px; }
+          </style>
+        </head>
+        <body>
+          <h3>🧾 SIGR SUPERMARCHÉ</h3>
+          <div class="line"></div>
+          <p>Date: ${new Date(sale.sale_date).toLocaleString('fr-FR')}</p>
+          <div class="line"></div>
+          <div class="item">
+            <span>${product?.name || 'Produit'} x${sale.quantity}</span>
+            <span>${sale.total_amount.toLocaleString()} FCFA</span>
+          </div>
+          <div class="line"></div>
+          <div class="total">TOTAL: ${sale.total_amount.toLocaleString()} FCFA</div>
+          <div class="footer">
+            <p>Merci pour votre achat 🙏</p>
+            <p>À bientôt !</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(receiptContent);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  // Télécharger le reçu en PDF
+  const downloadReceiptPDF = (sale: any) => {
+    const product = products.find(p => p.id === sale.product_id);
+    const doc = new jsPDF({
+      format: [80, 150],
+      unit: 'mm'
+    });
+
+    doc.setFontSize(14);
+    doc.text('SIGR SUPERMARCHÉ', 40, 10, { align: 'center' });
+    doc.setFontSize(8);
+    doc.text('─────────────────────────────', 40, 15, { align: 'center' });
+    doc.text(`Date: ${new Date(sale.sale_date).toLocaleString('fr-FR')}`, 5, 20);
+    doc.text('─────────────────────────────', 40, 25, { align: 'center' });
+
+    doc.setFontSize(9);
+    doc.text(`${product?.name || 'Produit'} x${sale.quantity}`, 5, 35);
+    doc.text(`${sale.total_amount.toLocaleString()} FCFA`, 70, 35, { align: 'right' });
+
+    doc.text('─────────────────────────────', 40, 40, { align: 'center' });
+    doc.setFontSize(11);
+    doc.text(`TOTAL: ${sale.total_amount.toLocaleString()} FCFA`, 70, 50, { align: 'right' });
+    
+    doc.setFontSize(8);
+    doc.text('Merci pour votre achat 🙏', 40, 60, { align: 'center' });
+
+    const fileName = `recu_${new Date(sale.sale_date).toISOString().slice(0, 10)}_${sale.id.slice(0, 8)}.pdf`;
+    doc.save(fileName);
+    
+    toast({
+      title: "✅ PDF téléchargé",
+      description: "Le reçu a été téléchargé avec succès",
+    });
+  };
 
   if (isLoading) {
     return (
@@ -175,17 +258,38 @@ export default function Ventes() {
                               {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
                             </p>
                           </div>
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => {
-                              setSelectedSale(sale);
-                              setShowSaleDetails(true);
-                            }}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                          <div className="flex gap-1">
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => {
+                                setSelectedSale(sale);
+                                setShowSaleDetails(true);
+                              }}
+                              title="Voir détails"
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => reprintReceipt(sale)}
+                              title="Réimprimer"
+                            >
+                              <Printer className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => downloadReceiptPDF(sale)}
+                              title="PDF"
+                            >
+                              <Download className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-3">
@@ -254,16 +358,35 @@ export default function Ventes() {
                             <span className="font-semibold">{sale.total_amount.toLocaleString()} FCFA</span>
                           </TableCell>
                           <TableCell>
-                            <Button 
-                              variant="outline" 
-                              size="icon"
-                              onClick={() => {
-                                setSelectedSale(sale);
-                                setShowSaleDetails(true);
-                              }}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="icon"
+                                onClick={() => {
+                                  setSelectedSale(sale);
+                                  setShowSaleDetails(true);
+                                }}
+                                title="Voir détails"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => reprintReceipt(sale)}
+                                title="Réimprimer le reçu"
+                              >
+                                <Printer className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => downloadReceiptPDF(sale)}
+                                title="Télécharger PDF"
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}

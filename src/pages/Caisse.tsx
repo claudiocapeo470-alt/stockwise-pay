@@ -59,8 +59,6 @@ export default function Caisse() {
 
   // Activer la caméra pour scanner
   const toggleCamera = async () => {
-    if (!readerRef.current) return;
-
     if (cameraActive && scannerRef.current) {
       try {
         await scannerRef.current.stop();
@@ -69,73 +67,81 @@ export default function Caisse() {
       } catch (err) {
         console.error("Error stopping camera:", err);
       }
-    } else {
-      try {
-        const html5QrCode = new Html5Qrcode("reader");
-        scannerRef.current = html5QrCode;
+      return;
+    }
 
-        const config = {
-          fps: 10,
-          qrbox: { width: 300, height: 200 }, // Format rectangulaire
-          aspectRatio: 1.5,
-          formatsToSupport: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] // Tous les formats de codes-barres
-        };
+    // Activer la caméra
+    setCameraActive(true);
+    
+    // Attendre que le DOM soit prêt
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-        await html5QrCode.start(
-          { facingMode: "environment" },
-          config,
-          (decodedText) => {
-            const code = decodedText.trim();
-            const product = products.find(p => p.sku === code);
+    try {
+      const html5QrCode = new Html5Qrcode("reader");
+      scannerRef.current = html5QrCode;
+
+      const config = {
+        fps: 10,
+        qrbox: { width: 300, height: 200 },
+        aspectRatio: 1.5,
+        formatsToSupport: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+      };
+
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+          const code = decodedText.trim();
+          const product = products.find(p => p.sku === code);
+          
+          if (product) {
+            addToCart(product);
+            toast({
+              title: "✅ Produit scanné",
+              description: `${product.name} ajouté au panier`,
+            });
             
-            if (product) {
-              addToCart(product);
-              toast({
-                title: "✅ Produit scanné",
-                description: `${product.name} ajouté au panier`,
-              });
-              
-              // Vibration feedback sur mobile
-              if (navigator.vibrate) {
-                navigator.vibrate(200);
-              }
-            } else {
-              toast({
-                title: "❌ Produit non reconnu",
-                description: `Code: ${code}`,
-                variant: "destructive",
-              });
+            // Vibration feedback sur mobile
+            if (navigator.vibrate) {
+              navigator.vibrate(200);
             }
-          },
-          (errorMessage) => {
-            // Ignorer les erreurs de scan en cours
+          } else {
+            toast({
+              title: "❌ Produit non reconnu",
+              description: `Code: ${code}`,
+              variant: "destructive",
+            });
           }
-        );
-        
-        setCameraActive(true);
-        toast({
-          title: "📷 Caméra activée",
-          description: "Scannez un code-barres",
-        });
-      } catch (err: any) {
-        console.error("Error starting camera:", err);
-        let errorMsg = "Impossible d'accéder à la caméra";
-        
-        if (err.name === "NotAllowedError") {
-          errorMsg = "Veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur";
-        } else if (err.name === "NotFoundError") {
-          errorMsg = "Aucune caméra détectée sur cet appareil";
-        } else if (err.name === "NotReadableError") {
-          errorMsg = "La caméra est déjà utilisée par une autre application";
+        },
+        (errorMessage) => {
+          // Ignorer les erreurs de scan en cours
         }
-        
-        toast({
-          title: "Erreur caméra",
-          description: errorMsg,
-          variant: "destructive",
-        });
-        scannerRef.current = null;
+      );
+      
+      toast({
+        title: "📷 Caméra activée",
+        description: "Scannez un code-barres",
+      });
+    } catch (err: any) {
+      console.error("Error starting camera:", err);
+      setCameraActive(false);
+      
+      let errorMsg = "Impossible d'accéder à la caméra";
+      
+      if (err.name === "NotAllowedError") {
+        errorMsg = "Veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur";
+      } else if (err.name === "NotFoundError") {
+        errorMsg = "Aucune caméra détectée sur cet appareil";
+      } else if (err.name === "NotReadableError") {
+        errorMsg = "La caméra est déjà utilisée par une autre application";
       }
+      
+      toast({
+        title: "Erreur caméra",
+        description: errorMsg,
+        variant: "destructive",
+      });
+      scannerRef.current = null;
     }
   };
 
@@ -371,16 +377,18 @@ export default function Caisse() {
                   <Camera className="h-5 w-5 sm:h-6 sm:w-6 mr-2" />
                   {cameraActive ? "Arrêter la caméra" : "Scanner avec caméra"}
                 </Button>
-                {cameraActive && (
-                  <div className="mt-4 border-4 border-blue-500 rounded-lg overflow-hidden bg-black">
-                    <div
-                      id="reader"
-                      ref={readerRef}
-                      className="w-full min-h-[300px] sm:min-h-[400px]"
-                    />
-                  </div>
-                )}
               </div>
+
+              {/* Zone de scan caméra */}
+              {cameraActive && (
+                <div className="mt-4 border-4 border-blue-500 rounded-lg overflow-hidden bg-black">
+                  <div
+                    id="reader"
+                    ref={readerRef}
+                    className="w-full min-h-[350px] sm:min-h-[450px]"
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

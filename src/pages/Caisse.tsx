@@ -76,8 +76,8 @@ export default function Caisse() {
 
         const config = {
           fps: 10,
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0,
+          qrbox: { width: 300, height: 200 }, // Format rectangulaire
+          aspectRatio: 1.5,
           formatsToSupport: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] // Tous les formats de codes-barres
         };
 
@@ -371,11 +371,15 @@ export default function Caisse() {
                   <Camera className="h-5 w-5 sm:h-6 sm:w-6 mr-2" />
                   {cameraActive ? "Arrêter la caméra" : "Scanner avec caméra"}
                 </Button>
-                <div
-                  id="reader"
-                  ref={readerRef}
-                  className={`mt-4 rounded-lg overflow-hidden ${!cameraActive ? 'hidden' : ''}`}
-                />
+                {cameraActive && (
+                  <div className="mt-4 border-4 border-blue-500 rounded-lg overflow-hidden bg-black">
+                    <div
+                      id="reader"
+                      ref={readerRef}
+                      className="w-full min-h-[300px] sm:min-h-[400px]"
+                    />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

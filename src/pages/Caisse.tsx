@@ -79,7 +79,7 @@ export default function Caisse() {
     setCameraActive(true);
     
     // Attendre que le DOM soit prêt
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     try {
       Quagga.init({
@@ -89,24 +89,43 @@ export default function Caisse() {
           target: document.querySelector('#scanner'),
           constraints: {
             facingMode: "environment",
-            width: { ideal: 640 },
-            height: { ideal: 480 }
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 480, ideal: 720, max: 1080 }
+          },
+          area: {
+            top: "20%",
+            right: "10%",
+            left: "10%",
+            bottom: "20%"
           }
         },
+        frequency: 10,
         decoder: {
           readers: [
             "ean_reader",        // EAN-13
             "ean_8_reader",      // EAN-8
             "code_128_reader",   // Code128
+            "code_39_reader",    // Code39
             "upc_reader",        // UPC-A
-            "upc_e_reader"       // UPC-E (bonus)
-          ]
+            "upc_e_reader",      // UPC-E
+            "codabar_reader",    // Codabar
+            "i2of5_reader"       // Interleaved 2 of 5
+          ],
+          debug: {
+            drawBoundingBox: true,
+            showFrequency: true,
+            drawScanline: true,
+            showPattern: true
+          },
+          multiple: false
         },
         locate: true,
         locator: {
           patchSize: "medium",
           halfSample: true
-        }
+        },
+        numOfWorkers: navigator.hardwareConcurrency || 4,
+        debug: false
       }, function(err) {
         if (err) {
           console.error("Erreur scanner :", err);
@@ -120,6 +139,8 @@ export default function Caisse() {
             errorMsg = "Aucune caméra détectée sur cet appareil";
           } else if (err.name === "NotReadableError") {
             errorMsg = "La caméra est déjà utilisée par une autre application";
+          } else if (err.name === "OverconstrainedError") {
+            errorMsg = "Configuration de caméra non supportée";
           }
           
           toast({
@@ -135,7 +156,7 @@ export default function Caisse() {
         
         toast({
           title: "📷 Caméra activée",
-          description: "Scannez un code-barres",
+          description: "Pointez vers un code-barres",
         });
       });
 
@@ -160,18 +181,25 @@ export default function Caisse() {
             if (navigator.vibrate) {
               navigator.vibrate(200);
             }
+            
+            // Arrêter le scanner après détection réussie
+            setTimeout(() => {
+              Quagga.stop();
+              setCameraActive(false);
+              scannerInitialized.current = false;
+            }, 500);
           } else {
             toast({
               title: "⚠️ Code scanné",
-              description: `Code: ${code} - Produit non trouvé`,
+              description: `Code: ${code} - Produit non trouvé dans votre inventaire`,
               variant: "destructive",
             });
+            
+            // Continuer à scanner même si produit non trouvé
+            if (navigator.vibrate) {
+              navigator.vibrate([100, 50, 100]);
+            }
           }
-          
-          // Arrêter le scanner après détection
-          Quagga.stop();
-          setCameraActive(false);
-          scannerInitialized.current = false;
         }
       });
       
@@ -442,11 +470,21 @@ export default function Caisse() {
 
               {/* Zone de scan caméra QuaggaJS */}
               {cameraActive && (
-                <div className="mt-4 border-4 border-blue-500 rounded-lg overflow-hidden bg-black">
-                  <div
-                    id="scanner"
-                    className="w-full min-h-[350px] sm:min-h-[450px]"
-                  />
+                <div className="mt-4 relative">
+                  <div className="border-4 border-blue-500 rounded-lg overflow-hidden bg-black">
+                    <div
+                      id="scanner"
+                      className="w-full h-[400px] sm:h-[500px]"
+                      style={{ position: 'relative' }}
+                    >
+                      <canvas className="drawingBuffer" style={{ position: 'absolute', top: 0, left: 0 }}></canvas>
+                    </div>
+                  </div>
+                  <div className="mt-2 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Placez le code-barres dans le cadre
+                    </p>
+                  </div>
                 </div>
               )}
             </CardContent>

@@ -523,10 +523,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cleanup_expired_reset_codes: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_expired_reset_codes: { Args: never; Returns: undefined }
       generate_document_number: {
         Args: {
           _document_type: Database["public"]["Enums"]["document_type"]

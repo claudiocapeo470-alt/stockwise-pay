@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { useToast } from "@/hooks/use-toast";
-import { Html5Qrcode } from "html5-qrcode";
+import Quagga from "quagga";
 import { Camera, Scan, Plus, Minus, ShoppingCart, Printer, Trash2, Download, FileText } from "lucide-react";
 import jsPDF from "jspdf";
 
@@ -23,17 +23,22 @@ export default function Caisse() {
   const [scannerInput, setScannerInput] = useState("");
   const [cameraActive, setCameraActive] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
+  const [codeArticle, setCodeArticle] = useState("");
   const { products } = useProducts();
   const { addSale } = useSales();
   const { toast } = useToast();
-  const scannerRef = useRef<Html5Qrcode | null>(null);
-  const readerRef = useRef<HTMLDivElement>(null);
+  const scannerInitialized = useRef(false);
 
   // Nettoyage de la caméra à la fermeture
   useEffect(() => {
     return () => {
-      if (scannerRef.current && cameraActive) {
-        scannerRef.current.stop().catch(console.error);
+      if (cameraActive && scannerInitialized.current) {
+        try {
+          Quagga.stop();
+          scannerInitialized.current = false;
+        } catch (err) {
+          console.error("Error stopping Quagga:", err);
+        }
       }
     };
   }, [cameraActive]);
@@ -57,13 +62,13 @@ export default function Caisse() {
     setScannerInput("");
   };
 
-  // Activer la caméra pour scanner
+  // Activer la caméra pour scanner avec QuaggaJS
   const toggleCamera = async () => {
-    if (cameraActive && scannerRef.current) {
+    if (cameraActive) {
       try {
-        await scannerRef.current.stop();
+        Quagga.stop();
         setCameraActive(false);
-        scannerRef.current = null;
+        scannerInitialized.current = false;
       } catch (err) {
         console.error("Error stopping camera:", err);
       }
@@ -77,27 +82,77 @@ export default function Caisse() {
     await new Promise(resolve => setTimeout(resolve, 100));
 
     try {
-      const html5QrCode = new Html5Qrcode("reader");
-      scannerRef.current = html5QrCode;
+      Quagga.init({
+        inputStream: {
+          name: "Live",
+          type: "LiveStream",
+          target: document.querySelector('#scanner'),
+          constraints: {
+            facingMode: "environment",
+            width: { ideal: 640 },
+            height: { ideal: 480 }
+          }
+        },
+        decoder: {
+          readers: [
+            "ean_reader",        // EAN-13
+            "ean_8_reader",      // EAN-8
+            "code_128_reader",   // Code128
+            "upc_reader",        // UPC-A
+            "upc_e_reader"       // UPC-E (bonus)
+          ]
+        },
+        locate: true,
+        locator: {
+          patchSize: "medium",
+          halfSample: true
+        }
+      }, function(err) {
+        if (err) {
+          console.error("Erreur scanner :", err);
+          setCameraActive(false);
+          
+          let errorMsg = "Impossible d'accéder à la caméra";
+          
+          if (err.name === "NotAllowedError") {
+            errorMsg = "Veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur";
+          } else if (err.name === "NotFoundError") {
+            errorMsg = "Aucune caméra détectée sur cet appareil";
+          } else if (err.name === "NotReadableError") {
+            errorMsg = "La caméra est déjà utilisée par une autre application";
+          }
+          
+          toast({
+            title: "Erreur caméra",
+            description: errorMsg,
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        Quagga.start();
+        scannerInitialized.current = true;
+        
+        toast({
+          title: "📷 Caméra activée",
+          description: "Scannez un code-barres",
+        });
+      });
 
-      const config = {
-        fps: 10,
-        qrbox: { width: 300, height: 200 },
-        aspectRatio: 1.5,
-        formatsToSupport: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-      };
-
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        config,
-        (decodedText) => {
-          const code = decodedText.trim();
+      // Détecter les codes-barres
+      Quagga.onDetected((result) => {
+        if (result && result.codeResult && result.codeResult.code) {
+          const code = result.codeResult.code.trim();
+          setCodeArticle(code);
+          
+          // Chercher le produit correspondant
           const product = products.find(p => p.sku === code);
           
           if (product) {
             addToCart(product);
+            
             toast({
-              title: "✅ Produit scanné",
+              title: "✅ Code scanné avec succès",
               description: `${product.name} ajouté au panier`,
             });
             
@@ -107,41 +162,29 @@ export default function Caisse() {
             }
           } else {
             toast({
-              title: "❌ Produit non reconnu",
-              description: `Code: ${code}`,
+              title: "⚠️ Code scanné",
+              description: `Code: ${code} - Produit non trouvé`,
               variant: "destructive",
             });
           }
-        },
-        (errorMessage) => {
-          // Ignorer les erreurs de scan en cours
+          
+          // Arrêter le scanner après détection
+          Quagga.stop();
+          setCameraActive(false);
+          scannerInitialized.current = false;
         }
-      );
-      
-      toast({
-        title: "📷 Caméra activée",
-        description: "Scannez un code-barres",
       });
+      
     } catch (err: any) {
       console.error("Error starting camera:", err);
       setCameraActive(false);
-      
-      let errorMsg = "Impossible d'accéder à la caméra";
-      
-      if (err.name === "NotAllowedError") {
-        errorMsg = "Veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur";
-      } else if (err.name === "NotFoundError") {
-        errorMsg = "Aucune caméra détectée sur cet appareil";
-      } else if (err.name === "NotReadableError") {
-        errorMsg = "La caméra est déjà utilisée par une autre application";
-      }
+      scannerInitialized.current = false;
       
       toast({
-        title: "Erreur caméra",
-        description: errorMsg,
+        title: "Erreur",
+        description: "Impossible de démarrer le scanner",
         variant: "destructive",
       });
-      scannerRef.current = null;
     }
   };
 
@@ -346,10 +389,29 @@ export default function Caisse() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 sm:space-y-4">
+              {/* Code Article - Résultat du scan */}
+              <div>
+                <label htmlFor="codeArticle" className="text-xs sm:text-sm font-medium mb-2 block">
+                  Code Article
+                </label>
+                <Input
+                  id="codeArticle"
+                  value={codeArticle}
+                  onChange={(e) => setCodeArticle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && codeArticle.trim()) {
+                      handleScannerInput(codeArticle.trim());
+                    }
+                  }}
+                  placeholder="Code article scanné..."
+                  className="text-base sm:text-lg h-12 sm:h-14"
+                />
+              </div>
+
               {/* Scanner USB/Clavier */}
               <div>
                 <label className="text-xs sm:text-sm font-medium mb-2 block">
-                  Scanner code-barres
+                  Scanner code-barres manuel
                 </label>
                 <Input
                   id="scannerInput"
@@ -362,7 +424,6 @@ export default function Caisse() {
                   }}
                   placeholder="Scannez un produit..."
                   className="text-base sm:text-lg h-12 sm:h-14"
-                  autoFocus
                 />
               </div>
 
@@ -379,12 +440,11 @@ export default function Caisse() {
                 </Button>
               </div>
 
-              {/* Zone de scan caméra */}
+              {/* Zone de scan caméra QuaggaJS */}
               {cameraActive && (
                 <div className="mt-4 border-4 border-blue-500 rounded-lg overflow-hidden bg-black">
                   <div
-                    id="reader"
-                    ref={readerRef}
+                    id="scanner"
                     className="w-full min-h-[350px] sm:min-h-[450px]"
                   />
                 </div>

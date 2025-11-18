@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AppLayout } from "./components/layout/AppLayout";
+import { AdminLayout } from "./components/layout/AdminLayout";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -19,6 +20,14 @@ import AuthSimple from "./pages/AuthSimple";
 import InvoiceEditor from "./pages/InvoiceEditor";
 import InvoicePreview from "./pages/InvoicePreview";
 import Caisse from "./pages/Caisse";
+
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
+import AdminStocks from "./pages/admin/AdminStocks";
+import AdminNotifications from "./pages/admin/AdminNotifications";
+import AdminPerformance from "./pages/admin/AdminPerformance";
 
 import HomePage from "./pages/HomePage";
 import MentionsLegales from "./pages/MentionsLegales";
@@ -66,6 +75,23 @@ const App = () => (
               
               {/* Auth Route */}
               <Route path="/auth" element={<AuthSimple />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/*" element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <Routes>
+                      <Route path="/" element={<AdminDashboard />} />
+                      <Route path="/users" element={<AdminUsers />} />
+                      <Route path="/subscriptions" element={<AdminSubscriptions />} />
+                      <Route path="/stocks" element={<AdminStocks />} />
+                      <Route path="/notifications" element={<AdminNotifications />} />
+                      <Route path="/performance" element={<AdminPerformance />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </AdminLayout>
+                </ProtectedRoute>
+              } />
               
               {/* Protected App Routes */}
               <Route path="/app/*" element={

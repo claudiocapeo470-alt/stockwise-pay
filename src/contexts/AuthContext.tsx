@@ -102,14 +102,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             fetchProfile(session.user.id);
           }, 0);
           
-          // Redirect to dashboard after email confirmation
+          // Redirect after email confirmation
           if (event === 'SIGNED_IN' && window.location.pathname.includes('/auth')) {
-            setTimeout(() => {
+            setTimeout(async () => {
               // Forcer le mode jour
               localStorage.setItem('theme', 'light');
               document.documentElement.classList.remove('dark');
               document.documentElement.classList.add('light');
-              window.location.href = '/app';
+              
+              // Vérifier si l'utilisateur est admin
+              const { data: roleData } = await supabase
+                .from('user_roles')
+                .select('role')
+                .eq('user_id', session.user.id)
+                .maybeSingle();
+              
+              // Rediriger vers admin si admin, sinon vers app
+              if (roleData?.role === 'admin') {
+                window.location.href = '/admin';
+              } else {
+                window.location.href = '/app';
+              }
             }, 100);
           }
         } else {

@@ -46,3 +46,15 @@ verify_jwt = false
 
 [functions.send-confirmation-email]
 verify_jwt = false
+
+[functions.admin-toggle-user-status]
+verify_jwt = true
+
+[functions.admin-send-mass-email]
+verify_jwt = true
+
+[functions.admin-update-user]
+verify_jwt = true
+
+[functions.admin-update-subscription]
+verify_jwt = true

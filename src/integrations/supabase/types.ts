@@ -62,6 +62,42 @@ export type Database = {
         }
         Relationships: []
       }
+      email_history: {
+        Row: {
+          id: string
+          message: string
+          recipient_email: string | null
+          recipient_type: string
+          sent_at: string
+          sent_by: string
+          status: string
+          subject: string
+          total_recipients: number | null
+        }
+        Insert: {
+          id?: string
+          message: string
+          recipient_email?: string | null
+          recipient_type: string
+          sent_at?: string
+          sent_by: string
+          status?: string
+          subject: string
+          total_recipients?: number | null
+        }
+        Update: {
+          id?: string
+          message?: string
+          recipient_email?: string | null
+          recipient_type?: string
+          sent_at?: string
+          sent_by?: string
+          status?: string
+          subject?: string
+          total_recipients?: number | null
+        }
+        Relationships: []
+      }
       invoice_items: {
         Row: {
           created_at: string
@@ -365,6 +401,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_status: string
           avatar_url: string | null
           company_name: string | null
           created_at: string
@@ -376,6 +413,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          account_status?: string
           avatar_url?: string | null
           company_name?: string | null
           created_at?: string
@@ -387,6 +425,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          account_status?: string
           avatar_url?: string | null
           company_name?: string | null
           created_at?: string
@@ -452,6 +491,53 @@ export type Database = {
           },
         ]
       }
+      stock_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          movement_type: string
+          new_quantity: number
+          previous_quantity: number
+          product_id: string
+          quantity: number
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type: string
+          new_quantity: number
+          previous_quantity: number
+          product_id: string
+          quantity: number
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type?: string
+          new_quantity?: number
+          previous_quantity?: number
+          product_id?: string
+          quantity?: number
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscribers: {
         Row: {
           amount: number
@@ -494,6 +580,36 @@ export type Database = {
           subscription_end?: string | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_login_history: {
+        Row: {
+          email: string
+          id: string
+          ip_address: string | null
+          login_at: string
+          success: boolean
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          email: string
+          id?: string
+          ip_address?: string | null
+          login_at?: string
+          success?: boolean
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          ip_address?: string | null
+          login_at?: string
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }

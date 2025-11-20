@@ -162,6 +162,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       };
     }
     
+    // Redirection immédiate après connexion réussie
+    if (data?.user && !error) {
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', data.user.id)
+        .maybeSingle();
+      
+      // Forcer le mode jour
+      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+      
+      // Rediriger immédiatement selon le rôle
+      setTimeout(() => {
+        if (roleData?.role === 'admin') {
+          window.location.href = '/admin';
+        } else {
+          window.location.href = '/app';
+        }
+      }, 100);
+    }
+    
     return { error };
   };
 

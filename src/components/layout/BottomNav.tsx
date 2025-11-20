@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { BarChart3, Package, ShoppingCart, Receipt, Scan } from "lucide-react";
+import { BarChart3, Package, ShoppingCart, Receipt, Scan, TrendingUp } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/app", icon: BarChart3, label: "Accueil" },
@@ -7,6 +7,7 @@ const navigation = [
   { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks" },
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes" },
   { name: "Facturation", href: "/app/facturation", icon: Receipt, label: "Factures" },
+  { name: "Performance", href: "/app/performance", icon: TrendingUp, label: "Perf." },
 ];
 
 export function BottomNav() {

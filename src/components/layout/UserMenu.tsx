@@ -68,6 +68,11 @@ export function UserMenu() {
           <span>Profil</span>
         </DropdownMenuItem>
         
+        <DropdownMenuItem onClick={() => navigate('/app/settings')}>
+          <Settings className="mr-2 h-4 w-4" />
+          <span>Paramètres</span>
+        </DropdownMenuItem>
+        
         <DropdownMenuSeparator />
         
         <DropdownMenuItem

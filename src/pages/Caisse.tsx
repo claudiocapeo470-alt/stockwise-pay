@@ -216,7 +216,7 @@ export default function Caisse() {
     }
   };
 
-  // Ajouter au panier
+  // Ajouter au panier avec animation
   const addToCart = (product: any) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id);
@@ -235,6 +235,11 @@ export default function Caisse() {
         sku: product.sku,
       }];
     });
+
+    // Animation feedback
+    if (navigator.vibrate) {
+      navigator.vibrate(100);
+    }
   };
 
   // Modifier quantité
@@ -333,8 +338,13 @@ export default function Caisse() {
       
       toast({
         title: "✅ Vente validée",
-        description: "Stock mis à jour automatiquement",
+        description: "Impression du ticket en cours...",
       });
+
+      // Impression automatique après un court délai
+      setTimeout(() => {
+        printReceipt();
+      }, 500);
     } catch (error) {
       toast({
         title: "Erreur",
@@ -395,51 +405,33 @@ export default function Caisse() {
   };
 
   return (
-    <div className="space-y-4 p-2 sm:p-4 md:p-6 max-w-7xl mx-auto pb-20 md:pb-6">
+    <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 md:p-6 max-w-7xl mx-auto pb-20 md:pb-6">
       {/* En-tête */}
-      <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/40 rounded-lg p-3 sm:p-4 md:p-6">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-900 dark:text-blue-100 text-center">
+      <div className="bg-gradient-to-r from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/5 border-2 border-primary/20 rounded-xl p-4 sm:p-6 shadow-sm">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground text-center mb-2">
           🛒 Caisse Tactile
         </h2>
-        <p className="text-sm sm:text-base text-blue-700 dark:text-blue-300 text-center mt-2">
-          Scannez vos produits et validez la vente
+        <p className="text-sm sm:text-base text-muted-foreground text-center">
+          Scannez vos produits et validez la vente rapidement
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Panneau de scan */}
-        <div className="space-y-3 sm:space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <Scan className="h-4 w-4 sm:h-5 sm:w-5" />
-                Scanner
+        <div className="space-y-4">
+          <Card className="shadow-md border-2">
+            <CardHeader className="pb-4 border-b bg-muted/30">
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                <Scan className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                Scanner de Produits
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 sm:space-y-4">
-              {/* Code Article - Résultat du scan */}
-              <div>
-                <label htmlFor="codeArticle" className="text-xs sm:text-sm font-medium mb-2 block">
-                  Code Article
-                </label>
-                <Input
-                  id="codeArticle"
-                  value={codeArticle}
-                  onChange={(e) => setCodeArticle(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && codeArticle.trim()) {
-                      handleScannerInput(codeArticle.trim());
-                    }
-                  }}
-                  placeholder="Code article scanné..."
-                  className="text-base sm:text-lg h-12 sm:h-14"
-                />
-              </div>
-
-              {/* Scanner USB/Clavier */}
-              <div>
-                <label className="text-xs sm:text-sm font-medium mb-2 block">
-                  Scanner code-barres manuel
+            <CardContent className="space-y-4 pt-6">
+              {/* Scanner USB/Clavier - Principal */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <Scan className="h-4 w-4" />
+                  Scanner Code-Barres
                 </label>
                 <Input
                   id="scannerInput"
@@ -450,39 +442,52 @@ export default function Caisse() {
                       handleScannerInput(scannerInput.trim());
                     }
                   }}
-                  placeholder="Scannez un produit..."
-                  className="text-base sm:text-lg h-12 sm:h-14"
+                  placeholder="Scannez un produit ou saisissez le code..."
+                  className="text-base sm:text-lg h-14 sm:h-16 border-2 focus:border-primary transition-all"
+                  autoFocus
                 />
               </div>
 
               {/* Scanner caméra */}
-              <div>
+              <div className="pt-2">
                 <Button
                   onClick={toggleCamera}
-                  variant={cameraActive ? "destructive" : "outline"}
-                  className="w-full h-12 sm:h-14 text-base"
+                  variant={cameraActive ? "destructive" : "default"}
+                  className="w-full h-14 sm:h-16 text-base sm:text-lg font-semibold shadow-md hover:shadow-lg transition-all"
                   size="lg"
                 >
                   <Camera className="h-5 w-5 sm:h-6 sm:w-6 mr-2" />
-                  {cameraActive ? "Arrêter la caméra" : "Scanner avec caméra"}
+                  {cameraActive ? "🔴 Arrêter la Caméra" : "📷 Scanner avec Caméra"}
                 </Button>
               </div>
 
               {/* Zone de scan caméra QuaggaJS */}
               {cameraActive && (
-                <div className="mt-4 relative">
-                  <div className="border-4 border-blue-500 rounded-lg overflow-hidden bg-black">
+                <div className="mt-4 relative animate-fade-in">
+                  <div className="border-4 border-primary rounded-xl overflow-hidden bg-black shadow-xl relative">
+                    {/* Cadre de guidage */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                      <div className="border-4 border-green-400 rounded-lg w-[80%] h-[60%] shadow-[0_0_20px_rgba(74,222,128,0.5)]">
+                        <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-400 rounded-tl-lg"></div>
+                        <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-400 rounded-tr-lg"></div>
+                        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-400 rounded-bl-lg"></div>
+                        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-400 rounded-br-lg"></div>
+                      </div>
+                    </div>
                     <div
                       id="scanner"
-                      className="w-full h-[400px] sm:h-[500px]"
+                      className="w-full h-[350px] sm:h-[450px]"
                       style={{ position: 'relative' }}
                     >
                       <canvas className="drawingBuffer" style={{ position: 'absolute', top: 0, left: 0 }}></canvas>
                     </div>
                   </div>
-                  <div className="mt-2 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      Placez le code-barres dans le cadre
+                  <div className="mt-3 text-center space-y-1 bg-muted/50 rounded-lg p-3">
+                    <p className="text-sm font-medium text-foreground">
+                      📍 Placez le code-barres dans le cadre vert
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Tenez le code-barres stable pour une meilleure détection
                     </p>
                   </div>
                 </div>
@@ -510,52 +515,56 @@ export default function Caisse() {
                 </Button>
               )}
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               {cart.length === 0 ? (
-                <div className="text-center py-6 sm:py-8 text-muted-foreground">
-                  <ShoppingCart className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-2 opacity-20" />
-                  <p className="text-sm">Panier vide</p>
+                <div className="text-center py-12 text-muted-foreground">
+                  <ShoppingCart className="h-16 w-16 mx-auto mb-4 opacity-20" />
+                  <p className="text-base font-medium">Panier vide</p>
+                  <p className="text-sm mt-1">Scannez des produits pour commencer</p>
                 </div>
               ) : (
-                <div className="space-y-2 sm:space-y-3 max-h-[50vh] overflow-y-auto">
+                <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
                   {cart.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg"
+                      className="flex items-center justify-between p-4 bg-background border-2 rounded-xl hover:shadow-md transition-all animate-scale-in"
                     >
-                      <div className="flex-1 min-w-0 pr-2">
-                        <p className="font-medium truncate text-sm sm:text-base">{item.name}</p>
-                        <p className="text-xs sm:text-sm text-muted-foreground">
+                      <div className="flex-1 min-w-0 pr-3">
+                        <p className="font-semibold truncate text-base">{item.name}</p>
+                        <p className="text-sm text-muted-foreground font-medium mt-0.5">
                           {item.price.toLocaleString()} FCFA × {item.quantity}
                         </p>
+                        <p className="text-sm font-bold text-primary mt-1">
+                          = {(item.price * item.quantity).toLocaleString()} FCFA
+                        </p>
                       </div>
-                      <div className="flex items-center gap-1 sm:gap-2">
+                      <div className="flex items-center gap-2">
                         <Button
                           size="icon"
                           variant="outline"
                           onClick={() => updateQuantity(item.id, -1)}
-                          className="h-8 w-8 sm:h-9 sm:w-9 touch-manipulation"
+                          className="h-10 w-10 border-2 hover:bg-destructive/10 hover:border-destructive transition-all"
                         >
-                          <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <Minus className="h-4 w-4" />
                         </Button>
-                        <Badge variant="secondary" className="min-w-[2rem] sm:min-w-[2.5rem] text-center text-sm">
+                        <Badge variant="secondary" className="min-w-[3rem] text-center text-base font-bold py-2">
                           {item.quantity}
                         </Badge>
                         <Button
                           size="icon"
                           variant="outline"
                           onClick={() => updateQuantity(item.id, 1)}
-                          className="h-8 w-8 sm:h-9 sm:w-9 touch-manipulation"
+                          className="h-10 w-10 border-2 hover:bg-primary/10 hover:border-primary transition-all"
                         >
-                          <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <Plus className="h-4 w-4" />
                         </Button>
                         <Button
                           size="icon"
-                          variant="ghost"
+                          variant="outline"
                           onClick={() => removeFromCart(item.id)}
-                          className="h-8 w-8 sm:h-9 sm:w-9 text-destructive touch-manipulation"
+                          className="h-10 w-10 text-destructive border-2 border-destructive/20 hover:bg-destructive hover:text-destructive-foreground transition-all"
                         >
-                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -567,22 +576,34 @@ export default function Caisse() {
 
           {/* Total et validation */}
           {cart.length > 0 && (
-            <Card className="bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40">
-              <CardContent className="pt-4 sm:pt-6">
-                <div className="flex justify-between items-center mb-3 sm:mb-4">
-                  <span className="text-lg sm:text-xl font-semibold">TOTAL</span>
-                  <span className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">
-                    {total.toLocaleString()} FCFA
+            <Card className="bg-gradient-to-br from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/5 border-2 border-primary/30 shadow-lg">
+              <CardContent className="pt-6 space-y-4">
+                <div className="flex justify-between items-center p-4 bg-background/50 rounded-xl border-2">
+                  <span className="text-xl font-bold">TOTAL</span>
+                  <span className="text-3xl sm:text-4xl font-bold text-primary">
+                    {total.toLocaleString()} <span className="text-lg">FCFA</span>
                   </span>
                 </div>
                 <Button
                   onClick={validateSale}
-                  className="w-full bg-green-600 hover:bg-green-700 h-12 sm:h-14 text-base sm:text-lg touch-manipulation"
+                  className="w-full h-16 text-lg font-bold shadow-lg hover:shadow-xl transition-all bg-primary hover:bg-primary/90"
                   size="lg"
                   disabled={addSale.isPending}
                 >
-                  ✅ Valider la vente
+                  {addSale.isPending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Validation en cours...
+                    </>
+                  ) : (
+                    <>
+                      ✅ Valider la Vente & Imprimer
+                    </>
+                  )}
                 </Button>
+                <p className="text-xs text-center text-muted-foreground">
+                  Le ticket sera imprimé automatiquement
+                </p>
               </CardContent>
             </Card>
           )}

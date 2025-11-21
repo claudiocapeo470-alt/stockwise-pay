@@ -76,15 +76,10 @@ export default function Paiements() {
     return (
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Gestion des paiements</h1>
-            <p className="text-muted-foreground">
-              Suivez et gérez tous vos paiements clients
-            </p>
-          </div>
-          
+        <div className="bg-gradient-to-r from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/5 border-2 border-primary/20 rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center gap-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Gestion des paiements</h2>
           <AddPaymentDialog />
+          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">Suivez et gérez tous vos paiements clients</p>
         </div>
 
         {/* Empty State */}
@@ -100,12 +95,10 @@ export default function Paiements() {
   return (
     <div className="space-y-6">
       {/* Header Block with Description and Button */}
-      <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/40 rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-2">Gestion des paiements</h2>
-          <p className="text-blue-700 dark:text-blue-300">Suivez et gérez tous vos paiements clients</p>
-        </div>
+      <div className="bg-gradient-to-r from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/5 border-2 border-primary/20 rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center gap-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Gestion des paiements</h2>
         <AddPaymentDialog />
+        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">Suivez et gérez tous vos paiements clients</p>
       </div>
 
       {/* Stats Cards */}

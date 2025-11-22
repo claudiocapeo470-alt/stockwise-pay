@@ -342,68 +342,69 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Modern Dark Theme - Premium SaaS Design - WCAG AA Compliant */
-    /* Background - Deep gradient with proper contrast */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 96%;
+    /* Stocknix Premium Theme - Based on Official Logo Colors */
+    /* Background - Dark Navy Base */
+    --background: 221 65% 13%;
+    --foreground: 0 0% 98%;
 
-    /* Cards with enhanced depth and contrast */
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 96%;
+    /* Cards with enhanced depth */
+    --card: 221 65% 16%;
+    --card-foreground: 0 0% 98%;
 
-    /* Popovers with better visibility */
-    --popover: 0 0% 11%;
-    --popover-foreground: 0 0% 96%;
+    /* Popovers */
+    --popover: 221 65% 16%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Primary - Bright Electric Blue for optimal contrast */
-    --primary: 206 100% 55%;
+    /* Primary - Electric Blue (Stocknix Blue) */
+    --primary: 199 89% 56%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Enhanced contrast surface */
-    --secondary: 0 0% 16%;
-    --secondary-foreground: 0 0% 93%;
+    /* Secondary - Turquoise/Teal (Stocknix Check Color) */
+    --secondary: 168 60% 51%;
+    --secondary-foreground: 221 65% 13%;
 
-    /* Muted areas - Better readability */
-    --muted: 0 0% 14%;
+    /* Muted areas */
+    --muted: 221 50% 20%;
     --muted-foreground: 0 0% 72%;
 
-    /* Accent - Vibrant Purple with high contrast */
-    --accent: 258 84% 70%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Turquoise Bright */
+    --accent: 168 60% 51%;
+    --accent-foreground: 221 65% 13%;
 
-    /* Destructive - High contrast red */
-    --destructive: 0 90% 65%;
+    /* Destructive - Red Alert */
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Success - Enhanced mint green */
-    --success: 160 100% 55%;
-    --success-foreground: 0 0% 4%;
+    /* Success - Turquoise (matching brand) */
+    --success: 168 60% 51%;
+    --success-foreground: 221 65% 13%;
 
-    /* Warning - High visibility orange */
+    /* Warning - Amber */
     --warning: 38 100% 60%;
-    --warning-foreground: 0 0% 4%;
+    --warning-foreground: 221 65% 13%;
 
-    /* Borders and inputs - Enhanced visibility */
-    --border: 0 0% 22%;
-    --input: 0 0% 16%;
-    --ring: 206 100% 55%;
+    /* Borders and inputs */
+    --border: 221 50% 30%;
+    --input: 221 50% 20%;
+    --ring: 199 89% 56%;
 
-    /* Premium gradients with enhanced contrast */
-    --gradient-primary: linear-gradient(135deg, hsl(0 0% 4%) 0%, hsl(0 0% 9%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(206 100% 55%) 0%, hsl(258 84% 70%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(160 100% 55%) 0%, hsl(160 100% 45%) 100%);
+    /* Stocknix Premium Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(221 65% 13%) 0%, hsl(221 65% 18%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(199 89% 56%) 0%, hsl(168 60% 51%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(168 60% 51%) 0%, hsl(168 60% 45%) 100%);
     --gradient-warning: linear-gradient(135deg, hsl(38 100% 60%) 0%, hsl(25 95% 58%) 100%);
-    --gradient-surface: linear-gradient(135deg, hsl(0 0% 9%) 0%, hsl(0 0% 14%) 100%);
-    --gradient-dark-animated: linear-gradient(135deg, hsl(0 0% 2%) 0%, hsl(0 0% 8%) 50%, hsl(0 0% 4%) 100%);
-    --gradient-neon: linear-gradient(135deg, hsl(206 100% 55%) 0%, hsl(258 84% 70%) 50%, hsl(180 100% 50%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(221 65% 16%) 0%, hsl(221 50% 20%) 100%);
+    --gradient-dark-animated: linear-gradient(135deg, hsl(221 65% 10%) 0%, hsl(221 65% 15%) 50%, hsl(221 65% 13%) 100%);
+    --gradient-neon: linear-gradient(135deg, hsl(199 89% 56%) 0%, hsl(168 60% 51%) 50%, hsl(180 100% 50%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(221 65% 13%) 0%, hsl(199 89% 20%) 50%, hsl(168 60% 20%) 100%);
     
-    /* Enhanced shadows with better visibility */
-    --shadow-soft: 0 1px 3px 0 hsl(0 0% 0% / 0.4), 0 1px 2px -1px hsl(0 0% 0% / 0.4);
-    --shadow-medium: 0 4px 6px -1px hsl(0 0% 0% / 0.5), 0 2px 4px -2px hsl(0 0% 0% / 0.5);
-    --shadow-large: 0 10px 15px -3px hsl(0 0% 0% / 0.6), 0 4px 6px -4px hsl(0 0% 0% / 0.6);
-    --shadow-glow: 0 0 20px hsl(206 100% 55% / 0.4);
-    --shadow-neon: 0 0 30px hsl(206 100% 55% / 0.6), 0 0 60px hsl(206 100% 55% / 0.3);
-    --shadow-purple-glow: 0 0 25px hsl(258 84% 70% / 0.5), 0 0 50px hsl(258 84% 70% / 0.2);
+    /* Stocknix Shadows with brand colors */
+    --shadow-soft: 0 1px 3px 0 hsl(221 65% 5% / 0.5), 0 1px 2px -1px hsl(221 65% 5% / 0.5);
+    --shadow-medium: 0 4px 6px -1px hsl(221 65% 5% / 0.6), 0 2px 4px -2px hsl(221 65% 5% / 0.6);
+    --shadow-large: 0 10px 15px -3px hsl(221 65% 5% / 0.7), 0 4px 6px -4px hsl(221 65% 5% / 0.7);
+    --shadow-glow: 0 0 20px hsl(199 89% 56% / 0.4);
+    --shadow-neon: 0 0 30px hsl(199 89% 56% / 0.6), 0 0 60px hsl(199 89% 56% / 0.3);
+    --shadow-turquoise-glow: 0 0 25px hsl(168 60% 51% / 0.5), 0 0 50px hsl(168 60% 51% / 0.2);
     
     /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -450,88 +451,88 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    /* Sidebar - Enhanced contrast and depth */
-    --sidebar-background: 0 0% 2%;
-    --sidebar-foreground: 0 0% 93%;
-    --sidebar-primary: 206 100% 55%;
+    /* Sidebar - Stocknix Navy */
+    --sidebar-background: 221 65% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 199 89% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 0 0% 93%;
-    --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 206 100% 55%;
+    --sidebar-accent: 221 55% 18%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 221 50% 25%;
+    --sidebar-ring: 199 89% 56%;
   }
 
   .dark {
-    /* Enhanced dark theme with improved contrast */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 96%;
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 96%;
-    --popover: 0 0% 11%;
-    --popover-foreground: 0 0% 96%;
-    --primary: 206 100% 55%;
+    /* Stocknix Dark Theme - Official Colors */
+    --background: 221 65% 13%;
+    --foreground: 0 0% 98%;
+    --card: 221 65% 16%;
+    --card-foreground: 0 0% 98%;
+    --popover: 221 65% 16%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 199 89% 56%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 16%;
-    --secondary-foreground: 0 0% 93%;
-    --muted: 0 0% 14%;
+    --secondary: 168 60% 51%;
+    --secondary-foreground: 221 65% 13%;
+    --muted: 221 50% 20%;
     --muted-foreground: 0 0% 72%;
-    --accent: 258 84% 70%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 90% 65%;
+    --accent: 168 60% 51%;
+    --accent-foreground: 221 65% 13%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --success: 160 100% 55%;
-    --success-foreground: 0 0% 4%;
+    --success: 168 60% 51%;
+    --success-foreground: 221 65% 13%;
     --warning: 38 100% 60%;
-    --warning-foreground: 0 0% 4%;
-    --border: 0 0% 22%;
-    --input: 0 0% 16%;
-    --ring: 206 100% 55%;
-    --sidebar-background: 0 0% 2%;
-    --sidebar-foreground: 0 0% 93%;
-    --sidebar-primary: 206 100% 55%;
+    --warning-foreground: 221 65% 13%;
+    --border: 221 50% 30%;
+    --input: 221 50% 20%;
+    --ring: 199 89% 56%;
+    --sidebar-background: 221 65% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 199 89% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 0 0% 93%;
-    --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 206 100% 55%;
+    --sidebar-accent: 221 55% 18%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 221 50% 25%;
+    --sidebar-ring: 199 89% 56%;
   }
 
-  /* Light theme - White background with Electric Blue accents */
+  /* Light theme - White background with Stocknix Blue accents */
   .light {
     /* Pure white background */
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 221 65% 13%;
     
     /* Cards - Pure white with borders */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 221 65% 13%;
     
     /* Popovers */
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 221 65% 13%;
     
-    /* Electric Blue primary color - #3B82F6 equivalent */
-    --primary: 217 91% 60%;
+    /* Stocknix Blue primary color */
+    --primary: 199 89% 56%;
     --primary-foreground: 0 0% 100%;
     
-    /* Very light gray secondary surfaces */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 222 47% 11%;
+    /* Light turquoise secondary */
+    --secondary: 168 60% 96%;
+    --secondary-foreground: 221 65% 13%;
     
     /* Muted gray areas */
     --muted: 0 0% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 221 30% 40%;
     
-    /* Light gray accent */
-    --accent: 0 0% 96%;
-    --accent-foreground: 222 47% 11%;
+    /* Turquoise accent */
+    --accent: 168 60% 51%;
+    --accent-foreground: 0 0% 100%;
     
-    /* Error - Bright red #FF4D4F equivalent */
+    /* Error - Red Alert */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    /* Success - Green #28C76F equivalent */
-    --success: 142 76% 36%;
+    /* Success - Turquoise */
+    --success: 168 60% 51%;
     --success-foreground: 0 0% 100%;
     
     /* Warning - Orange */
@@ -541,22 +542,23 @@ All colors MUST be HSL.
     /* Borders - Light gray */
     --border: 0 0% 90%;
     --input: 0 0% 100%;
-    --ring: 217 91% 60%;
+    --ring: 199 89% 56%;
     
     /* Sidebar - Pure white */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-foreground: 221 65% 13%;
+    --sidebar-primary: 199 89% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-accent-foreground: 221 65% 13%;
     --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 199 89% 56%;
     
     /* Light theme specific gradients - White base */
     --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 91% 50%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(199 89% 56%) 0%, hsl(168 60% 51%) 100%);
     --gradient-surface: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(199 89% 95%) 50%, hsl(168 60% 95%) 100%);
   }
 }
 

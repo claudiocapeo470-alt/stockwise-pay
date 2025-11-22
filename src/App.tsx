@@ -31,6 +31,9 @@ import AdminPerformance from "./pages/admin/AdminPerformance";
 
 import HomePage from "./pages/HomePage";
 import MentionsLegales from "./pages/MentionsLegales";
+import Tarifs from "./pages/Tarifs";
+import Fonctionnalites from "./pages/Fonctionnalites";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -70,7 +73,11 @@ const App = () => (
               {/* Landing Page */}
               <Route path="/" element={<HomePage />} />
               
-              {/* Legal Pages */}
+              {/* Public Pages */}
+              <Route path="/tarifs" element={<Tarifs />} />
+              <Route path="/fonctionnalites" element={<Fonctionnalites />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/legal" element={<MentionsLegales />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               
               {/* Auth Route */}

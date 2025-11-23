@@ -6,240 +6,180 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { 
   BarChart3, Package, CreditCard, TrendingUp, Users, Shield, 
   Smartphone, ArrowRight, CheckCircle, Menu, X, Star, 
-  Zap, Clock, Target, Store, ShoppingBag, Building2,
-  Check, Sparkles, ChevronDown
+  Zap, Clock, Store, ShoppingBag, Building2,
+  Check, Sparkles, ChevronDown, Bell, FileText, Scan,
+  Download, Upload, AlertTriangle, DollarSign
 } from "lucide-react";
 import { useState } from "react";
 import stocknixLogo from '@/assets/stocknix-logo.png';
-import teamWorkingInventory from '@/assets/team-working-inventory.jpg';
+import dashboardHero from '@/assets/3d-dashboard-hero.png';
 import inventoryFeature from '@/assets/3d-inventory-feature.png';
 import analyticsFeature from '@/assets/3d-analytics-feature.png';
 import paymentFeature from '@/assets/3d-payment-feature.png';
-import supportSimple from '@/assets/support-simple.png';
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const features = [
+  const mainFeatures = [
     {
       icon: Package,
       title: "Gestion des Stocks",
-      description: "Suivez vos inventaires en temps réel avec des alertes automatiques de réapprovisionnement et un contrôle total sur vos produits",
-      image: inventoryFeature,
-      benefits: ["Alertes de stock bas", "Suivi en temps réel", "Import/Export Excel", "Code-barres"]
+      description: "Suivi en temps réel, alertes de stock bas, import/export Excel/PDF/CSV, gestion code-barres, contrôle complet des produits",
+      items: ["Suivi en temps réel", "Alertes de stock bas", "Import/Export Excel, PDF, CSV", "Scanner Code-barres", "Contrôle total produits"]
     },
     {
-      icon: TrendingUp,
+      icon: ShoppingBag,
+      title: "Caisse & POS",
+      description: "Encaissement rapide, gestion quantités/remises, paiements multiples (Mobile Money, espèces, cartes), tickets automatiques",
+      items: ["Caisse tactile rapide", "Gestion remises", "Multi-paiements", "Impression tickets", "Interface intuitive"]
+    },
+    {
+      icon: FileText,
       title: "Ventes & Facturation",
-      description: "Créez des devis et factures professionnels en quelques clics avec un suivi complet de vos transactions",
-      image: analyticsFeature,
-      benefits: ["Devis & Factures", "Historique complet", "Exports PDF", "Multi-devises"]
+      description: "Création de devis et factures professionnels, suivi complet des transactions, export PDF automatique",
+      items: ["Devis personnalisés", "Factures pro", "Suivi transactions", "Export PDF", "Historique complet"]
     },
     {
-      icon: CreditCard,
+      icon: DollarSign,
       title: "Gestion des Paiements",
-      description: "Suivez tous vos paiements clients et fournisseurs avec un tableau de bord centralisé et des rappels automatiques",
-      image: paymentFeature,
-      benefits: ["Suivi en temps réel", "Rappels automatiques", "Multiple devises", "Rapprochement bancaire"]
+      description: "Historique complet, multi-méthodes de paiement, statuts en temps réel, rappels automatiques",
+      items: ["Historique détaillé", "Multi-méthodes", "Statuts temps réel", "Rappels auto", "Rapprochement bancaire"]
     },
     {
       icon: BarChart3,
       title: "Rapports & Analytics",
-      description: "Analysez votre activité avec des rapports détaillés, des graphiques interactifs et des prévisions intelligentes",
-      image: analyticsFeature,
-      benefits: ["Graphiques en temps réel", "Exports personnalisés", "Métriques clés", "Prévisions IA"]
+      description: "Rapports détaillés, graphiques interactifs, prévisions intelligentes, analyse activité commerciale",
+      items: ["Graphiques temps réel", "Rapports détaillés", "Prévisions IA", "Analytics avancés", "Exports personnalisés"]
+    },
+    {
+      icon: Bell,
+      title: "Alertes Temps Réel",
+      description: "Notifications automatiques pour stock bas, ruptures, activité caisse, mouvements produits",
+      items: ["Alertes stock bas", "Notifications rupture", "Activité caisse", "Mouvements stock", "Alertes personnalisées"]
     }
   ];
 
   const targetAudience = [
     {
       icon: Store,
-      title: "Boutiques & Magasins",
-      description: "Gérez votre commerce de détail avec efficacité et professionnalisme"
+      title: "Supermarchés & Boutiques",
+      description: "Gérez votre supermarché ou boutique avec efficacité. Stock temps réel, caisse rapide, facturation automatique."
     },
     {
       icon: ShoppingBag,
-      title: "E-commerce",
-      description: "Suivez vos ventes en ligne et synchronisez vos stocks automatiquement"
+      title: "Magasins & Commerce",
+      description: "Solution complète pour magasins de détail. Suivez vos ventes, gérez vos stocks, fidélisez vos clients."
     },
     {
       icon: Building2,
-      title: "PME/TPE",
-      description: "Solution complète adaptée aux besoins des petites et moyennes entreprises"
+      title: "PME & TPE",
+      description: "Plateforme adaptée aux PME/TPE. Gestion complète de votre activité commerciale avec analytics avancés."
     },
     {
       icon: Users,
-      title: "Grossistes",
-      description: "Gérez vos commandes en gros et vos relations fournisseurs"
+      title: "Grossistes & Distributeurs",
+      description: "Gérez vos commandes en gros, suivez vos fournisseurs, optimisez votre inventaire et vos marges."
     }
   ];
 
   const benefits = [
     {
       icon: Zap,
-      title: "Simplicité d'utilisation",
-      description: "Interface intuitive et moderne, aucune formation nécessaire"
+      title: "Rapide & Efficace",
+      description: "Interface ultra-rapide, caisse tactile, scanner code-barres intégré"
     },
     {
       icon: Clock,
-      title: "Gain de temps massif",
-      description: "Automatisez vos tâches répétitives et gagnez jusqu'à 15h par semaine"
+      title: "Gain de Temps",
+      description: "Automatisez vos tâches, alertes intelligentes, import/export massif"
     },
     {
       icon: Shield,
-      title: "Sécurité maximale",
-      description: "Vos données sont cryptées et sauvegardées automatiquement dans le cloud"
+      title: "100% Sécurisé",
+      description: "Données chiffrées, sauvegardes automatiques, conformité RGPD"
     },
     {
       icon: Smartphone,
-      title: "Accessible partout",
-      description: "Application 100% responsive - mobile, tablette et ordinateur"
+      title: "Multi-plateforme",
+      description: "PC, Mac, tablettes, smartphones - accessible partout"
     }
-  ];
-
-  const testimonials = [
-    {
-      name: "Aminata Diallo",
-      role: "Gérante de boutique, Dakar",
-      content: "Stocknix a transformé ma gestion quotidienne. Je sais exactement où j'en suis avec mes stocks et mes ventes. Un gain de temps incroyable !",
-      rating: 5,
-      avatar: "AD"
-    },
-    {
-      name: "Kouassi Jean",
-      role: "Propriétaire de magasin, Abidjan",
-      content: "Depuis que j'utilise Stocknix, je n'ai plus de problèmes de rupture de stock. Les alertes automatiques sont parfaites !",
-      rating: 5,
-      avatar: "KJ"
-    },
-    {
-      name: "Fatou Mbaye",
-      role: "Entrepreneur, Bamako",
-      content: "Interface simple et efficace. Même sans compétences techniques, j'ai pu démarrer en quelques minutes. Je recommande !",
-      rating: 5,
-      avatar: "FM"
-    },
-    {
-      name: "Ibrahim Touré",
-      role: "Grossiste, Lomé",
-      content: "La gestion multi-devises et les rapports détaillés m'ont permis de mieux piloter mon activité. Excellent outil !",
-      rating: 5,
-      avatar: "IT"
-    },
-    {
-      name: "Mariam Keita",
-      role: "Boutique e-commerce, Ouagadougou",
-      content: "Le suivi des paiements et la facturation automatique m'ont fait gagner énormément de temps. Support réactif en plus !",
-      rating: 5,
-      avatar: "MK"
-    },
-    {
-      name: "Youssouf Cissé",
-      role: "Pharmacie, Niamey",
-      content: "Idéal pour gérer mes stocks de médicaments avec les dates de péremption. La solution qu'il me fallait !",
-      rating: 5,
-      avatar: "YC"
-    }
-  ];
-
-  const pricingFeatures = [
-    "1 mois d'essai gratuit complet",
-    "Gestion illimitée des produits",
-    "Ventes et factures illimitées",
-    "Rapports et analytics en temps réel",
-    "Support client prioritaire 24/7",
-    "Sauvegardes automatiques quotidiennes",
-    "Mises à jour gratuites à vie",
-    "Accès mobile, tablette et desktop"
   ];
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
+    <div className="min-h-screen bg-background">
       
-      {/* Navigation - Fixed Header */}
-      <header className="border-b border-gray-100 bg-white/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <img src={stocknixLogo} alt="Stocknix" className="h-10 sm:h-12" />
-              <span className="text-2xl sm:text-3xl font-black text-black dark:text-white font-futura">
-                Stocknix
+      {/* Navigation */}
+      <header className="border-b border-border bg-background/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img src={stocknixLogo} alt="Stocknix Logo" className="h-8 sm:h-10" />
+              <span className="text-xl sm:text-2xl font-black text-foreground">
+                STOCKNIX
               </span>
             </div>
 
-            {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
-              <a href="#accueil" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
-                Accueil
-              </a>
-              <a href="#fonctionnalites" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
+              <a href="#fonctionnalites" className="text-muted-foreground hover:text-primary transition-colors font-medium">
                 Fonctionnalités
               </a>
-              <a href="#pour-qui" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
+              <a href="#pour-qui" className="text-muted-foreground hover:text-primary transition-colors font-medium">
                 Pour qui ?
               </a>
-              <a href="#tarifs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
+              <a href="/tarifs" className="text-muted-foreground hover:text-primary transition-colors font-medium">
                 Tarifs
               </a>
-              <a href="#avis" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">
-                Avis
+              <a href="/faq" className="text-muted-foreground hover:text-primary transition-colors font-medium">
+                FAQ
               </a>
             </nav>
 
-            {/* CTA Buttons */}
             <div className="hidden lg:flex items-center gap-3">
               <Button 
                 variant="ghost" 
-                onClick={() => navigate('/auth')} 
-                className="text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                onClick={() => navigate('/auth')}
               >
-                Se connecter
+                Connexion
               </Button>
               <Button 
                 onClick={() => navigate('/auth')} 
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30"
+                className="bg-primary hover:bg-primary/90"
               >
-                Essai gratuit
+                Essai Gratuit
                 <Sparkles className="ml-2 h-4 w-4" />
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
             <button 
-              className="lg:hidden p-2 text-gray-700" 
+              className="lg:hidden p-2" 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
 
-          {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="lg:hidden py-6 border-t border-gray-100">
-              <nav className="flex flex-col space-y-4">
-                <a href="#accueil" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
-                  Accueil
-                </a>
-                <a href="#fonctionnalites" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+            <div className="lg:hidden py-4 border-t border-border">
+              <nav className="flex flex-col space-y-3">
+                <a href="#fonctionnalites" className="text-muted-foreground hover:text-primary transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>
                   Fonctionnalités
                 </a>
-                <a href="#pour-qui" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                <a href="#pour-qui" className="text-muted-foreground hover:text-primary transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>
                   Pour qui ?
                 </a>
-                <a href="#tarifs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                <a href="/tarifs" className="text-muted-foreground hover:text-primary transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>
                   Tarifs
                 </a>
-                <a href="#avis" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
-                  Avis
+                <a href="/faq" className="text-muted-foreground hover:text-primary transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>
+                  FAQ
                 </a>
-                <div className="flex flex-col gap-3 pt-4">
+                <div className="flex flex-col gap-2 pt-3">
                   <Button variant="outline" onClick={() => navigate('/auth')} className="w-full">
-                    Se connecter
+                    Connexion
                   </Button>
-                  <Button onClick={() => navigate('/auth')} className="w-full bg-blue-600 text-white">
-                    Essai gratuit
+                  <Button onClick={() => navigate('/auth')} className="w-full">
+                    Essai Gratuit
                   </Button>
                 </div>
               </nav>
@@ -248,356 +188,130 @@ const HomePage = () => {
         </div>
       </header>
 
-      {/* Hero Section - Background Image */}
-      <section id="accueil" className="relative min-h-[90vh] flex items-center overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={teamWorkingInventory} 
-            alt="Équipe PME utilisant Stocknix" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/95 via-blue-800/90 to-blue-900/70"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-blue-900/40"></div>
-        </div>
-        
-        <div className="container mx-auto px-6 lg:px-8 relative z-10 py-20">
+      {/* Hero Section */}
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-gradient-to-br from-primary/10 via-background to-primary/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 sm:py-20">
           <div className="max-w-7xl mx-auto">
             <ScrollReveal>
-              <div className="max-w-2xl">
-                {/* Badge */}
-                <Badge className="bg-white/20 text-white border-0 px-6 py-3 text-sm font-semibold backdrop-blur-md inline-flex items-center gap-2 mb-8">
-                  <Sparkles className="h-4 w-4" />
-                  1 mois gratuit • Sans engagement
-                </Badge>
-                
-                {/* Title */}
-                <h1 className="font-extrabold text-white text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight mb-8">
-                  Transformez votre business en quelques clics
-                </h1>
-                
-                {/* Description */}
-                <p className="text-white/95 text-lg sm:text-xl lg:text-2xl leading-relaxed mb-10">
-                  Gérez stocks, ventes et finances intelligemment. La plateforme moderne qui accompagne votre croissance.
-                </p>
-                
-                {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-16">
-                  <Button 
-                    size="lg" 
-                    onClick={() => navigate('/auth')} 
-                    className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-lg px-10 py-7 rounded-xl font-bold transition-all hover:scale-105"
-                  >
-                    Démarrer gratuitement
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    onClick={() => navigate('/auth')}
-                    className="text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 px-10 py-7 rounded-xl bg-white/10 backdrop-blur-sm transition-all hover:scale-105"
-                  >
-                    Voir la démo
-                  </Button>
-                </div>
-              </div>
-            </ScrollReveal>
-
-            {/* Stats Section - Bottom */}
-            <ScrollReveal delay={200}>
-              <div className="grid grid-cols-3 gap-8 max-w-4xl bg-white/10 backdrop-blur-lg rounded-2xl p-8 lg:p-10 border border-white/20">
-                <div className="text-center">
-                  <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-3">500+</div>
-                  <div className="text-sm sm:text-base text-white/90 font-medium">Entreprises</div>
-                </div>
-                <div className="text-center border-l border-r border-white/30">
-                  <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-3">4.9/5</div>
-                  <div className="text-sm sm:text-base text-white/90 font-medium flex items-center gap-2 justify-center">
-                    <Star className="h-5 w-5 fill-amber-300 text-amber-300" />
-                    Satisfaction
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-3">24/7</div>
-                  <div className="text-sm sm:text-base text-white/90 font-medium">Support</div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce z-20">
-          <span className="text-white/90 text-sm font-medium">Découvrir</span>
-          <ChevronDown className="h-6 w-6 text-white/90" />
-        </div>
-      </section>
-
-      {/* Features Section - White Background */}
-      <section id="fonctionnalites" className="py-24 lg:py-32 bg-white relative">
-        <div className="container mx-auto px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <Badge className="mb-6 bg-blue-100 text-blue-700 border-0 px-5 py-2.5 text-sm font-semibold">
-                Fonctionnalités
-              </Badge>
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                Tout ce dont vous avez besoin
-              </h2>
-              <p className="text-xl text-gray-600 leading-relaxed">
-                Des outils puissants et intuitifs pour gérer votre entreprise avec simplicité et efficacité
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="space-y-32 max-w-7xl mx-auto">
-            {features.map((feature, index) => (
-              <ScrollReveal key={index} delay={index * 100}>
-                <div className={`grid lg:grid-cols-2 gap-12 lg:gap-16 items-center ${
-                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                }`}>
-                  {/* Content */}
-                  <div className={`flex flex-col justify-center ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-                    <div className="space-y-6">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl">
-                        <feature.icon className="h-8 w-8 text-blue-600" />
-                      </div>
-                      <h3 className="text-3xl sm:text-4xl font-bold text-gray-900">
-                        {feature.title}
-                      </h3>
-                      <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
-                        {feature.description}
-                      </p>
-                      <div className="space-y-4 pt-4">
-                        {feature.benefits.map((benefit, i) => (
-                          <div key={i} className="flex items-center gap-4">
-                            <div className="flex-shrink-0 w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center">
-                              <Check className="h-4 w-4 text-white" />
-                            </div>
-                            <span className="text-gray-700 text-base sm:text-lg font-medium">{benefit}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Image */}
-                  <div className={`flex items-center justify-center ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                    <div className="relative w-full max-w-xl p-8 bg-gradient-to-br from-gray-50 to-blue-50/50 rounded-3xl">
-                      <img 
-                        src={feature.image} 
-                        alt={feature.title} 
-                        className="relative z-10 w-full h-auto rounded-2xl shadow-2xl"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Target Audience Section - Black Background */}
-      <section id="pour-qui" className="py-24 lg:py-32 bg-gradient-to-b from-gray-900 via-black to-gray-900 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1),transparent_70%)]"></div>
-        
-        <div className="container mx-auto px-6 lg:px-8 relative z-10">
-          <ScrollReveal>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <Badge className="mb-6 bg-blue-500/20 text-blue-300 border-0 px-5 py-2.5 text-sm font-semibold">
-                Pour qui ?
-              </Badge>
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-                Conçu pour votre entreprise
-              </h2>
-              <p className="text-xl text-gray-300 leading-relaxed">
-                Des commerçants aux grossistes, une solution qui grandit avec vous
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto">
-            {targetAudience.map((target, index) => (
-              <ScrollReveal key={index} delay={index * 100}>
-                <Card className="p-8 text-center bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all group hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/20 h-full flex flex-col items-center justify-center">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-6 group-hover:scale-110 transition-transform shadow-lg">
-                    <target.icon className="h-10 w-10 text-white" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                    {target.title}
-                  </h3>
-                  <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-                    {target.description}
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                {/* Left Content */}
+                <div className="space-y-6 sm:space-y-8">
+                  <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 text-sm font-semibold">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Essai Gratuit • Sans Engagement
+                  </Badge>
+                  
+                  <h1 className="font-extrabold text-foreground text-4xl sm:text-5xl lg:text-6xl leading-tight">
+                    STOCKNIX
+                  </h1>
+                  
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                    Gérez vos stocks, vos ventes et votre caisse en toute simplicité
+                  </h2>
+                  
+                  <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                    Le logiciel SaaS complet pour boutiques, supermarchés, magasins, PME et TPE. 
+                    Stock en temps réel, factures, devis, paiements, analytics et alertes automatiques.
                   </p>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section - White Background with Modern Carousel */}
-      <section className="py-24 lg:py-32 bg-white relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-72 h-72 bg-blue-400 rounded-full blur-3xl"></div>
-        </div>
-        
-        <div className="container mx-auto px-6 lg:px-8 relative z-10">
-          <ScrollReveal>
-            <div className="text-center mb-16 max-w-3xl mx-auto">
-              <Badge className="mb-6 bg-blue-600 text-white border-0 px-5 py-2.5 text-sm font-semibold">
-                Bénéfices
-              </Badge>
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                Pourquoi choisir Stocknix ?
-              </h2>
-              <p className="text-xl text-gray-600 leading-relaxed">
-                Une plateforme pensée pour simplifier votre quotidien d'entrepreneur
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="max-w-7xl mx-auto">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {benefits.map((benefit, index) => (
-                <ScrollReveal key={index} delay={index * 100}>
-                  <div className="relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-400 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
-                    <Card className="relative h-full p-8 text-center space-y-6 border-0 bg-white shadow-lg hover:shadow-2xl transition-all rounded-3xl">
-                      <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
-                        <benefit.icon className="h-10 w-10 text-white" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {benefit.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm leading-relaxed">
-                        {benefit.description}
-                      </p>
-                    </Card>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button 
+                      size="lg" 
+                      onClick={() => navigate('/auth')} 
+                      className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-lg"
+                    >
+                      Essayer Stocknix Maintenant
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      onClick={() => navigate('/fonctionnalites')}
+                      className="text-lg px-8 py-6 border-2"
+                    >
+                      Découvrir les Fonctionnalités
+                    </Button>
                   </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Pricing Section - Blue Background */}
-      <section id="tarifs" className="py-24 lg:py-32 bg-gradient-to-br from-blue-50 via-blue-100/50 to-white relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(59,130,246,0.15),transparent_50%)]"></div>
-        
-        <div className="container mx-auto px-6 lg:px-8 relative z-10">
-          <ScrollReveal>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <Badge className="mb-6 bg-blue-600 text-white border-0 px-5 py-2.5 text-sm font-semibold">
-                Tarification
-              </Badge>
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                Un prix simple et transparent
-              </h2>
-              <p className="text-xl text-gray-700 leading-relaxed">
-                Essayez gratuitement pendant 1 mois, sans engagement
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal delay={100}>
-            <Card className="max-w-4xl mx-auto p-8 lg:p-12 bg-white border-2 border-blue-100 shadow-2xl">
-              <div className="text-center mb-10">
-                <Badge className="mb-6 bg-green-100 text-green-700 border-0 px-4 py-2 text-sm font-semibold">
-                  Le plus populaire
-                </Badge>
-                <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                  Plan Professionnel
-                </h3>
-                <div className="flex items-baseline justify-center gap-2 mb-6">
-                  <span className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-blue-600">
-                    2000
-                  </span>
-                  <span className="text-2xl text-gray-600">FCFA/mois</span>
-                </div>
-                <p className="text-lg text-gray-600">
-                  Tout ce dont vous avez besoin pour réussir
-                </p>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4 mb-10">
-                {pricingFeatures.map((feature, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <CheckCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700 text-base font-medium">{feature}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
-                  onClick={() => navigate('/auth')} 
-                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-xl text-lg px-12 py-7 rounded-xl font-bold transition-transform hover:scale-105"
-                >
-                  Commencer gratuitement
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  onClick={() => navigate('/auth')}
-                  className="text-lg border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-12 py-7 rounded-xl font-bold"
-                >
-                  Voir la démo
-                </Button>
-              </div>
-
-              <p className="text-center text-sm text-gray-500 mt-8">
-                Sans engagement • Annulez à tout moment • Support inclus
-              </p>
-            </Card>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Testimonials Section - White Background */}
-      <section id="avis" className="py-24 lg:py-32 bg-white relative">
-        <div className="container mx-auto px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <Badge className="mb-6 bg-blue-100 text-blue-700 border-0 px-5 py-2.5 text-sm font-semibold">
-                Témoignages
-              </Badge>
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                Ils nous font confiance
-              </h2>
-              <p className="text-xl text-gray-600 leading-relaxed">
-                Découvrez les retours de nos utilisateurs satisfaits partout en Afrique
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <ScrollReveal key={index} delay={index * 100}>
-                <Card className="p-8 bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all h-full flex flex-col">
-                  <div className="flex gap-1 mb-6">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <p className="text-gray-700 text-base leading-relaxed mb-8 flex-grow">
-                    "{testimonial.content}"
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center w-14 h-14 bg-blue-600 rounded-full text-white text-lg font-bold">
-                      {testimonial.avatar}
+                  <div className="flex items-center gap-6 pt-4">
+                    <div className="flex -space-x-2">
+                      {[1,2,3,4,5].map(i => (
+                        <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-sm font-bold">
+                          {i}
+                        </div>
+                      ))}
                     </div>
                     <div>
-                      <p className="font-bold text-gray-900">{testimonial.name}</p>
-                      <p className="text-sm text-gray-600">{testimonial.role}</p>
+                      <div className="flex items-center gap-1">
+                        {[1,2,3,4,5].map(i => (
+                          <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                      <p className="text-sm text-muted-foreground font-medium">500+ entreprises satisfaites</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Image */}
+                <div className="relative">
+                  <div className="relative z-10">
+                    <img 
+                      src={dashboardHero} 
+                      alt="Stocknix Dashboard" 
+                      className="w-full h-auto rounded-2xl shadow-2xl"
+                    />
+                  </div>
+                  <div className="absolute -top-4 -left-4 w-72 h-72 bg-primary/20 rounded-full blur-3xl"></div>
+                  <div className="absolute -bottom-4 -right-4 w-72 h-72 bg-accent/20 rounded-full blur-3xl"></div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <ChevronDown className="h-8 w-8 text-muted-foreground" />
+        </div>
+      </section>
+
+      {/* Fonctionnalités Principales */}
+      <section id="fonctionnalites" className="py-16 sm:py-24 bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 px-4 py-2">
+                Fonctionnalités
+              </Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+                Tout ce dont vous avez besoin
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Une plateforme complète pour gérer votre entreprise efficacement
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
+            {mainFeatures.map((feature, index) => (
+              <ScrollReveal key={index} delay={index * 100}>
+                <Card className="p-6 sm:p-8 hover:shadow-xl transition-all border-2 h-full">
+                  <div className="space-y-4">
+                    <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center">
+                      <feature.icon className="h-7 w-7 text-primary" />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {feature.description}
+                    </p>
+                    <div className="space-y-2 pt-2">
+                      {feature.items.map((item, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                          <span className="text-sm text-muted-foreground">{item}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </Card>
@@ -607,125 +321,162 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Support Section - Simplified */}
-      <section className="py-24 lg:py-32 bg-gradient-to-br from-blue-50 to-white relative overflow-hidden">
-        <div className="container mx-auto px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <ScrollReveal>
-              <div className="mb-12">
-                <img 
-                  src={supportSimple} 
-                  alt="Support Stocknix" 
-                  className="w-48 h-48 mx-auto mb-8"
-                />
-              </div>
-              
-              <Badge className="mb-6 bg-blue-600 text-white border-0 px-6 py-3 text-sm font-semibold">
-                Support 24/7
+      {/* Pour Qui? */}
+      <section id="pour-qui" className="py-16 sm:py-24 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 px-4 py-2">
+                Pour Qui ?
               </Badge>
-              
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                Une équipe à vos côtés 24h/24 et 7j/7
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+                Conçu pour les professionnels
               </h2>
-              
-              <p className="text-xl text-gray-600 leading-relaxed mb-8 max-w-2xl mx-auto">
-                Notre équipe d'experts est disponible à tout moment pour vous accompagner. Support par chat, email ou téléphone.
+              <p className="text-lg text-muted-foreground">
+                Stocknix s'adapte à tous les types d'entreprises en Côte d'Ivoire
               </p>
-            </ScrollReveal>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {targetAudience.map((audience, index) => (
+              <ScrollReveal key={index} delay={index * 100}>
+                <Card className="p-6 hover:shadow-xl transition-all text-center border-2 h-full">
+                  <div className="space-y-4">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                      <audience.icon className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground">
+                      {audience.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {audience.description}
+                    </p>
+                  </div>
+                </Card>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Quick Account Creation Section */}
-      <section className="py-24 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_70%)]"></div>
-        
-        <div className="container mx-auto px-6 lg:px-8 relative z-10">
+      {/* SEO Content Section */}
+      <section className="py-16 sm:py-24 bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
           <ScrollReveal>
-            <div className="max-w-4xl mx-auto text-center">
-              <Badge className="mb-8 bg-white/20 text-white border-0 px-6 py-3 text-sm font-semibold backdrop-blur-md inline-flex items-center gap-2">
-                <Zap className="h-4 w-4" />
-                Rapide et facile
-              </Badge>
-              
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
-                Votre compte créé en ligne en 2 minutes
+            <div className="prose prose-lg max-w-none">
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
+                Stocknix : Votre Partenaire de Confiance pour la Gestion Commerciale en Côte d'Ivoire
               </h2>
               
-              <p className="text-xl text-white/95 leading-relaxed mb-12 max-w-2xl mx-auto">
-                Quelques clics suffisent pour commencer à gérer votre entreprise professionnellement
-              </p>
+              <div className="space-y-6 text-muted-foreground leading-relaxed">
+                <p>
+                  <strong className="text-foreground">Stocknix</strong> est bien plus qu'un simple logiciel de gestion de stock. 
+                  C'est une <strong>plateforme SaaS complète</strong> conçue spécifiquement pour les entreprises en Côte d'Ivoire : 
+                  supermarchés, boutiques, magasins, PME et TPE. Notre solution cloud vous permet de gérer l'intégralité de votre activité commerciale 
+                  depuis n'importe quel appareil.
+                </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-                <div className="flex items-center gap-3 text-white">
-                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-lg font-bold">
-                    1
-                  </div>
-                  <span className="text-lg">Inscrivez-vous</span>
-                </div>
-                <ArrowRight className="h-6 w-6 text-white rotate-90 sm:rotate-0" />
-                <div className="flex items-center gap-3 text-white">
-                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-lg font-bold">
-                    2
-                  </div>
-                  <span className="text-lg">Configurez</span>
-                </div>
-                <ArrowRight className="h-6 w-6 text-white rotate-90 sm:rotate-0" />
-                <div className="flex items-center gap-3 text-white">
-                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-lg font-bold">
-                    3
-                  </div>
-                  <span className="text-lg">C'est parti !</span>
-                </div>
+                <p>
+                  Avec <strong className="text-foreground">Stocknix</strong>, vous bénéficiez d'un <strong>suivi en temps réel</strong> de votre inventaire, 
+                  d'une <strong>caisse tactile rapide</strong>, d'un système de <strong>facturation et devis professionnels</strong>, 
+                  d'une <strong>gestion complète des paiements</strong>, et d'<strong>analytics avancés</strong> pour piloter votre croissance.
+                </p>
+
+                <p>
+                  Notre logiciel s'adapte aux besoins spécifiques des entreprises locales : gestion multi-devises (FCFA), 
+                  support des méthodes de paiement populaires (Mobile Money, espèces, cartes bancaires), 
+                  et interface disponible en français avec un support client basé en Côte d'Ivoire.
+                </p>
+
+                <p>
+                  Les fonctionnalités clés incluent : <strong>alertes automatiques de stock bas</strong>, 
+                  <strong>import/export massif Excel/PDF/CSV</strong>, <strong>scanner de code-barres intégré</strong>, 
+                  <strong>rapports détaillés</strong>, <strong>prévisions intelligentes par IA</strong>, 
+                  et une <strong>interface mobile-first</strong> accessible sur smartphones, tablettes et ordinateurs.
+                </p>
+
+                <p>
+                  Que vous gériez un supermarché, une boutique de détail, un magasin d'électronique, une pharmacie ou une entreprise de distribution, 
+                  <strong className="text-foreground"> Stocknix</strong> vous fait gagner du temps, réduit les erreurs et optimise votre rentabilité. 
+                  Rejoignez les <strong>500+ entreprises</strong> qui nous font confiance.
+                </p>
+
+                <p>
+                  Développé par <strong className="text-foreground">DESCHNIX</strong>, dirigé par <strong>Ulrich Deschamp KOSSONOU</strong>, 
+                  Stocknix est le fruit d'une expertise locale combinée aux meilleures pratiques internationales. 
+                  Notre mission : rendre la gestion commerciale <strong>simple, rapide et fiable</strong> pour tous les entrepreneurs.
+                </p>
+
+                <p className="text-lg font-semibold text-foreground">
+                  Essayez Stocknix gratuitement dès aujourd'hui. Sans carte bancaire. Sans engagement.
+                </p>
               </div>
-
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/auth')} 
-                className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-xl px-12 py-8 rounded-xl font-bold transition-transform hover:scale-105"
-              >
-                Créer un compte gratuitement
-                <ArrowRight className="ml-2 h-6 w-6" />
-              </Button>
-
-              <p className="text-white/90 text-sm mt-6">
-                Sans carte bancaire • Sans engagement • 1 mois gratuit
-              </p>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* Final CTA Section - Blue Background */}
-      <section className="py-24 lg:py-32 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
-        
-        <div className="container mx-auto px-6 lg:px-8 relative z-10">
+      {/* Benefits */}
+      <section className="py-16 sm:py-24 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center max-w-4xl mx-auto">
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8">
-                Prêt à transformer votre entreprise ?
+            <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+                Pourquoi choisir Stocknix ?
               </h2>
-              <p className="text-xl sm:text-2xl text-blue-50 mb-12 leading-relaxed">
-                Rejoignez plus de 500 entreprises qui font confiance à Stocknix
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {benefits.map((benefit, index) => (
+              <ScrollReveal key={index} delay={index * 100}>
+                <Card className="p-6 hover:shadow-xl transition-all text-center border-2">
+                  <div className="space-y-4">
+                    <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto">
+                      <benefit.icon className="h-7 w-7 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {benefit.description}
+                    </p>
+                  </div>
+                </Card>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="py-16 sm:py-24 bg-gradient-to-br from-primary to-primary/80">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <ScrollReveal>
+            <div className="max-w-3xl mx-auto space-y-8">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+                Prêt à transformer votre gestion ?
+              </h2>
+              <p className="text-xl text-white/90">
+                Rejoignez les 500+ entreprises qui ont choisi Stocknix
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   size="lg" 
                   onClick={() => navigate('/auth')} 
-                  className="bg-white text-blue-600 hover:bg-blue-50 shadow-2xl text-lg px-12 py-7 rounded-xl font-bold transition-transform hover:scale-105"
+                  className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-6 shadow-xl"
                 >
-                  Démarrer gratuitement
+                  Commencer Gratuitement
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  onClick={() => navigate('/auth')}
-                  className="text-lg border-2 border-white text-white hover:bg-white hover:text-blue-600 px-12 py-7 rounded-xl bg-transparent"
+                  onClick={() => navigate('/tarifs')}
+                  className="text-lg px-10 py-6 border-2 border-white text-white hover:bg-white hover:text-primary"
                 >
-                  Contacter l'équipe
+                  Voir les Tarifs
                 </Button>
               </div>
             </div>
@@ -733,67 +484,48 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Footer - Black Background */}
-      <footer className="bg-black text-white py-16 lg:py-20">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mb-12">
-            <div className="col-span-2 md:col-span-1">
-              <div className="flex items-center gap-3 mb-6">
-                <img src={stocknixLogo} alt="Stocknix" className="h-10" />
-                <span className="text-xl font-black text-white font-futura">
-                  Stocknix
-                </span>
+      {/* Footer */}
+      <footer className="py-12 px-4 sm:px-6 border-t border-border bg-muted/30">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <img src={stocknixLogo} alt="Stocknix" className="h-8" />
+                <span className="text-xl font-black">STOCKNIX</span>
               </div>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                La solution de gestion d'entreprise pensée pour les entrepreneurs africains
+              <p className="text-sm text-muted-foreground">
+                Logiciel de gestion complet pour PME et TPE en Côte d'Ivoire
               </p>
             </div>
             
             <div>
-              <h4 className="font-bold text-white mb-4 text-sm">Produit</h4>
-              <ul className="space-y-3">
-                <li><a href="#fonctionnalites" className="text-gray-400 hover:text-white transition-colors text-sm">Fonctionnalités</a></li>
-                <li><a href="#tarifs" className="text-gray-400 hover:text-white transition-colors text-sm">Tarifs</a></li>
-                <li><a href="#avis" className="text-gray-400 hover:text-white transition-colors text-sm">Témoignages</a></li>
-              </ul>
+              <h3 className="font-bold mb-4">Produit</h3>
+              <div className="space-y-2 text-sm">
+                <a href="/fonctionnalites" className="block text-muted-foreground hover:text-primary">Fonctionnalités</a>
+                <a href="/tarifs" className="block text-muted-foreground hover:text-primary">Tarifs</a>
+                <a href="/faq" className="block text-muted-foreground hover:text-primary">FAQ</a>
+              </div>
             </div>
             
             <div>
-              <h4 className="font-bold text-white mb-4 text-sm">Entreprise</h4>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">À propos</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Contact</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Blog</a></li>
-              </ul>
+              <h3 className="font-bold mb-4">Entreprise</h3>
+              <div className="space-y-2 text-sm">
+                <a href="/legal" className="block text-muted-foreground hover:text-primary">Mentions Légales</a>
+                <p className="text-muted-foreground">Par DESCHNIX</p>
+              </div>
             </div>
             
             <div>
-              <h4 className="font-bold text-white mb-4 text-sm">Légal</h4>
-              <ul className="space-y-3">
-                <li><a href="/mentions-legales" className="text-gray-400 hover:text-white transition-colors text-sm">Mentions légales</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Confidentialité</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">CGU</a></li>
-              </ul>
+              <h3 className="font-bold mb-4">Contact</h3>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>support@stocknix.space</p>
+                <p>Côte d'Ivoire</p>
+              </div>
             </div>
           </div>
           
-          <div className="border-t border-gray-800 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-gray-400 text-sm text-center md:text-left">
-                © 2025 Stocknix. Tous droits réservés.
-              </p>
-              <div className="flex gap-6">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Twitter
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  LinkedIn
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Facebook
-                </a>
-              </div>
-            </div>
+          <div className="text-center text-sm text-muted-foreground border-t border-border pt-8">
+            <p>© 2025 Stocknix par DESCHNIX. Tous droits réservés.</p>
           </div>
         </div>
       </footer>

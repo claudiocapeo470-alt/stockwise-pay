@@ -3,111 +3,82 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { 
-  BarChart3, Package, CreditCard, TrendingUp, Users, Shield, 
-  Smartphone, ArrowRight, CheckCircle, Menu, X, Star, 
-  Zap, Clock, Store, ShoppingBag, Building2,
-  Check, Sparkles, ChevronDown, Bell, FileText, Scan,
-  Download, Upload, AlertTriangle, DollarSign
-} from "lucide-react";
+import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X, Star, Zap, Clock, Store, ShoppingBag, Building2, Check, Sparkles, ChevronDown, Bell, FileText, Scan, Download, Upload, AlertTriangle, DollarSign } from "lucide-react";
 import { useState } from "react";
 import stocknixLogo from '@/assets/stocknix-logo.png';
 import dashboardHero from '@/assets/3d-dashboard-hero.png';
 import inventoryFeature from '@/assets/3d-inventory-feature.png';
 import analyticsFeature from '@/assets/3d-analytics-feature.png';
 import paymentFeature from '@/assets/3d-payment-feature.png';
-
 const HomePage = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const mainFeatures = [
-    {
-      icon: Package,
-      title: "Gestion des Stocks",
-      description: "Suivi en temps réel, alertes de stock bas, import/export Excel/PDF/CSV, gestion code-barres, contrôle complet des produits",
-      items: ["Suivi en temps réel", "Alertes de stock bas", "Import/Export Excel, PDF, CSV", "Scanner Code-barres", "Contrôle total produits"]
-    },
-    {
-      icon: ShoppingBag,
-      title: "Caisse & POS",
-      description: "Encaissement rapide, gestion quantités/remises, paiements multiples (Mobile Money, espèces, cartes), tickets automatiques",
-      items: ["Caisse tactile rapide", "Gestion remises", "Multi-paiements", "Impression tickets", "Interface intuitive"]
-    },
-    {
-      icon: FileText,
-      title: "Ventes & Facturation",
-      description: "Création de devis et factures professionnels, suivi complet des transactions, export PDF automatique",
-      items: ["Devis personnalisés", "Factures pro", "Suivi transactions", "Export PDF", "Historique complet"]
-    },
-    {
-      icon: DollarSign,
-      title: "Gestion des Paiements",
-      description: "Historique complet, multi-méthodes de paiement, statuts en temps réel, rappels automatiques",
-      items: ["Historique détaillé", "Multi-méthodes", "Statuts temps réel", "Rappels auto", "Rapprochement bancaire"]
-    },
-    {
-      icon: BarChart3,
-      title: "Rapports & Analytics",
-      description: "Rapports détaillés, graphiques interactifs, prévisions intelligentes, analyse activité commerciale",
-      items: ["Graphiques temps réel", "Rapports détaillés", "Prévisions IA", "Analytics avancés", "Exports personnalisés"]
-    },
-    {
-      icon: Bell,
-      title: "Alertes Temps Réel",
-      description: "Notifications automatiques pour stock bas, ruptures, activité caisse, mouvements produits",
-      items: ["Alertes stock bas", "Notifications rupture", "Activité caisse", "Mouvements stock", "Alertes personnalisées"]
-    }
-  ];
-
-  const targetAudience = [
-    {
-      icon: Store,
-      title: "Supermarchés & Boutiques",
-      description: "Gérez votre supermarché ou boutique avec efficacité. Stock temps réel, caisse rapide, facturation automatique."
-    },
-    {
-      icon: ShoppingBag,
-      title: "Magasins & Commerce",
-      description: "Solution complète pour magasins de détail. Suivez vos ventes, gérez vos stocks, fidélisez vos clients."
-    },
-    {
-      icon: Building2,
-      title: "PME & TPE",
-      description: "Plateforme adaptée aux PME/TPE. Gestion complète de votre activité commerciale avec analytics avancés."
-    },
-    {
-      icon: Users,
-      title: "Grossistes & Distributeurs",
-      description: "Gérez vos commandes en gros, suivez vos fournisseurs, optimisez votre inventaire et vos marges."
-    }
-  ];
-
-  const benefits = [
-    {
-      icon: Zap,
-      title: "Rapide & Efficace",
-      description: "Interface ultra-rapide, caisse tactile, scanner code-barres intégré"
-    },
-    {
-      icon: Clock,
-      title: "Gain de Temps",
-      description: "Automatisez vos tâches, alertes intelligentes, import/export massif"
-    },
-    {
-      icon: Shield,
-      title: "100% Sécurisé",
-      description: "Données chiffrées, sauvegardes automatiques, conformité RGPD"
-    },
-    {
-      icon: Smartphone,
-      title: "Multi-plateforme",
-      description: "PC, Mac, tablettes, smartphones - accessible partout"
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-background">
+  const mainFeatures = [{
+    icon: Package,
+    title: "Gestion des Stocks",
+    description: "Suivi en temps réel, alertes de stock bas, import/export Excel/PDF/CSV, gestion code-barres, contrôle complet des produits",
+    items: ["Suivi en temps réel", "Alertes de stock bas", "Import/Export Excel, PDF, CSV", "Scanner Code-barres", "Contrôle total produits"]
+  }, {
+    icon: ShoppingBag,
+    title: "Caisse & POS",
+    description: "Encaissement rapide, gestion quantités/remises, paiements multiples (Mobile Money, espèces, cartes), tickets automatiques",
+    items: ["Caisse tactile rapide", "Gestion remises", "Multi-paiements", "Impression tickets", "Interface intuitive"]
+  }, {
+    icon: FileText,
+    title: "Ventes & Facturation",
+    description: "Création de devis et factures professionnels, suivi complet des transactions, export PDF automatique",
+    items: ["Devis personnalisés", "Factures pro", "Suivi transactions", "Export PDF", "Historique complet"]
+  }, {
+    icon: DollarSign,
+    title: "Gestion des Paiements",
+    description: "Historique complet, multi-méthodes de paiement, statuts en temps réel, rappels automatiques",
+    items: ["Historique détaillé", "Multi-méthodes", "Statuts temps réel", "Rappels auto", "Rapprochement bancaire"]
+  }, {
+    icon: BarChart3,
+    title: "Rapports & Analytics",
+    description: "Rapports détaillés, graphiques interactifs, prévisions intelligentes, analyse activité commerciale",
+    items: ["Graphiques temps réel", "Rapports détaillés", "Prévisions IA", "Analytics avancés", "Exports personnalisés"]
+  }, {
+    icon: Bell,
+    title: "Alertes Temps Réel",
+    description: "Notifications automatiques pour stock bas, ruptures, activité caisse, mouvements produits",
+    items: ["Alertes stock bas", "Notifications rupture", "Activité caisse", "Mouvements stock", "Alertes personnalisées"]
+  }];
+  const targetAudience = [{
+    icon: Store,
+    title: "Supermarchés & Boutiques",
+    description: "Gérez votre supermarché ou boutique avec efficacité. Stock temps réel, caisse rapide, facturation automatique."
+  }, {
+    icon: ShoppingBag,
+    title: "Magasins & Commerce",
+    description: "Solution complète pour magasins de détail. Suivez vos ventes, gérez vos stocks, fidélisez vos clients."
+  }, {
+    icon: Building2,
+    title: "PME & TPE",
+    description: "Plateforme adaptée aux PME/TPE. Gestion complète de votre activité commerciale avec analytics avancés."
+  }, {
+    icon: Users,
+    title: "Grossistes & Distributeurs",
+    description: "Gérez vos commandes en gros, suivez vos fournisseurs, optimisez votre inventaire et vos marges."
+  }];
+  const benefits = [{
+    icon: Zap,
+    title: "Rapide & Efficace",
+    description: "Interface ultra-rapide, caisse tactile, scanner code-barres intégré"
+  }, {
+    icon: Clock,
+    title: "Gain de Temps",
+    description: "Automatisez vos tâches, alertes intelligentes, import/export massif"
+  }, {
+    icon: Shield,
+    title: "100% Sécurisé",
+    description: "Données chiffrées, sauvegardes automatiques, conformité RGPD"
+  }, {
+    icon: Smartphone,
+    title: "Multi-plateforme",
+    description: "PC, Mac, tablettes, smartphones - accessible partout"
+  }];
+  return <div className="min-h-screen bg-background">
       
       {/* Navigation */}
       <header className="border-b border-border bg-background/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
@@ -136,31 +107,21 @@ const HomePage = () => {
             </nav>
 
             <div className="hidden lg:flex items-center gap-3">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/auth')}
-              >
+              <Button variant="ghost" onClick={() => navigate('/auth')}>
                 Connexion
               </Button>
-              <Button 
-                onClick={() => navigate('/auth')} 
-                className="bg-primary hover:bg-primary/90"
-              >
+              <Button onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90">
                 Essai Gratuit
                 <Sparkles className="ml-2 h-4 w-4" />
               </Button>
             </div>
 
-            <button 
-              className="lg:hidden p-2" 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
+            <button className="lg:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
 
-          {mobileMenuOpen && (
-            <div className="lg:hidden py-4 border-t border-border">
+          {mobileMenuOpen && <div className="lg:hidden py-4 border-t border-border">
               <nav className="flex flex-col space-y-3">
                 <a href="#fonctionnalites" className="text-muted-foreground hover:text-primary transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>
                   Fonctionnalités
@@ -183,8 +144,7 @@ const HomePage = () => {
                   </Button>
                 </div>
               </nav>
-            </div>
-          )}
+            </div>}
         </div>
       </header>
 
@@ -215,37 +175,24 @@ const HomePage = () => {
                   </p>
                   
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <Button 
-                      size="lg" 
-                      onClick={() => navigate('/auth')} 
-                      className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-lg"
-                    >
+                    <Button size="lg" onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-lg">
                       Essayer Stocknix Maintenant
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
-                    <Button 
-                      size="lg" 
-                      variant="outline" 
-                      onClick={() => navigate('/fonctionnalites')}
-                      className="text-lg px-8 py-6 border-2"
-                    >
+                    <Button size="lg" variant="outline" onClick={() => navigate('/fonctionnalites')} className="text-lg px-8 py-6 border-2">
                       Découvrir les Fonctionnalités
                     </Button>
                   </div>
 
                   <div className="flex items-center gap-6 pt-4">
                     <div className="flex -space-x-2">
-                      {[1,2,3,4,5].map(i => (
-                        <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-sm font-bold">
+                      {[1, 2, 3, 4, 5].map(i => <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-sm font-bold">
                           {i}
-                        </div>
-                      ))}
+                        </div>)}
                     </div>
                     <div>
                       <div className="flex items-center gap-1">
-                        {[1,2,3,4,5].map(i => (
-                          <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                        ))}
+                        {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />)}
                       </div>
                       <p className="text-sm text-muted-foreground font-medium">500+ entreprises satisfaites</p>
                     </div>
@@ -255,11 +202,7 @@ const HomePage = () => {
                 {/* Right Image */}
                 <div className="relative">
                   <div className="relative z-10">
-                    <img 
-                      src={dashboardHero} 
-                      alt="Stocknix Dashboard" 
-                      className="w-full h-auto rounded-2xl shadow-2xl"
-                    />
+                    
                   </div>
                   <div className="absolute -top-4 -left-4 w-72 h-72 bg-primary/20 rounded-full blur-3xl"></div>
                   <div className="absolute -bottom-4 -right-4 w-72 h-72 bg-accent/20 rounded-full blur-3xl"></div>
@@ -292,8 +235,7 @@ const HomePage = () => {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
-            {mainFeatures.map((feature, index) => (
-              <ScrollReveal key={index} delay={index * 100}>
+            {mainFeatures.map((feature, index) => <ScrollReveal key={index} delay={index * 100}>
                 <Card className="p-6 sm:p-8 hover:shadow-xl transition-all border-2 h-full">
                   <div className="space-y-4">
                     <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -306,17 +248,14 @@ const HomePage = () => {
                       {feature.description}
                     </p>
                     <div className="space-y-2 pt-2">
-                      {feature.items.map((item, i) => (
-                        <div key={i} className="flex items-center gap-2">
+                      {feature.items.map((item, i) => <div key={i} className="flex items-center gap-2">
                           <Check className="h-4 w-4 text-primary flex-shrink-0" />
                           <span className="text-sm text-muted-foreground">{item}</span>
-                        </div>
-                      ))}
+                        </div>)}
                     </div>
                   </div>
                 </Card>
-              </ScrollReveal>
-            ))}
+              </ScrollReveal>)}
           </div>
         </div>
       </section>
@@ -339,8 +278,7 @@ const HomePage = () => {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {targetAudience.map((audience, index) => (
-              <ScrollReveal key={index} delay={index * 100}>
+            {targetAudience.map((audience, index) => <ScrollReveal key={index} delay={index * 100}>
                 <Card className="p-6 hover:shadow-xl transition-all text-center border-2 h-full">
                   <div className="space-y-4">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
@@ -354,8 +292,7 @@ const HomePage = () => {
                     </p>
                   </div>
                 </Card>
-              </ScrollReveal>
-            ))}
+              </ScrollReveal>)}
           </div>
         </div>
       </section>
@@ -429,8 +366,7 @@ const HomePage = () => {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {benefits.map((benefit, index) => (
-              <ScrollReveal key={index} delay={index * 100}>
+            {benefits.map((benefit, index) => <ScrollReveal key={index} delay={index * 100}>
                 <Card className="p-6 hover:shadow-xl transition-all text-center border-2">
                   <div className="space-y-4">
                     <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto">
@@ -444,8 +380,7 @@ const HomePage = () => {
                     </p>
                   </div>
                 </Card>
-              </ScrollReveal>
-            ))}
+              </ScrollReveal>)}
           </div>
         </div>
       </section>
@@ -462,20 +397,11 @@ const HomePage = () => {
                 Rejoignez les 500+ entreprises qui ont choisi Stocknix
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
-                  onClick={() => navigate('/auth')} 
-                  className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-6 shadow-xl"
-                >
+                <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-6 shadow-xl">
                   Commencer Gratuitement
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  onClick={() => navigate('/tarifs')}
-                  className="text-lg px-10 py-6 border-2 border-white text-white hover:bg-white hover:text-primary"
-                >
+                <Button size="lg" variant="outline" onClick={() => navigate('/tarifs')} className="text-lg px-10 py-6 border-2 border-white text-white hover:bg-white hover:text-primary">
                   Voir les Tarifs
                 </Button>
               </div>
@@ -529,8 +455,6 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default HomePage;

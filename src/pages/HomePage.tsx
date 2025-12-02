@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X, Star, Zap, Clock, Store, ShoppingBag, Building2, Check, Sparkles, ChevronDown, Bell, FileText, Scan, Download, Upload, AlertTriangle, DollarSign } from "lucide-react";
 import { useState } from "react";
-import stocknixLogo from '@/assets/stocknix-logo.png';
+const stocknixLogo = '/stocknix-og-image.png';
 import dashboardHero from '@/assets/3d-dashboard-hero.png';
 import inventoryFeature from '@/assets/3d-inventory-feature.png';
 import analyticsFeature from '@/assets/3d-analytics-feature.png';
@@ -85,7 +85,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
             <div className="flex items-center gap-2 sm:gap-3">
-              <img src={stocknixLogo} alt="Stocknix Logo" className="h-8 sm:h-10" />
+              <img src={stocknixLogo} alt="Stocknix Logo" className="h-10 sm:h-12 w-auto object-contain" />
               <span className="text-xl sm:text-2xl font-black text-foreground">
                 STOCKNIX
               </span>

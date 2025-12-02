@@ -8,7 +8,7 @@ import { BottomNav } from "./BottomNav";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WindmillsParachutesBackground } from "@/components/ui/windmills-parachutes-background";
-import stocknixLogo from "@/assets/stocknix-logo.png";
+const stocknixLogo = "/stocknix-og-image.png";
 
 interface AppLayoutProps {
   children: React.ReactNode;

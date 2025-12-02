@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
-import stocknixLogo from "@/assets/stocknix-logo-text.png";
+const stocknixLogo = '/stocknix-og-image.png';
 import entrepreneursImage from "@/assets/african-entrepreneur-tablet.png";
 
 // Schémas de validation ultra-simples
@@ -321,7 +321,7 @@ export default function AuthSimple() {
             </div>
             <span className="font-medium">Retour</span>
           </Link>
-          <img src={stocknixLogo} alt="Stocknix" className="h-10 brightness-0 invert" />
+          <img src={stocknixLogo} alt="Stocknix" className="h-10 w-auto object-contain brightness-0 invert" />
         </div>
 
         <div className="relative z-10 space-y-6">
@@ -363,7 +363,7 @@ export default function AuthSimple() {
         <div className="w-full max-w-md space-y-8">
           {/* Mobile logo */}
           <div className="lg:hidden text-center">
-            <img src={stocknixLogo} alt="Stocknix" className="h-8 mx-auto mb-4" />
+            <img src={stocknixLogo} alt="Stocknix" className="h-8 w-auto object-contain mx-auto mb-4" />
           </div>
 
           <div className="text-center space-y-2">

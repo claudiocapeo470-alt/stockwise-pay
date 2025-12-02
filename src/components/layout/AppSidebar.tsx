@@ -15,7 +15,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useCompanySettings } from "@/hooks/useCompanySettings"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import stocknixLogo from "@/assets/stocknix-logo.png"
+const stocknixLogo = "/stocknix-og-image.png";
 
 const navigation = [
   { name: "Tableau de bord", href: "/app", icon: BarChart3 },
@@ -60,7 +60,7 @@ export function AppSidebar() {
           <img 
             src={settings?.logo_url || stocknixLogo} 
             alt={settings?.company_name || "Stocknix"} 
-            className="h-12 w-12 object-cover rounded-lg"
+            className="h-10 w-10 object-contain rounded-lg"
           />
           {!isCollapsed && (
             <div>

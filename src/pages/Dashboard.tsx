@@ -10,7 +10,7 @@ import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import { useMemo, useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-const stocknixLogo = "/stocknix-og-image.png";
+import stocknixLogo from "@/assets/stocknix-logo.png";
 
 export default function Dashboard() {
   const { products } = useProducts();

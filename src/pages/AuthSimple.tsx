@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
-const stocknixLogo = '/stocknix-og-image.png';
+import stocknixLogo from '@/assets/stocknix-logo.png';
 import entrepreneursImage from "@/assets/african-entrepreneur-tablet.png";
 
 // Schémas de validation ultra-simples

@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { z } from 'zod';
-const stocknixLogo = '/stocknix-og-image.png';
+import stocknixLogo from '@/assets/stocknix-logo.png';
 
 // Schemas de validation
 const loginSchema = z.object({

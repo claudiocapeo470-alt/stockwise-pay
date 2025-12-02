@@ -16,7 +16,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { LogOut, LayoutDashboard, Users, CreditCard, Package, Bell, TrendingUp, Shield } from "lucide-react";
-import stocknixLogo from "@/assets/stocknix-logo.png";
+const stocknixLogo = "/stocknix-og-image.png";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -58,7 +58,7 @@ export function AdminSidebar() {
           <img 
             src={stocknixLogo} 
             alt="Stocknix" 
-            className={collapsed ? "h-8 w-8" : "h-10 w-10"}
+            className={collapsed ? "h-8 w-8 object-contain" : "h-10 w-10 object-contain"}
           />
           {!collapsed && (
             <div>

@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { z } from 'zod';
-import stocknixLogo from '@/assets/stocknix-logo.png';
+const stocknixLogo = '/stocknix-og-image.png';
 
 // Schemas de validation
 const loginSchema = z.object({
@@ -587,7 +587,7 @@ export default function Auth() {
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
-                  <img src={stocknixLogo} alt="Stocknix" className="h-10 w-10" />
+                  <img src={stocknixLogo} alt="Stocknix" className="h-10 w-10 object-contain" />
                 </div>
               </div>
               <div>

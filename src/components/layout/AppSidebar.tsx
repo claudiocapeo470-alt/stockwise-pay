@@ -15,7 +15,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useCompanySettings } from "@/hooks/useCompanySettings"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-const stocknixLogo = "/stocknix-og-image.png";
+import stocknixLogo from "@/assets/stocknix-logo.png";
 
 const navigation = [
   { name: "Tableau de bord", href: "/app", icon: BarChart3 },

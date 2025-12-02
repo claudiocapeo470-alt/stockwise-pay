@@ -16,7 +16,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { LogOut, LayoutDashboard, Users, CreditCard, Package, Bell, TrendingUp, Shield } from "lucide-react";
-const stocknixLogo = "/stocknix-og-image.png";
+import stocknixLogo from "@/assets/stocknix-logo.png";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },

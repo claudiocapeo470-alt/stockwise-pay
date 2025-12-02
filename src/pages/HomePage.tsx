@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X, Star, Zap, Clock, Store, ShoppingBag, Building2, Check, Sparkles, ChevronDown, Bell, FileText, Scan, Download, Upload, AlertTriangle, DollarSign } from "lucide-react";
 import { useState } from "react";
-const stocknixLogo = '/stocknix-og-image.png';
+import stocknixLogo from '@/assets/stocknix-logo.png';
 import dashboardHero from '@/assets/3d-dashboard-hero.png';
 import inventoryFeature from '@/assets/3d-inventory-feature.png';
 import analyticsFeature from '@/assets/3d-analytics-feature.png';

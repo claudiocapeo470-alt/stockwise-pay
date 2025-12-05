@@ -188,7 +188,7 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-gradient-to-br from-primary/10 via-background to-primary/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 sm:py-20">
-          <div className="max-w-5xl mx-auto text-center">
+          <div className="max-w-4xl">
             <ScrollReveal>
               <div className="space-y-6 sm:space-y-8">
                 <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 text-sm font-semibold inline-flex">
@@ -196,16 +196,20 @@ const HomePage = () => {
                   Essai Gratuit • Sans Engagement
                 </Badge>
                 
-                <h1 className="font-extrabold text-foreground text-3xl sm:text-4xl lg:text-5xl xl:text-6xl leading-tight">
-                  Gérez vos stocks, vos ventes et votre caisse en toute simplicité
+                <h1 className="font-extrabold text-foreground text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight">
+                  Stocknix
                 </h1>
                 
-                <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                <h2 className="font-bold text-foreground text-2xl sm:text-3xl lg:text-4xl leading-tight">
+                  Gérez vos stocks, vos ventes et votre caisse en toute simplicité
+                </h2>
+                
+                <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                   Le logiciel SaaS complet pour boutiques, supermarchés, magasins, PME et TPE. 
                   Stock en temps réel, factures, devis, paiements, analytics et alertes automatiques.
                 </p>
                 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button size="lg" onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-lg">
                     Essayer Stocknix Maintenant
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -215,7 +219,7 @@ const HomePage = () => {
                   </Button>
                 </div>
 
-                <div className="flex items-center justify-center gap-6 pt-4">
+                <div className="flex items-center gap-6 pt-4">
                   <div className="flex -space-x-2">
                     {[1, 2, 3, 4, 5].map(i => (
                       <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-sm font-bold">

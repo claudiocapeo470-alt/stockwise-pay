@@ -123,11 +123,8 @@ const HomePage = () => {
       <header className="border-b border-border bg-background/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center">
               <img src={stocknixLogo} alt="Stocknix Logo" className="h-10 sm:h-12 w-auto object-contain" />
-              <span className="text-xl sm:text-2xl font-black text-foreground">
-                STOCKNIX
-              </span>
             </div>
 
             <nav className="hidden lg:flex items-center space-x-8">
@@ -188,63 +185,52 @@ const HomePage = () => {
       </header>
 
       {/* Hero Section */}
+      {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-gradient-to-br from-primary/10 via-background to-primary/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 sm:py-20">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-5xl mx-auto text-center">
             <ScrollReveal>
-              <div className="grid lg:grid-cols-2 gap-12 items-center">
-                {/* Left Content */}
-                <div className="space-y-6 sm:space-y-8">
-                  <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 text-sm font-semibold">
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    Essai Gratuit • Sans Engagement
-                  </Badge>
-                  
-                  <h1 className="font-extrabold text-foreground text-4xl sm:text-5xl lg:text-6xl leading-tight">
-                    STOCKNIX
-                  </h1>
-                  
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-                    Gérez vos stocks, vos ventes et votre caisse en toute simplicité
-                  </h2>
-                  
-                  <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                    Le logiciel SaaS complet pour boutiques, supermarchés, magasins, PME et TPE. 
-                    Stock en temps réel, factures, devis, paiements, analytics et alertes automatiques.
-                  </p>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button size="lg" onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-lg">
-                      Essayer Stocknix Maintenant
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                    <Button size="lg" variant="outline" onClick={() => navigate('/fonctionnalites')} className="text-lg px-8 py-6 border-2">
-                      Découvrir les Fonctionnalités
-                    </Button>
-                  </div>
-
-                  <div className="flex items-center gap-6 pt-4">
-                    <div className="flex -space-x-2">
-                      {[1, 2, 3, 4, 5].map(i => <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-sm font-bold">
-                          {i}
-                        </div>)}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />)}
-                      </div>
-                      <p className="text-sm text-muted-foreground font-medium">500+ entreprises satisfaites</p>
-                    </div>
-                  </div>
+              <div className="space-y-6 sm:space-y-8">
+                <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 text-sm font-semibold inline-flex">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Essai Gratuit • Sans Engagement
+                </Badge>
+                
+                <h1 className="font-extrabold text-foreground text-3xl sm:text-4xl lg:text-5xl xl:text-6xl leading-tight">
+                  Gérez vos stocks, vos ventes et votre caisse en toute simplicité
+                </h1>
+                
+                <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                  Le logiciel SaaS complet pour boutiques, supermarchés, magasins, PME et TPE. 
+                  Stock en temps réel, factures, devis, paiements, analytics et alertes automatiques.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button size="lg" onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-lg">
+                    Essayer Stocknix Maintenant
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                  <Button size="lg" variant="outline" onClick={() => navigate('/fonctionnalites')} className="text-lg px-8 py-6 border-2">
+                    Découvrir les Fonctionnalités
+                  </Button>
                 </div>
 
-                {/* Right Image */}
-                <div className="relative">
-                  <div className="relative z-10">
-                    
+                <div className="flex items-center justify-center gap-6 pt-4">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-sm font-bold">
+                        {i}
+                      </div>
+                    ))}
                   </div>
-                  <div className="absolute -top-4 -left-4 w-72 h-72 bg-primary/20 rounded-full blur-3xl"></div>
-                  <div className="absolute -bottom-4 -right-4 w-72 h-72 bg-accent/20 rounded-full blur-3xl"></div>
+                  <div>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map(i => (
+                        <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <p className="text-sm text-muted-foreground font-medium">500+ entreprises satisfaites</p>
+                  </div>
                 </div>
               </div>
             </ScrollReveal>

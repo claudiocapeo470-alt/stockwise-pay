@@ -3,16 +3,55 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X, Star, Zap, Clock, Store, ShoppingBag, Building2, Check, Sparkles, ChevronDown, Bell, FileText, Scan, Download, Upload, AlertTriangle, DollarSign } from "lucide-react";
-import { useState } from "react";
+import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X, Star, Zap, Clock, Store, ShoppingBag, Building2, Check, Sparkles, ChevronDown, Bell, FileText, Scan, Download, Upload, AlertTriangle, DollarSign, ChevronLeft, ChevronRight, Globe, Heart, Rocket } from "lucide-react";
+import { useState, useCallback } from "react";
+import useEmblaCarousel from 'embla-carousel-react';
 import stocknixLogo from '@/assets/stocknix-logo.png';
 import dashboardHero from '@/assets/3d-dashboard-hero.png';
 import inventoryFeature from '@/assets/3d-inventory-feature.png';
 import analyticsFeature from '@/assets/3d-analytics-feature.png';
 import paymentFeature from '@/assets/3d-payment-feature.png';
+
 const HomePage = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+  
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const carouselSlides = [
+    {
+      icon: Globe,
+      title: "Solution 100% Cloud",
+      subtitle: "Accessible partout",
+      description: "Gérez votre entreprise depuis n'importe où : smartphone, tablette ou ordinateur. Vos données sont synchronisées en temps réel.",
+      highlights: ["Multi-devises (FCFA)", "Mobile Money intégré", "Support en français"],
+      color: "from-primary/20 to-primary/5"
+    },
+    {
+      icon: Rocket,
+      title: "Simple & Rapide",
+      subtitle: "Conçu pour vous",
+      description: "Interface intuitive pensée pour les entrepreneurs. Pas besoin d'être expert en informatique pour gérer votre stock et vos ventes.",
+      highlights: ["Prise en main immédiate", "500+ entreprises", "Support local"],
+      color: "from-accent/20 to-accent/5"
+    },
+    {
+      icon: Heart,
+      title: "Made in Côte d'Ivoire",
+      subtitle: "Par DESCHNIX",
+      description: "Développé par Ulrich Deschamp KOSSONOU pour répondre aux besoins réels des commerçants ivoiriens. Expertise locale, standards internationaux.",
+      highlights: ["Adapté au marché local", "Expertise reconnue", "Évolution continue"],
+      color: "from-primary/15 to-accent/10"
+    }
+  ];
+
   const mainFeatures = [{
     icon: Package,
     title: "Gestion des Stocks",
@@ -297,60 +336,95 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SEO Content Section */}
-      <section className="py-16 sm:py-24 bg-background">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+      {/* Section 1: Pourquoi Stocknix - Carousel */}
+      <section className="py-16 sm:py-24 bg-background overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="prose prose-lg max-w-none">
-              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-                Stocknix : Votre Partenaire de Confiance pour la Gestion Commerciale en Côte d'Ivoire
+            <div className="text-center mb-10 max-w-2xl mx-auto">
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 px-4 py-2">
+                Découvrir
+              </Badge>
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">
+                Pourquoi Stocknix ?
               </h2>
-              
-              <div className="space-y-6 text-muted-foreground leading-relaxed">
-                <p>
-                  <strong className="text-foreground">Stocknix</strong> est bien plus qu'un simple logiciel de gestion de stock. 
-                  C'est une <strong>plateforme SaaS complète</strong> conçue spécifiquement pour les entreprises en Côte d'Ivoire : 
-                  supermarchés, boutiques, magasins, PME et TPE. Notre solution cloud vous permet de gérer l'intégralité de votre activité commerciale 
-                  depuis n'importe quel appareil.
-                </p>
-
-                <p>
-                  Avec <strong className="text-foreground">Stocknix</strong>, vous bénéficiez d'un <strong>suivi en temps réel</strong> de votre inventaire, 
-                  d'une <strong>caisse tactile rapide</strong>, d'un système de <strong>facturation et devis professionnels</strong>, 
-                  d'une <strong>gestion complète des paiements</strong>, et d'<strong>analytics avancés</strong> pour piloter votre croissance.
-                </p>
-
-                <p>
-                  Notre logiciel s'adapte aux besoins spécifiques des entreprises locales : gestion multi-devises (FCFA), 
-                  support des méthodes de paiement populaires (Mobile Money, espèces, cartes bancaires), 
-                  et interface disponible en français avec un support client basé en Côte d'Ivoire.
-                </p>
-
-                <p>
-                  Les fonctionnalités clés incluent : <strong>alertes automatiques de stock bas</strong>, 
-                  <strong>import/export massif Excel/PDF/CSV</strong>, <strong>scanner de code-barres intégré</strong>, 
-                  <strong>rapports détaillés</strong>, <strong>prévisions intelligentes par IA</strong>, 
-                  et une <strong>interface mobile-first</strong> accessible sur smartphones, tablettes et ordinateurs.
-                </p>
-
-                <p>
-                  Que vous gériez un supermarché, une boutique de détail, un magasin d'électronique, une pharmacie ou une entreprise de distribution, 
-                  <strong className="text-foreground"> Stocknix</strong> vous fait gagner du temps, réduit les erreurs et optimise votre rentabilité. 
-                  Rejoignez les <strong>500+ entreprises</strong> qui nous font confiance.
-                </p>
-
-                <p>
-                  Développé par <strong className="text-foreground">DESCHNIX</strong>, dirigé par <strong>Ulrich Deschamp KOSSONOU</strong>, 
-                  Stocknix est le fruit d'une expertise locale combinée aux meilleures pratiques internationales. 
-                  Notre mission : rendre la gestion commerciale <strong>simple, rapide et fiable</strong> pour tous les entrepreneurs.
-                </p>
-
-                <p className="text-lg font-semibold text-foreground">
-                  Essayez Stocknix gratuitement dès aujourd'hui. Sans carte bancaire. Sans engagement.
-                </p>
-              </div>
+              <p className="text-muted-foreground">
+                Une solution pensée pour les entrepreneurs africains
+              </p>
             </div>
           </ScrollReveal>
+
+          <div className="relative max-w-4xl mx-auto">
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex">
+                {carouselSlides.map((slide, index) => (
+                  <div key={index} className="flex-[0_0_100%] min-w-0 px-4">
+                    <Card className={`p-8 sm:p-12 bg-gradient-to-br ${slide.color} border-2 border-border/50`}>
+                      <div className="flex flex-col lg:flex-row items-center gap-8">
+                        <div className="w-24 h-24 bg-primary/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                          <slide.icon className="h-12 w-12 text-primary" />
+                        </div>
+                        <div className="text-center lg:text-left flex-1">
+                          <p className="text-sm font-medium text-primary mb-1">{slide.subtitle}</p>
+                          <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
+                            {slide.title}
+                          </h3>
+                          <p className="text-muted-foreground leading-relaxed mb-4">
+                            {slide.description}
+                          </p>
+                          <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+                            {slide.highlights.map((highlight, i) => (
+                              <Badge key={i} variant="secondary" className="text-xs">
+                                <Check className="h-3 w-3 mr-1" />
+                                {highlight}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Navigation Arrows */}
+            <button
+              onClick={scrollPrev}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 w-10 h-10 bg-background border-2 border-border rounded-full flex items-center justify-center hover:bg-muted"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={scrollNext}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 w-10 h-10 bg-background border-2 border-border rounded-full flex items-center justify-center hover:bg-muted"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 2: Essai Gratuit Simple */}
+      <section className="py-12 sm:py-16 bg-muted/50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-3 bg-background rounded-full px-6 py-3 border-2 border-border mb-6">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <span className="font-semibold text-foreground">Essai 100% Gratuit</span>
+              <span className="text-muted-foreground">•</span>
+              <span className="text-muted-foreground">Sans carte bancaire</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
+              Prêt à simplifier votre gestion ?
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              Rejoignez les 500+ entreprises ivoiriennes qui nous font confiance
+            </p>
+            <Button size="lg" onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90">
+              Commencer Maintenant
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </section>
 

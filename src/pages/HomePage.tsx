@@ -290,7 +290,7 @@ const HomePage = () => {
       </section>
 
       {/* Pour Qui? */}
-      <section id="pour-qui" className="py-16 sm:py-24 bg-muted/30">
+      <section id="pour-qui" className="py-16 sm:py-24 bg-gradient-to-br from-primary/5 via-background to-accent/10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
@@ -395,7 +395,7 @@ const HomePage = () => {
       </section>
 
       {/* Section 2: Essai Gratuit Simple */}
-      <section className="py-12 sm:py-16 bg-muted/50">
+      <section className="py-12 sm:py-16 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-3 bg-background rounded-full px-6 py-3 border-2 border-border mb-6">

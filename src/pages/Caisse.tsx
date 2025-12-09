@@ -43,7 +43,7 @@ export default function Caisse() {
     };
   }, [cameraActive]);
 
-  // Scanner USB / Clavier
+  // Scanner USB / Clavier - notification uniquement si produit trouvé
   const handleScannerInput = (code: string) => {
     const product = products.find(p => p.sku === code);
     if (product) {
@@ -52,13 +52,8 @@ export default function Caisse() {
         title: "✅ Produit ajouté",
         description: `${product.name} ajouté au panier`,
       });
-    } else {
-      toast({
-        title: "❌ Produit non reconnu",
-        description: "Code-barres introuvable",
-        variant: "destructive",
-      });
     }
+    // Pas de notification si produit non trouvé
     setScannerInput("");
   };
 
@@ -160,7 +155,7 @@ export default function Caisse() {
         });
       });
 
-      // Détecter les codes-barres
+      // Détecter les codes-barres - notification uniquement si produit trouvé
       Quagga.onDetected((result) => {
         if (result && result.codeResult && result.codeResult.code) {
           const code = result.codeResult.code.trim();
@@ -188,18 +183,8 @@ export default function Caisse() {
               setCameraActive(false);
               scannerInitialized.current = false;
             }, 500);
-          } else {
-            toast({
-              title: "⚠️ Code scanné",
-              description: `Code: ${code} - Produit non trouvé dans votre inventaire`,
-              variant: "destructive",
-            });
-            
-            // Continuer à scanner même si produit non trouvé
-            if (navigator.vibrate) {
-              navigator.vibrate([100, 50, 100]);
-            }
           }
+          // Pas de notification si produit non trouvé - continuer à scanner silencieusement
         }
       });
       
@@ -461,19 +446,10 @@ export default function Caisse() {
                 </Button>
               </div>
 
-              {/* Zone de scan caméra QuaggaJS */}
+              {/* Zone de scan caméra QuaggaJS - sans rectangle */}
               {cameraActive && (
-                <div className="mt-4 relative animate-fade-in">
-                  <div className="border-4 border-primary rounded-xl overflow-hidden bg-black shadow-xl relative">
-                    {/* Cadre de guidage */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                      <div className="border-4 border-green-400 rounded-lg w-[80%] h-[60%] shadow-[0_0_20px_rgba(74,222,128,0.5)]">
-                        <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-400 rounded-tl-lg"></div>
-                        <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-400 rounded-tr-lg"></div>
-                        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-400 rounded-bl-lg"></div>
-                        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-400 rounded-br-lg"></div>
-                      </div>
-                    </div>
+                <div className="mt-4 relative">
+                  <div className="border-2 border-primary rounded-xl overflow-hidden bg-black shadow-xl">
                     <div
                       id="scanner"
                       className="w-full h-[350px] sm:h-[450px]"
@@ -482,12 +458,9 @@ export default function Caisse() {
                       <canvas className="drawingBuffer" style={{ position: 'absolute', top: 0, left: 0 }}></canvas>
                     </div>
                   </div>
-                  <div className="mt-3 text-center space-y-1 bg-muted/50 rounded-lg p-3">
+                  <div className="mt-3 text-center bg-muted/50 rounded-lg p-3">
                     <p className="text-sm font-medium text-foreground">
-                      📍 Placez le code-barres dans le cadre vert
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Tenez le code-barres stable pour une meilleure détection
+                      📍 Pointez vers le code-barres
                     </p>
                   </div>
                 </div>

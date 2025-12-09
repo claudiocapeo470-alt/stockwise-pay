@@ -406,10 +406,27 @@ export default function Caisse() {
         <div className="space-y-4">
           <Card className="shadow-md border-2">
             <CardHeader className="pb-4 border-b bg-muted/30">
-              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                <Scan className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                Scanner de Produits
-              </CardTitle>
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  <Scan className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                  Scanner de Produits
+                </CardTitle>
+                {/* Bouton Scanner Caméra dans l'en-tête */}
+                <Button
+                  onClick={toggleCamera}
+                  variant={cameraActive ? "destructive" : "default"}
+                  size="sm"
+                  className={`h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm font-semibold shadow-md ${
+                    cameraActive 
+                      ? 'bg-destructive hover:bg-destructive/90' 
+                      : 'bg-primary hover:bg-primary/90'
+                  }`}
+                >
+                  <Camera className="h-4 w-4 mr-1.5" />
+                  <span className="hidden xs:inline">{cameraActive ? "Arrêter" : "Scanner"}</span>
+                  <span className="xs:hidden">{cameraActive ? "Stop" : "Scan"}</span>
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4 pt-6">
               {/* Saisie manuelle du code produit avec bouton Valider */}
@@ -450,27 +467,6 @@ export default function Caisse() {
                   Saisissez le code SKU ou code-barres puis appuyez sur Valider ou Entrée
                 </p>
               </div>
-
-              {/* Séparateur */}
-              <div className="relative py-4">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-muted-foreground/20" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-3 text-muted-foreground font-medium">ou</span>
-                </div>
-              </div>
-
-              {/* Scanner caméra */}
-              <Button
-                onClick={toggleCamera}
-                variant={cameraActive ? "destructive" : "outline"}
-                className="w-full h-12 sm:h-14 text-base font-semibold border-2 shadow-sm hover:shadow-md"
-                size="lg"
-              >
-                <Camera className="h-5 w-5 mr-2" />
-                {cameraActive ? "Arrêter la Caméra" : "Scanner avec Caméra"}
-              </Button>
 
               {/* Zone de scan caméra QuaggaJS - sans rectangle */}
               {cameraActive && (

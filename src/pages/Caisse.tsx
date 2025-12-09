@@ -6,9 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { useToast } from "@/hooks/use-toast";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { useAuth } from "@/contexts/AuthContext";
 import Quagga from "quagga";
 import { Camera, Scan, Plus, Minus, ShoppingCart, Printer, Trash2, Download, FileText } from "lucide-react";
 import jsPDF from "jspdf";
+import stocknixLogo from "@/assets/stocknix-logo-official.png";
 
 interface CartItem {
   id: string;
@@ -27,6 +30,8 @@ export default function Caisse() {
   const { products } = useProducts();
   const { addSale } = useSales();
   const { toast } = useToast();
+  const { settings } = useCompanySettings();
+  const { profile } = useAuth();
   const scannerInitialized = useRef(false);
 
   // Nettoyage de la caméra à la fermeture
@@ -247,36 +252,86 @@ export default function Caisse() {
   // Calculer le total
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // Générer PDF du reçu
+  // Nom de l'entreprise
+  const companyName = settings?.company_name || profile?.company_name || "Stocknix";
+  const companyAddress = settings?.company_address || "";
+  const companyCity = settings?.company_city || "";
+  const companyPhone = settings?.company_phone || "";
+  const companyEmail = settings?.company_email || "";
+
+  // Générer PDF du reçu type POS
   const generateReceiptPDF = () => {
     const doc = new jsPDF({
-      format: [80, 200],
+      format: [80, 220],
       unit: 'mm'
     });
 
-    doc.setFontSize(14);
-    doc.text('SIGR SUPERMARCHÉ', 40, 10, { align: 'center' });
-    doc.setFontSize(8);
-    doc.text('─────────────────────────────', 40, 15, { align: 'center' });
-    doc.text(`Date: ${new Date().toLocaleString('fr-FR')}`, 5, 20);
-    doc.text('─────────────────────────────', 40, 25, { align: 'center' });
+    let y = 8;
 
-    let y = 30;
+    // Logo et en-tête entreprise
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text(companyName.toUpperCase(), 40, y, { align: 'center' });
+    y += 5;
+
+    if (companyAddress) {
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.text(companyAddress, 40, y, { align: 'center' });
+      y += 4;
+    }
+    if (companyCity) {
+      doc.text(companyCity, 40, y, { align: 'center' });
+      y += 4;
+    }
+    if (companyPhone) {
+      doc.text(`Tél: ${companyPhone}`, 40, y, { align: 'center' });
+      y += 4;
+    }
+
+    // Ligne de séparation
+    y += 2;
+    doc.setFontSize(8);
+    doc.text('━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 40, y, { align: 'center' });
+    y += 5;
+
+    // Date et heure
+    doc.setFont("helvetica", "normal");
+    doc.text(`Date: ${new Date().toLocaleDateString('fr-FR')}`, 5, y);
+    doc.text(`Heure: ${new Date().toLocaleTimeString('fr-FR')}`, 75, y, { align: 'right' });
+    y += 5;
+    doc.text('━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 40, y, { align: 'center' });
+    y += 6;
+
+    // Produits
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
     cart.forEach((item) => {
-      doc.setFontSize(9);
-      doc.text(`${item.name} x${item.quantity}`, 5, y);
-      doc.text(`${(item.price * item.quantity).toLocaleString()} FCFA`, 65, y, { align: 'right' });
+      doc.setFont("helvetica", "normal");
+      doc.text(`${item.name}`, 5, y);
+      y += 4;
+      doc.text(`  ${item.quantity} x ${item.price.toLocaleString('fr-FR')} FCFA`, 5, y);
+      doc.text(`${(item.price * item.quantity).toLocaleString('fr-FR')} FCFA`, 75, y, { align: 'right' });
       y += 5;
     });
 
-    doc.text('─────────────────────────────', 40, y, { align: 'center' });
+    // Total
+    y += 2;
+    doc.text('━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 40, y, { align: 'center' });
     y += 5;
-    doc.setFontSize(11);
-    doc.text(`TOTAL: ${total.toLocaleString()} FCFA`, 65, y, { align: 'right' });
-    y += 10;
-    doc.setFontSize(8);
-    doc.text('Merci pour votre achat 🙏', 40, y, { align: 'center' });
-    doc.text('À bientôt !', 40, y + 5, { align: 'center' });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text('TOTAL:', 5, y);
+    doc.text(`${total.toLocaleString('fr-FR')} FCFA`, 75, y, { align: 'right' });
+    y += 8;
+
+    // Message de remerciement
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "italic");
+    doc.text('Merci et à bientôt !', 40, y, { align: 'center' });
+    y += 5;
+    doc.setFontSize(7);
+    doc.text('Powered by Stocknix', 40, y, { align: 'center' });
 
     return doc;
   };
@@ -339,40 +394,72 @@ export default function Caisse() {
     }
   };
 
-  // Imprimer le reçu
+  // Imprimer le reçu automatiquement (ticket POS)
   const printReceipt = () => {
-    const printWindow = window.open('', '', 'width=300,height=600');
+    const printWindow = window.open('', '', 'width=320,height=600');
     if (!printWindow) return;
 
     const receiptContent = `
+      <!DOCTYPE html>
       <html>
         <head>
-          <title>Reçu - SIGR SUPERMARCHÉ</title>
+          <title>Ticket - ${companyName}</title>
           <style>
-            body { font-family: monospace; font-size: 12px; width: 300px; margin: 0 auto; padding: 10px; }
-            h3 { text-align: center; margin: 10px 0; }
-            .line { border-bottom: 1px dashed #000; margin: 5px 0; }
-            .item { display: flex; justify-content: space-between; margin: 3px 0; }
-            .total { font-weight: bold; font-size: 14px; text-align: right; margin-top: 10px; }
-            .footer { text-align: center; margin-top: 20px; }
+            @page { size: 80mm auto; margin: 0; }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Courier New', monospace; 
+              font-size: 12px; 
+              width: 80mm; 
+              padding: 8px;
+              background: #fff;
+            }
+            .header { text-align: center; margin-bottom: 8px; }
+            .company-name { font-size: 16px; font-weight: bold; text-transform: uppercase; }
+            .company-info { font-size: 10px; color: #444; }
+            .divider { border-bottom: 1px dashed #000; margin: 6px 0; }
+            .date-row { display: flex; justify-content: space-between; font-size: 10px; }
+            .item { margin: 4px 0; }
+            .item-name { font-weight: 500; }
+            .item-detail { display: flex; justify-content: space-between; font-size: 11px; padding-left: 8px; }
+            .total-section { margin-top: 8px; padding-top: 8px; border-top: 2px solid #000; }
+            .total-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; }
+            .footer { text-align: center; margin-top: 12px; font-size: 11px; }
+            .thank-you { font-style: italic; font-weight: 500; }
+            .powered { font-size: 9px; color: #666; margin-top: 4px; }
           </style>
         </head>
         <body>
-          <h3>🧾 SIGR SUPERMARCHÉ</h3>
-          <div class="line"></div>
-          <p>Date: ${new Date().toLocaleString('fr-FR')}</p>
-          <div class="line"></div>
+          <div class="header">
+            <div class="company-name">${companyName}</div>
+            ${companyAddress ? `<div class="company-info">${companyAddress}</div>` : ''}
+            ${companyCity ? `<div class="company-info">${companyCity}</div>` : ''}
+            ${companyPhone ? `<div class="company-info">Tél: ${companyPhone}</div>` : ''}
+          </div>
+          <div class="divider"></div>
+          <div class="date-row">
+            <span>Date: ${new Date().toLocaleDateString('fr-FR')}</span>
+            <span>Heure: ${new Date().toLocaleTimeString('fr-FR')}</span>
+          </div>
+          <div class="divider"></div>
           ${cart.map(item => `
             <div class="item">
-              <span>${item.name} x${item.quantity}</span>
-              <span>${(item.price * item.quantity).toLocaleString()} FCFA</span>
+              <div class="item-name">${item.name}</div>
+              <div class="item-detail">
+                <span>${item.quantity} x ${item.price.toLocaleString('fr-FR')} FCFA</span>
+                <span>${(item.price * item.quantity).toLocaleString('fr-FR')} FCFA</span>
+              </div>
             </div>
           `).join('')}
-          <div class="line"></div>
-          <div class="total">TOTAL: ${total.toLocaleString()} FCFA</div>
+          <div class="total-section">
+            <div class="total-row">
+              <span>TOTAL</span>
+              <span>${total.toLocaleString('fr-FR')} FCFA</span>
+            </div>
+          </div>
           <div class="footer">
-            <p>Merci pour votre achat 🙏</p>
-            <p>À bientôt !</p>
+            <div class="thank-you">Merci et à bientôt !</div>
+            <div class="powered">Powered by Stocknix</div>
           </div>
         </body>
       </html>
@@ -380,13 +467,23 @@ export default function Caisse() {
 
     printWindow.document.write(receiptContent);
     printWindow.document.close();
-    printWindow.print();
+    
+    // Attendre le chargement avant d'imprimer
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.onafterprint = () => printWindow.close();
+    };
+    
+    // Fallback si onload ne fonctionne pas
+    setTimeout(() => {
+      printWindow.print();
+    }, 300);
     
     // Réinitialiser après impression
     setTimeout(() => {
       setCart([]);
       setShowReceipt(false);
-    }, 500);
+    }, 1000);
   };
 
   return (

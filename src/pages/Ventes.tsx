@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import { ShoppingCart, Search, Plus, Eye, Grid3x3, List, Printer, Download } from "lucide-react";
+import { ShoppingCart, Search, Plus, Eye, Grid3x3, List, Printer, Download, FileText } from "lucide-react";
 import { useState } from "react";
 import { useSales } from "@/hooks/useSales";
 import { useProducts } from "@/hooks/useProducts";
@@ -15,6 +15,9 @@ import { fr } from "date-fns/locale";
 import { useIsMobile } from "@/hooks/use-mobile";
 import jsPDF from "jspdf";
 import { useToast } from "@/hooks/use-toast";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { useAuth } from "@/contexts/AuthContext";
+import stocknixLogo from "@/assets/stocknix-logo-official.png";
 
 export default function Ventes() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,7 +27,19 @@ export default function Ventes() {
   const { sales, isLoading } = useSales();
   const { products } = useProducts();
   const { toast } = useToast();
+  const { settings } = useCompanySettings();
+  const { profile } = useAuth();
   const isMobile = useIsMobile();
+
+  // Informations entreprise
+  const companyName = settings?.company_name || profile?.company_name || "Stocknix";
+  const companyAddress = settings?.company_address || "";
+  const companyCity = settings?.company_city || "";
+  const companyPhone = settings?.company_phone || "";
+  const companyEmail = settings?.company_email || "";
+  const companySiret = settings?.company_siret || "";
+  const companyTva = settings?.company_tva || "";
+  const logoUrl = settings?.logo_url || profile?.avatar_url || "";
 
   const filteredSales = sales.filter(sale =>
     (sale.customer_name && sale.customer_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -39,39 +54,71 @@ export default function Ventes() {
   });
   const todayTotal = todaySales.reduce((sum, sale) => sum + sale.total_amount, 0);
 
-  // Réimprimer le reçu
+  // Réimprimer le reçu (ticket POS)
   const reprintReceipt = (sale: any) => {
     const product = products.find(p => p.id === sale.product_id);
-    const printWindow = window.open('', '', 'width=300,height=600');
+    const printWindow = window.open('', '', 'width=320,height=600');
     if (!printWindow) return;
 
     const receiptContent = `
+      <!DOCTYPE html>
       <html>
         <head>
-          <title>Reçu - SIGR SUPERMARCHÉ</title>
+          <title>Ticket - ${companyName}</title>
           <style>
-            body { font-family: monospace; font-size: 12px; width: 300px; margin: 0 auto; padding: 10px; }
-            h3 { text-align: center; margin: 10px 0; }
-            .line { border-bottom: 1px dashed #000; margin: 5px 0; }
-            .item { display: flex; justify-content: space-between; margin: 3px 0; }
-            .total { font-weight: bold; font-size: 14px; text-align: right; margin-top: 10px; }
-            .footer { text-align: center; margin-top: 20px; }
+            @page { size: 80mm auto; margin: 0; }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Courier New', monospace; 
+              font-size: 12px; 
+              width: 80mm; 
+              padding: 8px;
+              background: #fff;
+            }
+            .header { text-align: center; margin-bottom: 8px; }
+            .company-name { font-size: 16px; font-weight: bold; text-transform: uppercase; }
+            .company-info { font-size: 10px; color: #444; }
+            .divider { border-bottom: 1px dashed #000; margin: 6px 0; }
+            .date-row { display: flex; justify-content: space-between; font-size: 10px; }
+            .item { margin: 4px 0; }
+            .item-name { font-weight: 500; }
+            .item-detail { display: flex; justify-content: space-between; font-size: 11px; padding-left: 8px; }
+            .total-section { margin-top: 8px; padding-top: 8px; border-top: 2px solid #000; }
+            .total-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; }
+            .footer { text-align: center; margin-top: 12px; font-size: 11px; }
+            .thank-you { font-style: italic; font-weight: 500; }
+            .powered { font-size: 9px; color: #666; margin-top: 4px; }
           </style>
         </head>
         <body>
-          <h3>🧾 SIGR SUPERMARCHÉ</h3>
-          <div class="line"></div>
-          <p>Date: ${new Date(sale.sale_date).toLocaleString('fr-FR')}</p>
-          <div class="line"></div>
-          <div class="item">
-            <span>${product?.name || 'Produit'} x${sale.quantity}</span>
-            <span>${sale.total_amount.toLocaleString()} FCFA</span>
+          <div class="header">
+            <div class="company-name">${companyName}</div>
+            ${companyAddress ? `<div class="company-info">${companyAddress}</div>` : ''}
+            ${companyCity ? `<div class="company-info">${companyCity}</div>` : ''}
+            ${companyPhone ? `<div class="company-info">Tél: ${companyPhone}</div>` : ''}
           </div>
-          <div class="line"></div>
-          <div class="total">TOTAL: ${sale.total_amount.toLocaleString()} FCFA</div>
+          <div class="divider"></div>
+          <div class="date-row">
+            <span>Date: ${new Date(sale.sale_date).toLocaleDateString('fr-FR')}</span>
+            <span>Heure: ${new Date(sale.sale_date).toLocaleTimeString('fr-FR')}</span>
+          </div>
+          <div class="divider"></div>
+          <div class="item">
+            <div class="item-name">${product?.name || 'Produit'}</div>
+            <div class="item-detail">
+              <span>${sale.quantity} x ${sale.unit_price.toLocaleString('fr-FR')} FCFA</span>
+              <span>${sale.total_amount.toLocaleString('fr-FR')} FCFA</span>
+            </div>
+          </div>
+          <div class="total-section">
+            <div class="total-row">
+              <span>TOTAL</span>
+              <span>${sale.total_amount.toLocaleString('fr-FR')} FCFA</span>
+            </div>
+          </div>
           <div class="footer">
-            <p>Merci pour votre achat 🙏</p>
-            <p>À bientôt !</p>
+            <div class="thank-you">Merci et à bientôt !</div>
+            <div class="powered">Powered by Stocknix</div>
           </div>
         </body>
       </html>
@@ -82,38 +129,176 @@ export default function Ventes() {
     printWindow.print();
   };
 
-  // Télécharger le reçu en PDF
-  const downloadReceiptPDF = (sale: any) => {
+  // Télécharger la FACTURE A4 en PDF
+  const downloadReceiptPDF = async (sale: any) => {
     const product = products.find(p => p.id === sale.product_id);
     const doc = new jsPDF({
-      format: [80, 150],
+      format: 'a4',
       unit: 'mm'
     });
 
-    doc.setFontSize(14);
-    doc.text('SIGR SUPERMARCHÉ', 40, 10, { align: 'center' });
-    doc.setFontSize(8);
-    doc.text('─────────────────────────────', 40, 15, { align: 'center' });
-    doc.text(`Date: ${new Date(sale.sale_date).toLocaleString('fr-FR')}`, 5, 20);
-    doc.text('─────────────────────────────', 40, 25, { align: 'center' });
+    const pageWidth = 210;
+    const margin = 20;
+    let y = 20;
 
-    doc.setFontSize(9);
-    doc.text(`${product?.name || 'Produit'} x${sale.quantity}`, 5, 35);
-    doc.text(`${sale.total_amount.toLocaleString()} FCFA`, 70, 35, { align: 'right' });
+    // Charger et ajouter le logo si disponible
+    if (logoUrl) {
+      try {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = logoUrl;
+        });
+        doc.addImage(img, 'PNG', margin, y, 35, 35);
+      } catch (e) {
+        console.log("Logo non chargé, continuer sans");
+      }
+    }
 
-    doc.text('─────────────────────────────', 40, 40, { align: 'center' });
-    doc.setFontSize(11);
-    doc.text(`TOTAL: ${sale.total_amount.toLocaleString()} FCFA`, 70, 50, { align: 'right' });
+    // En-tête entreprise
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(10, 26, 59); // Bleu Nuit Stocknix
+    doc.text(companyName.toUpperCase(), pageWidth - margin, y + 8, { align: 'right' });
     
-    doc.setFontSize(8);
-    doc.text('Merci pour votre achat 🙏', 40, 60, { align: 'center' });
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    y += 15;
+    if (companyAddress) {
+      doc.text(companyAddress, pageWidth - margin, y, { align: 'right' });
+      y += 5;
+    }
+    if (companyCity) {
+      doc.text(companyCity, pageWidth - margin, y, { align: 'right' });
+      y += 5;
+    }
+    if (companyPhone) {
+      doc.text(`Tél: ${companyPhone}`, pageWidth - margin, y, { align: 'right' });
+      y += 5;
+    }
+    if (companyEmail) {
+      doc.text(companyEmail, pageWidth - margin, y, { align: 'right' });
+      y += 5;
+    }
+    if (companySiret) {
+      doc.text(`SIRET: ${companySiret}`, pageWidth - margin, y, { align: 'right' });
+      y += 5;
+    }
+    if (companyTva) {
+      doc.text(`N° TVA: ${companyTva}`, pageWidth - margin, y, { align: 'right' });
+    }
 
-    const fileName = `recu_${new Date(sale.sale_date).toISOString().slice(0, 10)}_${sale.id.slice(0, 8)}.pdf`;
+    y = 70;
+
+    // Titre FACTURE
+    doc.setFontSize(28);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(46, 163, 242); // Bleu Clair Stocknix
+    doc.text("FACTURE", margin, y);
+
+    // Numéro et date
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(60, 60, 60);
+    y += 12;
+    doc.text(`N° ${sale.id.slice(0, 8).toUpperCase()}`, margin, y);
+    doc.text(`Date: ${format(new Date(sale.sale_date), "dd MMMM yyyy", { locale: fr })}`, pageWidth - margin, y, { align: 'right' });
+
+    // Ligne décorative
+    y += 10;
+    doc.setDrawColor(46, 163, 242);
+    doc.setLineWidth(0.8);
+    doc.line(margin, y, pageWidth - margin, y);
+
+    // Informations client
+    y += 15;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(10, 26, 59);
+    doc.text("CLIENT", margin, y);
+    
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(60, 60, 60);
+    y += 8;
+    doc.text(sale.customer_name || "Client anonyme", margin, y);
+    if (sale.customer_phone) {
+      y += 6;
+      doc.text(`Tél: ${sale.customer_phone}`, margin, y);
+    }
+
+    // Tableau des produits
+    y += 20;
+    
+    // En-tête tableau
+    doc.setFillColor(10, 26, 59);
+    doc.rect(margin, y, pageWidth - 2 * margin, 12, 'F');
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(255, 255, 255);
+    doc.text("DESCRIPTION", margin + 5, y + 8);
+    doc.text("QTÉ", 100, y + 8, { align: 'center' });
+    doc.text("PRIX UNIT.", 135, y + 8, { align: 'center' });
+    doc.text("TOTAL", pageWidth - margin - 5, y + 8, { align: 'right' });
+
+    // Ligne produit
+    y += 12;
+    doc.setFillColor(245, 245, 245);
+    doc.rect(margin, y, pageWidth - 2 * margin, 12, 'F');
+    
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(40, 40, 40);
+    doc.text(product?.name || "Produit", margin + 5, y + 8);
+    doc.text(sale.quantity.toString(), 100, y + 8, { align: 'center' });
+    doc.text(`${sale.unit_price.toLocaleString('fr-FR')} FCFA`, 135, y + 8, { align: 'center' });
+    doc.text(`${sale.total_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin - 5, y + 8, { align: 'right' });
+
+    // Total section
+    y += 25;
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.3);
+    doc.line(120, y, pageWidth - margin, y);
+    
+    y += 10;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(10, 26, 59);
+    doc.text("TOTAL TTC", 120, y);
+    doc.setTextColor(46, 163, 242);
+    doc.text(`${sale.total_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin, y, { align: 'right' });
+
+    // Montant payé
+    y += 10;
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(60, 60, 60);
+    doc.text("Montant payé:", 120, y);
+    doc.text(`${sale.paid_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin, y, { align: 'right' });
+
+    // Pied de page
+    y = 270;
+    doc.setDrawColor(46, 163, 242);
+    doc.setLineWidth(0.5);
+    doc.line(margin, y, pageWidth - margin, y);
+    
+    y += 8;
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Merci pour votre confiance !", pageWidth / 2, y, { align: 'center' });
+    y += 5;
+    doc.setFontSize(8);
+    doc.text("Facture générée par Stocknix - stocknix.space", pageWidth / 2, y, { align: 'center' });
+
+    const fileName = `facture_${format(new Date(sale.sale_date), "yyyy-MM-dd")}_${sale.id.slice(0, 8)}.pdf`;
     doc.save(fileName);
     
     toast({
-      title: "✅ PDF téléchargé",
-      description: "Le reçu a été téléchargé avec succès",
+      title: "✅ Facture téléchargée",
+      description: "La facture PDF a été générée avec succès",
     });
   };
 

@@ -487,15 +487,10 @@ export default function Caisse() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 md:p-6 max-w-7xl mx-auto pb-20 md:pb-6">
-      {/* En-tête */}
-      <div className="bg-gradient-to-r from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/5 border-2 border-primary/20 rounded-xl p-4 sm:p-6 shadow-sm">
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground text-center mb-2">
-          🛒 Caisse Tactile
-        </h2>
-        <p className="text-sm sm:text-base text-muted-foreground text-center">
-          Scannez vos produits et validez la vente rapidement
-        </p>
+    <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto pb-20 md:pb-6">
+      {/* Header avec description */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <p className="text-muted-foreground">Scannez vos produits et validez la vente rapidement</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">

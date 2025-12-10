@@ -312,11 +312,10 @@ export default function Ventes() {
 
   return (
     <div className="space-y-6">
-      {/* Header Block with Description and Button */}
-      <div className="bg-gradient-to-r from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/5 border-2 border-primary/20 rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center gap-4">
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Gestion des Ventes</h2>
+      {/* Header avec bouton à droite */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <p className="text-muted-foreground">Enregistrez et suivez toutes vos ventes</p>
         <AddSaleDialog />
-        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">Enregistrez et suivez toutes vos ventes</p>
       </div>
 
       {/* Stats Cards */}

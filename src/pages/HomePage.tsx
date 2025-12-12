@@ -184,9 +184,15 @@ const HomePage = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-gradient-to-br from-primary/10 via-background to-primary/5">
+      {/* Hero Section with Grid Background */}
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-background">
+        {/* Grid Pattern Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.1)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
+        {/* Radial Gradient Overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,hsl(var(--primary)/0.2),transparent)]" />
+        {/* Glow Effects */}
+        <div className="absolute top-20 right-20 w-72 h-72 bg-primary/20 rounded-full blur-[100px]" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-accent/15 rounded-full blur-[120px]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 sm:py-20">
           <div className="max-w-4xl">
             <ScrollReveal>
@@ -246,18 +252,24 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Fonctionnalités Principales */}
-      <section id="fonctionnalites" className="py-16 sm:py-24 bg-background">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Fonctionnalités Principales - Futuristic Dark Theme */}
+      <section id="fonctionnalites" className="relative py-16 sm:py-24 bg-[hsl(222,47%,6%)] overflow-hidden">
+        {/* Futuristic Background Elements */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.05)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[120px]" />
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal>
             <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
-              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 px-4 py-2">
+              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30 px-4 py-2 backdrop-blur-sm">
+                <Zap className="h-4 w-4 mr-2" />
                 Fonctionnalités
               </Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
                 Tout ce dont vous avez besoin
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-white/60">
                 Une plateforme complète pour gérer votre entreprise efficacement
               </p>
             </div>
@@ -265,21 +277,21 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
             {mainFeatures.map((feature, index) => <ScrollReveal key={index} delay={index * 100}>
-                <Card className="p-6 sm:p-8 hover:shadow-xl transition-all border-2 h-full">
+                <Card className="group p-6 sm:p-8 bg-white/5 backdrop-blur-sm border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all h-full">
                   <div className="space-y-4">
-                    <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center">
-                      <feature.icon className="h-7 w-7 text-primary" />
+                    <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <feature.icon className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-foreground">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-white/60 leading-relaxed">
                       {feature.description}
                     </p>
                     <div className="space-y-2 pt-2">
                       {feature.items.map((item, i) => <div key={i} className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                          <span className="text-sm text-muted-foreground">{item}</span>
+                          <Check className="h-4 w-4 text-accent flex-shrink-0" />
+                          <span className="text-sm text-white/70">{item}</span>
                         </div>)}
                     </div>
                   </div>
@@ -289,12 +301,18 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Pour Qui? */}
-      <section id="pour-qui" className="py-16 sm:py-24 bg-gradient-to-br from-primary/5 via-background to-accent/10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Pour Qui? - Gradient Mesh Style */}
+      <section id="pour-qui" className="relative py-16 sm:py-24 bg-gradient-to-br from-[hsl(180,60%,95%)] via-background to-[hsl(220,60%,95%)] dark:from-[hsl(180,40%,10%)] dark:via-background dark:to-[hsl(220,40%,10%)] overflow-hidden">
+        {/* Decorative Blobs */}
+        <div className="absolute top-10 left-10 w-32 h-32 bg-accent/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary/5 to-accent/5 rounded-full blur-3xl" />
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal>
             <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
-              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 px-4 py-2">
+              <Badge className="mb-4 bg-accent/20 text-accent border-accent/30 px-4 py-2">
+                <Users className="h-4 w-4 mr-2" />
                 Pour Qui ?
               </Badge>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
@@ -308,10 +326,10 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {targetAudience.map((audience, index) => <ScrollReveal key={index} delay={index * 100}>
-                <Card className="p-6 hover:shadow-xl transition-all text-center border-2 h-full">
+                <Card className="group p-6 bg-background/80 backdrop-blur-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-center border border-border/50 hover:border-accent/50 h-full">
                   <div className="space-y-4">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                      <audience.icon className="h-8 w-8 text-primary" />
+                    <div className="w-16 h-16 bg-gradient-to-br from-accent to-primary rounded-2xl flex items-center justify-center mx-auto group-hover:rotate-6 transition-transform shadow-lg">
+                      <audience.icon className="h-8 w-8 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-foreground">
                       {audience.title}
@@ -394,36 +412,49 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Section 2: Essai Gratuit Simple */}
-      <section className="py-12 sm:py-16 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Section 2: Essai Gratuit - Glassmorphism Style */}
+      <section className="relative py-12 sm:py-20 bg-gradient-to-r from-primary via-[hsl(200,80%,50%)] to-accent overflow-hidden">
+        {/* Animated Background Shapes */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-20 -left-20 w-60 h-60 bg-white/10 rounded-full blur-xl" />
+          <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-white/10 rounded-full blur-xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/5 rounded-full" />
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-3 bg-background rounded-full px-6 py-3 border-2 border-border mb-6">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-foreground">Essai 100% Gratuit</span>
-              <span className="text-muted-foreground">•</span>
-              <span className="text-muted-foreground">Sans carte bancaire</span>
+            <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md rounded-full px-6 py-3 border border-white/30 mb-6">
+              <Sparkles className="h-5 w-5 text-white" />
+              <span className="font-semibold text-white">Essai 100% Gratuit</span>
+              <span className="text-white/60">•</span>
+              <span className="text-white/80">Sans carte bancaire</span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
               Prêt à simplifier votre gestion ?
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-white/80 text-lg mb-8">
               Rejoignez les 500+ entreprises ivoiriennes qui nous font confiance
             </p>
-            <Button size="lg" onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90">
+            <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 shadow-xl px-8 py-6 text-lg">
               Commencer Maintenant
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Benefits */}
-      <section className="py-16 sm:py-24 bg-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Benefits - Neon Glow Style */}
+      <section className="relative py-16 sm:py-24 bg-[hsl(230,25%,8%)] overflow-hidden">
+        {/* Neon Grid Lines */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--accent)/0.1)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--accent)/0.1)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        {/* Neon Glow Effects */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal>
             <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
                 Pourquoi choisir Stocknix ?
               </h2>
             </div>
@@ -431,15 +462,17 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {benefits.map((benefit, index) => <ScrollReveal key={index} delay={index * 100}>
-                <Card className="p-6 hover:shadow-xl transition-all text-center border-2">
-                  <div className="space-y-4">
-                    <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto">
-                      <benefit.icon className="h-7 w-7 text-primary" />
+                <Card className="group relative p-6 bg-transparent border border-accent/30 hover:border-accent transition-all text-center overflow-hidden">
+                  {/* Card Glow */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative z-10 space-y-4">
+                    <div className="w-14 h-14 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center mx-auto shadow-[0_0_30px_hsl(var(--accent)/0.5)] group-hover:shadow-[0_0_50px_hsl(var(--accent)/0.7)] transition-shadow">
+                      <benefit.icon className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-foreground">
+                    <h3 className="text-lg font-bold text-white">
                       {benefit.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <p className="text-sm text-white/60 leading-relaxed">
                       {benefit.description}
                     </p>
                   </div>
@@ -449,11 +482,25 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* CTA Final */}
-      <section className="py-16 sm:py-24 bg-gradient-to-br from-primary to-primary/80">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* CTA Final - Cyberpunk Gradient */}
+      <section className="relative py-16 sm:py-24 bg-gradient-to-br from-[hsl(260,70%,30%)] via-primary to-[hsl(200,80%,40%)] overflow-hidden">
+        {/* Geometric Shapes */}
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-20 h-20 border-2 border-white/20 rotate-45" />
+          <div className="absolute bottom-10 right-10 w-32 h-32 border-2 border-white/20 rotate-12" />
+          <div className="absolute top-1/2 right-1/4 w-16 h-16 border-2 border-white/10 rounded-full" />
+          <div className="absolute bottom-1/4 left-1/4 w-24 h-24 border border-white/10 rounded-full" />
+        </div>
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <ScrollReveal>
             <div className="max-w-3xl mx-auto space-y-8">
+              <Badge className="bg-white/20 text-white border-white/30 px-4 py-2 backdrop-blur-sm">
+                <Rocket className="h-4 w-4 mr-2" />
+                Lancez-vous maintenant
+              </Badge>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
                 Prêt à transformer votre gestion ?
               </h2>
@@ -461,11 +508,11 @@ const HomePage = () => {
                 Rejoignez les 500+ entreprises qui ont choisi Stocknix
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-6 shadow-xl">
+                <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-6 shadow-xl hover:shadow-2xl transition-shadow">
                   Commencer Gratuitement
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" onClick={() => navigate('/tarifs')} className="text-lg px-10 py-6 border-2 border-white text-white hover:bg-white hover:text-primary">
+                <Button size="lg" variant="outline" onClick={() => navigate('/tarifs')} className="text-lg px-10 py-6 border-2 border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm">
                   Voir les Tarifs
                 </Button>
               </div>
@@ -474,46 +521,46 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 border-t border-border bg-muted/30">
-        <div className="container mx-auto">
+      {/* Footer - Modern Dark */}
+      <footer className="relative py-12 px-4 sm:px-6 bg-[hsl(222,47%,6%)] border-t border-white/10">
+        <div className="container mx-auto relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="space-y-4">
               <div className="flex items-center">
                 <img src={stocknixLogo} alt="Stocknix" className="h-10" />
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-white/60">
                 Logiciel de gestion complet pour PME et TPE en Côte d'Ivoire
               </p>
             </div>
             
             <div>
-              <h3 className="font-bold mb-4">Produit</h3>
+              <h3 className="font-bold mb-4 text-white">Produit</h3>
               <div className="space-y-2 text-sm">
-                <a href="/fonctionnalites" className="block text-muted-foreground hover:text-primary">Fonctionnalités</a>
-                <a href="/tarifs" className="block text-muted-foreground hover:text-primary">Tarifs</a>
-                <a href="/faq" className="block text-muted-foreground hover:text-primary">FAQ</a>
+                <a href="/fonctionnalites" className="block text-white/60 hover:text-accent transition-colors">Fonctionnalités</a>
+                <a href="/tarifs" className="block text-white/60 hover:text-accent transition-colors">Tarifs</a>
+                <a href="/faq" className="block text-white/60 hover:text-accent transition-colors">FAQ</a>
               </div>
             </div>
             
             <div>
-              <h3 className="font-bold mb-4">Entreprise</h3>
+              <h3 className="font-bold mb-4 text-white">Entreprise</h3>
               <div className="space-y-2 text-sm">
-                <a href="/legal" className="block text-muted-foreground hover:text-primary">Mentions Légales</a>
-                <p className="text-muted-foreground">Par DESCHNIX</p>
+                <a href="/legal" className="block text-white/60 hover:text-accent transition-colors">Mentions Légales</a>
+                <p className="text-white/60">Par DESCHNIX</p>
               </div>
             </div>
             
             <div>
-              <h3 className="font-bold mb-4">Contact</h3>
-              <div className="space-y-2 text-sm text-muted-foreground">
+              <h3 className="font-bold mb-4 text-white">Contact</h3>
+              <div className="space-y-2 text-sm text-white/60">
                 <p>support@stocknix.space</p>
                 <p>Côte d'Ivoire</p>
               </div>
             </div>
           </div>
           
-          <div className="text-center text-sm text-muted-foreground border-t border-border pt-8">
+          <div className="text-center text-sm text-white/40 border-t border-white/10 pt-8">
             <p>© 2025 Stocknix par DESCHNIX. Tous droits réservés.</p>
           </div>
         </div>

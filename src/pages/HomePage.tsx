@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X, Star, Zap, Clock, Store, ShoppingBag, Building2, Check, Sparkles, ChevronDown, Bell, FileText, Scan, Download, Upload, AlertTriangle, DollarSign, ChevronLeft, ChevronRight, Globe, Heart, Rocket, Quote } from "lucide-react";
+import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X, Star, Zap, Clock, Store, ShoppingBag, Building2, Check, Sparkles, ChevronDown, Bell, FileText, Scan, Download, Upload, AlertTriangle, DollarSign, ChevronLeft, ChevronRight, Globe, Heart, Rocket } from "lucide-react";
 import { useState, useCallback } from "react";
 import useEmblaCarousel from 'embla-carousel-react';
 import stocknixLogo from '@/assets/stocknix-logo.png';
@@ -52,71 +52,37 @@ const HomePage = () => {
     }
   ];
 
-  const testimonials = [
-    {
-      name: "Aminata K.",
-      role: "Gérante de Supermarché",
-      location: "Abidjan, Cocody",
-      content: "Stocknix a transformé notre gestion. Avant, je perdais des heures à compter le stock. Maintenant tout est automatique !",
-      rating: 5,
-      avatar: "AK"
-    },
-    {
-      name: "Kouassi B.",
-      role: "Propriétaire de Boutique",
-      location: "Bouaké",
-      content: "Le module caisse est incroyable. Mes employés l'ont adopté en moins d'une heure. Les ventes sont maintenant bien suivies.",
-      rating: 5,
-      avatar: "KB"
-    },
-    {
-      name: "Marie-Claire D.",
-      role: "Directrice PME",
-      location: "Abidjan, Plateau",
-      content: "Les rapports et analytics m'aident à prendre de meilleures décisions. Mon chiffre d'affaires a augmenté de 30% en 6 mois.",
-      rating: 5,
-      avatar: "MD"
-    }
-  ];
-
   const mainFeatures = [{
     icon: Package,
     title: "Gestion des Stocks",
     description: "Suivi en temps réel, alertes de stock bas, import/export Excel/PDF/CSV, gestion code-barres, contrôle complet des produits",
-    items: ["Suivi en temps réel", "Alertes de stock bas", "Import/Export Excel, PDF, CSV", "Scanner Code-barres", "Contrôle total produits"],
-    gradient: "from-blue-500 to-cyan-400"
+    items: ["Suivi en temps réel", "Alertes de stock bas", "Import/Export Excel, PDF, CSV", "Scanner Code-barres", "Contrôle total produits"]
   }, {
     icon: ShoppingBag,
     title: "Caisse & POS",
     description: "Encaissement rapide, gestion quantités/remises, paiements multiples (Mobile Money, espèces, cartes), tickets automatiques",
-    items: ["Caisse tactile rapide", "Gestion remises", "Multi-paiements", "Impression tickets", "Interface intuitive"],
-    gradient: "from-violet-500 to-purple-400"
+    items: ["Caisse tactile rapide", "Gestion remises", "Multi-paiements", "Impression tickets", "Interface intuitive"]
   }, {
     icon: FileText,
     title: "Ventes & Facturation",
     description: "Création de devis et factures professionnels, suivi complet des transactions, export PDF automatique",
-    items: ["Devis personnalisés", "Factures pro", "Suivi transactions", "Export PDF", "Historique complet"],
-    gradient: "from-emerald-500 to-teal-400"
+    items: ["Devis personnalisés", "Factures pro", "Suivi transactions", "Export PDF", "Historique complet"]
   }, {
     icon: DollarSign,
     title: "Gestion des Paiements",
     description: "Historique complet, multi-méthodes de paiement, statuts en temps réel, rappels automatiques",
-    items: ["Historique détaillé", "Multi-méthodes", "Statuts temps réel", "Rappels auto", "Rapprochement bancaire"],
-    gradient: "from-orange-500 to-amber-400"
+    items: ["Historique détaillé", "Multi-méthodes", "Statuts temps réel", "Rappels auto", "Rapprochement bancaire"]
   }, {
     icon: BarChart3,
     title: "Rapports & Analytics",
     description: "Rapports détaillés, graphiques interactifs, prévisions intelligentes, analyse activité commerciale",
-    items: ["Graphiques temps réel", "Rapports détaillés", "Prévisions IA", "Analytics avancés", "Exports personnalisés"],
-    gradient: "from-pink-500 to-rose-400"
+    items: ["Graphiques temps réel", "Rapports détaillés", "Prévisions IA", "Analytics avancés", "Exports personnalisés"]
   }, {
     icon: Bell,
     title: "Alertes Temps Réel",
     description: "Notifications automatiques pour stock bas, ruptures, activité caisse, mouvements produits",
-    items: ["Alertes stock bas", "Notifications rupture", "Activité caisse", "Mouvements stock", "Alertes personnalisées"],
-    gradient: "from-indigo-500 to-blue-400"
+    items: ["Alertes stock bas", "Notifications rupture", "Activité caisse", "Mouvements stock", "Alertes personnalisées"]
   }];
-
   const targetAudience = [{
     icon: Store,
     title: "Supermarchés & Boutiques",
@@ -134,7 +100,6 @@ const HomePage = () => {
     title: "Grossistes & Distributeurs",
     description: "Gérez vos commandes en gros, suivez vos fournisseurs, optimisez votre inventaire et vos marges."
   }];
-
   const benefits = [{
     icon: Zap,
     title: "Rapide & Efficace",
@@ -152,7 +117,6 @@ const HomePage = () => {
     title: "Multi-plateforme",
     description: "PC, Mac, tablettes, smartphones - accessible partout"
   }];
-
   return <div className="min-h-screen bg-background">
       
       {/* Navigation */}
@@ -220,113 +184,62 @@ const HomePage = () => {
         </div>
       </header>
 
-      {/* Hero Section with 3D Dashboard */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-[hsl(222,47%,8%)] via-[hsl(222,47%,11%)] to-[hsl(200,50%,12%)]">
-        {/* Animated Gradient Orbs */}
-        <div className="absolute top-20 right-[20%] w-[500px] h-[500px] bg-primary/30 rounded-full blur-[150px] animate-pulse" />
-        <div className="absolute bottom-20 left-[10%] w-[400px] h-[400px] bg-accent/25 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 right-[10%] w-[300px] h-[300px] bg-[hsl(280,60%,50%)]/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }} />
-        
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 sm:py-16">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-6 sm:space-y-8">
-              <ScrollReveal>
-                <Badge className="bg-white/10 text-white border-white/20 px-4 py-2 text-sm font-semibold inline-flex backdrop-blur-sm">
-                  <Sparkles className="h-4 w-4 mr-2 text-accent" />
+      {/* Hero Section with Grid Background */}
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-background">
+        {/* Grid Pattern Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.1)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
+        {/* Radial Gradient Overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,hsl(var(--primary)/0.2),transparent)]" />
+        {/* Glow Effects */}
+        <div className="absolute top-20 right-20 w-72 h-72 bg-primary/20 rounded-full blur-[100px]" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-accent/15 rounded-full blur-[120px]" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 sm:py-20">
+          <div className="max-w-4xl">
+            <ScrollReveal>
+              <div className="space-y-6 sm:space-y-8">
+                <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 text-sm font-semibold inline-flex">
+                  <Sparkles className="h-4 w-4 mr-2" />
                   Essai Gratuit • Sans Engagement
                 </Badge>
-              </ScrollReveal>
-              
-              <ScrollReveal delay={100}>
-                <h1 className="font-extrabold text-white text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight">
+                
+                <h1 className="font-extrabold text-foreground text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight">
                   Stocknix
                 </h1>
-              </ScrollReveal>
-              
-              <ScrollReveal delay={200}>
-                <h2 className="font-bold text-white/90 text-2xl sm:text-3xl lg:text-4xl leading-tight">
+                
+                <h2 className="font-bold text-foreground text-2xl sm:text-3xl lg:text-4xl leading-tight">
                   Gérez vos stocks, vos ventes et votre caisse en toute simplicité
                 </h2>
-              </ScrollReveal>
-              
-              <ScrollReveal delay={300}>
-                <p className="text-lg sm:text-xl text-white/70 leading-relaxed max-w-xl">
+                
+                <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                   Le logiciel SaaS complet pour boutiques, supermarchés, magasins, PME et TPE. 
                   Stock en temps réel, factures, devis, paiements, analytics et alertes automatiques.
                 </p>
-              </ScrollReveal>
-              
-              <ScrollReveal delay={400}>
+                
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" onClick={() => navigate('/auth')} className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-lg px-8 py-6 shadow-2xl shadow-primary/30 transition-all duration-300 hover:shadow-primary/50 hover:scale-105">
+                  <Button size="lg" onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-lg">
                     Essayer Stocknix Maintenant
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
-                  <Button size="lg" variant="outline" onClick={() => navigate('/fonctionnalites')} className="text-lg px-8 py-6 border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-300 hover:border-white/50">
+                  <Button size="lg" variant="outline" onClick={() => navigate('/fonctionnalites')} className="text-lg px-8 py-6 border-2">
                     Découvrir les Fonctionnalités
                   </Button>
                 </div>
-              </ScrollReveal>
 
-              <ScrollReveal delay={500}>
                 <div className="flex items-center gap-6 pt-4">
-                  <div className="flex -space-x-3">
-                    {['AK', 'BM', 'CL', 'DT', 'EK'].map((initials, i) => (
-                      <div key={i} className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-accent border-2 border-[hsl(222,47%,11%)] flex items-center justify-center text-xs font-bold text-white shadow-lg">
-                        {initials}
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-sm font-bold">
+                        {i}
                       </div>
                     ))}
                   </div>
                   <div>
                     <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map(i => (
-                        <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
+                        <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                       ))}
                     </div>
-                    <p className="text-sm text-white/60 font-medium">500+ entreprises satisfaites</p>
-                  </div>
-                </div>
-              </ScrollReveal>
-            </div>
-
-            {/* Right - 3D Dashboard Image */}
-            <ScrollReveal delay={300}>
-              <div className="relative lg:block hidden">
-                <div className="relative">
-                  {/* Floating Glow Behind */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-accent/40 rounded-3xl blur-3xl scale-90" />
-                  
-                  {/* Main 3D Image */}
-                  <img 
-                    src={dashboardHero} 
-                    alt="Stocknix Dashboard 3D" 
-                    className="relative z-10 w-full h-auto rounded-2xl shadow-2xl transform hover:scale-[1.02] transition-transform duration-500"
-                  />
-                  
-                  {/* Floating Stats Cards */}
-                  <div className="absolute -top-4 -left-4 bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 shadow-xl animate-float">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center">
-                        <TrendingUp className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-white/60">Ventes du jour</p>
-                        <p className="text-lg font-bold text-white">+32%</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="absolute -bottom-4 -right-4 bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 shadow-xl animate-float" style={{ animationDelay: '0.5s' }}>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-violet-400 to-purple-500 rounded-lg flex items-center justify-center">
-                        <Package className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-white/60">Produits actifs</p>
-                        <p className="text-lg font-bold text-white">1,247</p>
-                      </div>
-                    </div>
+                    <p className="text-sm text-muted-foreground font-medium">500+ entreprises satisfaites</p>
                   </div>
                 </div>
               </div>
@@ -334,19 +247,17 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-          <div className="flex flex-col items-center gap-2 text-white/50">
-            <span className="text-xs uppercase tracking-widest">Découvrir</span>
-            <ChevronDown className="h-6 w-6 animate-bounce" />
-          </div>
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <ChevronDown className="h-8 w-8 text-muted-foreground" />
         </div>
       </section>
 
-      {/* Fonctionnalités Principales - Modern Cards with Animations */}
+      {/* Fonctionnalités Principales - Futuristic Dark Theme */}
       <section id="fonctionnalites" className="relative py-16 sm:py-24 bg-[hsl(222,47%,6%)] overflow-hidden">
-        {/* Subtle Background */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.08),transparent_70%)]" />
+        {/* Futuristic Background Elements */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.05)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[120px]" />
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal>
@@ -365,25 +276,22 @@ const HomePage = () => {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
-            {mainFeatures.map((feature, index) => <ScrollReveal key={index} delay={index * 80}>
-                <Card className="group relative p-6 sm:p-8 bg-white/[0.03] backdrop-blur-sm border border-white/10 hover:border-white/30 transition-all duration-500 h-full overflow-hidden hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2">
-                  {/* Gradient Glow on Hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-                  
-                  <div className="relative z-10 space-y-4">
-                    <div className={`w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg`}>
+            {mainFeatures.map((feature, index) => <ScrollReveal key={index} delay={index * 100}>
+                <Card className="group p-6 sm:p-8 bg-white/5 backdrop-blur-sm border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all h-full">
+                  <div className="space-y-4">
+                    <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                       <feature.icon className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/80 group-hover:bg-clip-text transition-all duration-300">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-white/60 leading-relaxed group-hover:text-white/70 transition-colors duration-300">
+                    <p className="text-white/60 leading-relaxed">
                       {feature.description}
                     </p>
                     <div className="space-y-2 pt-2">
-                      {feature.items.map((item, i) => <div key={i} className="flex items-center gap-2 group/item">
-                          <Check className="h-4 w-4 text-accent flex-shrink-0 group-hover/item:scale-110 transition-transform" />
-                          <span className="text-sm text-white/70 group-hover:text-white/80 transition-colors">{item}</span>
+                      {feature.items.map((item, i) => <div key={i} className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-accent flex-shrink-0" />
+                          <span className="text-sm text-white/70">{item}</span>
                         </div>)}
                     </div>
                   </div>
@@ -418,9 +326,9 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {targetAudience.map((audience, index) => <ScrollReveal key={index} delay={index * 100}>
-                <Card className="group p-6 bg-background/80 backdrop-blur-sm hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 text-center border border-border/50 hover:border-accent/50 h-full">
+                <Card className="group p-6 bg-background/80 backdrop-blur-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-center border border-border/50 hover:border-accent/50 h-full">
                   <div className="space-y-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-accent to-primary rounded-2xl flex items-center justify-center mx-auto group-hover:rotate-6 group-hover:scale-110 transition-all duration-500 shadow-lg">
+                    <div className="w-16 h-16 bg-gradient-to-br from-accent to-primary rounded-2xl flex items-center justify-center mx-auto group-hover:rotate-6 transition-transform shadow-lg">
                       <audience.icon className="h-8 w-8 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-foreground">
@@ -458,7 +366,7 @@ const HomePage = () => {
               <div className="flex">
                 {carouselSlides.map((slide, index) => (
                   <div key={index} className="flex-[0_0_100%] min-w-0 px-4">
-                    <Card className={`p-8 sm:p-12 bg-gradient-to-br ${slide.color} border-2 border-border/50 hover:border-primary/30 transition-all duration-300`}>
+                    <Card className={`p-8 sm:p-12 bg-gradient-to-br ${slide.color} border-2 border-border/50`}>
                       <div className="flex flex-col lg:flex-row items-center gap-8">
                         <div className="w-24 h-24 bg-primary/10 rounded-2xl flex items-center justify-center flex-shrink-0">
                           <slide.icon className="h-12 w-12 text-primary" />
@@ -490,75 +398,16 @@ const HomePage = () => {
             {/* Navigation Arrows */}
             <button
               onClick={scrollPrev}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 w-10 h-10 bg-background border-2 border-border rounded-full flex items-center justify-center hover:bg-muted transition-all duration-300 hover:scale-110"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 w-10 h-10 bg-background border-2 border-border rounded-full flex items-center justify-center hover:bg-muted"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={scrollNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 w-10 h-10 bg-background border-2 border-border rounded-full flex items-center justify-center hover:bg-muted transition-all duration-300 hover:scale-110"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 w-10 h-10 bg-background border-2 border-border rounded-full flex items-center justify-center hover:bg-muted"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-16 sm:py-24 bg-gradient-to-br from-[hsl(220,50%,6%)] to-[hsl(200,50%,8%)] overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
-              <Badge className="mb-4 bg-accent/20 text-accent border-accent/30 px-4 py-2 backdrop-blur-sm">
-                <Star className="h-4 w-4 mr-2" />
-                Témoignages
-              </Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
-                Ils nous font confiance
-              </h2>
-              <p className="text-lg text-white/60">
-                Découvrez ce que nos clients disent de Stocknix
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <ScrollReveal key={index} delay={index * 100}>
-                <Card className="group p-6 sm:p-8 bg-white/[0.03] backdrop-blur-sm border border-white/10 hover:border-accent/50 transition-all duration-500 h-full hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/10">
-                  <div className="space-y-6">
-                    {/* Quote Icon */}
-                    <div className="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center">
-                      <Quote className="h-6 w-6 text-white" />
-                    </div>
-                    
-                    {/* Rating */}
-                    <div className="flex gap-1">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
-                    
-                    {/* Content */}
-                    <p className="text-white/80 leading-relaxed italic">
-                      "{testimonial.content}"
-                    </p>
-                    
-                    {/* Author */}
-                    <div className="flex items-center gap-4 pt-4 border-t border-white/10">
-                      <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold">
-                        {testimonial.avatar}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-white">{testimonial.name}</p>
-                        <p className="text-sm text-white/60">{testimonial.role}</p>
-                        <p className="text-xs text-accent">{testimonial.location}</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </ScrollReveal>
-            ))}
           </div>
         </div>
       </section>
@@ -586,7 +435,7 @@ const HomePage = () => {
             <p className="text-white/80 text-lg mb-8">
               Rejoignez les 500+ entreprises ivoiriennes qui nous font confiance
             </p>
-            <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 shadow-xl px-8 py-6 text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+            <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 shadow-xl px-8 py-6 text-lg">
               Commencer Maintenant
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -594,11 +443,13 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Benefits - Professional Dark Theme */}
+      {/* Benefits - Neon Glow Style */}
       <section className="relative py-16 sm:py-24 bg-[hsl(230,25%,8%)] overflow-hidden">
-        {/* Gradient Orbs */}
-        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-accent/10 rounded-full blur-[120px]" />
+        {/* Neon Grid Lines */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--accent)/0.1)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--accent)/0.1)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        {/* Neon Glow Effects */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal>
@@ -606,26 +457,22 @@ const HomePage = () => {
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
                 Pourquoi choisir Stocknix ?
               </h2>
-              <p className="text-lg text-white/60">
-                Des avantages concrets pour votre entreprise
-              </p>
             </div>
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {benefits.map((benefit, index) => <ScrollReveal key={index} delay={index * 100}>
-                <Card className="group relative p-6 bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/10 hover:border-primary/50 transition-all duration-500 text-center overflow-hidden hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
-                  {/* Hover Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
+                <Card className="group relative p-6 bg-transparent border border-accent/30 hover:border-accent transition-all text-center overflow-hidden">
+                  {/* Card Glow */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative z-10 space-y-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center mx-auto group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                    <div className="w-14 h-14 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center mx-auto shadow-[0_0_30px_hsl(var(--accent)/0.5)] group-hover:shadow-[0_0_50px_hsl(var(--accent)/0.7)] transition-shadow">
                       <benefit.icon className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="text-lg font-bold text-white">
                       {benefit.title}
                     </h3>
-                    <p className="text-sm text-white/60 leading-relaxed group-hover:text-white/70 transition-colors">
+                    <p className="text-sm text-white/60 leading-relaxed">
                       {benefit.description}
                     </p>
                   </div>
@@ -661,11 +508,11 @@ const HomePage = () => {
                 Rejoignez les 500+ entreprises qui ont choisi Stocknix
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-6 shadow-xl hover:shadow-2xl transition-shadow">
                   Commencer Gratuitement
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" onClick={() => navigate('/tarifs')} className="text-lg px-10 py-6 border-2 border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm transition-all duration-300">
+                <Button size="lg" variant="outline" onClick={() => navigate('/tarifs')} className="text-lg px-10 py-6 border-2 border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm">
                   Voir les Tarifs
                 </Button>
               </div>
@@ -718,17 +565,6 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
-
-      {/* Custom Animation Styles */}
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-      `}</style>
     </div>;
 };
 export default HomePage;

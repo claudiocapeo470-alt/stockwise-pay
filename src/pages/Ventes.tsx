@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { ShoppingCart, Search, Plus, Eye, Grid3x3, List, Printer, Download, FileText } from "lucide-react";
 import { useState } from "react";
@@ -54,83 +55,8 @@ export default function Ventes() {
   });
   const todayTotal = todaySales.reduce((sum, sale) => sum + sale.total_amount, 0);
 
-  // Réimprimer le reçu (ticket POS)
-  const reprintReceipt = (sale: any) => {
-    const product = products.find(p => p.id === sale.product_id);
-    const printWindow = window.open('', '', 'width=320,height=600');
-    if (!printWindow) return;
-
-    const receiptContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Ticket - ${companyName}</title>
-          <style>
-            @page { size: 80mm auto; margin: 0; }
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { 
-              font-family: 'Courier New', monospace; 
-              font-size: 12px; 
-              width: 80mm; 
-              padding: 8px;
-              background: #fff;
-            }
-            .header { text-align: center; margin-bottom: 8px; }
-            .company-name { font-size: 16px; font-weight: bold; text-transform: uppercase; }
-            .company-info { font-size: 10px; color: #444; }
-            .divider { border-bottom: 1px dashed #000; margin: 6px 0; }
-            .date-row { display: flex; justify-content: space-between; font-size: 10px; }
-            .item { margin: 4px 0; }
-            .item-name { font-weight: 500; }
-            .item-detail { display: flex; justify-content: space-between; font-size: 11px; padding-left: 8px; }
-            .total-section { margin-top: 8px; padding-top: 8px; border-top: 2px solid #000; }
-            .total-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; }
-            .footer { text-align: center; margin-top: 12px; font-size: 11px; }
-            .thank-you { font-style: italic; font-weight: 500; }
-            .powered { font-size: 9px; color: #666; margin-top: 4px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="company-name">${companyName}</div>
-            ${companyAddress ? `<div class="company-info">${companyAddress}</div>` : ''}
-            ${companyCity ? `<div class="company-info">${companyCity}</div>` : ''}
-            ${companyPhone ? `<div class="company-info">Tél: ${companyPhone}</div>` : ''}
-          </div>
-          <div class="divider"></div>
-          <div class="date-row">
-            <span>Date: ${new Date(sale.sale_date).toLocaleDateString('fr-FR')}</span>
-            <span>Heure: ${new Date(sale.sale_date).toLocaleTimeString('fr-FR')}</span>
-          </div>
-          <div class="divider"></div>
-          <div class="item">
-            <div class="item-name">${product?.name || 'Produit'}</div>
-            <div class="item-detail">
-              <span>${sale.quantity} x ${sale.unit_price.toLocaleString('fr-FR')} FCFA</span>
-              <span>${sale.total_amount.toLocaleString('fr-FR')} FCFA</span>
-            </div>
-          </div>
-          <div class="total-section">
-            <div class="total-row">
-              <span>TOTAL</span>
-              <span>${sale.total_amount.toLocaleString('fr-FR')} FCFA</span>
-            </div>
-          </div>
-          <div class="footer">
-            <div class="thank-you">Merci et à bientôt !</div>
-            <div class="powered">Powered by Stocknix</div>
-          </div>
-        </body>
-      </html>
-    `;
-
-    printWindow.document.write(receiptContent);
-    printWindow.document.close();
-    printWindow.print();
-  };
-
-  // Télécharger la FACTURE A4 en PDF
-  const downloadReceiptPDF = async (sale: any) => {
+  // Générer et télécharger/imprimer le document A4 (Facture ou Proforma)
+  const generateDocumentA4 = async (sale: any, documentType: 'facture' | 'proforma' = 'facture', action: 'download' | 'print' = 'download') => {
     const product = products.find(p => p.id === sale.product_id);
     const doc = new jsPDF({
       format: 'a4',
@@ -140,6 +66,9 @@ export default function Ventes() {
     const pageWidth = 210;
     const margin = 20;
     let y = 20;
+    
+    const docTitle = documentType === 'facture' ? 'FACTURE' : 'PROFORMA';
+    const docPrefix = documentType === 'facture' ? 'FAC' : 'PRO';
 
     // Charger et ajouter le logo si disponible
     if (logoUrl) {
@@ -160,7 +89,7 @@ export default function Ventes() {
     // En-tête entreprise
     doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(10, 26, 59); // Bleu Nuit Stocknix
+    doc.setTextColor(10, 26, 59);
     doc.text(companyName.toUpperCase(), pageWidth - margin, y + 8, { align: 'right' });
     
     doc.setFontSize(10);
@@ -193,23 +122,23 @@ export default function Ventes() {
 
     y = 70;
 
-    // Titre FACTURE
+    // Titre document (Facture ou Proforma)
     doc.setFontSize(28);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(46, 163, 242); // Bleu Clair Stocknix
-    doc.text("FACTURE", margin, y);
+    doc.setTextColor(documentType === 'facture' ? 46 : 55, documentType === 'facture' ? 163 : 200, documentType === 'facture' ? 242 : 166);
+    doc.text(docTitle, margin, y);
 
     // Numéro et date
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(60, 60, 60);
     y += 12;
-    doc.text(`N° ${sale.id.slice(0, 8).toUpperCase()}`, margin, y);
+    doc.text(`N° ${docPrefix}-${sale.id.slice(0, 8).toUpperCase()}`, margin, y);
     doc.text(`Date: ${format(new Date(sale.sale_date), "dd MMMM yyyy", { locale: fr })}`, pageWidth - margin, y, { align: 'right' });
 
     // Ligne décorative
     y += 10;
-    doc.setDrawColor(46, 163, 242);
+    doc.setDrawColor(documentType === 'facture' ? 46 : 55, documentType === 'facture' ? 163 : 200, documentType === 'facture' ? 242 : 166);
     doc.setLineWidth(0.8);
     doc.line(margin, y, pageWidth - margin, y);
 
@@ -268,20 +197,33 @@ export default function Ventes() {
     doc.setFont("helvetica", "bold");
     doc.setTextColor(10, 26, 59);
     doc.text("TOTAL TTC", 120, y);
-    doc.setTextColor(46, 163, 242);
+    doc.setTextColor(documentType === 'facture' ? 46 : 55, documentType === 'facture' ? 163 : 200, documentType === 'facture' ? 242 : 166);
     doc.text(`${sale.total_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin, y, { align: 'right' });
 
-    // Montant payé
-    y += 10;
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(60, 60, 60);
-    doc.text("Montant payé:", 120, y);
-    doc.text(`${sale.paid_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin, y, { align: 'right' });
+    // Montant payé (seulement pour factures)
+    if (documentType === 'facture') {
+      y += 10;
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(60, 60, 60);
+      doc.text("Montant payé:", 120, y);
+      doc.text(`${sale.paid_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin, y, { align: 'right' });
+    }
+
+    // Note pour Proforma
+    if (documentType === 'proforma') {
+      y += 20;
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "italic");
+      doc.setTextColor(100, 100, 100);
+      doc.text("Ce document est une proforma et ne constitue pas une facture définitive.", margin, y);
+      y += 5;
+      doc.text("Valable 30 jours à compter de la date d'émission.", margin, y);
+    }
 
     // Pied de page
     y = 270;
-    doc.setDrawColor(46, 163, 242);
+    doc.setDrawColor(documentType === 'facture' ? 46 : 55, documentType === 'facture' ? 163 : 200, documentType === 'facture' ? 242 : 166);
     doc.setLineWidth(0.5);
     doc.line(margin, y, pageWidth - margin, y);
     
@@ -291,15 +233,32 @@ export default function Ventes() {
     doc.text("Merci pour votre confiance !", pageWidth / 2, y, { align: 'center' });
     y += 5;
     doc.setFontSize(8);
-    doc.text("Facture générée par Stocknix - stocknix.space", pageWidth / 2, y, { align: 'center' });
+    doc.text(`${docTitle} générée par Stocknix - stocknix.space`, pageWidth / 2, y, { align: 'center' });
 
-    const fileName = `facture_${format(new Date(sale.sale_date), "yyyy-MM-dd")}_${sale.id.slice(0, 8)}.pdf`;
-    doc.save(fileName);
-    
-    toast({
-      title: "✅ Facture téléchargée",
-      description: "La facture PDF a été générée avec succès",
-    });
+    if (action === 'download') {
+      const fileName = `${documentType}_${format(new Date(sale.sale_date), "yyyy-MM-dd")}_${sale.id.slice(0, 8)}.pdf`;
+      doc.save(fileName);
+      
+      toast({
+        title: `✅ ${docTitle} téléchargée`,
+        description: `Le document PDF a été généré avec succès`,
+      });
+    } else {
+      // Impression sur demande
+      const pdfBlob = doc.output('blob');
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const printWindow = window.open(pdfUrl);
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+      }
+      
+      toast({
+        title: `🖨️ Impression ${docTitle}`,
+        description: `Document prêt à imprimer`,
+      });
+    }
   };
 
   if (isLoading) {
@@ -457,20 +416,20 @@ export default function Ventes() {
                               variant="ghost"
                               size="icon"
                               className="h-7 w-7"
-                              onClick={() => reprintReceipt(sale)}
-                              title="Réimprimer"
+                              onClick={() => generateDocumentA4(sale, 'facture', 'print')}
+                              title="Imprimer Facture A4"
                             >
                               <Printer className="h-3.5 w-3.5" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7"
-                              onClick={() => downloadReceiptPDF(sale)}
-                              title="PDF"
-                            >
-                              <Download className="h-3.5 w-3.5" />
-                            </Button>
+                            <Select onValueChange={(type: 'facture' | 'proforma') => generateDocumentA4(sale, type, 'download')}>
+                              <SelectTrigger className="h-7 w-7 p-0 border-0 bg-transparent hover:bg-muted">
+                                <Download className="h-3.5 w-3.5" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="facture">Télécharger Facture</SelectItem>
+                                <SelectItem value="proforma">Télécharger Proforma</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
                         </div>
                       </CardHeader>
@@ -555,19 +514,20 @@ export default function Ventes() {
                               <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() => reprintReceipt(sale)}
-                                title="Réimprimer le reçu"
+                                onClick={() => generateDocumentA4(sale, 'facture', 'print')}
+                                title="Imprimer Facture A4"
                               >
                                 <Printer className="h-4 w-4" />
                               </Button>
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => downloadReceiptPDF(sale)}
-                                title="Télécharger PDF"
-                              >
-                                <Download className="h-4 w-4" />
-                              </Button>
+                              <Select onValueChange={(type: 'facture' | 'proforma') => generateDocumentA4(sale, type, 'download')}>
+                                <SelectTrigger className="h-9 w-9 p-0 border hover:bg-muted">
+                                  <Download className="h-4 w-4" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="facture">Télécharger Facture</SelectItem>
+                                  <SelectItem value="proforma">Télécharger Proforma</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
                           </TableCell>
                         </TableRow>

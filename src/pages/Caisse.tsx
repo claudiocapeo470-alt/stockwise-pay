@@ -33,6 +33,12 @@ export default function Caisse() {
   const { settings } = useCompanySettings();
   const { profile } = useAuth();
   const scannerInitialized = useRef(false);
+  
+  // Anti-doublon et cooldown pour le scanner
+  const lastScannedCode = useRef<string | null>(null);
+  const lastScanTime = useRef<number>(0);
+  const scanCooldown = 2000; // 2 secondes de délai entre chaque scan du même code
+  const globalCooldown = useRef(false); // Cooldown global après scan réussi
 
   // Nettoyage de la caméra à la fermeture
   useEffect(() => {
@@ -160,16 +166,35 @@ export default function Caisse() {
         });
       });
 
-      // Détecter les codes-barres - notification uniquement si produit trouvé
+      // Détecter les codes-barres avec anti-doublon et cooldown
       Quagga.onDetected((result) => {
         if (result && result.codeResult && result.codeResult.code) {
           const code = result.codeResult.code.trim();
+          const currentTime = Date.now();
+          
+          // Vérifier si en cooldown global (après un scan réussi)
+          if (globalCooldown.current) {
+            return;
+          }
+          
+          // Vérifier le cooldown pour le même code
+          if (code === lastScannedCode.current && (currentTime - lastScanTime.current) < scanCooldown) {
+            return; // Ignorer - même code scanné trop rapidement
+          }
+          
+          // Mettre à jour les références
+          lastScannedCode.current = code;
+          lastScanTime.current = currentTime;
+          
           setCodeArticle(code);
           
           // Chercher le produit correspondant
           const product = products.find(p => p.sku === code);
           
           if (product) {
+            // Activer le cooldown global
+            globalCooldown.current = true;
+            
             addToCart(product);
             
             toast({
@@ -187,6 +212,11 @@ export default function Caisse() {
               Quagga.stop();
               setCameraActive(false);
               scannerInitialized.current = false;
+              // Réinitialiser le cooldown global après fermeture
+              setTimeout(() => {
+                globalCooldown.current = false;
+                lastScannedCode.current = null;
+              }, 1000);
             }, 500);
           }
           // Pas de notification si produit non trouvé - continuer à scanner silencieusement

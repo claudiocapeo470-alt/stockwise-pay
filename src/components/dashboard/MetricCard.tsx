@@ -19,68 +19,77 @@ export function MetricCard({
   gradient = "primary"
 }: MetricCardProps) {
   const iconBgClasses = {
-    primary: "bg-blue-500",
-    success: "bg-emerald-500", 
-    warning: "bg-amber-500"
+    primary: "bg-gradient-to-br from-primary to-secondary shadow-glow",
+    success: "bg-gradient-to-br from-primary to-accent shadow-turquoise-glow", 
+    warning: "bg-gradient-to-br from-warning to-orange-500 shadow-lg shadow-warning/30"
   }
 
-  const cardGradientClasses = {
-    primary: "from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20",
-    success: "from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20", 
-    warning: "from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20"
+  const cardClasses = {
+    primary: "bg-card/80 backdrop-blur-xl border-primary/20 hover:border-primary/40 hover:shadow-glow",
+    success: "bg-card/80 backdrop-blur-xl border-success/20 hover:border-success/40 hover:shadow-turquoise-glow", 
+    warning: "bg-card/80 backdrop-blur-xl border-warning/20 hover:border-warning/40 hover:shadow-lg hover:shadow-warning/20"
   }
 
-  const borderClasses = {
-    primary: "border-blue-200 dark:border-blue-800/40",
-    success: "border-emerald-200 dark:border-emerald-800/40",
-    warning: "border-amber-200 dark:border-amber-800/40"
-  }
-
-  const topBorderClasses = {
-    primary: "from-blue-500 to-blue-600",
-    success: "from-emerald-500 to-emerald-600",
-    warning: "from-amber-500 to-amber-600"
-  }
-
-  const textClasses = {
-    primary: "text-blue-900 dark:text-blue-100",
-    success: "text-emerald-900 dark:text-emerald-100",
-    warning: "text-amber-900 dark:text-amber-100"
+  const accentLineClasses = {
+    primary: "from-primary via-secondary to-primary",
+    success: "from-primary via-accent to-primary",
+    warning: "from-warning via-orange-400 to-warning"
   }
 
   const valueClasses = {
-    primary: "text-blue-600 dark:text-blue-400",
-    success: "text-emerald-600 dark:text-emerald-400",
-    warning: "text-amber-600 dark:text-amber-400"
+    primary: "text-primary",
+    success: "text-primary",
+    warning: "text-warning"
   }
 
   const changeClasses = {
-    positive: "text-green-600 dark:text-green-400 font-medium",
-    negative: "text-red-600 dark:text-red-400 font-medium",
+    positive: "text-primary font-semibold",
+    negative: "text-destructive font-semibold",
     neutral: "text-muted-foreground"
   }
 
   return (
-    <Card className={`relative overflow-hidden bg-gradient-to-br ${cardGradientClasses[gradient]} border-2 ${borderClasses[gradient]} hover:shadow-lg transition-all duration-300 group`}>
-      {/* Bordure colorée en haut */}
-      <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${topBorderClasses[gradient]}`}></div>
+    <Card className={`relative overflow-hidden ${cardClasses[gradient]} border transition-all duration-500 group hover:-translate-y-1`}>
+      {/* Animated gradient line at top */}
+      <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${accentLineClasses[gradient]} opacity-80`}>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+      </div>
       
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 pt-5">
-        <CardTitle className={`text-sm font-medium ${textClasses[gradient]}`}>
+      {/* Subtle mesh background */}
+      <div className="absolute inset-0 opacity-30 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+      
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 pt-6 relative z-10">
+        <CardTitle className="text-sm font-medium text-muted-foreground tracking-wide uppercase">
           {title}
         </CardTitle>
-        <div className={`p-2.5 rounded-lg shadow-md ${iconBgClasses[gradient]} group-hover:scale-110 transition-transform`}>
-          <Icon className="h-5 w-5 text-white" />
+        <div className={`p-3 rounded-2xl ${iconBgClasses[gradient]} group-hover:scale-110 transition-transform duration-300`}>
+          <Icon className="h-5 w-5 text-primary-foreground" />
         </div>
       </CardHeader>
-      <CardContent>
-        <div className={`text-3xl font-bold ${valueClasses[gradient]}`}>{value}</div>
+      
+      <CardContent className="relative z-10">
+        <div className={`text-3xl font-bold tracking-tight ${valueClasses[gradient]}`}>
+          {value}
+        </div>
         {change && (
-          <p className={`text-xs ${changeClasses[changeType]} mt-1`}>
+          <p className={`text-sm ${changeClasses[changeType]} mt-2 flex items-center gap-1`}>
+            {changeType === "positive" && (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            )}
+            {changeType === "negative" && (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+              </svg>
+            )}
             {change}
           </p>
         )}
       </CardContent>
+      
+      {/* Decorative corner glow */}
+      <div className={`absolute -bottom-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br ${accentLineClasses[gradient]} opacity-10 blur-2xl group-hover:opacity-20 transition-opacity duration-500`} />
     </Card>
   )
 }

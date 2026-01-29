@@ -342,242 +342,205 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Stocknix Premium Theme - Based on Official Logo Colors */
-    /* Background - Dark Navy Base */
-    --background: 221 65% 13%;
+    /* Stocknix Premium Theme 2026-2027 - Modern Startup Aesthetic */
+    /* Primary: #4DD4D1 (Turquoise vif) - HSL: 178 58% 57% */
+    /* Secondary: #2C4A9D (Bleu marine) - HSL: 223 56% 40% */
+    /* Accent: #1E3A8A (Bleu profond) - HSL: 224 67% 33% */
+    
+    /* Background - Deep Navy */
+    --background: 224 67% 8%;
     --foreground: 0 0% 98%;
 
-    /* Cards with enhanced depth */
-    --card: 221 65% 16%;
+    /* Cards with glassmorphism depth */
+    --card: 224 60% 12%;
     --card-foreground: 0 0% 98%;
 
     /* Popovers */
-    --popover: 221 65% 16%;
+    --popover: 224 60% 12%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary - Electric Blue (Stocknix Blue) */
-    --primary: 199 89% 56%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary - Turquoise Vif #4DD4D1 */
+    --primary: 178 58% 57%;
+    --primary-foreground: 224 67% 8%;
 
-    /* Secondary - Turquoise/Teal (Stocknix Check Color) */
-    --secondary: 168 60% 51%;
-    --secondary-foreground: 221 65% 13%;
+    /* Secondary - Bleu Marine #2C4A9D */
+    --secondary: 223 56% 40%;
+    --secondary-foreground: 0 0% 100%;
 
     /* Muted areas */
-    --muted: 221 50% 20%;
-    --muted-foreground: 0 0% 72%;
+    --muted: 224 50% 16%;
+    --muted-foreground: 0 0% 68%;
 
-    /* Accent - Turquoise Bright */
-    --accent: 168 60% 51%;
-    --accent-foreground: 221 65% 13%;
+    /* Accent - Bleu Profond #1E3A8A */
+    --accent: 224 67% 33%;
+    --accent-foreground: 0 0% 100%;
 
     /* Destructive - Red Alert */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Success - Turquoise (matching brand) */
-    --success: 168 60% 51%;
-    --success-foreground: 221 65% 13%;
+    /* Success - Turquoise matching primary */
+    --success: 178 58% 57%;
+    --success-foreground: 224 67% 8%;
 
-    /* Warning - Amber */
-    --warning: 38 100% 60%;
-    --warning-foreground: 221 65% 13%;
+    /* Warning - Amber Gold */
+    --warning: 38 100% 55%;
+    --warning-foreground: 224 67% 8%;
 
     /* Borders and inputs */
-    --border: 221 50% 30%;
-    --input: 221 50% 20%;
-    --ring: 199 89% 56%;
+    --border: 223 50% 25%;
+    --input: 224 50% 16%;
+    --ring: 178 58% 57%;
 
-    /* Stocknix Premium Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(221 65% 13%) 0%, hsl(221 65% 18%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(199 89% 56%) 0%, hsl(168 60% 51%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(168 60% 51%) 0%, hsl(168 60% 45%) 100%);
-    --gradient-warning: linear-gradient(135deg, hsl(38 100% 60%) 0%, hsl(25 95% 58%) 100%);
-    --gradient-surface: linear-gradient(135deg, hsl(221 65% 16%) 0%, hsl(221 50% 20%) 100%);
-    --gradient-dark-animated: linear-gradient(135deg, hsl(221 65% 10%) 0%, hsl(221 65% 15%) 50%, hsl(221 65% 13%) 100%);
-    --gradient-neon: linear-gradient(135deg, hsl(199 89% 56%) 0%, hsl(168 60% 51%) 50%, hsl(180 100% 50%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(221 65% 13%) 0%, hsl(199 89% 20%) 50%, hsl(168 60% 20%) 100%);
+    /* 2026-2027 Modern Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(224 67% 8%) 0%, hsl(224 60% 12%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(178 58% 57%) 0%, hsl(223 56% 40%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(178 58% 57%) 0%, hsl(178 58% 45%) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(38 100% 55%) 0%, hsl(25 95% 50%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(224 60% 12%) 0%, hsl(224 50% 16%) 100%);
+    --gradient-dark-animated: linear-gradient(135deg, hsl(224 67% 6%) 0%, hsl(224 67% 10%) 50%, hsl(224 67% 8%) 100%);
+    --gradient-neon: linear-gradient(135deg, hsl(178 58% 57%) 0%, hsl(223 56% 40%) 50%, hsl(224 67% 33%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(224 67% 8%) 0%, hsl(223 56% 15%) 50%, hsl(178 58% 20%) 100%);
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(178 58% 57% / 0.15) 0px, transparent 50%), 
+                     radial-gradient(at 80% 0%, hsl(223 56% 40% / 0.2) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsl(224 67% 33% / 0.15) 0px, transparent 50%),
+                     radial-gradient(at 80% 50%, hsl(178 58% 57% / 0.1) 0px, transparent 50%),
+                     radial-gradient(at 0% 100%, hsl(223 56% 40% / 0.15) 0px, transparent 50%);
     
-    /* Stocknix Shadows with brand colors */
-    --shadow-soft: 0 1px 3px 0 hsl(221 65% 5% / 0.5), 0 1px 2px -1px hsl(221 65% 5% / 0.5);
-    --shadow-medium: 0 4px 6px -1px hsl(221 65% 5% / 0.6), 0 2px 4px -2px hsl(221 65% 5% / 0.6);
-    --shadow-large: 0 10px 15px -3px hsl(221 65% 5% / 0.7), 0 4px 6px -4px hsl(221 65% 5% / 0.7);
-    --shadow-glow: 0 0 20px hsl(199 89% 56% / 0.4);
-    --shadow-neon: 0 0 30px hsl(199 89% 56% / 0.6), 0 0 60px hsl(199 89% 56% / 0.3);
-    --shadow-turquoise-glow: 0 0 25px hsl(168 60% 51% / 0.5), 0 0 50px hsl(168 60% 51% / 0.2);
+    /* Modern Shadows with brand glow */
+    --shadow-soft: 0 2px 8px -2px hsl(224 67% 5% / 0.6);
+    --shadow-medium: 0 8px 24px -4px hsl(224 67% 5% / 0.7);
+    --shadow-large: 0 24px 48px -12px hsl(224 67% 5% / 0.8);
+    --shadow-glow: 0 0 30px hsl(178 58% 57% / 0.4);
+    --shadow-neon: 0 0 40px hsl(178 58% 57% / 0.5), 0 0 80px hsl(178 58% 57% / 0.3);
+    --shadow-turquoise-glow: 0 0 30px hsl(178 58% 57% / 0.5), 0 0 60px hsl(178 58% 57% / 0.2);
+    --shadow-blue-glow: 0 0 30px hsl(223 56% 40% / 0.5), 0 0 60px hsl(223 56% 40% / 0.2);
     
-    /* Smooth transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    /* Ultra-smooth transitions */
+    --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-    /* 3D Effects and premium animations */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(180deg); }
-    }
+    /* Modern border radius */
+    --radius: 1rem;
 
-    @keyframes float-delayed {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-15px) rotate(90deg); }
-    }
-
-    @keyframes float-slow {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-10px) rotate(45deg); }
-    }
-
-    @keyframes spin-slow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .animate-float {
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .animate-float-delayed {
-      animation: float-delayed 8s ease-in-out infinite;
-      animation-delay: 2s;
-    }
-
-    .animate-float-slow {
-      animation: float-slow 10s ease-in-out infinite;
-      animation-delay: 1s;
-    }
-
-    .animate-spin-slow {
-      animation: spin-slow 20s linear infinite;
-    }
-
-    --radius: 0.75rem;
-
-    /* Sidebar - Stocknix Navy */
-    --sidebar-background: 221 65% 10%;
+    /* Sidebar - Deep Navy */
+    --sidebar-background: 224 67% 6%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 199 89% 56%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 221 55% 18%;
+    --sidebar-primary: 178 58% 57%;
+    --sidebar-primary-foreground: 224 67% 8%;
+    --sidebar-accent: 224 55% 15%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 221 50% 25%;
-    --sidebar-ring: 199 89% 56%;
+    --sidebar-border: 223 50% 20%;
+    --sidebar-ring: 178 58% 57%;
   }
 
   .dark {
-    /* Stocknix Dark Theme - Official Colors */
-    --background: 221 65% 13%;
+    /* Stocknix Dark Theme 2026-2027 */
+    --background: 224 67% 8%;
     --foreground: 0 0% 98%;
-    --card: 221 65% 16%;
+    --card: 224 60% 12%;
     --card-foreground: 0 0% 98%;
-    --popover: 221 65% 16%;
+    --popover: 224 60% 12%;
     --popover-foreground: 0 0% 98%;
-    --primary: 199 89% 56%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 168 60% 51%;
-    --secondary-foreground: 221 65% 13%;
-    --muted: 221 50% 20%;
-    --muted-foreground: 0 0% 72%;
-    --accent: 168 60% 51%;
-    --accent-foreground: 221 65% 13%;
+    --primary: 178 58% 57%;
+    --primary-foreground: 224 67% 8%;
+    --secondary: 223 56% 40%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 224 50% 16%;
+    --muted-foreground: 0 0% 68%;
+    --accent: 224 67% 33%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --success: 168 60% 51%;
-    --success-foreground: 221 65% 13%;
-    --warning: 38 100% 60%;
-    --warning-foreground: 221 65% 13%;
-    --border: 221 50% 30%;
-    --input: 221 50% 20%;
-    --ring: 199 89% 56%;
-    --sidebar-background: 221 65% 10%;
+    --success: 178 58% 57%;
+    --success-foreground: 224 67% 8%;
+    --warning: 38 100% 55%;
+    --warning-foreground: 224 67% 8%;
+    --border: 223 50% 25%;
+    --input: 224 50% 16%;
+    --ring: 178 58% 57%;
+    --sidebar-background: 224 67% 6%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 199 89% 56%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 221 55% 18%;
+    --sidebar-primary: 178 58% 57%;
+    --sidebar-primary-foreground: 224 67% 8%;
+    --sidebar-accent: 224 55% 15%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 221 50% 25%;
-    --sidebar-ring: 199 89% 56%;
+    --sidebar-border: 223 50% 20%;
+    --sidebar-ring: 178 58% 57%;
   }
 
-  /* Light theme - White background with Stocknix Blue accents */
+  /* Light theme 2026-2027 - Clean white with turquoise accents */
   .light {
     /* Pure white background */
     --background: 0 0% 100%;
-    --foreground: 221 65% 13%;
+    --foreground: 224 67% 12%;
     
-    /* Cards - Pure white with borders */
+    /* Cards - White with subtle depth */
     --card: 0 0% 100%;
-    --card-foreground: 221 65% 13%;
+    --card-foreground: 224 67% 12%;
     
     /* Popovers */
     --popover: 0 0% 100%;
-    --popover-foreground: 221 65% 13%;
+    --popover-foreground: 224 67% 12%;
     
-    /* Stocknix Blue primary color */
-    --primary: 199 89% 56%;
+    /* Primary - Turquoise Vif */
+    --primary: 178 58% 47%;
     --primary-foreground: 0 0% 100%;
     
-    /* Light turquoise secondary */
-    --secondary: 168 60% 96%;
-    --secondary-foreground: 221 65% 13%;
+    /* Secondary - Bleu Marine */
+    --secondary: 223 56% 40%;
+    --secondary-foreground: 0 0% 100%;
     
     /* Muted gray areas */
-    --muted: 0 0% 96%;
-    --muted-foreground: 221 30% 40%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 224 30% 40%;
     
-    /* Turquoise accent */
-    --accent: 168 60% 51%;
+    /* Accent - Bleu Profond */
+    --accent: 224 67% 33%;
     --accent-foreground: 0 0% 100%;
     
     /* Error - Red Alert */
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 55%;
     --destructive-foreground: 0 0% 100%;
     
     /* Success - Turquoise */
-    --success: 168 60% 51%;
+    --success: 178 58% 47%;
     --success-foreground: 0 0% 100%;
     
     /* Warning - Orange */
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
     
-    /* Borders - Light gray */
-    --border: 0 0% 90%;
+    /* Borders - Subtle gray */
+    --border: 220 14% 90%;
     --input: 0 0% 100%;
-    --ring: 199 89% 56%;
+    --ring: 178 58% 47%;
     
-    /* Sidebar - Pure white */
+    /* Sidebar - Clean white */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 221 65% 13%;
-    --sidebar-primary: 199 89% 56%;
+    --sidebar-foreground: 224 67% 12%;
+    --sidebar-primary: 178 58% 47%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 221 65% 13%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 199 89% 56%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 224 67% 12%;
+    --sidebar-border: 220 14% 90%;
+    --sidebar-ring: 178 58% 47%;
     
-    /* Light theme specific gradients - White base */
-    --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(199 89% 56%) 0%, hsl(168 60% 51%) 100%);
-    --gradient-surface: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(199 89% 95%) 50%, hsl(168 60% 95%) 100%);
-  }
-}
-
-/* Windmills & Parachutes Background Animations */
-.light-mode-only {
-  display: none;
-}
-
-.light .light-mode-only {
-  display: block;
-}
-
-/* Windmill rotation */
-@keyframes windmill-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+    /* Light theme gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(220 14% 98%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(178 58% 57%) 0%, hsl(223 56% 40%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(220 14% 98%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(178 58% 97%) 50%, hsl(223 56% 97%) 100%);
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(178 58% 57% / 0.08) 0px, transparent 50%), 
+                     radial-gradient(at 80% 0%, hsl(223 56% 40% / 0.1) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsl(224 67% 33% / 0.08) 0px, transparent 50%);
+    
+    /* Light shadows */
+    --shadow-soft: 0 2px 8px -2px hsl(224 67% 20% / 0.1);
+    --shadow-medium: 0 8px 24px -4px hsl(224 67% 20% / 0.15);
+    --shadow-large: 0 24px 48px -12px hsl(224 67% 20% / 0.2);
+    --shadow-glow: 0 0 30px hsl(178 58% 57% / 0.2);
   }
 }
 

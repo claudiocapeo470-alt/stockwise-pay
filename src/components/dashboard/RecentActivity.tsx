@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ShoppingCart, Package, Receipt, AlertTriangle } from "lucide-react"
+import { ShoppingCart, Package, Receipt, AlertTriangle, Activity } from "lucide-react"
 import { useProducts } from "@/hooks/useProducts"
 import { useSales } from "@/hooks/useSales"
 import { usePayments } from "@/hooks/usePayments"
@@ -21,14 +21,27 @@ const getIcon = (type: string) => {
   }
 }
 
+const getIconClasses = (type: string) => {
+  switch (type) {
+    case "sale":
+      return "bg-gradient-to-br from-primary to-secondary text-primary-foreground"
+    case "stock":
+      return "bg-gradient-to-br from-warning to-orange-500 text-warning-foreground"
+    case "payment":
+      return "bg-gradient-to-br from-secondary to-accent text-secondary-foreground"
+    default:
+      return "bg-muted text-muted-foreground"
+  }
+}
+
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "completed":
-      return <Badge className="bg-success text-success-foreground">Terminé</Badge>
+      return <Badge className="bg-primary/20 text-primary border-primary/30 hover:bg-primary/30">Terminé</Badge>
     case "warning":
-      return <Badge className="bg-warning text-warning-foreground">Attention</Badge>
+      return <Badge className="bg-warning/20 text-warning border-warning/30 hover:bg-warning/30">Attention</Badge>
     case "pending":
-      return <Badge variant="outline">En attente</Badge>
+      return <Badge variant="outline" className="border-muted-foreground/30">En attente</Badge>
     default:
       return null
   }
@@ -86,42 +99,59 @@ export function RecentActivity() {
   }, [products, sales, payments])
 
   return (
-    <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/40 hover:shadow-lg transition-all duration-300">
-      {/* Bordure colorée en haut */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+    <Card className="relative overflow-hidden bg-card/80 backdrop-blur-xl border border-secondary/20 hover:border-secondary/40 transition-all duration-500 hover:shadow-blue-glow">
+      {/* Animated gradient line */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary via-accent to-secondary opacity-80">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+      </div>
       
-      <CardHeader className="pt-5">
-        <CardTitle className="text-lg font-semibold text-blue-900 dark:text-blue-100">Activité récente</CardTitle>
+      {/* Mesh background */}
+      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-secondary/20 via-transparent to-transparent" />
+      
+      <CardHeader className="pt-6 relative z-10">
+        <CardTitle className="text-lg font-bold flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-secondary to-accent shadow-blue-glow">
+            <Activity className="h-4 w-4 text-secondary-foreground" />
+          </div>
+          <span className="text-foreground">Activité récente</span>
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      
+      <CardContent className="space-y-3 relative z-10">
         {activities.length === 0 ? (
-          <div className="text-center py-8">
-            <AlertTriangle className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">
+          <div className="text-center py-10 px-6">
+            <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <p className="text-sm font-medium text-foreground">
               Aucune activité récente
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-2">
               Commencez par ajouter des produits et effectuer des ventes
             </p>
           </div>
         ) : (
-          activities.map((activity) => {
+          activities.map((activity, index) => {
             const Icon = getIcon(activity.type)
             return (
-              <div key={activity.id} className="flex items-start gap-4 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-                <div className="bg-muted p-2 rounded-lg">
-                  <Icon className="h-4 w-4 text-muted-foreground" />
+              <div 
+                key={activity.id} 
+                className="flex items-start gap-4 p-4 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 hover:border-border transition-all duration-300 group"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className={`p-2.5 rounded-xl ${getIconClasses(activity.type)} shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                  <Icon className="h-4 w-4" />
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-medium text-foreground truncate">
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="text-sm font-semibold text-foreground truncate">
                       {activity.title}
                     </h4>
                     {getStatusBadge(activity.status)}
                   </div>
                   
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
                     {activity.description}
                   </p>
                   
@@ -130,7 +160,7 @@ export function RecentActivity() {
                       {activity.time}
                     </span>
                     {activity.amount && (
-                      <span className="text-sm font-medium text-foreground">
+                      <span className="text-sm font-bold text-primary">
                         {activity.amount}
                       </span>
                     )}
@@ -141,6 +171,9 @@ export function RecentActivity() {
           })
         )}
       </CardContent>
+      
+      {/* Decorative glow */}
+      <div className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-gradient-to-br from-secondary to-accent opacity-10 blur-3xl" />
     </Card>
   )
 }

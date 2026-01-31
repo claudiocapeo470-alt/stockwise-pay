@@ -52,47 +52,42 @@ export function AppSidebar() {
 
   return (
     <Sidebar className={`${isCollapsed ? "w-16" : "w-64"} bg-sidebar border-r border-sidebar-border`} collapsible="icon">
-      {/* Header with brand gradient */}
-      <SidebarHeader className="bg-gradient-to-br from-background via-card to-background p-4 border-b border-sidebar-border relative overflow-hidden">
-        {/* Subtle glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-secondary/10 to-transparent" />
-        <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary via-secondary to-primary opacity-60" />
-        
-        <div className="flex items-center gap-3 relative z-10">
+      {/* Header */}
+      <SidebarHeader className="p-4 border-b border-sidebar-border">
+        <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-xl blur-lg opacity-40" />
             <img 
               src={settings?.logo_url || stocknixLogo} 
               alt={settings?.company_name || "Stocknix"} 
-              className="h-10 w-10 object-contain rounded-xl relative z-10 ring-2 ring-primary/20"
+              className="h-9 w-9 object-contain rounded-lg"
             />
           </div>
           {!isCollapsed && (
             <div>
-              <h1 className="font-bold text-foreground text-lg tracking-tight">
+              <h1 className="font-semibold text-foreground text-base tracking-tight">
                 {settings?.company_name || "Stocknix"}
               </h1>
-              <p className="text-xs text-muted-foreground font-medium">PME Dashboard</p>
+              <p className="text-xs text-muted-foreground">PME Dashboard</p>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="p-3 space-y-1">
-        <SidebarMenu className="space-y-1.5">
+      <SidebarContent className="p-2 space-y-0.5">
+        <SidebarMenu className="space-y-0.5">
           {navigation.map((item) => (
             <SidebarMenuItem key={item.name}>
               <SidebarMenuButton 
                 asChild 
-                className={`w-full justify-start rounded-xl transition-all duration-300 ${
+                className={`w-full justify-start rounded-lg transition-all duration-200 ${
                   isActive(item.href) 
-                    ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold shadow-glow" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
+                    ? "bg-primary text-primary-foreground font-medium" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
               >
-                <NavLink to={item.href} className="flex items-center gap-3 px-3 py-2.5">
-                  <item.icon className={`h-5 w-5 flex-shrink-0 ${isActive(item.href) ? 'text-primary-foreground' : 'text-primary'}`} />
-                  {!isCollapsed && <span className="font-medium">{item.name}</span>}
+                <NavLink to={item.href} className="flex items-center gap-3 px-3 py-2">
+                  <item.icon className={`h-4 w-4 flex-shrink-0`} />
+                  {!isCollapsed && <span className="text-sm">{item.name}</span>}
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -102,19 +97,19 @@ export function AppSidebar() {
 
       <SidebarFooter className="p-3 border-t border-sidebar-border">
         {!isCollapsed && user && (
-          <div className="px-3 py-3 mb-2 bg-card/50 backdrop-blur-sm rounded-xl border border-border/50">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10 ring-2 ring-primary/30">
+          <div className="px-3 py-2.5 mb-2 bg-muted/50 rounded-lg">
+            <div className="flex items-center gap-2.5">
+              <Avatar className="h-8 w-8">
                 <AvatarImage src={profile?.avatar_url || ''} alt={displayName} />
-                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground text-xs font-bold">
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs font-medium">
                   {initials}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">{displayName}</p>
+                <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
                 <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                 {isAdmin && (
-                  <p className="text-xs text-primary font-semibold">Administrateur</p>
+                  <p className="text-xs text-primary font-medium">Admin</p>
                 )}
               </div>
             </div>
@@ -125,12 +120,12 @@ export function AppSidebar() {
           <Button
             variant="ghost"
             onClick={signOut}
-            className={`w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all ${
+            className={`w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg ${
               isCollapsed ? 'px-2' : 'px-3'
             }`}
           >
-            <LogOut className="h-5 w-5 flex-shrink-0" />
-            {!isCollapsed && <span className="ml-3 font-medium">Déconnexion</span>}
+            <LogOut className="h-4 w-4 flex-shrink-0" />
+            {!isCollapsed && <span className="ml-2 text-sm">Déconnexion</span>}
           </Button>
         </SidebarMenuItem>
       </SidebarFooter>

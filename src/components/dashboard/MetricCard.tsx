@@ -19,77 +19,63 @@ export function MetricCard({
   gradient = "primary"
 }: MetricCardProps) {
   const iconBgClasses = {
-    primary: "bg-gradient-to-br from-primary to-secondary shadow-glow",
-    success: "bg-gradient-to-br from-primary to-accent shadow-turquoise-glow", 
-    warning: "bg-gradient-to-br from-warning to-orange-500 shadow-lg shadow-warning/30"
+    primary: "bg-primary/10 text-primary",
+    success: "bg-success/10 text-success", 
+    warning: "bg-warning/10 text-warning"
   }
 
-  const cardClasses = {
-    primary: "bg-card/80 backdrop-blur-xl border-primary/20 hover:border-primary/40 hover:shadow-glow",
-    success: "bg-card/80 backdrop-blur-xl border-success/20 hover:border-success/40 hover:shadow-turquoise-glow", 
-    warning: "bg-card/80 backdrop-blur-xl border-warning/20 hover:border-warning/40 hover:shadow-lg hover:shadow-warning/20"
-  }
-
-  const accentLineClasses = {
-    primary: "from-primary via-secondary to-primary",
-    success: "from-primary via-accent to-primary",
-    warning: "from-warning via-orange-400 to-warning"
+  const accentClasses = {
+    primary: "bg-primary",
+    success: "bg-success",
+    warning: "bg-warning"
   }
 
   const valueClasses = {
-    primary: "text-primary",
-    success: "text-primary",
-    warning: "text-warning"
+    primary: "text-foreground",
+    success: "text-foreground",
+    warning: "text-foreground"
   }
 
   const changeClasses = {
-    positive: "text-primary font-semibold",
-    negative: "text-destructive font-semibold",
+    positive: "text-success font-medium",
+    negative: "text-destructive font-medium",
     neutral: "text-muted-foreground"
   }
 
   return (
-    <Card className={`relative overflow-hidden ${cardClasses[gradient]} border transition-all duration-500 group hover:-translate-y-1`}>
-      {/* Animated gradient line at top */}
-      <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${accentLineClasses[gradient]} opacity-80`}>
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
-      </div>
+    <Card className="relative overflow-hidden group card-hover">
+      {/* Accent line at top */}
+      <div className={`absolute top-0 left-0 w-full h-0.5 ${accentClasses[gradient]}`} />
       
-      {/* Subtle mesh background */}
-      <div className="absolute inset-0 opacity-30 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
-      
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 pt-6 relative z-10">
-        <CardTitle className="text-sm font-medium text-muted-foreground tracking-wide uppercase">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 pt-5">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
-        <div className={`p-3 rounded-2xl ${iconBgClasses[gradient]} group-hover:scale-110 transition-transform duration-300`}>
-          <Icon className="h-5 w-5 text-primary-foreground" />
+        <div className={`p-2.5 rounded-lg ${iconBgClasses[gradient]} transition-transform duration-200 group-hover:scale-105`}>
+          <Icon className="h-4 w-4" />
         </div>
       </CardHeader>
       
-      <CardContent className="relative z-10">
-        <div className={`text-3xl font-bold tracking-tight ${valueClasses[gradient]}`}>
+      <CardContent>
+        <div className={`text-2xl font-bold tracking-tight ${valueClasses[gradient]}`}>
           {value}
         </div>
         {change && (
-          <p className={`text-sm ${changeClasses[changeType]} mt-2 flex items-center gap-1`}>
+          <p className={`text-xs ${changeClasses[changeType]} mt-1.5 flex items-center gap-1`}>
             {changeType === "positive" && (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
               </svg>
             )}
             {changeType === "negative" && (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 7l-9.2 9.2M7 7v10h10" />
               </svg>
             )}
             {change}
           </p>
         )}
       </CardContent>
-      
-      {/* Decorative corner glow */}
-      <div className={`absolute -bottom-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br ${accentLineClasses[gradient]} opacity-10 blur-2xl group-hover:opacity-20 transition-opacity duration-500`} />
     </Card>
   )
 }

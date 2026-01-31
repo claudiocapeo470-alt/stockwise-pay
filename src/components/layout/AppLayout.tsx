@@ -7,7 +7,6 @@ import { ThemeToggle } from "./ThemeToggle";
 import { BottomNav } from "./BottomNav";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { WindmillsParachutesBackground } from "@/components/ui/windmills-parachutes-background";
 import stocknixLogo from "@/assets/stocknix-logo.png";
 
 interface AppLayoutProps {
@@ -44,7 +43,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4 animate-spin"></div>
           <p className="text-muted-foreground">Chargement...</p>
         </div>
       </div>
@@ -57,24 +56,26 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <SidebarProvider>
-      <WindmillsParachutesBackground />
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full bg-background">
         {/* Sidebar - masquée sur mobile/tablette */}
         {!isMobile && <AppSidebar />}
         
         <main className="flex-1 flex flex-col">
-          <header className="sticky top-0 z-40 relative border-b border-blue-200 dark:border-blue-800/40 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 dark:from-blue-700 dark:via-blue-600 dark:to-blue-700 px-4 py-3 shadow-md backdrop-blur-lg">
+          {/* Header premium avec gradient subtil */}
+          <header className="sticky top-0 z-40 border-b border-border/50 bg-card/80 backdrop-blur-xl px-4 py-3 shadow-soft">
             <div className="flex items-center gap-4">
               {/* Trigger sidebar uniquement sur desktop */}
-              {!isMobile && <SidebarTrigger className="-ml-1 text-white hover:bg-blue-700/30" />}
+              {!isMobile && <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-smooth" />}
               <div className="flex-1">
-                <h2 className="text-lg font-semibold text-white">{pageTitle}</h2>
+                <h2 className="text-lg font-semibold text-foreground">{pageTitle}</h2>
               </div>
               <ThemeToggle />
               {user && <UserMenu />}
             </div>
           </header>
-          <div className={`flex-1 p-4 md:p-6 ${isMobile ? 'pb-20' : 'md:px-12 lg:px-16'}`}>
+          
+          {/* Main content area */}
+          <div className={`flex-1 p-4 md:p-6 ${isMobile ? 'pb-24' : 'md:px-8 lg:px-12'}`}>
             {children}
           </div>
         </main>

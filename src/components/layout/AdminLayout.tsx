@@ -7,7 +7,6 @@ import { ThemeToggle } from "./ThemeToggle";
 import { AdminBottomNav } from "./AdminBottomNav";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { WindmillsParachutesBackground } from "@/components/ui/windmills-parachutes-background";
 import { Shield } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -36,7 +35,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     if (!loading && !user) {
       navigate('/auth');
     } else if (!loading && user && !isAdmin) {
-      // Si l'utilisateur n'est pas admin, rediriger vers l'app normale
       navigate('/app');
     }
   }, [user, loading, isAdmin, navigate]);
@@ -45,7 +43,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4 animate-spin"></div>
           <p className="text-muted-foreground">Chargement...</p>
         </div>
       </div>
@@ -58,25 +56,25 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <SidebarProvider>
-      <WindmillsParachutesBackground />
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full bg-background">
         {/* Sidebar - masquée sur mobile/tablette */}
         {!isMobile && <AdminSidebar />}
         
         <main className="flex-1 flex flex-col">
-          <header className="sticky top-0 z-40 relative border-b border-red-200 dark:border-red-800/40 bg-gradient-to-r from-red-600 via-red-500 to-red-600 dark:from-red-700 dark:via-red-600 dark:to-red-700 px-4 py-3 shadow-md backdrop-blur-lg">
+          <header className="sticky top-0 z-40 border-b border-destructive/20 bg-card/80 backdrop-blur-xl px-4 py-3 shadow-soft">
             <div className="flex items-center gap-4">
-              {/* Trigger sidebar uniquement sur desktop */}
-              {!isMobile && <SidebarTrigger className="-ml-1 text-white hover:bg-red-700/30" />}
+              {!isMobile && <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-smooth" />}
               <div className="flex-1 flex items-center gap-2">
-                <Shield className="h-5 w-5 text-white" />
-                <h2 className="text-lg font-semibold text-white">{pageTitle}</h2>
+                <div className="p-1.5 rounded-md bg-destructive/10">
+                  <Shield className="h-4 w-4 text-destructive" />
+                </div>
+                <h2 className="text-lg font-semibold text-foreground">{pageTitle}</h2>
               </div>
               <ThemeToggle />
               {user && <UserMenu />}
             </div>
           </header>
-          <div className={`flex-1 p-4 md:p-6 ${isMobile ? 'pb-20' : 'md:px-12 lg:px-16'}`}>
+          <div className={`flex-1 p-4 md:p-6 ${isMobile ? 'pb-24' : 'md:px-8 lg:px-12'}`}>
             {children}
           </div>
         </main>

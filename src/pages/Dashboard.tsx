@@ -78,22 +78,15 @@ export default function Dashboard() {
 
 
   return (
-    <div className="space-y-8 relative">
-      {/* Background mesh gradient */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-50" />
-      </div>
-      
+    <div className="space-y-6">
       {/* Header */}
-      <div className="relative">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-gradient-to-br from-primary to-secondary shadow-glow">
-            <BarChart3 className="h-7 w-7 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Vue d'ensemble de votre activité</p>
-          </div>
+      <div className="flex items-center gap-3">
+        <div className="p-2.5 rounded-lg bg-primary/10">
+          <BarChart3 className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground text-sm">Vue d'ensemble de votre activité</p>
         </div>
       </div>
 
@@ -135,35 +128,32 @@ export default function Dashboard() {
 
       {/* Low Stock Alert */}
       {metrics.lowStockProducts > 0 && (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-destructive/10 via-destructive/5 to-transparent border-2 border-destructive/30 p-6 backdrop-blur-xl">
-          {/* Animated border */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-destructive via-orange-500 to-destructive opacity-80" />
-          
-          <div className="flex items-start gap-5">
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-destructive to-orange-500 shadow-lg shadow-destructive/30 shrink-0 animate-pulse">
-              <AlertTriangle className="h-8 w-8 text-white" />
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-destructive/10 shrink-0">
+              <AlertTriangle className="h-4 w-4 text-destructive" />
             </div>
             
             <div className="flex-1 min-w-0">
-              <h3 className="text-xl font-bold text-foreground mb-1 flex items-center gap-3">
-                Alerte Stock Critique
-                <span className="text-sm font-semibold bg-destructive text-destructive-foreground px-3 py-1 rounded-full">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                Alerte Stock
+                <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full">
                   {metrics.lowStockProducts}
                 </span>
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Ces produits nécessitent un réapprovisionnement urgent
+              <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+                Produits nécessitant un réapprovisionnement
               </p>
               
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {metrics.lowStockProductsList.map((product) => (
                   <div 
                     key={product.id}
-                    className="inline-flex items-center gap-2 bg-card/80 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-destructive/20 hover:border-destructive/40 transition-colors group"
+                    className="inline-flex items-center gap-1.5 bg-card rounded-md px-2.5 py-1.5 border border-border text-xs"
                   >
-                    <span className="w-2 h-2 rounded-full bg-destructive animate-pulse"></span>
-                    <span className="font-semibold text-foreground">{product.name}</span>
-                    <span className="text-xs text-muted-foreground bg-destructive/10 px-2 py-0.5 rounded-lg">
+                    <span className="w-1.5 h-1.5 rounded-full bg-destructive"></span>
+                    <span className="font-medium text-foreground">{product.name}</span>
+                    <span className="text-muted-foreground">
                       {product.quantity}/{product.min_quantity}
                     </span>
                   </div>

@@ -2,15 +2,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import { RevenueCard } from "@/components/dashboard/RevenueCard";
 import { WelcomeGuide } from "@/components/onboarding/WelcomeGuide";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { BarChart3, Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import { useMemo, useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import stocknixLogo from "@/assets/stocknix-logo.png";
 
 export default function Dashboard() {
   const { products } = useProducts();
@@ -56,11 +55,9 @@ export default function Dashboard() {
   // Auto-show welcome guide ONLY for new users who haven't seen it OR after email confirmation
   useEffect(() => {
     if (user?.id) {
-      // Show guide if user confirmed email OR if they never saw it before
       if (isEmailConfirmed || !hasSeenWelcomeGuide) {
         setShowWelcomeGuide(true);
         
-        // Clean URL after showing guide
         if (isEmailConfirmed) {
           window.history.replaceState(null, '', '/app');
         }
@@ -76,22 +73,21 @@ export default function Dashboard() {
     setShowWelcomeGuide(false);
   };
 
-
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="p-2.5 rounded-lg bg-primary/10">
-          <BarChart3 className="h-5 w-5 text-primary" />
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg">
+          <BarChart3 className="h-5 w-5 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
           <p className="text-muted-foreground text-sm">Vue d'ensemble de votre activité</p>
         </div>
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <MetricCard
           title="Produits en stock"
           value={metrics.totalProducts.toString()}
@@ -126,34 +122,37 @@ export default function Dashboard() {
         />
       </div>
 
+      {/* Chiffre d'affaires dynamique */}
+      <RevenueCard />
+
       {/* Low Stock Alert */}
       {metrics.lowStockProducts > 0 && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-destructive/10 shrink-0">
-              <AlertTriangle className="h-4 w-4 text-destructive" />
+        <div className="rounded-xl border-2 border-destructive/30 bg-gradient-to-r from-destructive/5 via-destructive/10 to-destructive/5 p-5">
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-xl bg-destructive/10 shrink-0">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
             </div>
             
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
                 Alerte Stock
-                <span className="text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-destructive text-destructive-foreground px-2.5 py-1 rounded-full font-semibold">
                   {metrics.lowStockProducts}
                 </span>
               </h3>
-              <p className="text-xs text-muted-foreground mt-0.5 mb-3">
-                Produits nécessitant un réapprovisionnement
+              <p className="text-sm text-muted-foreground mt-1 mb-4">
+                Produits nécessitant un réapprovisionnement urgent
               </p>
               
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {metrics.lowStockProductsList.map((product) => (
                   <div 
                     key={product.id}
-                    className="inline-flex items-center gap-1.5 bg-card rounded-md px-2.5 py-1.5 border border-border text-xs"
+                    className="inline-flex items-center gap-2 bg-card rounded-lg px-3 py-2 border-2 border-border/60 text-sm hover:border-destructive/30 transition-colors"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-destructive"></span>
-                    <span className="font-medium text-foreground">{product.name}</span>
-                    <span className="text-muted-foreground">
+                    <span className="w-2 h-2 rounded-full bg-destructive animate-pulse"></span>
+                    <span className="font-semibold text-foreground">{product.name}</span>
+                    <span className="text-muted-foreground font-medium">
                       {product.quantity}/{product.min_quantity}
                     </span>
                   </div>

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Area, AreaChart } from "recharts";
 import { format, parseISO, startOfDay, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from "date-fns";
 import { fr } from "date-fns/locale";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, BarChart3 } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 interface Sale {
@@ -45,7 +45,6 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
     // Définir les intervalles selon la période
     switch (period) {
       case "today":
-        // Pour aujourd'hui, on groupe par heure
         intervals = Array.from({ length: 24 }, (_, i) => {
           const date = new Date(from);
           date.setHours(i);
@@ -81,20 +80,17 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
       let salesInInterval: Sale[] = [];
 
       if (period === "today") {
-        // Pour aujourd'hui, filtrer par heure
         salesInInterval = sales.filter(sale => {
           const saleDate = parseISO(sale.sale_date);
           return saleDate.getHours() === intervalDate.getHours() &&
                  startOfDay(saleDate).getTime() === startOfDay(intervalDate).getTime();
         });
       } else {
-        // Pour les autres périodes, filtrer par jour/semaine
         salesInInterval = sales.filter(sale => {
           const saleDate = parseISO(sale.sale_date);
           if (period === "week" || period === "month" || (period === "custom" && formatString.includes("dd"))) {
             return startOfDay(saleDate).getTime() === startOfDay(intervalDate).getTime();
           } else {
-            // Pour les semaines
             const saleWeekStart = startOfDay(saleDate);
             saleWeekStart.setDate(saleWeekStart.getDate() - saleWeekStart.getDay());
             const intervalWeekStart = startOfDay(intervalDate);
@@ -122,49 +118,51 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
   const totalSales = chartData.reduce((sum, data) => sum + data.count, 0);
 
   return (
-    <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
+    <div className="grid gap-5 sm:gap-6 grid-cols-1 md:grid-cols-2">
       {/* Évolution du chiffre d'affaires */}
-      <Card className="relative overflow-hidden bg-gradient-to-br from-card via-card to-card/90 border-primary/20 shadow-medium hover:shadow-glow transition-all duration-500 group">
-        {/* Bordure supérieure animée */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-secondary"></div>
-        
+      <Card className="relative overflow-hidden bg-card border-2 border-border/60 border-l-4 border-l-primary hover:shadow-xl transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center text-base sm:text-lg font-bold">
-            <div className="p-2 rounded-lg bg-primary/10 mr-2 group-hover:bg-primary/20 transition-colors">
-              <TrendingUp className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-3 text-base sm:text-lg font-bold">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg">
+              <TrendingUp className="h-5 w-5 text-white" />
             </div>
-            <span className="truncate">Chiffre d'Affaires</span>
+            <div>
+              <span className="block">Chiffre d'Affaires</span>
+              <span className="text-2xl sm:text-3xl font-black text-primary">
+                {new Intl.NumberFormat('fr-FR', {
+                  style: 'currency',
+                  currency: 'XOF',
+                  notation: 'compact',
+                  compactDisplay: 'short'
+                }).format(totalRevenue)}
+              </span>
+            </div>
           </CardTitle>
-          <div className="text-xl sm:text-2xl md:text-3xl font-black bg-gradient-secondary bg-clip-text text-transparent mt-1">
-            {new Intl.NumberFormat('fr-FR', {
-              style: 'currency',
-              currency: 'XOF',
-              notation: 'compact',
-              compactDisplay: 'short'
-            }).format(totalRevenue)}
-          </div>
         </CardHeader>
         <CardContent className="pt-0 pb-4">
-          <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px]">
+          <ChartContainer config={chartConfig} className="h-[280px] sm:h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
-                  <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                  <linearGradient id="revenueGradient2026" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.5}/>
+                    <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
                 <XAxis 
                   dataKey="date" 
                   stroke="hsl(var(--muted-foreground))"
                   fontSize={11}
                   tickLine={false}
+                  axisLine={false}
                 />
                 <YAxis 
                   stroke="hsl(var(--muted-foreground))"
                   fontSize={11}
                   tickLine={false}
+                  axisLine={false}
                   tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
@@ -173,7 +171,9 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
                   dataKey="revenue" 
                   stroke="hsl(var(--primary))" 
                   strokeWidth={3}
-                  fill="url(#revenueGradient)"
+                  fill="url(#revenueGradient2026)"
+                  dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: "hsl(var(--primary))", stroke: "hsl(var(--background))", strokeWidth: 2 }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -182,41 +182,48 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
       </Card>
 
       {/* Nombre de ventes */}
-      <Card className="relative overflow-hidden bg-gradient-to-br from-card via-card to-card/90 border-success/20 shadow-medium hover:shadow-glow transition-all duration-500 group">
-        {/* Bordure supérieure animée */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-success"></div>
-        
+      <Card className="relative overflow-hidden bg-card border-2 border-border/60 border-l-4 border-l-success hover:shadow-xl transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center text-base sm:text-lg font-bold">
-            <div className="p-2 rounded-lg bg-success/10 mr-2 group-hover:bg-success/20 transition-colors">
-              <TrendingUp className="h-5 w-5 text-success" />
+          <CardTitle className="flex items-center gap-3 text-base sm:text-lg font-bold">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-success to-emerald-600 shadow-lg">
+              <BarChart3 className="h-5 w-5 text-white" />
             </div>
-            <span className="truncate">Nombre de Ventes</span>
+            <div>
+              <span className="block">Nombre de Ventes</span>
+              <span className="text-2xl sm:text-3xl font-black text-success">
+                {totalSales} ventes
+              </span>
+            </div>
           </CardTitle>
-          <div className="text-xl sm:text-2xl md:text-3xl font-black text-success mt-1">
-            {totalSales} ventes
-          </div>
         </CardHeader>
         <CardContent className="pt-0 pb-4">
-          <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px]">
+          <ChartContainer config={chartConfig} className="h-[280px] sm:h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <BarChart data={chartData} barCategoryGap="20%">
+                <defs>
+                  <linearGradient id="barGradient2026" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--success))" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="hsl(var(--success))" stopOpacity={0.6}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
                 <XAxis 
                   dataKey="date" 
                   stroke="hsl(var(--muted-foreground))"
                   fontSize={11}
                   tickLine={false}
+                  axisLine={false}
                 />
                 <YAxis 
                   stroke="hsl(var(--muted-foreground))"
                   fontSize={11}
                   tickLine={false}
+                  axisLine={false}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar 
                   dataKey="count" 
-                  fill="hsl(var(--success))" 
+                  fill="url(#barGradient2026)"
                   radius={[8, 8, 0, 0]}
                 />
               </BarChart>

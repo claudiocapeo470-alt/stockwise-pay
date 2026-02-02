@@ -3,14 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X, Star, Zap, Clock, Store, ShoppingBag, Building2, Check, Sparkles, ChevronDown, Bell, FileText, Scan, Download, Upload, AlertTriangle, DollarSign, ChevronLeft, ChevronRight, Globe, Heart, Rocket } from "lucide-react";
+import { BarChart3, Package, CreditCard, TrendingUp, Users, Shield, Smartphone, ArrowRight, CheckCircle, Menu, X, Star, Zap, Clock, Store, ShoppingBag, Building2, Check, Sparkles, ChevronDown, Bell, FileText, Scan, Download, Upload, AlertTriangle, DollarSign, ChevronLeft, ChevronRight, Globe, Heart, Rocket, Play, MousePointer } from "lucide-react";
 import { useState, useCallback } from "react";
 import useEmblaCarousel from 'embla-carousel-react';
 import stocknixLogo from '@/assets/stocknix-logo.png';
-import dashboardHero from '@/assets/3d-dashboard-hero.png';
-import inventoryFeature from '@/assets/3d-inventory-feature.png';
-import analyticsFeature from '@/assets/3d-analytics-feature.png';
-import paymentFeature from '@/assets/3d-payment-feature.png';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -25,130 +21,102 @@ const HomePage = () => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  const carouselSlides = [
+  const mainFeatures = [
     {
-      icon: Globe,
-      title: "Solution 100% Cloud",
-      subtitle: "Accessible partout",
-      description: "Gérez votre entreprise depuis n'importe où : smartphone, tablette ou ordinateur. Vos données sont synchronisées en temps réel.",
-      highlights: ["Multi-devises (FCFA)", "Mobile Money intégré", "Support en français"],
-      color: "from-primary/20 to-primary/5"
+      icon: Package,
+      title: "Gestion des Stocks",
+      description: "Suivi en temps réel de votre inventaire avec alertes automatiques",
+      items: ["Suivi en temps réel", "Alertes stock bas", "Import/Export", "Scanner Code-barres"]
     },
     {
-      icon: Rocket,
-      title: "Simple & Rapide",
-      subtitle: "Conçu pour vous",
-      description: "Interface intuitive pensée pour les entrepreneurs. Pas besoin d'être expert en informatique pour gérer votre stock et vos ventes.",
-      highlights: ["Prise en main immédiate", "500+ entreprises", "Support local"],
-      color: "from-accent/20 to-accent/5"
+      icon: ShoppingBag,
+      title: "Caisse & POS",
+      description: "Encaissement rapide et professionnel pour vos clients",
+      items: ["Caisse tactile", "Multi-paiements", "Mobile Money", "Tickets automatiques"]
     },
     {
-      icon: Heart,
-      title: "Made in Côte d'Ivoire",
-      subtitle: "Par DESCHNIX",
-      description: "Développé par Ulrich Deschamp KOSSONOU pour répondre aux besoins réels des commerçants ivoiriens. Expertise locale, standards internationaux.",
-      highlights: ["Adapté au marché local", "Expertise reconnue", "Évolution continue"],
-      color: "from-primary/15 to-accent/10"
+      icon: FileText,
+      title: "Facturation",
+      description: "Devis et factures professionnels en quelques clics",
+      items: ["Devis personnalisés", "Factures pro", "Export PDF", "Suivi paiements"]
+    },
+    {
+      icon: BarChart3,
+      title: "Analytics",
+      description: "Rapports détaillés pour piloter votre activité",
+      items: ["Graphiques temps réel", "Rapports détaillés", "Prévisions", "Exports"]
     }
   ];
 
-  const mainFeatures = [{
-    icon: Package,
-    title: "Gestion des Stocks",
-    description: "Suivi en temps réel, alertes de stock bas, import/export Excel/PDF/CSV, gestion code-barres, contrôle complet des produits",
-    items: ["Suivi en temps réel", "Alertes de stock bas", "Import/Export Excel, PDF, CSV", "Scanner Code-barres", "Contrôle total produits"]
-  }, {
-    icon: ShoppingBag,
-    title: "Caisse & POS",
-    description: "Encaissement rapide, gestion quantités/remises, paiements multiples (Mobile Money, espèces, cartes), tickets automatiques",
-    items: ["Caisse tactile rapide", "Gestion remises", "Multi-paiements", "Impression tickets", "Interface intuitive"]
-  }, {
-    icon: FileText,
-    title: "Ventes & Facturation",
-    description: "Création de devis et factures professionnels, suivi complet des transactions, export PDF automatique",
-    items: ["Devis personnalisés", "Factures pro", "Suivi transactions", "Export PDF", "Historique complet"]
-  }, {
-    icon: DollarSign,
-    title: "Gestion des Paiements",
-    description: "Historique complet, multi-méthodes de paiement, statuts en temps réel, rappels automatiques",
-    items: ["Historique détaillé", "Multi-méthodes", "Statuts temps réel", "Rappels auto", "Rapprochement bancaire"]
-  }, {
-    icon: BarChart3,
-    title: "Rapports & Analytics",
-    description: "Rapports détaillés, graphiques interactifs, prévisions intelligentes, analyse activité commerciale",
-    items: ["Graphiques temps réel", "Rapports détaillés", "Prévisions IA", "Analytics avancés", "Exports personnalisés"]
-  }, {
-    icon: Bell,
-    title: "Alertes Temps Réel",
-    description: "Notifications automatiques pour stock bas, ruptures, activité caisse, mouvements produits",
-    items: ["Alertes stock bas", "Notifications rupture", "Activité caisse", "Mouvements stock", "Alertes personnalisées"]
-  }];
-  const targetAudience = [{
-    icon: Store,
-    title: "Supermarchés & Boutiques",
-    description: "Gérez votre supermarché ou boutique avec efficacité. Stock temps réel, caisse rapide, facturation automatique."
-  }, {
-    icon: ShoppingBag,
-    title: "Magasins & Commerce",
-    description: "Solution complète pour magasins de détail. Suivez vos ventes, gérez vos stocks, fidélisez vos clients."
-  }, {
-    icon: Building2,
-    title: "PME & TPE",
-    description: "Plateforme adaptée aux PME/TPE. Gestion complète de votre activité commerciale avec analytics avancés."
-  }, {
-    icon: Users,
-    title: "Grossistes & Distributeurs",
-    description: "Gérez vos commandes en gros, suivez vos fournisseurs, optimisez votre inventaire et vos marges."
-  }];
-  const benefits = [{
-    icon: Zap,
-    title: "Rapide & Efficace",
-    description: "Interface ultra-rapide, caisse tactile, scanner code-barres intégré"
-  }, {
-    icon: Clock,
-    title: "Gain de Temps",
-    description: "Automatisez vos tâches, alertes intelligentes, import/export massif"
-  }, {
-    icon: Shield,
-    title: "100% Sécurisé",
-    description: "Données chiffrées, sauvegardes automatiques, conformité RGPD"
-  }, {
-    icon: Smartphone,
-    title: "Multi-plateforme",
-    description: "PC, Mac, tablettes, smartphones - accessible partout"
-  }];
-  return <div className="min-h-screen bg-background">
-      
+  const testimonials = [
+    {
+      name: "Kouamé A.",
+      role: "Gérant de supermarché",
+      image: "K",
+      content: "Stocknix a transformé ma gestion. Je gagne 2h par jour sur l'inventaire !",
+      rating: 5
+    },
+    {
+      name: "Fatou D.",
+      role: "Boutique mode",
+      image: "F",
+      content: "Simple, efficace, adapté à nos réalités. Le support est excellent.",
+      rating: 5
+    },
+    {
+      name: "Ibrahim K.",
+      role: "Grossiste",
+      image: "I",
+      content: "Mes ventes ont augmenté de 30% grâce au suivi précis des stocks.",
+      rating: 5
+    }
+  ];
+
+  const steps = [
+    {
+      number: "1",
+      title: "Créez votre compte",
+      description: "Inscription gratuite en 2 minutes, sans carte bancaire"
+    },
+    {
+      number: "2",
+      title: "Ajoutez vos produits",
+      description: "Importez votre catalogue ou scannez vos articles"
+    },
+    {
+      number: "3",
+      title: "Gérez votre business",
+      description: "Vendez, facturez, analysez - tout en un seul endroit"
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <header className="border-b border-border bg-background/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+      <header className="border-b border-border/60 bg-background/95 backdrop-blur-xl sticky top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
-            <div className="flex items-center">
-              <img src={stocknixLogo} alt="Stocknix Logo" className="h-10 sm:h-12 w-auto object-contain" />
-            </div>
+          <div className="flex items-center justify-between h-16 sm:h-18">
+            <img src={stocknixLogo} alt="Stocknix" className="h-10 sm:h-11 w-auto" />
 
             <nav className="hidden lg:flex items-center space-x-8">
-              <a href="#fonctionnalites" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                Fonctionnalités
-              </a>
-              <a href="#pour-qui" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                Pour qui ?
-              </a>
-              <a href="/tarifs" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                Tarifs
-              </a>
-              <a href="/faq" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                FAQ
-              </a>
+              {["Fonctionnalités", "Pour qui ?", "Tarifs", "FAQ"].map((item) => (
+                <a
+                  key={item}
+                  href={item === "Tarifs" ? "/tarifs" : item === "FAQ" ? "/faq" : `#${item.toLowerCase().replace(/\s|\?/g, '')}`}
+                  className="text-muted-foreground hover:text-foreground transition-colors font-medium text-sm"
+                >
+                  {item}
+                </a>
+              ))}
             </nav>
 
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="ghost" onClick={() => navigate('/auth')}>
+              <Button variant="ghost" onClick={() => navigate('/auth')} className="font-medium">
                 Connexion
               </Button>
-              <Button onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90">
+              <Button onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90 font-semibold shadow-lg shadow-primary/20">
                 Essai Gratuit
-                <Sparkles className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
 
@@ -157,20 +125,19 @@ const HomePage = () => {
             </button>
           </div>
 
-          {mobileMenuOpen && <div className="lg:hidden py-4 border-t border-border">
+          {mobileMenuOpen && (
+            <div className="lg:hidden py-4 border-t border-border/60">
               <nav className="flex flex-col space-y-3">
-                <a href="#fonctionnalites" className="text-muted-foreground hover:text-primary transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>
-                  Fonctionnalités
-                </a>
-                <a href="#pour-qui" className="text-muted-foreground hover:text-primary transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>
-                  Pour qui ?
-                </a>
-                <a href="/tarifs" className="text-muted-foreground hover:text-primary transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>
-                  Tarifs
-                </a>
-                <a href="/faq" className="text-muted-foreground hover:text-primary transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>
-                  FAQ
-                </a>
+                {["Fonctionnalités", "Pour qui ?", "Tarifs", "FAQ"].map((item) => (
+                  <a
+                    key={item}
+                    href={item === "Tarifs" ? "/tarifs" : item === "FAQ" ? "/faq" : `#${item.toLowerCase()}`}
+                    className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item}
+                  </a>
+                ))}
                 <div className="flex flex-col gap-2 pt-3">
                   <Button variant="outline" onClick={() => navigate('/auth')} className="w-full">
                     Connexion
@@ -180,391 +147,288 @@ const HomePage = () => {
                   </Button>
                 </div>
               </nav>
-            </div>}
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Hero Section with Grid Background */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-background">
-        {/* Grid Pattern Background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.1)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
-        {/* Radial Gradient Overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,hsl(var(--primary)/0.2),transparent)]" />
-        {/* Glow Effects */}
-        <div className="absolute top-20 right-20 w-72 h-72 bg-primary/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-accent/15 rounded-full blur-[120px]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12 sm:py-20">
-          <div className="max-w-4xl">
+      {/* Hero Section - Inspiré Chariow */}
+      <section className="relative py-16 sm:py-24 lg:py-32 overflow-hidden">
+        {/* Background subtil */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--primary)/0.08),transparent)]" />
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center max-w-4xl mx-auto">
             <ScrollReveal>
-              <div className="space-y-6 sm:space-y-8">
-                <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 text-sm font-semibold inline-flex">
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Essai Gratuit • Sans Engagement
-                </Badge>
-                
-                <h1 className="font-extrabold text-foreground text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight">
-                  Stocknix
-                </h1>
-                
-                <h2 className="font-bold text-foreground text-2xl sm:text-3xl lg:text-4xl leading-tight">
-                  Gérez vos stocks, vos ventes et votre caisse en toute simplicité
-                </h2>
-                
-                <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl">
-                  Le logiciel SaaS complet pour boutiques, supermarchés, magasins, PME et TPE. 
-                  Stock en temps réel, factures, devis, paiements, analytics et alertes automatiques.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" onClick={() => navigate('/auth')} className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-lg">
-                    Essayer Stocknix Maintenant
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                  <Button size="lg" variant="outline" onClick={() => navigate('/fonctionnalites')} className="text-lg px-8 py-6 border-2">
-                    Découvrir les Fonctionnalités
-                  </Button>
+              {/* Badge */}
+              <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 px-4 py-2 text-sm font-medium">
+                <Sparkles className="h-4 w-4 mr-2" />
+                Essai Gratuit • Sans Engagement
+              </Badge>
+              
+              {/* Titre principal */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-foreground leading-tight mb-6">
+                La plateforme tout-en-un pour{" "}
+                <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                  gérer votre commerce
+                </span>
+              </h1>
+              
+              {/* Sous-titre */}
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+                Stocks, ventes, factures, paiements et analytics - tout ce dont vous avez besoin pour développer votre business en Côte d'Ivoire.
+              </p>
+              
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate('/auth')} 
+                  className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-xl shadow-primary/25 font-semibold"
+                >
+                  Créer mon compte gratuit
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  onClick={() => navigate('/fonctionnalites')}
+                  className="text-lg px-8 py-6 border-2 font-semibold"
+                >
+                  <Play className="mr-2 h-5 w-5" />
+                  Voir la démo
+                </Button>
+              </div>
+              
+              {/* Social Proof */}
+              <div className="flex items-center justify-center gap-6">
+                <div className="flex -space-x-3">
+                  {["K", "F", "I", "M", "A"].map((initial, i) => (
+                    <div 
+                      key={i} 
+                      className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-sm font-bold border-2 border-background"
+                    >
+                      {initial}
+                    </div>
+                  ))}
                 </div>
-
-                <div className="flex items-center gap-6 pt-4">
-                  <div className="flex -space-x-2">
+                <div className="text-left">
+                  <div className="flex items-center gap-1 mb-0.5">
                     {[1, 2, 3, 4, 5].map(i => (
-                      <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-sm font-bold">
-                        {i}
-                      </div>
+                      <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-1">
-                      {[1, 2, 3, 4, 5].map(i => (
-                        <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
-                    <p className="text-sm text-muted-foreground font-medium">500+ entreprises satisfaites</p>
-                  </div>
+                  <p className="text-sm text-muted-foreground font-medium">
+                    500+ entreprises satisfaites
+                  </p>
                 </div>
               </div>
             </ScrollReveal>
           </div>
         </div>
-
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ChevronDown className="h-8 w-8 text-muted-foreground" />
-        </div>
       </section>
 
-      {/* Fonctionnalités Principales - Futuristic Dark Theme */}
-      <section id="fonctionnalites" className="relative py-16 sm:py-24 bg-[hsl(222,47%,6%)] overflow-hidden">
-        {/* Futuristic Background Elements */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.05)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[120px]" />
-        
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <ScrollReveal>
-            <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
-              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30 px-4 py-2 backdrop-blur-sm">
-                <Zap className="h-4 w-4 mr-2" />
-                Fonctionnalités
-              </Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
-                Tout ce dont vous avez besoin
-              </h2>
-              <p className="text-lg text-white/60">
-                Une plateforme complète pour gérer votre entreprise efficacement
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
-            {mainFeatures.map((feature, index) => <ScrollReveal key={index} delay={index * 100}>
-                <Card className="group p-6 sm:p-8 bg-white/5 backdrop-blur-sm border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all h-full">
-                  <div className="space-y-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <feature.icon className="h-7 w-7 text-white" />
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white">
-                      {feature.title}
-                    </h3>
-                    <p className="text-white/60 leading-relaxed">
-                      {feature.description}
-                    </p>
-                    <div className="space-y-2 pt-2">
-                      {feature.items.map((item, i) => <div key={i} className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-accent flex-shrink-0" />
-                          <span className="text-sm text-white/70">{item}</span>
-                        </div>)}
-                    </div>
-                  </div>
-                </Card>
-              </ScrollReveal>)}
-          </div>
-        </div>
-      </section>
-
-      {/* Pour Qui? - Gradient Mesh Style */}
-      <section id="pour-qui" className="relative py-16 sm:py-24 bg-gradient-to-br from-[hsl(180,60%,95%)] via-background to-[hsl(220,60%,95%)] dark:from-[hsl(180,40%,10%)] dark:via-background dark:to-[hsl(220,40%,10%)] overflow-hidden">
-        {/* Decorative Blobs */}
-        <div className="absolute top-10 left-10 w-32 h-32 bg-accent/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary/5 to-accent/5 rounded-full blur-3xl" />
-        
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <ScrollReveal>
-            <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
-              <Badge className="mb-4 bg-accent/20 text-accent border-accent/30 px-4 py-2">
-                <Users className="h-4 w-4 mr-2" />
-                Pour Qui ?
-              </Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-                Conçu pour les professionnels
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Stocknix s'adapte à tous les types d'entreprises en Côte d'Ivoire
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {targetAudience.map((audience, index) => <ScrollReveal key={index} delay={index * 100}>
-                <Card className="group p-6 bg-background/80 backdrop-blur-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-center border border-border/50 hover:border-accent/50 h-full">
-                  <div className="space-y-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-accent to-primary rounded-2xl flex items-center justify-center mx-auto group-hover:rotate-6 transition-transform shadow-lg">
-                      <audience.icon className="h-8 w-8 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-foreground">
-                      {audience.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {audience.description}
-                    </p>
-                  </div>
-                </Card>
-              </ScrollReveal>)}
-          </div>
-        </div>
-      </section>
-
-      {/* Section 1: Pourquoi Stocknix - Carousel */}
-      <section className="py-16 sm:py-24 bg-background overflow-hidden">
+      {/* Fonctionnalités - Grid moderne */}
+      <section id="fonctionnalités" className="py-20 sm:py-28 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center mb-10 max-w-2xl mx-auto">
-              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 px-4 py-2">
-                Découvrir
+            <div className="text-center mb-16 max-w-2xl mx-auto">
+              <Badge className="mb-4 bg-accent/10 text-accent border-accent/20 px-4 py-2">
+                Fonctionnalités
               </Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">
-                Pourquoi Stocknix ?
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+                Tout ce dont vous avez besoin
               </h2>
-              <p className="text-muted-foreground">
-                Une solution pensée pour les entrepreneurs africains
+              <p className="text-lg text-muted-foreground">
+                Une solution complète pour gérer votre commerce efficacement
               </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="relative max-w-4xl mx-auto">
-            <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex">
-                {carouselSlides.map((slide, index) => (
-                  <div key={index} className="flex-[0_0_100%] min-w-0 px-4">
-                    <Card className={`p-8 sm:p-12 bg-gradient-to-br ${slide.color} border-2 border-border/50`}>
-                      <div className="flex flex-col lg:flex-row items-center gap-8">
-                        <div className="w-24 h-24 bg-primary/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                          <slide.icon className="h-12 w-12 text-primary" />
-                        </div>
-                        <div className="text-center lg:text-left flex-1">
-                          <p className="text-sm font-medium text-primary mb-1">{slide.subtitle}</p>
-                          <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
-                            {slide.title}
-                          </h3>
-                          <p className="text-muted-foreground leading-relaxed mb-4">
-                            {slide.description}
-                          </p>
-                          <div className="flex flex-wrap justify-center lg:justify-start gap-2">
-                            {slide.highlights.map((highlight, i) => (
-                              <Badge key={i} variant="secondary" className="text-xs">
-                                <Check className="h-3 w-3 mr-1" />
-                                {highlight}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Navigation Arrows */}
-            <button
-              onClick={scrollPrev}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 w-10 h-10 bg-background border-2 border-border rounded-full flex items-center justify-center hover:bg-muted"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={scrollNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 w-10 h-10 bg-background border-2 border-border rounded-full flex items-center justify-center hover:bg-muted"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 2: Essai Gratuit - Glassmorphism Style */}
-      <section className="relative py-12 sm:py-20 bg-gradient-to-r from-primary via-[hsl(200,80%,50%)] to-accent overflow-hidden">
-        {/* Animated Background Shapes */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-20 -left-20 w-60 h-60 bg-white/10 rounded-full blur-xl" />
-          <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-white/10 rounded-full blur-xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/5 rounded-full" />
-        </div>
-        
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md rounded-full px-6 py-3 border border-white/30 mb-6">
-              <Sparkles className="h-5 w-5 text-white" />
-              <span className="font-semibold text-white">Essai 100% Gratuit</span>
-              <span className="text-white/60">•</span>
-              <span className="text-white/80">Sans carte bancaire</span>
-            </div>
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
-              Prêt à simplifier votre gestion ?
-            </h3>
-            <p className="text-white/80 text-lg mb-8">
-              Rejoignez les 500+ entreprises ivoiriennes qui nous font confiance
-            </p>
-            <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 shadow-xl px-8 py-6 text-lg">
-              Commencer Maintenant
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits - Neon Glow Style */}
-      <section className="relative py-16 sm:py-24 bg-[hsl(230,25%,8%)] overflow-hidden">
-        {/* Neon Grid Lines */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--accent)/0.1)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--accent)/0.1)_1px,transparent_1px)] bg-[size:80px_80px]" />
-        {/* Neon Glow Effects */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
-        
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <ScrollReveal>
-            <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
-                Pourquoi choisir Stocknix ?
-              </h2>
             </div>
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {benefits.map((benefit, index) => <ScrollReveal key={index} delay={index * 100}>
-                <Card className="group relative p-6 bg-transparent border border-accent/30 hover:border-accent transition-all text-center overflow-hidden">
-                  {/* Card Glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative z-10 space-y-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center mx-auto shadow-[0_0_30px_hsl(var(--accent)/0.5)] group-hover:shadow-[0_0_50px_hsl(var(--accent)/0.7)] transition-shadow">
-                      <benefit.icon className="h-7 w-7 text-white" />
+            {mainFeatures.map((feature, index) => (
+              <ScrollReveal key={index} delay={index * 100}>
+                <Card className="group p-6 bg-card border-2 border-border/60 hover:border-primary/30 hover:shadow-xl transition-all duration-300 h-full">
+                  <div className="mb-5">
+                    <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                      <feature.icon className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-white">
-                      {benefit.title}
-                    </h3>
-                    <p className="text-sm text-white/60 leading-relaxed">
-                      {benefit.description}
-                    </p>
                   </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    {feature.description}
+                  </p>
+                  <ul className="space-y-2">
+                    {feature.items.map((item, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </Card>
-              </ScrollReveal>)}
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Final - Cyberpunk Gradient */}
-      <section className="relative py-16 sm:py-24 bg-gradient-to-br from-[hsl(260,70%,30%)] via-primary to-[hsl(200,80%,40%)] overflow-hidden">
-        {/* Geometric Shapes */}
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-20 h-20 border-2 border-white/20 rotate-45" />
-          <div className="absolute bottom-10 right-10 w-32 h-32 border-2 border-white/20 rotate-12" />
-          <div className="absolute top-1/2 right-1/4 w-16 h-16 border-2 border-white/10 rounded-full" />
-          <div className="absolute bottom-1/4 left-1/4 w-24 h-24 border border-white/10 rounded-full" />
-        </div>
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-        
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      {/* Comment ça marche - Style Chariow */}
+      <section className="py-20 sm:py-28 bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="max-w-3xl mx-auto space-y-8">
-              <Badge className="bg-white/20 text-white border-white/30 px-4 py-2 backdrop-blur-sm">
-                <Rocket className="h-4 w-4 mr-2" />
-                Lancez-vous maintenant
+            <div className="text-center mb-16 max-w-2xl mx-auto">
+              <Badge className="mb-4 bg-success/10 text-success border-success/20 px-4 py-2">
+                Comment ça marche ?
               </Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
-                Prêt à transformer votre gestion ?
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+                Démarrez en 3 étapes simples
               </h2>
-              <p className="text-xl text-white/90">
-                Rejoignez les 500+ entreprises qui ont choisi Stocknix
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" onClick={() => navigate('/auth')} className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-6 shadow-xl hover:shadow-2xl transition-shadow">
-                  Commencer Gratuitement
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => navigate('/tarifs')} className="text-lg px-10 py-6 border-2 border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm">
-                  Voir les Tarifs
-                </Button>
-              </div>
             </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {steps.map((step, index) => (
+              <ScrollReveal key={index} delay={index * 150}>
+                <div className="relative text-center">
+                  {/* Ligne de connexion */}
+                  {index < steps.length - 1 && (
+                    <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
+                  )}
+                  
+                  {/* Numéro */}
+                  <div className="w-24 h-24 bg-gradient-to-br from-primary to-accent rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/20">
+                    <span className="text-4xl font-black text-white">{step.number}</span>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-foreground mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {step.description}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Témoignages */}
+      <section className="py-20 sm:py-28 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="text-center mb-16 max-w-2xl mx-auto">
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 px-4 py-2">
+                Témoignages
+              </Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+                Ils réussissent avec Stocknix
+              </h2>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {testimonials.map((testimonial, index) => (
+              <ScrollReveal key={index} delay={index * 100}>
+                <Card className="p-6 bg-card border-2 border-border/60 h-full">
+                  <div className="flex items-center gap-1 mb-4">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-foreground mb-6 leading-relaxed">
+                    "{testimonial.content}"
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold">
+                      {testimonial.image}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">{testimonial.name}</p>
+                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </Card>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="py-20 sm:py-28 bg-gradient-to-br from-primary via-accent to-primary relative overflow-hidden">
+        {/* Effets décoratifs */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
+        <div className="absolute top-10 right-10 w-32 h-32 border-2 border-white/20 rounded-full" />
+        <div className="absolute bottom-10 left-10 w-24 h-24 border-2 border-white/10 rotate-45" />
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+          <ScrollReveal>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+              Commencez à vendre des produits<br />dès aujourd'hui !
+            </h2>
+            <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+              Rejoignez les 500+ entreprises qui ont choisi Stocknix
+            </p>
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/auth')}
+              className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-7 font-bold shadow-2xl"
+            >
+              Créer votre boutique
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* Footer - Modern Dark */}
-      <footer className="relative py-12 px-4 sm:px-6 bg-[hsl(222,47%,6%)] border-t border-white/10">
-        <div className="container mx-auto relative z-10">
+      {/* Footer */}
+      <footer className="py-12 bg-card border-t border-border/60">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <img src={stocknixLogo} alt="Stocknix" className="h-10" />
-              </div>
-              <p className="text-sm text-white/60">
+            <div>
+              <img src={stocknixLogo} alt="Stocknix" className="h-10 mb-4" />
+              <p className="text-sm text-muted-foreground">
                 Logiciel de gestion complet pour PME et TPE en Côte d'Ivoire
               </p>
             </div>
             
             <div>
-              <h3 className="font-bold mb-4 text-white">Produit</h3>
+              <h3 className="font-bold mb-4 text-foreground">Produit</h3>
               <div className="space-y-2 text-sm">
-                <a href="/fonctionnalites" className="block text-white/60 hover:text-accent transition-colors">Fonctionnalités</a>
-                <a href="/tarifs" className="block text-white/60 hover:text-accent transition-colors">Tarifs</a>
-                <a href="/faq" className="block text-white/60 hover:text-accent transition-colors">FAQ</a>
+                <a href="/fonctionnalites" className="block text-muted-foreground hover:text-primary transition-colors">Fonctionnalités</a>
+                <a href="/tarifs" className="block text-muted-foreground hover:text-primary transition-colors">Tarifs</a>
+                <a href="/faq" className="block text-muted-foreground hover:text-primary transition-colors">FAQ</a>
               </div>
             </div>
             
             <div>
-              <h3 className="font-bold mb-4 text-white">Entreprise</h3>
+              <h3 className="font-bold mb-4 text-foreground">Entreprise</h3>
               <div className="space-y-2 text-sm">
-                <a href="/legal" className="block text-white/60 hover:text-accent transition-colors">Mentions Légales</a>
-                <p className="text-white/60">Par DESCHNIX</p>
+                <a href="/legal" className="block text-muted-foreground hover:text-primary transition-colors">Mentions Légales</a>
+                <p className="text-muted-foreground">Par DESCHNIX</p>
               </div>
             </div>
             
             <div>
-              <h3 className="font-bold mb-4 text-white">Contact</h3>
-              <div className="space-y-2 text-sm text-white/60">
+              <h3 className="font-bold mb-4 text-foreground">Contact</h3>
+              <div className="space-y-2 text-sm text-muted-foreground">
                 <p>support@stocknix.space</p>
                 <p>Côte d'Ivoire</p>
               </div>
             </div>
           </div>
           
-          <div className="text-center text-sm text-white/40 border-t border-white/10 pt-8">
+          <div className="text-center text-sm text-muted-foreground border-t border-border/60 pt-8">
             <p>© 2025 Stocknix par DESCHNIX. Tous droits réservés.</p>
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default HomePage;

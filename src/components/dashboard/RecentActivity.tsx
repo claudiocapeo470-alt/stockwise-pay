@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ShoppingCart, Package, Receipt, AlertTriangle, Activity } from "lucide-react"
+import { ShoppingCart, Package, Receipt, AlertTriangle, Activity, Clock, CreditCard, TrendingUp } from "lucide-react"
 import { useProducts } from "@/hooks/useProducts"
 import { useSales } from "@/hooks/useSales"
 import { usePayments } from "@/hooks/usePayments"
@@ -8,40 +8,43 @@ import { useMemo } from "react"
 import { formatDistanceToNow } from "date-fns"
 import { fr } from "date-fns/locale"
 
-const getIcon = (type: string) => {
+const getIconConfig = (type: string) => {
   switch (type) {
     case "sale":
-      return ShoppingCart
+      return {
+        icon: ShoppingCart,
+        bg: "bg-gradient-to-br from-primary to-accent",
+        color: "text-white"
+      }
     case "stock":
-      return Package
+      return {
+        icon: Package,
+        bg: "bg-gradient-to-br from-warning to-orange-600",
+        color: "text-white"
+      }
     case "payment":
-      return Receipt
+      return {
+        icon: CreditCard,
+        bg: "bg-gradient-to-br from-success to-emerald-600",
+        color: "text-white"
+      }
     default:
-      return AlertTriangle
-  }
-}
-
-const getIconClasses = (type: string) => {
-  switch (type) {
-    case "sale":
-      return "bg-primary/10 text-primary"
-    case "stock":
-      return "bg-warning/10 text-warning"
-    case "payment":
-      return "bg-secondary/10 text-secondary"
-    default:
-      return "bg-muted text-muted-foreground"
+      return {
+        icon: AlertTriangle,
+        bg: "bg-muted",
+        color: "text-muted-foreground"
+      }
   }
 }
 
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "completed":
-      return <Badge variant="outline" className="text-success border-success/30 text-xs">Terminé</Badge>
+      return <Badge className="bg-success/10 text-success border-success/30 text-xs font-medium">Terminé</Badge>
     case "warning":
-      return <Badge variant="outline" className="text-warning border-warning/30 text-xs">Attention</Badge>
+      return <Badge className="bg-warning/10 text-warning border-warning/30 text-xs font-medium">Attention</Badge>
     case "pending":
-      return <Badge variant="outline" className="text-muted-foreground text-xs">En attente</Badge>
+      return <Badge className="bg-muted text-muted-foreground text-xs font-medium">En attente</Badge>
     default:
       return null
   }
@@ -92,61 +95,76 @@ export function RecentActivity() {
 
     allActivities.push(...recentSales, ...lowStockProducts, ...recentPayments)
     
-    // Sort by most recent and limit to 4
+    // Sort by most recent and limit to 6
     return allActivities
       .sort((a, b) => new Date(b.time === 'Maintenant' ? Date.now() : a.time).getTime() - new Date(a.time === 'Maintenant' ? Date.now() : b.time).getTime())
-      .slice(0, 4)
+      .slice(0, 6)
   }, [products, sales, payments])
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base font-semibold flex items-center gap-2">
-          <Activity className="h-4 w-4 text-secondary" />
+    <Card className="relative overflow-hidden border-2 border-border/60 bg-card">
+      {/* Bordure lumineuse */}
+      <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-accent via-primary to-accent" />
+      
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-bold flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-accent to-primary shadow-lg">
+            <Activity className="h-5 w-5 text-white" />
+          </div>
           Activité récente
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-1">
         {activities.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center mx-auto mb-3">
-              <AlertTriangle className="h-5 w-5 text-muted-foreground" />
+          <div className="text-center py-10">
+            <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
+              <Clock className="h-7 w-7 text-muted-foreground" />
             </div>
+            <p className="font-semibold text-foreground mb-1">Aucune activité récente</p>
             <p className="text-sm text-muted-foreground">
-              Aucune activité récente
+              Vos dernières actions apparaîtront ici
             </p>
           </div>
         ) : (
-          activities.map((activity) => {
-            const Icon = getIcon(activity.type)
+          activities.map((activity, index) => {
+            const iconConfig = getIconConfig(activity.type)
+            const Icon = iconConfig.icon
             return (
               <div 
                 key={activity.id} 
-                className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+                className={`
+                  flex items-center gap-4 p-3 rounded-xl
+                  hover:bg-muted/50 transition-all duration-200
+                  ${index !== activities.length - 1 ? 'border-b border-border/40' : ''}
+                `}
               >
-                <div className={`p-2 rounded-lg ${getIconClasses(activity.type)} shrink-0`}>
-                  <Icon className="h-3.5 w-3.5" />
+                <div className={`
+                  p-2.5 rounded-xl ${iconConfig.bg} 
+                  shadow-md shrink-0
+                `}>
+                  <Icon className={`h-4 w-4 ${iconConfig.color}`} />
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <h4 className="text-sm font-medium text-foreground truncate">
+                  <div className="flex items-center justify-between gap-2 mb-0.5">
+                    <h4 className="text-sm font-semibold text-foreground truncate">
                       {activity.title}
                     </h4>
                     {getStatusBadge(activity.status)}
                   </div>
                   
-                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                  <p className="text-xs text-muted-foreground truncate mb-1">
                     {activity.description}
                   </p>
                   
-                  <div className="flex items-center justify-between mt-1.5">
-                    <span className="text-xs text-muted-foreground">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
                       {activity.time}
                     </span>
                     {activity.amount && (
-                      <span className="text-xs font-semibold text-primary">
+                      <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                         {activity.amount}
                       </span>
                     )}

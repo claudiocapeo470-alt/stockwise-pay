@@ -1,11 +1,12 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { 
   Package, Scan, Download, Upload, Bell, AlertTriangle,
   CreditCard, Smartphone, Wallet, Receipt,
   FileText, FilePlus, FileCheck, DollarSign,
   BarChart3, TrendingUp, PieChart, LineChart
 } from "lucide-react";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { DepthParallax, ZoomCinematic, Magnetic, Floating3D } from "./ImmersiveAnimations";
 import { FloatingCard, DeviceMockup, GlowOrb, GridPattern } from "./FloatingElements";
 
 interface FeatureCardProps {
@@ -16,8 +17,15 @@ interface FeatureCardProps {
 }
 
 const FeatureCard = ({ icon: Icon, title, description, delay = 0 }: FeatureCardProps) => (
-  <FloatingCard delay={delay} duration={5}>
-    <div className="glass-strong rounded-2xl p-4 border border-border/40 hover:border-primary/30 transition-all duration-300 group">
+  <Magnetic strength={0.1}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay, duration: 0.5 }}
+      whileHover={{ y: -4, scale: 1.02 }}
+      className="bg-card/80 backdrop-blur-xl rounded-2xl p-4 border border-border hover:border-primary/30 transition-all duration-300 group shadow-lg hover:shadow-xl cursor-pointer"
+    >
       <div className="flex items-start gap-3">
         <div className="p-2 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
           <Icon size={20} className="text-primary" />
@@ -27,12 +35,20 @@ const FeatureCard = ({ icon: Icon, title, description, delay = 0 }: FeatureCardP
           <p className="text-xs text-muted-foreground">{description}</p>
         </div>
       </div>
-    </div>
-  </FloatingCard>
+    </motion.div>
+  </Magnetic>
 );
 
 // Section 1: Gestion des Stocks
 export const StocksSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
   const features = [
     { icon: Package, title: "Suivi temps réel", description: "Inventaire toujours à jour" },
     { icon: AlertTriangle, title: "Alertes stock bas", description: "Ne manquez plus jamais" },
@@ -41,112 +57,122 @@ export const StocksSection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden">
-      <GridPattern className="opacity-30" />
-      <GlowOrb color="primary" size="xl" className="absolute -left-40 top-1/4" />
+    <section ref={sectionRef} className="relative py-24 overflow-hidden">
+      <GridPattern className="opacity-20" />
+      <DepthParallax depth={-0.6} className="absolute -left-40 top-1/4 z-0">
+        <GlowOrb color="primary" size="xl" />
+      </DepthParallax>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
-          <ScrollReveal>
-            <div>
-              <span className="inline-block px-4 py-2 rounded-full glass-strong border border-primary/30 text-sm font-medium text-primary mb-4">
-                📦 Gestion des Stocks
-              </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-                <span className="text-foreground">Maîtrisez votre </span>
-                <span className="text-gradient">inventaire</span>
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Suivez chaque produit en temps réel, recevez des alertes automatiques 
-                et optimisez votre gestion des stocks sans effort.
-              </p>
-              
-              <div className="grid sm:grid-cols-2 gap-4">
-                {features.map((feature, index) => (
-                  <FeatureCard key={index} {...feature} delay={index * 0.2} />
-                ))}
-              </div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{ y }}
+          >
+            <span className="inline-block px-4 py-2 rounded-full bg-card/80 backdrop-blur-xl border border-primary/30 text-sm font-medium text-primary mb-4 shadow-lg">
+              📦 Gestion des Stocks
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+              <span className="text-foreground">Maîtrisez votre </span>
+              <span className="text-gradient">inventaire</span>
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Suivez chaque produit en temps réel, recevez des alertes automatiques 
+              et optimisez votre gestion des stocks sans effort.
+            </p>
+            
+            <div className="grid sm:grid-cols-2 gap-4">
+              {features.map((feature, index) => (
+                <FeatureCard key={index} {...feature} delay={index * 0.1} />
+              ))}
             </div>
-          </ScrollReveal>
+          </motion.div>
 
           {/* Visual */}
-          <ScrollReveal delay={200}>
-            <div className="relative">
-              <DeviceMockup type="desktop">
-                <div className="p-6 min-h-[300px]">
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <div className="text-sm font-semibold text-foreground">Gestion des Stocks</div>
-                      <div className="text-xs text-muted-foreground">1,247 produits</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium">
-                        + Ajouter
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative"
+          >
+            <DepthParallax depth={0.2}>
+              <Floating3D intensity={0.5} rotationIntensity={0.3}>
+                <DeviceMockup type="desktop">
+                  <div className="p-6 min-h-[300px]">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <div className="text-sm font-semibold text-foreground">Gestion des Stocks</div>
+                        <div className="text-xs text-muted-foreground">1,247 produits</div>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium">
+                          + Ajouter
+                        </div>
                       </div>
                     </div>
+                    
+                    {/* Product Grid */}
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        { name: "Riz 5kg", qty: 45, status: "ok" },
+                        { name: "Huile 1L", qty: 12, status: "low" },
+                        { name: "Sucre 1kg", qty: 89, status: "ok" },
+                        { name: "Lait 1L", qty: 5, status: "critical" },
+                        { name: "Farine 2kg", qty: 67, status: "ok" },
+                        { name: "Sel 500g", qty: 23, status: "ok" },
+                      ].map((product, i) => (
+                        <motion.div 
+                          key={i}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.5 + i * 0.1 }}
+                          className={`p-3 rounded-xl border ${
+                            product.status === 'critical' ? 'border-destructive/50 bg-destructive/10' :
+                            product.status === 'low' ? 'border-warning/50 bg-warning/10' :
+                            'border-border bg-muted/20'
+                          }`}
+                        >
+                          <div className="w-8 h-8 bg-muted rounded-lg mb-2" />
+                          <div className="text-xs font-medium text-foreground truncate">{product.name}</div>
+                          <div className={`text-[10px] ${
+                            product.status === 'critical' ? 'text-destructive' :
+                            product.status === 'low' ? 'text-warning' :
+                            'text-muted-foreground'
+                          }`}>
+                            {product.qty} en stock
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
-                  
-                  {/* Product Grid */}
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { name: "Riz 5kg", qty: 45, status: "ok" },
-                      { name: "Huile 1L", qty: 12, status: "low" },
-                      { name: "Sucre 1kg", qty: 89, status: "ok" },
-                      { name: "Lait 1L", qty: 5, status: "critical" },
-                      { name: "Farine 2kg", qty: 67, status: "ok" },
-                      { name: "Sel 500g", qty: 23, status: "ok" },
-                    ].map((product, i) => (
-                      <motion.div 
-                        key={i}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5 + i * 0.1 }}
-                        className={`p-3 rounded-xl border ${
-                          product.status === 'critical' ? 'border-destructive/50 bg-destructive/10' :
-                          product.status === 'low' ? 'border-warning/50 bg-warning/10' :
-                          'border-border/40 bg-muted/20'
-                        }`}
-                      >
-                        <div className="w-8 h-8 bg-muted rounded-lg mb-2" />
-                        <div className="text-xs font-medium text-foreground truncate">{product.name}</div>
-                        <div className={`text-[10px] ${
-                          product.status === 'critical' ? 'text-destructive' :
-                          product.status === 'low' ? 'text-warning' :
-                          'text-muted-foreground'
-                        }`}>
-                          {product.qty} en stock
-                        </div>
-                      </motion.div>
-                    ))}
+                </DeviceMockup>
+              </Floating3D>
+            </DepthParallax>
+
+            {/* Floating Alert */}
+            <DepthParallax depth={0.5} className="absolute -right-8 top-1/3">
+              <FloatingCard delay={0.5}>
+                <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-3 border border-warning/40 shadow-xl">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-warning/20">
+                      <Bell size={14} className="text-warning" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-foreground">Stock bas</p>
+                      <p className="text-[10px] text-muted-foreground">3 produits</p>
+                    </div>
                   </div>
                 </div>
-              </DeviceMockup>
-
-              {/* Floating Alert */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.2 }}
-                className="absolute -right-8 top-1/3"
-              >
-                <FloatingCard delay={0.5}>
-                  <div className="glass-strong rounded-2xl p-3 border border-warning/40 shadow-xl">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded-lg bg-warning/20">
-                        <Bell size={14} className="text-warning" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-foreground">Stock bas</p>
-                        <p className="text-[10px] text-muted-foreground">3 produits</p>
-                      </div>
-                    </div>
-                  </div>
-                </FloatingCard>
-              </motion.div>
-            </div>
-          </ScrollReveal>
+              </FloatingCard>
+            </DepthParallax>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -155,6 +181,14 @@ export const StocksSection = () => {
 
 // Section 2: Caisse & POS
 export const POSSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
   const features = [
     { icon: CreditCard, title: "Encaissement rapide", description: "En quelques clics" },
     { icon: Wallet, title: "Mobile Money", description: "Orange, MTN, Wave" },
@@ -163,98 +197,115 @@ export const POSSection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden bg-muted/20">
-      <GlowOrb color="secondary" size="xl" className="absolute -right-40 top-1/4" />
+    <section ref={sectionRef} className="relative py-24 overflow-hidden bg-muted/10">
+      <DepthParallax depth={-0.5} className="absolute -right-40 top-1/4 z-0">
+        <GlowOrb color="secondary" size="xl" />
+      </DepthParallax>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Visual - Mobile First */}
-          <ScrollReveal>
-            <div className="relative order-2 lg:order-1">
-              <div className="flex justify-center items-end gap-6">
-                {/* Main Phone */}
-                <DeviceMockup type="mobile">
-                  <div className="p-4 min-h-[300px]">
-                    <div className="text-center mb-4">
-                      <div className="text-xs text-muted-foreground">Total</div>
-                      <div className="text-2xl font-bold text-primary">25,500 F</div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative order-2 lg:order-1"
+          >
+            <div className="flex justify-center items-end gap-6">
+              {/* Main Phone */}
+              <DepthParallax depth={0.3}>
+                <Floating3D intensity={0.6} rotationIntensity={0.4}>
+                  <DeviceMockup type="mobile">
+                    <div className="p-4 min-h-[300px]">
+                      <div className="text-center mb-4">
+                        <div className="text-xs text-muted-foreground">Total</div>
+                        <div className="text-2xl font-bold text-primary">25,500 F</div>
+                      </div>
+                      
+                      {/* Items */}
+                      <div className="space-y-2 mb-4">
+                        {[
+                          { name: "Riz 5kg", price: "15,000 F" },
+                          { name: "Huile 1L", price: "5,500 F" },
+                          { name: "Sucre 1kg", price: "5,000 F" },
+                        ].map((item, i) => (
+                          <div key={i} className="flex justify-between text-xs p-2 bg-muted/30 rounded-lg border border-border/50">
+                            <span className="text-foreground">{item.name}</span>
+                            <span className="text-muted-foreground">{item.price}</span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Payment Methods */}
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        {["Espèces", "Orange", "Wave"].map((method, i) => (
+                          <div 
+                            key={i}
+                            className={`p-2 rounded-lg text-center text-[10px] font-medium border ${
+                              i === 0 ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/50 text-muted-foreground border-border'
+                            }`}
+                          >
+                            {method}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="p-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-center text-white text-sm font-semibold shadow-lg">
+                        Valider
+                      </div>
                     </div>
-                    
-                    {/* Items */}
-                    <div className="space-y-2 mb-4">
-                      {[
-                        { name: "Riz 5kg", price: "15,000 F" },
-                        { name: "Huile 1L", price: "5,500 F" },
-                        { name: "Sucre 1kg", price: "5,000 F" },
-                      ].map((item, i) => (
-                        <div key={i} className="flex justify-between text-xs p-2 bg-muted/30 rounded-lg">
-                          <span className="text-foreground">{item.name}</span>
-                          <span className="text-muted-foreground">{item.price}</span>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    {/* Payment Methods */}
-                    <div className="grid grid-cols-3 gap-2 mb-4">
-                      {["Espèces", "Orange", "Wave"].map((method, i) => (
-                        <div 
-                          key={i}
-                          className={`p-2 rounded-lg text-center text-[10px] font-medium ${
-                            i === 0 ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground'
-                          }`}
-                        >
-                          {method}
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="p-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-center text-white text-sm font-semibold">
-                      Valider
-                    </div>
-                  </div>
-                </DeviceMockup>
+                  </DeviceMockup>
+                </Floating3D>
+              </DepthParallax>
 
-                {/* Payment Icons Floating */}
-                <div className="hidden sm:flex flex-col gap-4">
-                  {[
-                    { icon: "🔶", label: "Orange Money" },
-                    { icon: "🌊", label: "Wave" },
-                    { icon: "💛", label: "MTN" },
-                  ].map((payment, i) => (
-                    <FloatingCard key={i} delay={i * 0.3} duration={4}>
-                      <div className="glass-strong rounded-xl p-3 border border-border/40 flex items-center gap-2">
+              {/* Payment Icons Floating */}
+              <div className="hidden sm:flex flex-col gap-4">
+                {[
+                  { icon: "🔶", label: "Orange Money" },
+                  { icon: "🌊", label: "Wave" },
+                  { icon: "💛", label: "MTN" },
+                ].map((payment, i) => (
+                  <DepthParallax key={i} depth={0.4 + i * 0.1}>
+                    <FloatingCard delay={i * 0.3} duration={4}>
+                      <div className="bg-card/90 backdrop-blur-xl rounded-xl p-3 border border-border shadow-lg flex items-center gap-2">
                         <span className="text-xl">{payment.icon}</span>
                         <span className="text-xs font-medium text-foreground">{payment.label}</span>
                       </div>
                     </FloatingCard>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-
-          {/* Content */}
-          <ScrollReveal delay={200}>
-            <div className="order-1 lg:order-2">
-              <span className="inline-block px-4 py-2 rounded-full glass-strong border border-secondary/30 text-sm font-medium text-secondary mb-4">
-                💳 Caisse & POS
-              </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-                <span className="text-foreground">Encaissez </span>
-                <span className="text-gradient">rapidement</span>
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Interface intuitive pour un encaissement rapide. Acceptez tous les 
-                modes de paiement, imprimez les tickets automatiquement.
-              </p>
-              
-              <div className="grid sm:grid-cols-2 gap-4">
-                {features.map((feature, index) => (
-                  <FeatureCard key={index} {...feature} delay={index * 0.2} />
+                  </DepthParallax>
                 ))}
               </div>
             </div>
-          </ScrollReveal>
+          </motion.div>
+
+          {/* Content */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="order-1 lg:order-2"
+            style={{ y }}
+          >
+            <span className="inline-block px-4 py-2 rounded-full bg-card/80 backdrop-blur-xl border border-secondary/30 text-sm font-medium text-secondary mb-4 shadow-lg">
+              💳 Caisse & POS
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+              <span className="text-foreground">Encaissez </span>
+              <span className="text-gradient">rapidement</span>
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Interface intuitive pour un encaissement rapide. Acceptez tous les 
+              modes de paiement, imprimez les tickets automatiquement.
+            </p>
+            
+            <div className="grid sm:grid-cols-2 gap-4">
+              {features.map((feature, index) => (
+                <FeatureCard key={index} {...feature} delay={index * 0.1} />
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -263,6 +314,14 @@ export const POSSection = () => {
 
 // Section 3: Facturation
 export const InvoicingSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
   const features = [
     { icon: FileText, title: "Factures pro", description: "Templates élégants" },
     { icon: FilePlus, title: "Devis rapides", description: "Conversion en 1 clic" },
@@ -271,102 +330,103 @@ export const InvoicingSection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden">
-      <GridPattern className="opacity-30" />
-      <GlowOrb color="accent" size="xl" className="absolute -left-40 top-1/4" />
+    <section ref={sectionRef} className="relative py-24 overflow-hidden">
+      <GridPattern className="opacity-20" />
+      <DepthParallax depth={-0.5} className="absolute -left-40 top-1/4 z-0">
+        <GlowOrb color="accent" size="xl" />
+      </DepthParallax>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
-          <ScrollReveal>
-            <div>
-              <span className="inline-block px-4 py-2 rounded-full glass-strong border border-accent/30 text-sm font-medium text-accent mb-4">
-                🧾 Facturation
-              </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-                <span className="text-foreground">Factures & devis </span>
-                <span className="text-gradient-accent">professionnels</span>
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Créez des documents professionnels en quelques clics. 
-                Suivez vos paiements et relancez automatiquement.
-              </p>
-              
-              <div className="grid sm:grid-cols-2 gap-4">
-                {features.map((feature, index) => (
-                  <FeatureCard key={index} {...feature} delay={index * 0.2} />
-                ))}
-              </div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{ y }}
+          >
+            <span className="inline-block px-4 py-2 rounded-full bg-card/80 backdrop-blur-xl border border-accent/30 text-sm font-medium text-accent mb-4 shadow-lg">
+              🧾 Facturation
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+              <span className="text-foreground">Factures & devis </span>
+              <span className="text-gradient-accent">professionnels</span>
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Créez des documents professionnels en quelques clics. 
+              Suivez vos paiements et relancez automatiquement.
+            </p>
+            
+            <div className="grid sm:grid-cols-2 gap-4">
+              {features.map((feature, index) => (
+                <FeatureCard key={index} {...feature} delay={index * 0.1} />
+              ))}
             </div>
-          </ScrollReveal>
+          </motion.div>
 
           {/* Visual */}
-          <ScrollReveal delay={200}>
-            <div className="relative">
-              {/* Invoice Preview */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="glass-strong rounded-2xl p-6 border border-border/40 shadow-2xl max-w-md mx-auto"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <div className="text-lg font-bold text-foreground">FACTURE</div>
-                    <div className="text-xs text-muted-foreground">#FAC-2025-0042</div>
-                  </div>
-                  <div className="px-3 py-1 rounded-full bg-success/20 text-success text-xs font-medium">
-                    Payée
-                  </div>
-                </div>
-                
-                <div className="border-t border-b border-border/40 py-4 my-4 space-y-3">
-                  {[
-                    { desc: "Riz 5kg x 10", amount: "150,000 F" },
-                    { desc: "Huile 1L x 5", amount: "27,500 F" },
-                    { desc: "Sucre 1kg x 8", amount: "40,000 F" },
-                  ].map((item, i) => (
-                    <div key={i} className="flex justify-between text-sm">
-                      <span className="text-foreground">{item.desc}</span>
-                      <span className="text-muted-foreground">{item.amount}</span>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative"
+          >
+            {/* Invoice Preview */}
+            <ZoomCinematic intensity={0.5}>
+              <Floating3D intensity={0.4} rotationIntensity={0.3}>
+                <motion.div
+                  className="bg-card/90 backdrop-blur-xl rounded-2xl p-6 border border-border shadow-2xl max-w-md mx-auto"
+                >
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <div className="text-lg font-bold text-foreground">FACTURE</div>
+                      <div className="text-xs text-muted-foreground">#FAC-2025-0042</div>
                     </div>
-                  ))}
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Total TTC</span>
-                  <span className="text-2xl font-bold text-primary">217,500 F</span>
-                </div>
-              </motion.div>
-
-              {/* Floating Elements */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 }}
-                className="absolute -left-8 top-1/4"
-              >
-                <FloatingCard delay={0.3}>
-                  <div className="glass-strong rounded-xl p-3 border border-border/40">
-                    <FileText size={24} className="text-accent" />
+                    <div className="px-3 py-1 rounded-full bg-success/20 text-success text-xs font-medium">
+                      Payée
+                    </div>
                   </div>
-                </FloatingCard>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1 }}
-                className="absolute -right-4 bottom-1/4"
-              >
-                <FloatingCard delay={0.6}>
-                  <div className="glass-strong rounded-xl p-3 border border-success/40">
-                    <FileCheck size={24} className="text-success" />
+                  
+                  <div className="border-t border-b border-border py-4 my-4 space-y-3">
+                    {[
+                      { desc: "Riz 5kg x 10", amount: "150,000 F" },
+                      { desc: "Huile 1L x 5", amount: "27,500 F" },
+                      { desc: "Sucre 1kg x 8", amount: "40,000 F" },
+                    ].map((item, i) => (
+                      <div key={i} className="flex justify-between text-sm">
+                        <span className="text-foreground">{item.desc}</span>
+                        <span className="text-muted-foreground">{item.amount}</span>
+                      </div>
+                    ))}
                   </div>
-                </FloatingCard>
-              </motion.div>
-            </div>
-          </ScrollReveal>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Total TTC</span>
+                    <span className="text-2xl font-bold text-primary">217,500 F</span>
+                  </div>
+                </motion.div>
+              </Floating3D>
+            </ZoomCinematic>
+
+            {/* Floating Elements */}
+            <DepthParallax depth={0.5} className="absolute -left-8 top-1/4">
+              <FloatingCard delay={0.3}>
+                <div className="bg-card/90 backdrop-blur-xl rounded-xl p-3 border border-border shadow-lg">
+                  <FileText size={24} className="text-accent" />
+                </div>
+              </FloatingCard>
+            </DepthParallax>
+
+            <DepthParallax depth={0.6} className="absolute -right-4 bottom-1/4">
+              <FloatingCard delay={0.6}>
+                <div className="bg-card/90 backdrop-blur-xl rounded-xl p-3 border border-success/40 shadow-lg">
+                  <FileCheck size={24} className="text-success" />
+                </div>
+              </FloatingCard>
+            </DepthParallax>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -375,6 +435,14 @@ export const InvoicingSection = () => {
 
 // Section 4: Analytics
 export const AnalyticsSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
   const features = [
     { icon: BarChart3, title: "Rapports détaillés", description: "Ventes, stocks, clients" },
     { icon: TrendingUp, title: "Tendances", description: "Prévisions intelligentes" },
@@ -383,104 +451,119 @@ export const AnalyticsSection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden bg-muted/20">
-      <GlowOrb color="primary" size="xl" className="absolute -right-40 top-1/4" />
+    <section ref={sectionRef} className="relative py-24 overflow-hidden bg-muted/10">
+      <DepthParallax depth={-0.5} className="absolute -right-40 top-1/4 z-0">
+        <GlowOrb color="primary" size="xl" />
+      </DepthParallax>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Visual */}
-          <ScrollReveal>
-            <div className="relative">
-              <DeviceMockup type="desktop">
-                <div className="p-6 min-h-[320px]">
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <div className="text-sm font-semibold text-foreground">Analytics</div>
-                      <div className="text-xs text-muted-foreground">Janvier 2025</div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative"
+          >
+            <DepthParallax depth={0.2}>
+              <Floating3D intensity={0.5} rotationIntensity={0.3}>
+                <DeviceMockup type="desktop">
+                  <div className="p-6 min-h-[320px]">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <div className="text-sm font-semibold text-foreground">Analytics</div>
+                        <div className="text-xs text-muted-foreground">Janvier 2025</div>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="px-2 py-1 rounded-lg bg-primary/20 text-primary text-[10px]">Mois</div>
+                        <div className="px-2 py-1 rounded-lg bg-muted/50 text-muted-foreground text-[10px]">Année</div>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      {["Jour", "Semaine", "Mois"].map((period, i) => (
-                        <div 
+                    
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      {[
+                        { label: "CA", value: "4.2M F", trend: "+18%" },
+                        { label: "Ventes", value: "342", trend: "+12%" },
+                        { label: "Marge", value: "28%", trend: "+3%" },
+                      ].map((stat, i) => (
+                        <motion.div 
                           key={i}
-                          className={`px-2 py-1 rounded text-[10px] ${
-                            i === 2 ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
-                          }`}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.5 + i * 0.1 }}
+                          className="p-3 rounded-xl bg-muted/30 border border-border"
                         >
-                          {period}
-                        </div>
+                          <div className="text-[10px] text-muted-foreground">{stat.label}</div>
+                          <div className="text-sm font-bold text-foreground">{stat.value}</div>
+                          <div className="text-[10px] text-success">{stat.trend}</div>
+                        </motion.div>
+                      ))}
+                    </div>
+                    
+                    {/* Chart */}
+                    <div className="h-28 bg-muted/30 rounded-xl flex items-end gap-1 p-3 border border-border">
+                      {[30, 45, 60, 40, 75, 55, 80, 65, 90, 70, 85, 95].map((h, i) => (
+                        <motion.div 
+                          key={i}
+                          initial={{ height: 0 }}
+                          whileInView={{ height: `${h}%` }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.8 + i * 0.05, duration: 0.5 }}
+                          className="flex-1 bg-gradient-to-t from-primary to-secondary rounded-t"
+                        />
                       ))}
                     </div>
                   </div>
-                  
-                  {/* Chart */}
-                  <div className="h-32 bg-muted/20 rounded-xl mb-4 flex items-end gap-2 p-4">
-                    {[35, 52, 41, 78, 45, 65, 88, 55, 72, 95, 60, 82].map((h, i) => (
-                      <motion.div 
-                        key={i}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${h}%` }}
-                        transition={{ delay: 0.8 + i * 0.05, duration: 0.5 }}
-                        className="flex-1 bg-gradient-to-t from-primary to-secondary rounded-t opacity-80"
-                      />
-                    ))}
-                  </div>
-                  
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-4">
-                    {[
-                      { label: "Chiffre d'affaires", value: "12.5M F", change: "+18%" },
-                      { label: "Transactions", value: "1,847", change: "+12%" },
-                      { label: "Panier moyen", value: "6,750 F", change: "+5%" },
-                    ].map((stat, i) => (
-                      <div key={i} className="text-center">
-                        <div className="text-xs text-muted-foreground">{stat.label}</div>
-                        <div className="text-sm font-bold text-foreground">{stat.value}</div>
-                        <div className="text-[10px] text-success">{stat.change}</div>
-                      </div>
-                    ))}
+                </DeviceMockup>
+              </Floating3D>
+            </DepthParallax>
+
+            {/* Floating stats */}
+            <DepthParallax depth={0.6} className="absolute -right-8 top-1/4">
+              <FloatingCard delay={0.5}>
+                <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-3 border border-success/40 shadow-xl">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp size={16} className="text-success" />
+                    <div>
+                      <p className="text-xs font-bold text-success">+23%</p>
+                      <p className="text-[10px] text-muted-foreground">vs mois dernier</p>
+                    </div>
                   </div>
                 </div>
-              </DeviceMockup>
-
-              {/* Floating Chart Icon */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2 }}
-                className="absolute -right-6 top-1/4"
-              >
-                <FloatingCard delay={0.8}>
-                  <div className="glass-strong rounded-2xl p-4 border border-primary/40">
-                    <TrendingUp size={32} className="text-primary" />
-                  </div>
-                </FloatingCard>
-              </motion.div>
-            </div>
-          </ScrollReveal>
+              </FloatingCard>
+            </DepthParallax>
+          </motion.div>
 
           {/* Content */}
-          <ScrollReveal delay={200}>
-            <div>
-              <span className="inline-block px-4 py-2 rounded-full glass-strong border border-primary/30 text-sm font-medium text-primary mb-4">
-                📊 Analytics
-              </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-                <span className="text-foreground">Décisions </span>
-                <span className="text-gradient">éclairées</span>
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Visualisez vos performances en temps réel. Identifiez les tendances, 
-                anticipez les besoins et optimisez votre business.
-              </p>
-              
-              <div className="grid sm:grid-cols-2 gap-4">
-                {features.map((feature, index) => (
-                  <FeatureCard key={index} {...feature} delay={index * 0.2} />
-                ))}
-              </div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            style={{ y }}
+          >
+            <span className="inline-block px-4 py-2 rounded-full bg-card/80 backdrop-blur-xl border border-primary/30 text-sm font-medium text-primary mb-4 shadow-lg">
+              📊 Analytics
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+              <span className="text-foreground">Décisions </span>
+              <span className="text-gradient">éclairées</span>
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Visualisez vos performances en temps réel. Identifiez les tendances, 
+              anticipez les besoins et prenez les bonnes décisions.
+            </p>
+            
+            <div className="grid sm:grid-cols-2 gap-4">
+              {features.map((feature, index) => (
+                <FeatureCard key={index} {...feature} delay={index * 0.1} />
+              ))}
             </div>
-          </ScrollReveal>
+          </motion.div>
         </div>
       </div>
     </section>

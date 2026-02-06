@@ -66,25 +66,22 @@ export const GlowOrb = ({
     xl: "w-96 h-96"
   };
   
-  const colorStyles = {
-    primary: "hsl(var(--primary) / 0.15)",
-    secondary: "hsl(var(--secondary) / 0.15)",
-    accent: "hsl(var(--accent) / 0.15)"
+  const colorClasses = {
+    primary: "from-primary/20 to-primary/5",
+    secondary: "from-secondary/20 to-secondary/5",
+    accent: "from-accent/20 to-accent/5"
   };
   
   return (
     <motion.div
-      initial={{ scale: 1, opacity: 0.4 }}
-      animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.6, 0.4] }}
+      initial={{ scale: 1, opacity: 0.5 }}
+      animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
       transition={{
-        duration: 8,
+        duration: 6,
         repeat: Infinity,
         ease: "easeInOut"
       }}
-      className={`rounded-full blur-3xl ${sizeClasses[size]} ${className}`}
-      style={{
-        background: `radial-gradient(circle, ${colorStyles[color]}, transparent 70%)`
-      }}
+      className={`rounded-full bg-gradient-radial ${colorClasses[color]} blur-3xl ${sizeClasses[size]} ${className}`}
     />
   );
 };

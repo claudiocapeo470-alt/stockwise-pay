@@ -44,7 +44,7 @@ export const FloatingIcon = ({
       delay,
       ease: "easeInOut"
     }}
-    className={`p-3 rounded-2xl backdrop-blur-xl bg-card/60 border border-border/40 shadow-lg ${className}`}
+    className={`p-3 rounded-2xl backdrop-blur-xl bg-card/60 shadow-lg ${className}`}
   >
     <Icon size={size} className="text-primary" />
   </motion.div>
@@ -100,7 +100,7 @@ export const StatsCard = ({
   delay?: number;
 }) => (
   <FloatingCard delay={delay} duration={4.5}>
-    <div className="glass-strong rounded-2xl p-4 border border-border/40 shadow-xl min-w-[140px]">
+    <div className="bg-card/80 backdrop-blur-xl rounded-2xl p-4 shadow-xl min-w-[140px]">
       <div className="flex items-center gap-2 mb-2">
         <div className="p-1.5 rounded-lg bg-primary/20">
           <Icon size={14} className="text-primary" />

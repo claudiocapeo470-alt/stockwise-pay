@@ -1,20 +1,29 @@
 import { motion } from "framer-motion";
 import { Monitor, Smartphone, Cloud, Shield, Lock, RefreshCw, Wifi, CheckCircle } from "lucide-react";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { FloatingCard, GlowOrb, GridPattern } from "./FloatingElements";
+import { GlowOrb, GridPattern } from "./FloatingElements";
+import { 
+  ParallaxContainer, 
+  AnimatedEntry, 
+  StaggerContainer, 
+  StaggerItem,
+  DisplacementMotion,
+  Floating3D 
+} from "./ImmersiveAnimations";
 
 // Synchronisation Section
 export const SyncSection = () => {
   return (
     <section className="relative py-24 overflow-hidden">
-      <GridPattern className="opacity-20" />
-      <GlowOrb color="secondary" size="xl" className="absolute left-1/4 top-0" />
-      <GlowOrb color="primary" size="lg" className="absolute right-1/4 bottom-0" />
+      <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
+        <GridPattern className="opacity-20" />
+        <GlowOrb color="secondary" size="xl" className="absolute left-1/4 top-0" />
+        <GlowOrb color="primary" size="lg" className="absolute right-1/4 bottom-0" />
+      </ParallaxContainer>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <ScrollReveal>
+        <AnimatedEntry type="fade-zoom">
           <div className="text-center mb-16">
-            <span className="inline-block px-4 py-2 rounded-full glass-strong border border-secondary/30 text-sm font-medium text-secondary mb-4">
+            <span className="inline-block px-4 py-2 rounded-full bg-secondary/10 text-sm font-medium text-secondary mb-4">
               🔄 Synchronisation
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
@@ -26,35 +35,33 @@ export const SyncSection = () => {
               Au bureau, en boutique ou en déplacement.
             </p>
           </div>
-        </ScrollReveal>
+        </AnimatedEntry>
 
         {/* Devices Illustration */}
         <div className="relative max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-8 lg:gap-16">
             {/* Desktop */}
-            <ScrollReveal delay={100}>
-              <motion.div 
-                className="relative"
-                animate={{ y: [-5, 5, -5] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <div className="glass-strong rounded-2xl p-4 border border-border/40">
-                  <div className="w-32 h-20 bg-muted/30 rounded-lg flex items-center justify-center">
-                    <Monitor size={40} className="text-primary" />
-                  </div>
-                  <div className="text-center mt-2">
-                    <div className="text-xs font-medium text-foreground">PC Bureau</div>
-                    <div className="flex items-center justify-center gap-1 mt-1">
-                      <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                      <span className="text-[10px] text-success">Connecté</span>
+            <DisplacementMotion direction="up" distance={15}>
+              <AnimatedEntry type="fade-zoom" delay={0.1}>
+                <Floating3D amplitude={8} duration={5}>
+                  <div className="bg-card/60 backdrop-blur-sm rounded-2xl p-4">
+                    <div className="w-32 h-20 bg-muted/30 rounded-lg flex items-center justify-center">
+                      <Monitor size={40} className="text-primary" />
+                    </div>
+                    <div className="text-center mt-2">
+                      <div className="text-xs font-medium text-foreground">PC Bureau</div>
+                      <div className="flex items-center justify-center gap-1 mt-1">
+                        <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                        <span className="text-[10px] text-success">Connecté</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            </ScrollReveal>
+                </Floating3D>
+              </AnimatedEntry>
+            </DisplacementMotion>
 
             {/* Cloud - Center */}
-            <ScrollReveal delay={200}>
+            <AnimatedEntry type="fade-zoom" delay={0.2}>
               <motion.div 
                 className="relative z-10"
                 animate={{ scale: [1, 1.05, 1] }}
@@ -95,47 +102,45 @@ export const SyncSection = () => {
                   </defs>
                 </svg>
               </motion.div>
-            </ScrollReveal>
+            </AnimatedEntry>
 
             {/* Mobile */}
-            <ScrollReveal delay={300}>
-              <motion.div 
-                className="relative"
-                animate={{ y: [5, -5, 5] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <div className="glass-strong rounded-2xl p-4 border border-border/40">
-                  <div className="w-20 h-32 bg-muted/30 rounded-lg flex items-center justify-center">
-                    <Smartphone size={32} className="text-secondary" />
-                  </div>
-                  <div className="text-center mt-2">
-                    <div className="text-xs font-medium text-foreground">Mobile</div>
-                    <div className="flex items-center justify-center gap-1 mt-1">
-                      <RefreshCw size={10} className="text-primary animate-spin" style={{ animationDuration: '3s' }} />
-                      <span className="text-[10px] text-primary">Sync</span>
+            <DisplacementMotion direction="down" distance={15}>
+              <AnimatedEntry type="fade-zoom" delay={0.3}>
+                <Floating3D amplitude={8} duration={5} delay={1}>
+                  <div className="bg-card/60 backdrop-blur-sm rounded-2xl p-4">
+                    <div className="w-20 h-32 bg-muted/30 rounded-lg flex items-center justify-center">
+                      <Smartphone size={32} className="text-secondary" />
+                    </div>
+                    <div className="text-center mt-2">
+                      <div className="text-xs font-medium text-foreground">Mobile</div>
+                      <div className="flex items-center justify-center gap-1 mt-1">
+                        <RefreshCw size={10} className="text-primary animate-spin" style={{ animationDuration: '3s' }} />
+                        <span className="text-[10px] text-primary">Sync</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            </ScrollReveal>
+                </Floating3D>
+              </AnimatedEntry>
+            </DisplacementMotion>
           </div>
 
           {/* Features */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16">
+          <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16" staggerDelay={0.08}>
             {[
               { icon: Wifi, label: "Temps réel" },
               { icon: RefreshCw, label: "Sync auto" },
               { icon: Cloud, label: "Cloud sécurisé" },
               { icon: CheckCircle, label: "Multi-appareils" },
             ].map((feature, i) => (
-              <ScrollReveal key={i} delay={i * 100}>
-                <div className="glass-strong rounded-xl p-4 border border-border/40 text-center hover:border-primary/30 transition-colors">
+              <StaggerItem key={i}>
+                <div className="bg-card/60 backdrop-blur-sm rounded-xl p-4 text-center transition-colors">
                   <feature.icon className="h-6 w-6 text-primary mx-auto mb-2" />
                   <div className="text-sm font-medium text-foreground">{feature.label}</div>
                 </div>
-              </ScrollReveal>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </div>
     </section>
@@ -152,60 +157,59 @@ export const SecuritySection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden bg-muted/20">
-      <GlowOrb color="accent" size="xl" className="absolute -right-40 top-1/3" />
+    <section className="relative py-24 overflow-hidden bg-muted/10">
+      <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
+        <GlowOrb color="accent" size="xl" className="absolute -right-40 top-1/3" />
+      </ParallaxContainer>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Visual */}
-          <ScrollReveal>
-            <div className="relative flex justify-center">
-              {/* Main Shield */}
-              <motion.div
-                animate={{ 
-                  y: [-10, 10, -10],
-                  rotate: [-2, 2, -2]
-                }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                className="relative"
-              >
-                <div className="w-48 h-56 rounded-3xl bg-gradient-to-br from-primary via-secondary to-accent p-[3px] shadow-glow">
-                  <div className="w-full h-full rounded-3xl bg-card flex items-center justify-center">
-                    <Shield size={80} className="text-primary" />
-                  </div>
-                </div>
-                
-                {/* Orbiting elements */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0"
-                  style={{ width: '300px', height: '300px', left: '-50px', top: '-25px' }}
-                >
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2">
-                    <div className="p-2 rounded-full glass-strong border border-primary/40">
-                      <Lock size={16} className="text-primary" />
+          <DisplacementMotion direction="up" distance={20}>
+            <AnimatedEntry type="fade-zoom">
+              <div className="relative flex justify-center">
+                {/* Main Shield */}
+                <Floating3D amplitude={15} duration={6}>
+                  <div className="relative">
+                    <div className="w-48 h-56 rounded-3xl bg-gradient-to-br from-primary via-secondary to-accent p-[3px] shadow-glow">
+                      <div className="w-full h-full rounded-3xl bg-card flex items-center justify-center">
+                        <Shield size={80} className="text-primary" />
+                      </div>
                     </div>
+                    
+                    {/* Orbiting elements */}
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-0"
+                      style={{ width: '300px', height: '300px', left: '-50px', top: '-25px' }}
+                    >
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2">
+                        <div className="p-2 rounded-full bg-card/80 backdrop-blur-sm">
+                          <Lock size={16} className="text-primary" />
+                        </div>
+                      </div>
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
+                        <div className="p-2 rounded-full bg-card/80 backdrop-blur-sm">
+                          <Cloud size={16} className="text-secondary" />
+                        </div>
+                      </div>
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2">
+                        <div className="p-2 rounded-full bg-card/80 backdrop-blur-sm">
+                          <CheckCircle size={16} className="text-success" />
+                        </div>
+                      </div>
+                    </motion.div>
                   </div>
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
-                    <div className="p-2 rounded-full glass-strong border border-secondary/40">
-                      <Cloud size={16} className="text-secondary" />
-                    </div>
-                  </div>
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2">
-                    <div className="p-2 rounded-full glass-strong border border-success/40">
-                      <CheckCircle size={16} className="text-success" />
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            </div>
-          </ScrollReveal>
+                </Floating3D>
+              </div>
+            </AnimatedEntry>
+          </DisplacementMotion>
 
           {/* Content */}
-          <ScrollReveal delay={200}>
+          <AnimatedEntry type="fade-zoom" delay={0.2}>
             <div>
-              <span className="inline-block px-4 py-2 rounded-full glass-strong border border-accent/30 text-sm font-medium text-accent mb-4">
+              <span className="inline-block px-4 py-2 rounded-full bg-accent/10 text-sm font-medium text-accent mb-4">
                 🔐 Sécurité
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
@@ -217,10 +221,10 @@ export const SecuritySection = () => {
                 Chiffrement, sauvegardes automatiques et conformité garantis.
               </p>
               
-              <div className="grid sm:grid-cols-2 gap-4">
+              <StaggerContainer className="grid sm:grid-cols-2 gap-4" staggerDelay={0.1}>
                 {securityFeatures.map((feature, index) => (
-                  <FloatingCard key={index} delay={index * 0.2} duration={5}>
-                    <div className="glass-strong rounded-2xl p-4 border border-border/40 hover:border-accent/30 transition-colors">
+                  <StaggerItem key={index}>
+                    <div className="bg-card/60 backdrop-blur-sm rounded-2xl p-4 transition-colors">
                       <div className="flex items-start gap-3">
                         <div className="p-2 rounded-xl bg-accent/20">
                           <feature.icon size={20} className="text-accent" />
@@ -231,11 +235,11 @@ export const SecuritySection = () => {
                         </div>
                       </div>
                     </div>
-                  </FloatingCard>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerContainer>
             </div>
-          </ScrollReveal>
+          </AnimatedEntry>
         </div>
       </div>
     </section>

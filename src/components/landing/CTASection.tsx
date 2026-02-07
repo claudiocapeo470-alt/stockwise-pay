@@ -3,6 +3,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Monitor, Smartphone, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { GlowOrb, GridPattern } from "./FloatingElements";
+import { 
+  ParallaxContainer, 
+  AnimatedEntry,
+  Floating3D 
+} from "./ImmersiveAnimations";
 
 const CTASection = () => {
   const navigate = useNavigate();
@@ -11,73 +16,63 @@ const CTASection = () => {
     <section className="relative py-32 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
-      <GridPattern className="opacity-30" />
-      <GlowOrb color="primary" size="xl" className="absolute -left-20 top-1/4" />
-      <GlowOrb color="secondary" size="xl" className="absolute -right-20 bottom-1/4" />
+      <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
+        <GridPattern className="opacity-30" />
+        <GlowOrb color="primary" size="xl" className="absolute -left-20 top-1/4" />
+        <GlowOrb color="secondary" size="xl" className="absolute -right-20 bottom-1/4" />
+      </ParallaxContainer>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Devices Illustration */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative mb-12"
-          >
-            <div className="flex items-end justify-center gap-4">
-              {/* Desktop */}
-              <motion.div
-                animate={{ y: [-8, 8, -8] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="relative"
-              >
-                <div className="w-48 h-32 bg-card/80 rounded-xl border-2 border-primary/30 shadow-glow flex items-center justify-center backdrop-blur-xl">
-                  <Monitor size={48} className="text-primary" />
-                </div>
-              </motion.div>
+          <AnimatedEntry type="fade-zoom">
+            <div className="relative mb-12">
+              <div className="flex items-end justify-center gap-4">
+                {/* Desktop */}
+                <Floating3D amplitude={12} duration={5}>
+                  <div className="relative">
+                    <div className="w-48 h-32 bg-card/80 rounded-xl border-2 border-primary/30 shadow-glow flex items-center justify-center backdrop-blur-xl">
+                      <Monitor size={48} className="text-primary" />
+                    </div>
+                  </div>
+                </Floating3D>
 
-              {/* Mobile */}
+                {/* Mobile */}
+                <Floating3D amplitude={12} duration={5} delay={0.5}>
+                  <div className="relative -ml-8">
+                    <div className="w-20 h-36 bg-card/80 rounded-2xl border-2 border-secondary/30 shadow-glow flex items-center justify-center backdrop-blur-xl">
+                      <Smartphone size={32} className="text-secondary" />
+                    </div>
+                  </div>
+                </Floating3D>
+              </div>
+
+              {/* Sparkles */}
               <motion.div
-                animate={{ y: [8, -8, 8] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                className="relative -ml-8"
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 1, 0.5]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute top-0 right-1/3"
               >
-                <div className="w-20 h-36 bg-card/80 rounded-2xl border-2 border-secondary/30 shadow-glow flex items-center justify-center backdrop-blur-xl">
-                  <Smartphone size={32} className="text-secondary" />
-                </div>
+                <Sparkles className="text-primary h-6 w-6" />
+              </motion.div>
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 1, 0.5]
+                }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                className="absolute bottom-4 left-1/3"
+              >
+                <Sparkles className="text-secondary h-4 w-4" />
               </motion.div>
             </div>
-
-            {/* Sparkles */}
-            <motion.div
-              animate={{ 
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 1, 0.5]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute top-0 right-1/3"
-            >
-              <Sparkles className="text-primary h-6 w-6" />
-            </motion.div>
-            <motion.div
-              animate={{ 
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 1, 0.5]
-              }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-              className="absolute bottom-4 left-1/3"
-            >
-              <Sparkles className="text-secondary h-4 w-4" />
-            </motion.div>
-          </motion.div>
+          </AnimatedEntry>
 
           {/* Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
+          <AnimatedEntry type="fade-zoom" delay={0.2}>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6">
               <span className="text-foreground">Prêt à transformer</span>
               <br />
@@ -92,7 +87,7 @@ const CTASection = () => {
               <Button 
                 size="lg"
                 onClick={() => navigate('/auth')}
-                className="text-lg px-10 py-7 bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-xl shadow-primary/25 font-bold group"
+                className="text-lg px-10 py-7 bg-gradient-to-r from-primary to-secondary shadow-xl shadow-primary/25 font-bold group"
               >
                 Démarrer avec Stocknix
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -101,7 +96,7 @@ const CTASection = () => {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate('/tarifs')}
-                className="text-lg px-10 py-7 border-2 border-border/60 hover:border-primary/50 font-semibold"
+                className="text-lg px-10 py-7 border-2 border-border/60 font-semibold"
               >
                 Voir les tarifs
               </Button>
@@ -122,7 +117,7 @@ const CTASection = () => {
                 Support 24/7
               </div>
             </div>
-          </motion.div>
+          </AnimatedEntry>
         </div>
       </div>
     </section>

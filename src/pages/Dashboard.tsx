@@ -1,29 +1,27 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MetricCard } from "@/components/dashboard/MetricCard";
-import { QuickActions } from "@/components/dashboard/QuickActions";
-import { RecentActivity } from "@/components/dashboard/RecentActivity";
-import { RevenueCard } from "@/components/dashboard/RevenueCard";
-import { WelcomeGuide } from "@/components/onboarding/WelcomeGuide";
-import { BarChart3, Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle, ArrowUpRight, ArrowDownRight, Plus, Clock, ChevronRight } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import { useMemo, useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { WelcomeGuide } from "@/components/onboarding/WelcomeGuide";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export default function Dashboard() {
   const { products } = useProducts();
   const { sales } = useSales();
   const { payments } = usePayments();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // Check if user just confirmed email (from URL params)
   const urlParams = new URLSearchParams(window.location.search);
   const isEmailConfirmed = urlParams.get('confirmed') === 'true';
-  
-  // Check if user has seen the welcome guide (unique per user)
   const hasSeenWelcomeGuide = user?.id ? localStorage.getItem(`welcome-guide-seen-${user.id}`) === 'true' : false;
-  
   const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
 
   const metrics = useMemo(() => {
@@ -36,28 +34,37 @@ export default function Dashboard() {
       const today = new Date();
       const saleDate = new Date(sale.sale_date);
       return saleDate.toDateString() === today.toDateString();
-    }).reduce((sum, sale) => sum + sale.total_amount, 0);
+    });
+    const todayTotal = todaySales.reduce((sum, sale) => sum + sale.total_amount, 0);
 
     const pendingPayments = payments.filter(p => p.status === 'pending').length;
     const totalPayments = payments.reduce((sum, payment) => sum + payment.total_amount, 0);
+
+    // Calcul CA mensuel
+    const now = new Date();
+    const monthSales = sales.filter(sale => {
+      const saleDate = new Date(sale.sale_date);
+      return saleDate.getMonth() === now.getMonth() && saleDate.getFullYear() === now.getFullYear();
+    });
+    const monthlyRevenue = monthSales.reduce((sum, sale) => sum + sale.total_amount, 0);
 
     return {
       totalProducts,
       lowStockProducts,
       lowStockProductsList,
       totalSales,
-      todaySales,
+      todaySales: todaySales.length,
+      todayTotal,
       pendingPayments,
       totalPayments,
+      monthlyRevenue,
     };
   }, [products, sales, payments]);
 
-  // Auto-show welcome guide ONLY for new users who haven't seen it OR after email confirmation
   useEffect(() => {
     if (user?.id) {
       if (isEmailConfirmed || !hasSeenWelcomeGuide) {
         setShowWelcomeGuide(true);
-        
         if (isEmailConfirmed) {
           window.history.replaceState(null, '', '/app');
         }
@@ -65,7 +72,6 @@ export default function Dashboard() {
     }
   }, [user?.id, hasSeenWelcomeGuide, isEmailConfirmed]);
 
-  // Handle closing the welcome guide and mark as seen
   const handleCloseWelcomeGuide = () => {
     if (user?.id) {
       localStorage.setItem(`welcome-guide-seen-${user.id}`, 'true');
@@ -73,112 +79,217 @@ export default function Dashboard() {
     setShowWelcomeGuide(false);
   };
 
+  // Activité récente
+  const recentSales = useMemo(() => {
+    return [...sales].sort((a, b) => 
+      new Date(b.sale_date).getTime() - new Date(a.sale_date).getTime()
+    ).slice(0, 5);
+  }, [sales]);
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg">
-          <BarChart3 className="h-5 w-5 text-white" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground text-sm">Vue d'ensemble de votre activité</p>
-        </div>
-      </div>
-
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <MetricCard
-          title="Produits en stock"
-          value={metrics.totalProducts.toString()}
-          change={metrics.lowStockProducts > 0 ? `${metrics.lowStockProducts} en rupture` : "Stock normal"}
-          changeType={metrics.lowStockProducts > 0 ? "negative" : "positive"}
-          icon={Package}
-          gradient="success"
-        />
-        <MetricCard
-          title="Ventes aujourd'hui"
-          value={`${metrics.todaySales.toLocaleString()} FCFA`}
-          change="+12% vs hier"
-          changeType="positive"
-          icon={ShoppingCart}
-          gradient="primary"
-        />
-        <MetricCard
-          title="Paiements en attente"
-          value={metrics.pendingPayments.toString()}
-          change={`${metrics.pendingPayments} factures`}
-          changeType="neutral"
-          icon={Receipt}
-          gradient="warning"
-        />
-        <MetricCard
-          title="Chiffre d'affaires"
-          value={`${metrics.totalPayments.toLocaleString()} FCFA`}
-          change="+8% vs mois dernier"
-          changeType="positive"
-          icon={TrendingUp}
-          gradient="primary"
-        />
-      </div>
-
-      {/* Chiffre d'affaires dynamique */}
-      <RevenueCard />
-
-      {/* Low Stock Alert */}
-      {metrics.lowStockProducts > 0 && (
-        <div className="rounded-xl border-2 border-destructive/30 bg-gradient-to-r from-destructive/5 via-destructive/10 to-destructive/5 p-5">
-          <div className="flex items-start gap-4">
-            <div className="p-3 rounded-xl bg-destructive/10 shrink-0">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
+    <div className="space-y-6 animate-fade-in">
+      {/* KPI Cards - 4 colonnes */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Produits en stock */}
+        <Card className="relative">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Produits en stock</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{metrics.totalProducts}</p>
+                <div className="flex items-center gap-1 mt-2">
+                  {metrics.lowStockProducts > 0 ? (
+                    <>
+                      <ArrowDownRight className="h-4 w-4 text-destructive" />
+                      <span className="text-sm text-destructive font-medium">{metrics.lowStockProducts} en rupture</span>
+                    </>
+                  ) : (
+                    <>
+                      <ArrowUpRight className="h-4 w-4 text-success" />
+                      <span className="text-sm text-success font-medium">Stock normal</span>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="h-12 w-12 bg-primary/10 flex items-center justify-center">
+                <Package className="h-6 w-6 text-primary" />
+              </div>
             </div>
-            
-            <div className="flex-1 min-w-0">
-              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                Alerte Stock
-                <span className="text-xs bg-destructive text-destructive-foreground px-2.5 py-1 rounded-full font-semibold">
-                  {metrics.lowStockProducts}
-                </span>
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1 mb-4">
-                Produits nécessitant un réapprovisionnement urgent
-              </p>
-              
-              <div className="flex flex-wrap gap-2">
-                {metrics.lowStockProductsList.map((product) => (
-                  <div 
-                    key={product.id}
-                    className="inline-flex items-center gap-2 bg-card rounded-lg px-3 py-2 border-2 border-border/60 text-sm hover:border-destructive/30 transition-colors"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-destructive animate-pulse"></span>
-                    <span className="font-semibold text-foreground">{product.name}</span>
-                    <span className="text-muted-foreground font-medium">
-                      {product.quantity}/{product.min_quantity}
-                    </span>
+          </CardContent>
+        </Card>
+
+        {/* Ventes aujourd'hui */}
+        <Card className="relative">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Ventes aujourd'hui</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{metrics.todaySales}</p>
+                <p className="text-sm text-muted-foreground mt-2">{metrics.todayTotal.toLocaleString()} FCFA</p>
+              </div>
+              <div className="h-12 w-12 bg-success/10 flex items-center justify-center">
+                <ShoppingCart className="h-6 w-6 text-success" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Paiements en attente */}
+        <Card className="relative">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Paiements en attente</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{metrics.pendingPayments}</p>
+                <p className="text-sm text-muted-foreground mt-2">{metrics.pendingPayments} factures</p>
+              </div>
+              <div className="h-12 w-12 bg-warning/10 flex items-center justify-center">
+                <Receipt className="h-6 w-6 text-warning" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* CA mensuel */}
+        <Card className="relative">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">CA du mois</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{(metrics.monthlyRevenue / 1000).toFixed(0)}K</p>
+                <p className="text-sm text-muted-foreground mt-2">{metrics.monthlyRevenue.toLocaleString()} FCFA</p>
+              </div>
+              <div className="h-12 w-12 bg-secondary/10 flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-secondary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Alerte Stock */}
+      {metrics.lowStockProducts > 0 && (
+        <Card className="border-destructive/30 bg-destructive/5">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-4">
+              <div className="h-10 w-10 bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold text-foreground">Alerte Stock</h3>
+                  <Badge variant="destructive">{metrics.lowStockProducts}</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">Produits nécessitant un réapprovisionnement</p>
+                <div className="flex flex-wrap gap-2">
+                  {metrics.lowStockProductsList.slice(0, 5).map((product) => (
+                    <div key={product.id} className="flex items-center gap-2 bg-background px-3 py-1.5 border border-border text-sm">
+                      <span className="font-medium">{product.name}</span>
+                      <span className="text-muted-foreground">{product.quantity}/{product.min_quantity}</span>
+                    </div>
+                  ))}
+                  {metrics.lowStockProductsList.length > 5 && (
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/app/stocks')}>
+                      +{metrics.lowStockProductsList.length - 5} autres
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Actions rapides + Activité récente */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Actions rapides */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-base">Actions rapides</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start h-12"
+              onClick={() => navigate('/app/caisse')}
+            >
+              <Plus className="h-4 w-4 mr-3" />
+              Nouvelle vente
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start h-12"
+              onClick={() => navigate('/app/stocks')}
+            >
+              <Package className="h-4 w-4 mr-3" />
+              Ajouter un produit
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start h-12"
+              onClick={() => navigate('/app/facturation')}
+            >
+              <Receipt className="h-4 w-4 mr-3" />
+              Créer une facture
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start h-12"
+              onClick={() => navigate('/app/performance')}
+            >
+              <TrendingUp className="h-4 w-4 mr-3" />
+              Voir les rapports
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Activité récente */}
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-4 flex flex-row items-center justify-between">
+            <CardTitle className="text-base">Activité récente</CardTitle>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/app/ventes')}>
+              Voir tout <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {recentSales.length === 0 ? (
+              <div className="text-center py-8">
+                <Clock className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground">Aucune activité récente</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {recentSales.map((sale) => (
+                  <div key={sale.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 bg-muted flex items-center justify-center">
+                        <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{sale.products?.name || 'Produit'}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(sale.sale_date), "dd MMM à HH:mm", { locale: fr })}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-sm">{sale.total_amount.toLocaleString()} FCFA</p>
+                      <p className="text-xs text-muted-foreground">Qté: {sale.quantity}</p>
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Welcome Guide Modal */}
       {showWelcomeGuide && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <WelcomeGuide onClose={handleCloseWelcomeGuide} />
         </div>
       )}
-
-      {/* Activity and Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <RecentActivity />
-        </div>
-        <div className="space-y-6">
-          <QuickActions />
-        </div>
-      </div>
     </div>
   );
 }

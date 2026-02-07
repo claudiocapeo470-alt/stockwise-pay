@@ -3,8 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-
-import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List, Plus } from "lucide-react";
 import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
@@ -16,7 +16,7 @@ export default function Stocks() {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const { products, isLoading, deleteProduct } = useProducts();
   const isMobile = useIsMobile();
 
@@ -43,171 +43,239 @@ export default function Stocks() {
     }
   };
 
+  const getStockStatus = (product: Product) => {
+    if (product.quantity === 0) return { label: 'Épuisé', variant: 'destructive' as const };
+    if (product.quantity <= product.min_quantity) return { label: 'Critique', variant: 'warning' as const };
+    return { label: 'En stock', variant: 'success' as const };
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header avec bouton à droite */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <p className="text-muted-foreground">Gérez vos produits et surveillez votre inventaire</p>
-        <AddProductDialog />
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-2 border-blue-200 dark:border-blue-800/40">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100">Total Produits</CardTitle>
-            <div className="p-2 rounded-lg bg-blue-500 shadow-md">
-              <Package className="h-4 w-4 text-white" />
+    <div className="space-y-6 animate-fade-in">
+      {/* Stats en haut */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center">
+              <Package className="h-5 w-5 text-primary" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{products.length}</div>
+            <div>
+              <p className="text-2xl font-bold">{products.length}</p>
+              <p className="text-sm text-muted-foreground">Total Produits</p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-2 border-amber-200 dark:border-amber-800/40">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-600"></div>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-amber-900 dark:text-amber-100">Stock Critique</CardTitle>
-            <div className="p-2 rounded-lg bg-amber-500 shadow-md">
-              <AlertTriangle className="h-4 w-4 text-white" />
+        <Card className={lowStockProducts.length > 0 ? "border-warning/30" : ""}>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center">
+              <AlertTriangle className="h-5 w-5 text-warning" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">{lowStockProducts.length}</div>
-            <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-              Produits sous le seuil minimum
-            </p>
+            <div>
+              <p className="text-2xl font-bold">{lowStockProducts.length}</p>
+              <p className="text-sm text-muted-foreground">Stock Critique</p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-2 border-red-200 dark:border-red-800/40">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-red-900 dark:text-red-100">Rupture de Stock</CardTitle>
-            <div className="p-2 rounded-lg bg-red-500 shadow-md">
-              <AlertTriangle className="h-4 w-4 text-white" />
+        <Card className={outOfStockProducts.length > 0 ? "border-destructive/30" : ""}>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-destructive/10 flex items-center justify-center">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-red-600 dark:text-red-400">{outOfStockProducts.length}</div>
-            <p className="text-xs text-red-700 dark:text-red-300 mt-1">
-              Produits épuisés
-            </p>
+            <div>
+              <p className="text-2xl font-bold">{outOfStockProducts.length}</p>
+              <p className="text-sm text-muted-foreground">Rupture de Stock</p>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Rechercher par nom, catégorie ou SKU..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            {!isMobile && (
-              <div className="flex gap-2">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "outline"}
-                  size="icon"
-                  onClick={() => setViewMode("grid")}
-                  title="Vue en grille"
-                >
-                  <Grid3x3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "outline"}
-                  size="icon"
-                  onClick={() => setViewMode("list")}
-                  title="Vue en liste"
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Barre d'outils */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <div className="relative flex-1 max-w-md w-full">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Rechercher par nom, catégorie ou SKU..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="flex gap-2">
+          {!isMobile && (
+            <>
+              <Button
+                variant={viewMode === "list" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setViewMode("list")}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "grid" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setViewMode("grid")}
+              >
+                <Grid3x3 className="h-4 w-4" />
+              </Button>
+            </>
+          )}
+          <AddProductDialog />
+        </div>
+      </div>
 
-      {/* Products Display */}
-      <div>
-        {filteredProducts.length === 0 ? (
-          <Card>
-            <CardContent className="py-12">
-              <div className="text-center">
-                <Package className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
-                  {products.length === 0 ? "Aucun produit" : "Aucun résultat"}
-                </h3>
-                <p className="text-muted-foreground">
-                  {products.length === 0 
-                    ? "Commencez par ajouter votre premier produit"
-                    : "Aucun produit trouvé pour cette recherche"
-                  }
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <>
-            {/* Grid View - Mobile et Desktop si sélectionné */}
-            {(isMobile || viewMode === "grid") && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredProducts.map((product) => (
-                  <Card key={product.id} className="group overflow-hidden">
-                    <CardHeader className="space-y-3">
+      {/* Liste des produits */}
+      {filteredProducts.length === 0 ? (
+        <Card>
+          <CardContent className="py-16 text-center">
+            <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
+              {products.length === 0 ? "Aucun produit" : "Aucun résultat"}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {products.length === 0 
+                ? "Commencez par ajouter votre premier produit"
+                : "Aucun produit trouvé pour cette recherche"
+              }
+            </p>
+            {products.length === 0 && <AddProductDialog />}
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {/* Vue Tableau - Desktop */}
+          {!isMobile && viewMode === "list" && (
+            <Card>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Produit</TableHead>
+                    <TableHead>Catégorie</TableHead>
+                    <TableHead className="text-right">Prix</TableHead>
+                    <TableHead className="text-center">Stock</TableHead>
+                    <TableHead className="text-center">Statut</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredProducts.map((product) => {
+                    const status = getStockStatus(product);
+                    return (
+                      <TableRow key={product.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{product.name}</p>
+                            {product.sku && (
+                              <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {product.category ? (
+                            <Badge variant="outline">{product.category}</Badge>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {product.price.toLocaleString()} FCFA
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className="font-medium">{product.quantity}</span>
+                          <span className="text-muted-foreground text-sm"> / {product.min_quantity}</span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant={status.variant}>{status.label}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1 justify-end">
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => handleEditProduct(product)}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Êtes-vous sûr de vouloir supprimer "{product.name}" ?
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => handleDeleteProduct(product)}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Supprimer
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </Card>
+          )}
+
+          {/* Vue Grille - Mobile ou sélectionnée */}
+          {(isMobile || viewMode === "grid") && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredProducts.map((product) => {
+                const status = getStockStatus(product);
+                return (
+                  <Card key={product.id}>
+                    <CardHeader className="pb-3">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-lg truncate">{product.name}</h3>
+                          <CardTitle className="text-base truncate">{product.name}</CardTitle>
                           {product.sku && (
-                            <p className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded inline-block">
-                              Code: {product.sku}
-                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">SKU: {product.sku}</p>
                           )}
                         </div>
-                        {product.quantity === 0 ? (
-                          <Badge variant="destructive" className="shrink-0">Épuisé</Badge>
-                        ) : product.quantity <= product.min_quantity ? (
-                          <Badge className="bg-warning text-warning-foreground shrink-0">Critique</Badge>
-                        ) : (
-                          <Badge className="bg-success text-success-foreground shrink-0">Disponible</Badge>
-                        )}
+                        <Badge variant={status.variant}>{status.label}</Badge>
                       </div>
-                      {product.category && (
-                        <Badge variant="outline" className="w-fit">{product.category}</Badge>
-                      )}
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="space-y-1">
-                          <p className="text-muted-foreground text-xs">Prix unitaire</p>
-                          <p className="font-bold text-lg">{product.price.toLocaleString()} <span className="text-xs font-normal">FCFA</span></p>
+                      {product.category && (
+                        <Badge variant="outline">{product.category}</Badge>
+                      )}
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Prix unitaire</p>
+                          <p className="text-lg font-bold">{product.price.toLocaleString()} <span className="text-xs font-normal">FCFA</span></p>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-muted-foreground text-xs">Stock actuel</p>
-                          <p className="font-bold text-lg">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Stock</p>
+                          <p className="text-lg font-bold">
                             {product.quantity}
                             <span className="text-xs font-normal text-muted-foreground"> / {product.min_quantity}</span>
                           </p>
                         </div>
                       </div>
                       
-                      <div className="flex gap-2 pt-2">
+                      <div className="flex gap-2 pt-2 border-t border-border">
                         <Button 
                           variant="outline" 
                           size="sm"
@@ -219,11 +287,7 @@ export default function Stocks() {
                         </Button>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              className="flex-1"
-                            >
+                            <Button variant="outline" size="sm" className="flex-1">
                               <Trash2 className="h-3.5 w-3.5 mr-1.5" />
                               Supprimer
                             </Button>
@@ -232,7 +296,7 @@ export default function Stocks() {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Êtes-vous sûr de vouloir supprimer "{product.name}" ? Cette action est irréversible.
+                                Êtes-vous sûr de vouloir supprimer "{product.name}" ?
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -249,111 +313,12 @@ export default function Stocks() {
                       </div>
                     </CardContent>
                   </Card>
-                ))}
-              </div>
-            )}
-
-            {/* List View - Desktop uniquement */}
-            {!isMobile && viewMode === "list" && (
-              <Card>
-                <CardContent className="p-0">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="border-b bg-muted/50">
-                        <tr>
-                          <th className="text-left p-4 font-semibold text-sm">Produit</th>
-                          <th className="text-left p-4 font-semibold text-sm">Catégorie</th>
-                          <th className="text-right p-4 font-semibold text-sm">Prix</th>
-                          <th className="text-center p-4 font-semibold text-sm">Stock</th>
-                          <th className="text-center p-4 font-semibold text-sm">Statut</th>
-                          <th className="text-right p-4 font-semibold text-sm">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y">
-                        {filteredProducts.map((product) => (
-                          <tr key={product.id} className="hover:bg-muted/30 transition-colors">
-                            <td className="p-4">
-                              <div>
-                                <p className="font-medium">{product.name}</p>
-                                {product.sku && (
-                                  <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
-                                )}
-                              </div>
-                            </td>
-                            <td className="p-4">
-                              {product.category ? (
-                                <Badge variant="outline">{product.category}</Badge>
-                              ) : (
-                                <span className="text-muted-foreground">-</span>
-                              )}
-                            </td>
-                            <td className="p-4 text-right font-semibold">
-                              {product.price.toLocaleString()} FCFA
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="font-medium">{product.quantity}</span>
-                              <span className="text-muted-foreground text-sm"> / {product.min_quantity}</span>
-                            </td>
-                            <td className="p-4 text-center">
-                              {product.quantity === 0 ? (
-                                <Badge variant="destructive">Épuisé</Badge>
-                              ) : product.quantity <= product.min_quantity ? (
-                                <Badge className="bg-warning text-warning-foreground">Stock critique</Badge>
-                              ) : (
-                                <Badge className="bg-success text-success-foreground">En stock</Badge>
-                              )}
-                            </td>
-                            <td className="p-4">
-                              <div className="flex gap-2 justify-end">
-                                <Button 
-                                  variant="outline" 
-                                  size="icon"
-                                  onClick={() => handleEditProduct(product)}
-                                  title="Modifier"
-                                >
-                                  <Edit2 className="h-4 w-4" />
-                                </Button>
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button 
-                                      variant="outline" 
-                                      size="icon"
-                                      title="Supprimer"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        Êtes-vous sûr de vouloir supprimer "{product.name}" ? Cette action est irréversible.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                      <AlertDialogAction 
-                                        onClick={() => handleDeleteProduct(product)}
-                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                      >
-                                        Supprimer
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </>
-        )}
-      </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
 
       {editingProduct && (
         <EditProductDialog 
@@ -361,9 +326,7 @@ export default function Stocks() {
           open={showEditDialog}
           onOpenChange={(open) => {
             setShowEditDialog(open);
-            if (!open) {
-              setEditingProduct(null);
-            }
+            if (!open) setEditingProduct(null);
           }}
         />
       )}

@@ -3,9 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-import { ShoppingCart, Search, Plus, Eye, Grid3x3, List, Printer, Download, FileText } from "lucide-react";
+import { ShoppingCart, Search, Eye, Grid3x3, List, Printer, Download, FileText, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { useSales } from "@/hooks/useSales";
 import { useProducts } from "@/hooks/useProducts";
@@ -18,13 +16,12 @@ import jsPDF from "jspdf";
 import { useToast } from "@/hooks/use-toast";
 import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { useAuth } from "@/contexts/AuthContext";
-import stocknixLogo from "@/assets/stocknix-logo-official.png";
 
 export default function Ventes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [showSaleDetails, setShowSaleDetails] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const { sales, isLoading } = useSales();
   const { products } = useProducts();
   const { toast } = useToast();
@@ -32,7 +29,6 @@ export default function Ventes() {
   const { profile } = useAuth();
   const isMobile = useIsMobile();
 
-  // Informations entreprise
   const companyName = settings?.company_name || profile?.company_name || "Stocknix";
   const companyAddress = settings?.company_address || "";
   const companyCity = settings?.company_city || "";
@@ -55,14 +51,9 @@ export default function Ventes() {
   });
   const todayTotal = todaySales.reduce((sum, sale) => sum + sale.total_amount, 0);
 
-  // Générer et télécharger/imprimer le document A4 (Facture ou Proforma)
   const generateDocumentA4 = async (sale: any, documentType: 'facture' | 'proforma' = 'facture', action: 'download' | 'print' = 'download') => {
     const product = products.find(p => p.id === sale.product_id);
-    const doc = new jsPDF({
-      format: 'a4',
-      unit: 'mm'
-    });
-
+    const doc = new jsPDF({ format: 'a4', unit: 'mm' });
     const pageWidth = 210;
     const margin = 20;
     let y = 20;
@@ -70,7 +61,6 @@ export default function Ventes() {
     const docTitle = documentType === 'facture' ? 'FACTURE' : 'PROFORMA';
     const docPrefix = documentType === 'facture' ? 'FAC' : 'PRO';
 
-    // Charger et ajouter le logo si disponible
     if (logoUrl) {
       try {
         const img = new Image();
@@ -82,470 +72,317 @@ export default function Ventes() {
         });
         doc.addImage(img, 'PNG', margin, y, 35, 35);
       } catch (e) {
-        console.log("Logo non chargé, continuer sans");
+        console.log("Logo non chargé");
       }
     }
 
-    // En-tête entreprise
     doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(10, 26, 59);
+    doc.setTextColor(17, 24, 39);
     doc.text(companyName.toUpperCase(), pageWidth - margin, y + 8, { align: 'right' });
     
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(100, 100, 100);
+    doc.setTextColor(107, 114, 128);
     y += 15;
-    if (companyAddress) {
-      doc.text(companyAddress, pageWidth - margin, y, { align: 'right' });
-      y += 5;
-    }
-    if (companyCity) {
-      doc.text(companyCity, pageWidth - margin, y, { align: 'right' });
-      y += 5;
-    }
-    if (companyPhone) {
-      doc.text(`Tél: ${companyPhone}`, pageWidth - margin, y, { align: 'right' });
-      y += 5;
-    }
-    if (companyEmail) {
-      doc.text(companyEmail, pageWidth - margin, y, { align: 'right' });
-      y += 5;
-    }
-    if (companySiret) {
-      doc.text(`SIRET: ${companySiret}`, pageWidth - margin, y, { align: 'right' });
-      y += 5;
-    }
-    if (companyTva) {
-      doc.text(`N° TVA: ${companyTva}`, pageWidth - margin, y, { align: 'right' });
-    }
+    if (companyAddress) { doc.text(companyAddress, pageWidth - margin, y, { align: 'right' }); y += 5; }
+    if (companyCity) { doc.text(companyCity, pageWidth - margin, y, { align: 'right' }); y += 5; }
+    if (companyPhone) { doc.text(`Tél: ${companyPhone}`, pageWidth - margin, y, { align: 'right' }); y += 5; }
+    if (companyEmail) { doc.text(companyEmail, pageWidth - margin, y, { align: 'right' }); y += 5; }
 
     y = 70;
-
-    // Titre document (Facture ou Proforma)
     doc.setFontSize(28);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(documentType === 'facture' ? 46 : 55, documentType === 'facture' ? 163 : 200, documentType === 'facture' ? 242 : 166);
+    doc.setTextColor(0, 102, 204);
     doc.text(docTitle, margin, y);
 
-    // Numéro et date
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(60, 60, 60);
+    doc.setTextColor(75, 85, 99);
     y += 12;
     doc.text(`N° ${docPrefix}-${sale.id.slice(0, 8).toUpperCase()}`, margin, y);
     doc.text(`Date: ${format(new Date(sale.sale_date), "dd MMMM yyyy", { locale: fr })}`, pageWidth - margin, y, { align: 'right' });
 
-    // Ligne décorative
     y += 10;
-    doc.setDrawColor(documentType === 'facture' ? 46 : 55, documentType === 'facture' ? 163 : 200, documentType === 'facture' ? 242 : 166);
-    doc.setLineWidth(0.8);
+    doc.setDrawColor(0, 102, 204);
+    doc.setLineWidth(0.5);
     doc.line(margin, y, pageWidth - margin, y);
 
-    // Informations client
     y += 15;
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(10, 26, 59);
+    doc.setTextColor(17, 24, 39);
     doc.text("CLIENT", margin, y);
     
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(60, 60, 60);
+    doc.setTextColor(75, 85, 99);
     y += 8;
     doc.text(sale.customer_name || "Client anonyme", margin, y);
-    if (sale.customer_phone) {
-      y += 6;
-      doc.text(`Tél: ${sale.customer_phone}`, margin, y);
-    }
+    if (sale.customer_phone) { y += 6; doc.text(`Tél: ${sale.customer_phone}`, margin, y); }
 
-    // Tableau des produits
     y += 20;
-    
-    // En-tête tableau
-    doc.setFillColor(10, 26, 59);
-    doc.rect(margin, y, pageWidth - 2 * margin, 12, 'F');
+    doc.setFillColor(17, 24, 39);
+    doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
     
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(255, 255, 255);
-    doc.text("DESCRIPTION", margin + 5, y + 8);
-    doc.text("QTÉ", 100, y + 8, { align: 'center' });
-    doc.text("PRIX UNIT.", 135, y + 8, { align: 'center' });
-    doc.text("TOTAL", pageWidth - margin - 5, y + 8, { align: 'right' });
+    doc.text("DESCRIPTION", margin + 5, y + 7);
+    doc.text("QTÉ", 100, y + 7, { align: 'center' });
+    doc.text("PRIX UNIT.", 135, y + 7, { align: 'center' });
+    doc.text("TOTAL", pageWidth - margin - 5, y + 7, { align: 'right' });
 
-    // Ligne produit
-    y += 12;
-    doc.setFillColor(245, 245, 245);
-    doc.rect(margin, y, pageWidth - 2 * margin, 12, 'F');
+    y += 10;
+    doc.setFillColor(249, 250, 251);
+    doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
     
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(40, 40, 40);
-    doc.text(product?.name || "Produit", margin + 5, y + 8);
-    doc.text(sale.quantity.toString(), 100, y + 8, { align: 'center' });
-    doc.text(`${sale.unit_price.toLocaleString('fr-FR')} FCFA`, 135, y + 8, { align: 'center' });
-    doc.text(`${sale.total_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin - 5, y + 8, { align: 'right' });
+    doc.setTextColor(55, 65, 81);
+    doc.text(product?.name || "Produit", margin + 5, y + 7);
+    doc.text(sale.quantity.toString(), 100, y + 7, { align: 'center' });
+    doc.text(`${sale.unit_price.toLocaleString('fr-FR')} FCFA`, 135, y + 7, { align: 'center' });
+    doc.text(`${sale.total_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin - 5, y + 7, { align: 'right' });
 
-    // Total section
-    y += 25;
-    doc.setDrawColor(200, 200, 200);
+    y += 20;
+    doc.setDrawColor(229, 231, 235);
     doc.setLineWidth(0.3);
     doc.line(120, y, pageWidth - margin, y);
     
     y += 10;
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(10, 26, 59);
+    doc.setTextColor(17, 24, 39);
     doc.text("TOTAL TTC", 120, y);
-    doc.setTextColor(documentType === 'facture' ? 46 : 55, documentType === 'facture' ? 163 : 200, documentType === 'facture' ? 242 : 166);
+    doc.setTextColor(0, 102, 204);
     doc.text(`${sale.total_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin, y, { align: 'right' });
 
-    // Montant payé (seulement pour factures)
-    if (documentType === 'facture') {
-      y += 10;
-      doc.setFontSize(11);
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(60, 60, 60);
-      doc.text("Montant payé:", 120, y);
-      doc.text(`${sale.paid_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin, y, { align: 'right' });
-    }
-
-    // Note pour Proforma
-    if (documentType === 'proforma') {
-      y += 20;
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "italic");
-      doc.setTextColor(100, 100, 100);
-      doc.text("Ce document est une proforma et ne constitue pas une facture définitive.", margin, y);
-      y += 5;
-      doc.text("Valable 30 jours à compter de la date d'émission.", margin, y);
-    }
-
-    // Pied de page
     y = 270;
-    doc.setDrawColor(documentType === 'facture' ? 46 : 55, documentType === 'facture' ? 163 : 200, documentType === 'facture' ? 242 : 166);
-    doc.setLineWidth(0.5);
+    doc.setDrawColor(0, 102, 204);
+    doc.setLineWidth(0.3);
     doc.line(margin, y, pageWidth - margin, y);
-    
     y += 8;
     doc.setFontSize(9);
-    doc.setTextColor(100, 100, 100);
+    doc.setTextColor(107, 114, 128);
     doc.text("Merci pour votre confiance !", pageWidth / 2, y, { align: 'center' });
     y += 5;
     doc.setFontSize(8);
-    doc.text(`${docTitle} générée par Stocknix - stocknix.space`, pageWidth / 2, y, { align: 'center' });
+    doc.text(`${docTitle} générée par Stocknix`, pageWidth / 2, y, { align: 'center' });
 
     if (action === 'download') {
-      const fileName = `${documentType}_${format(new Date(sale.sale_date), "yyyy-MM-dd")}_${sale.id.slice(0, 8)}.pdf`;
-      doc.save(fileName);
-      
-      toast({
-        title: `✅ ${docTitle} téléchargée`,
-        description: `Le document PDF a été généré avec succès`,
-      });
+      doc.save(`${documentType}_${format(new Date(sale.sale_date), "yyyy-MM-dd")}_${sale.id.slice(0, 8)}.pdf`);
+      toast({ title: `✅ ${docTitle} téléchargée` });
     } else {
-      // Impression sur demande
       const pdfBlob = doc.output('blob');
       const pdfUrl = URL.createObjectURL(pdfBlob);
       const printWindow = window.open(pdfUrl);
-      if (printWindow) {
-        printWindow.onload = () => {
-          printWindow.print();
-        };
-      }
-      
-      toast({
-        title: `🖨️ Impression ${docTitle}`,
-        description: `Document prêt à imprimer`,
-      });
+      if (printWindow) { printWindow.onload = () => printWindow.print(); }
+      toast({ title: `🖨️ Impression ${docTitle}` });
     }
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header avec bouton à droite */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <p className="text-muted-foreground">Enregistrez et suivez toutes vos ventes</p>
-        <AddSaleDialog />
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 border-2 border-purple-200 dark:border-purple-800/40">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-600"></div>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-purple-900 dark:text-purple-100">Ventes Totales</CardTitle>
-            <div className="p-2 rounded-lg bg-purple-500 shadow-md">
-              <ShoppingCart className="h-4 w-4 text-white" />
+    <div className="space-y-6 animate-fade-in">
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center">
+              <ShoppingCart className="h-5 w-5 text-primary" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{sales.length}</div>
-            <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
-              Transactions enregistrées
-            </p>
+            <div>
+              <p className="text-2xl font-bold">{sales.length}</p>
+              <p className="text-sm text-muted-foreground">Ventes totales</p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-2 border-green-200 dark:border-green-800/40">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-green-900 dark:text-green-100">Ventes Aujourd'hui</CardTitle>
-            <div className="p-2 rounded-lg bg-green-500 shadow-md">
-              <ShoppingCart className="h-4 w-4 text-white" />
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-success/10 flex items-center justify-center">
+              <ShoppingCart className="h-5 w-5 text-success" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-green-600 dark:text-green-400">{todaySales.length}</div>
-            <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-              {todayTotal.toLocaleString()} FCFA
-            </p>
+            <div>
+              <p className="text-2xl font-bold">{todaySales.length}</p>
+              <p className="text-sm text-muted-foreground">Aujourd'hui • {todayTotal.toLocaleString()} FCFA</p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800/40">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-indigo-600"></div>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-indigo-900 dark:text-indigo-100">Chiffre d'Affaires</CardTitle>
-            <div className="p-2 rounded-lg bg-indigo-500 shadow-md">
-              <ShoppingCart className="h-4 w-4 text-white" />
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-secondary/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-secondary" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{totalSales.toLocaleString()} FCFA</div>
-            <p className="text-xs text-indigo-700 dark:text-indigo-300 mt-1">
-              Total des ventes
-            </p>
+            <div>
+              <p className="text-2xl font-bold">{totalSales.toLocaleString()}</p>
+              <p className="text-sm text-muted-foreground">Chiffre d'affaires (FCFA)</p>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Search and View Controls */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recherche</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Rechercher par client ou produit..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            {!isMobile && (
-              <div className="flex gap-2">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "outline"}
-                  size="icon"
-                  onClick={() => setViewMode("grid")}
-                >
-                  <Grid3x3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "outline"}
-                  size="icon"
-                  onClick={() => setViewMode("list")}
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Sales Display */}
-      <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
-        <CardHeader>
-          <CardTitle className="text-blue-900 dark:text-blue-100">Historique des ventes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {filteredSales.length === 0 ? (
-            <div className="text-center py-8">
-              <ShoppingCart className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">
-                {sales.length === 0 
-                  ? "Aucune vente enregistrée. Commencez par enregistrer votre première vente."
-                  : "Aucune vente trouvée pour cette recherche."
-                }
-              </p>
-            </div>
-          ) : (
+      {/* Barre d'outils */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <div className="relative flex-1 max-w-md w-full">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Rechercher par client ou produit..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="flex gap-2">
+          {!isMobile && (
             <>
-              {/* Grid View for Mobile or when selected */}
-              {(isMobile || viewMode === "grid") && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredSales.map((sale) => (
-                    <Card key={sale.id} className="hover:shadow-lg transition-shadow bg-background/50">
-                      <CardHeader className="pb-3">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <CardTitle className="text-base font-semibold text-foreground">
-                              {sale.products?.name || "Produit supprimé"}
-                            </CardTitle>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
-                            </p>
-                          </div>
-                          <div className="flex gap-1">
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              className="h-7 w-7"
-                              onClick={() => {
-                                setSelectedSale(sale);
-                                setShowSaleDetails(true);
-                              }}
-                              title="Voir détails"
-                            >
-                              <Eye className="h-3.5 w-3.5" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7"
-                              onClick={() => generateDocumentA4(sale, 'facture', 'print')}
-                              title="Imprimer Facture A4"
-                            >
-                              <Printer className="h-3.5 w-3.5" />
-                            </Button>
-                            <Select onValueChange={(type: 'facture' | 'proforma') => generateDocumentA4(sale, type, 'download')}>
-                              <SelectTrigger className="h-7 w-7 p-0 border-0 bg-transparent hover:bg-muted">
-                                <Download className="h-3.5 w-3.5" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="facture">Télécharger Facture</SelectItem>
-                                <SelectItem value="proforma">Télécharger Proforma</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div className="flex justify-between items-center py-2 border-b border-border/50">
-                          <span className="text-sm text-muted-foreground">Client</span>
-                          <div className="text-right">
-                            <p className="text-sm font-medium">{sale.customer_name || "Client anonyme"}</p>
-                            {sale.customer_phone && (
-                              <p className="text-xs text-muted-foreground">{sale.customer_phone}</p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center py-2 border-b border-border/50">
-                          <span className="text-sm text-muted-foreground">Quantité</span>
-                          <Badge variant="secondary">{sale.quantity}</Badge>
-                        </div>
-                        <div className="flex justify-between items-center py-2 border-b border-border/50">
-                          <span className="text-sm text-muted-foreground">Prix Unitaire</span>
-                          <span className="text-sm font-medium">{sale.unit_price.toLocaleString()} FCFA</span>
-                        </div>
-                        <div className="flex justify-between items-center pt-2">
-                          <span className="text-sm font-medium">Total</span>
-                          <span className="text-lg font-bold text-primary">{sale.total_amount.toLocaleString()} FCFA</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-
-              {/* Table View for Desktop */}
-              {!isMobile && viewMode === "list" && (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Produit</TableHead>
-                        <TableHead>Client</TableHead>
-                        <TableHead>Quantité</TableHead>
-                        <TableHead>Prix Unitaire</TableHead>
-                        <TableHead>Total</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredSales.map((sale) => (
-                        <TableRow key={sale.id}>
-                          <TableCell>
-                            {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
-                          </TableCell>
-                          <TableCell>
-                            {sale.products?.name || "Produit supprimé"}
-                          </TableCell>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">{sale.customer_name || "Client anonyme"}</p>
-                              {sale.customer_phone && (
-                                <p className="text-sm text-muted-foreground">{sale.customer_phone}</p>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>{sale.quantity}</TableCell>
-                          <TableCell>{sale.unit_price.toLocaleString()} FCFA</TableCell>
-                          <TableCell>
-                            <span className="font-semibold">{sale.total_amount.toLocaleString()} FCFA</span>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              <Button 
-                                variant="outline" 
-                                size="icon"
-                                onClick={() => {
-                                  setSelectedSale(sale);
-                                  setShowSaleDetails(true);
-                                }}
-                                title="Voir détails"
-                              >
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => generateDocumentA4(sale, 'facture', 'print')}
-                                title="Imprimer Facture A4"
-                              >
-                                <Printer className="h-4 w-4" />
-                              </Button>
-                              <Select onValueChange={(type: 'facture' | 'proforma') => generateDocumentA4(sale, type, 'download')}>
-                                <SelectTrigger className="h-9 w-9 p-0 border hover:bg-muted">
-                                  <Download className="h-4 w-4" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="facture">Télécharger Facture</SelectItem>
-                                  <SelectItem value="proforma">Télécharger Proforma</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+              <Button
+                variant={viewMode === "list" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setViewMode("list")}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "grid" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setViewMode("grid")}
+              >
+                <Grid3x3 className="h-4 w-4" />
+              </Button>
             </>
           )}
-        </CardContent>
-      </Card>
+          <AddSaleDialog />
+        </div>
+      </div>
 
-      <SaleDetailsDialog
-        sale={selectedSale}
-        open={showSaleDetails}
-        onOpenChange={setShowSaleDetails}
-      />
+      {/* Liste des ventes */}
+      {filteredSales.length === 0 ? (
+        <Card>
+          <CardContent className="py-16 text-center">
+            <ShoppingCart className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
+              {sales.length === 0 ? "Aucune vente" : "Aucun résultat"}
+            </h3>
+            <p className="text-muted-foreground">
+              {sales.length === 0 
+                ? "Commencez par enregistrer votre première vente"
+                : "Aucune vente trouvée pour cette recherche"
+              }
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {/* Vue Tableau */}
+          {!isMobile && viewMode === "list" && (
+            <Card>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Produit</TableHead>
+                    <TableHead>Client</TableHead>
+                    <TableHead className="text-center">Quantité</TableHead>
+                    <TableHead className="text-right">Montant</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredSales.map((sale) => (
+                    <TableRow key={sale.id}>
+                      <TableCell className="text-muted-foreground">
+                        {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {sale.products?.name || "Produit supprimé"}
+                      </TableCell>
+                      <TableCell>
+                        {sale.customer_name || <span className="text-muted-foreground">—</span>}
+                      </TableCell>
+                      <TableCell className="text-center">{sale.quantity}</TableCell>
+                      <TableCell className="text-right font-semibold">
+                        {sale.total_amount.toLocaleString()} FCFA
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-1 justify-end">
+                          <Button variant="ghost" size="icon" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => generateDocumentA4(sale, 'facture', 'download')}>
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => generateDocumentA4(sale, 'facture', 'print')}>
+                            <Printer className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+          )}
+
+          {/* Vue Grille */}
+          {(isMobile || viewMode === "grid") && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredSales.map((sale) => (
+                <Card key={sale.id}>
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-base">{sale.products?.name || "Produit"}</CardTitle>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
+                        </p>
+                      </div>
+                      <p className="font-bold">{sale.total_amount.toLocaleString()} FCFA</p>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Client</span>
+                      <span>{sale.customer_name || "—"}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Quantité</span>
+                      <span>{sale.quantity}</span>
+                    </div>
+                    <div className="flex gap-2 pt-2 border-t border-border">
+                      <Button variant="outline" size="sm" className="flex-1" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
+                        <Eye className="h-3.5 w-3.5 mr-1" /> Détails
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => generateDocumentA4(sale, 'facture', 'download')}>
+                        <Download className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {selectedSale && (
+        <SaleDetailsDialog 
+          sale={selectedSale}
+          open={showSaleDetails}
+          onOpenChange={(open) => {
+            setShowSaleDetails(open);
+            if (!open) setSelectedSale(null);
+          }}
+        />
+      )}
     </div>
   );
 }

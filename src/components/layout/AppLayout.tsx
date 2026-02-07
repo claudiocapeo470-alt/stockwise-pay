@@ -7,7 +7,6 @@ import { ThemeToggle } from "./ThemeToggle";
 import { BottomNav } from "./BottomNav";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import stocknixLogo from "@/assets/stocknix-logo.png";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -43,8 +42,8 @@ export function AppLayout({ children }: AppLayoutProps) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4 animate-spin"></div>
-          <p className="text-muted-foreground">Chargement...</p>
+          <div className="h-8 w-8 border-2 border-primary border-t-transparent mx-auto mb-4 animate-spin"></div>
+          <p className="text-muted-foreground text-sm">Chargement...</p>
         </div>
       </div>
     );
@@ -57,31 +56,39 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
-        {/* Sidebar - masquée sur mobile/tablette */}
+        {/* Sidebar - desktop uniquement */}
         {!isMobile && <AppSidebar />}
         
         <main className="flex-1 flex flex-col">
-          {/* Header premium avec gradient subtil */}
-          <header className="sticky top-0 z-40 border-b border-border/50 bg-card/80 backdrop-blur-xl px-4 py-3 shadow-soft">
-            <div className="flex items-center gap-4">
-              {/* Trigger sidebar uniquement sur desktop */}
-              {!isMobile && <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-smooth" />}
+          {/* Header - 64px */}
+          <header className="sticky top-0 z-40 h-16 border-b border-border bg-background px-4 flex items-center">
+            <div className="flex items-center gap-4 w-full">
+              {/* Trigger sidebar desktop */}
+              {!isMobile && (
+                <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 flex items-center justify-center transition-colors" />
+              )}
+              
+              {/* Page title */}
               <div className="flex-1">
-                <h2 className="text-lg font-semibold text-foreground">{pageTitle}</h2>
+                <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
               </div>
-              <ThemeToggle />
-              {user && <UserMenu />}
+              
+              {/* Actions */}
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                {user && <UserMenu />}
+              </div>
             </div>
           </header>
           
-          {/* Main content area */}
-          <div className={`flex-1 p-4 md:p-6 ${isMobile ? 'pb-24' : 'md:px-8 lg:px-12'}`}>
+          {/* Main content */}
+          <div className={`flex-1 p-4 md:p-6 lg:px-12 ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
             {children}
           </div>
         </main>
       </div>
       
-      {/* Bottom Navigation - visible uniquement sur mobile/tablette */}
+      {/* Bottom Navigation - mobile uniquement */}
       {isMobile && <BottomNav />}
     </SidebarProvider>
   );

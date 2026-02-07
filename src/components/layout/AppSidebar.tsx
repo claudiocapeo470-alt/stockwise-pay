@@ -24,6 +24,9 @@ const navigation = [
   { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart },
   { name: "Facturation", href: "/app/facturation", icon: Receipt },
   { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp },
+]
+
+const secondaryNav = [
   { name: "Profil", href: "/app/profile", icon: User },
   { name: "Paramètres", href: "/app/settings", icon: SettingsIcon },
 ]
@@ -51,55 +54,90 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar className={`${isCollapsed ? "w-16" : "w-64"} bg-sidebar border-r border-sidebar-border`} collapsible="icon">
-      {/* Header */}
-      <SidebarHeader className="p-4 border-b border-sidebar-border">
+    <Sidebar className={`${isCollapsed ? "w-16" : "w-60"} bg-sidebar border-r border-sidebar-border`} collapsible="icon">
+      {/* Header - 48px height */}
+      <SidebarHeader className="h-16 flex items-center px-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <div className="relative">
-            <img 
-              src={settings?.logo_url || stocknixLogo} 
-              alt={settings?.company_name || "Stocknix"} 
-              className="h-9 w-9 object-contain rounded-lg"
-            />
-          </div>
+          <img 
+            src={settings?.logo_url || stocknixLogo} 
+            alt={settings?.company_name || "Stocknix"} 
+            className="h-8 w-8 object-contain"
+          />
           {!isCollapsed && (
             <div>
-              <h1 className="font-semibold text-foreground text-base tracking-tight">
+              <h1 className="font-semibold text-foreground text-sm tracking-tight">
                 {settings?.company_name || "Stocknix"}
               </h1>
-              <p className="text-xs text-muted-foreground">PME Dashboard</p>
+              <p className="text-xs text-muted-foreground">Gestion commerciale</p>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="p-2 space-y-0.5">
-        <SidebarMenu className="space-y-0.5">
-          {navigation.map((item) => (
-            <SidebarMenuItem key={item.name}>
-              <SidebarMenuButton 
-                asChild 
-                className={`w-full justify-start rounded-lg transition-all duration-200 ${
-                  isActive(item.href) 
-                    ? "bg-primary text-primary-foreground font-medium" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
-              >
-                <NavLink to={item.href} className="flex items-center gap-3 px-3 py-2">
-                  <item.icon className={`h-4 w-4 flex-shrink-0`} />
-                  {!isCollapsed && <span className="text-sm">{item.name}</span>}
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+      <SidebarContent className="px-3 py-4">
+        {/* Navigation principale */}
+        <div className="mb-6">
+          {!isCollapsed && (
+            <p className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Navigation
+            </p>
+          )}
+          <SidebarMenu className="space-y-1">
+            {navigation.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton 
+                  asChild 
+                  className={`w-full justify-start h-10 transition-colors duration-200 ${
+                    isActive(item.href) 
+                      ? "bg-primary text-primary-foreground font-medium" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  } ${isActive(item.href) ? "border-l-[3px] border-l-primary" : ""}`}
+                >
+                  <NavLink to={item.href} className="flex items-center gap-3 px-3">
+                    <item.icon className="h-4 w-4 flex-shrink-0" />
+                    {!isCollapsed && <span className="text-sm">{item.name}</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </div>
+
+        {/* Navigation secondaire */}
+        <div>
+          {!isCollapsed && (
+            <p className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Compte
+            </p>
+          )}
+          <SidebarMenu className="space-y-1">
+            {secondaryNav.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton 
+                  asChild 
+                  className={`w-full justify-start h-10 transition-colors duration-200 ${
+                    isActive(item.href) 
+                      ? "bg-primary text-primary-foreground font-medium" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
+                >
+                  <NavLink to={item.href} className="flex items-center gap-3 px-3">
+                    <item.icon className="h-4 w-4 flex-shrink-0" />
+                    {!isCollapsed && <span className="text-sm">{item.name}</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </div>
       </SidebarContent>
 
       <SidebarFooter className="p-3 border-t border-sidebar-border">
+        {/* User info */}
         {!isCollapsed && user && (
-          <div className="px-3 py-2.5 mb-2 bg-muted/50 rounded-lg">
-            <div className="flex items-center gap-2.5">
-              <Avatar className="h-8 w-8">
+          <div className="px-3 py-3 mb-2 bg-muted">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-9 w-9">
                 <AvatarImage src={profile?.avatar_url || ''} alt={displayName} />
                 <AvatarFallback className="bg-primary text-primary-foreground text-xs font-medium">
                   {initials}
@@ -109,18 +147,19 @@ export function AppSidebar() {
                 <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
                 <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                 {isAdmin && (
-                  <p className="text-xs text-primary font-medium">Admin</p>
+                  <span className="text-xs text-primary font-medium">Admin</span>
                 )}
               </div>
             </div>
           </div>
         )}
         
+        {/* Logout button */}
         <SidebarMenuItem>
           <Button
             variant="ghost"
             onClick={signOut}
-            className={`w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg ${
+            className={`w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 ${
               isCollapsed ? 'px-2' : 'px-3'
             }`}
           >

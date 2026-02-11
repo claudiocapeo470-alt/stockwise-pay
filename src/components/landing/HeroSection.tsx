@@ -1,14 +1,11 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Package, CreditCard, TrendingUp, Bell, Sparkles, Play } from "lucide-react";
+import { ArrowRight, Sparkles, Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { FloatingCard, StatsCard, DeviceMockup, GlowOrb, GridPattern } from "./FloatingElements";
+import { GlowOrb, GridPattern } from "./FloatingElements";
 import { 
   ParallaxContainer, 
-  AnimatedEntry, 
-  MouseParallax, 
-  Floating3D,
-  PerspectiveWrapper 
+  AnimatedEntry
 } from "./ImmersiveAnimations";
 
 const HeroSection = () => {
@@ -108,128 +105,29 @@ const HeroSection = () => {
             </div>
           </AnimatedEntry>
 
-          {/* Right Content - 3D Scene */}
-          <MouseParallax intensity={15} className="relative hidden lg:block">
-            <PerspectiveWrapper>
-              {/* Main Desktop Mockup */}
-              <Floating3D amplitude={8} duration={6}>
-                <DeviceMockup type="desktop" className="w-full max-w-[500px] mx-auto">
-                  <div className="p-4 space-y-3 min-h-[280px]">
-                    {/* Mini Dashboard */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="h-3 w-24 bg-primary/30 rounded" />
-                      <div className="flex gap-2">
-                        <div className="h-6 w-6 rounded-full bg-primary/20" />
-                        <div className="h-6 w-6 rounded-full bg-muted" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      {[
-                        { label: "Ventes", value: "2.4M", color: "bg-primary/20" },
-                        { label: "Produits", value: "1,247", color: "bg-secondary/20" },
-                        { label: "Clients", value: "892", color: "bg-success/20" }
-                      ].map((stat, i) => (
-                        <div key={i} className={`p-3 rounded-xl ${stat.color}`}>
-                          <div className="text-[10px] text-muted-foreground">{stat.label}</div>
-                          <div className="text-sm font-bold text-foreground">{stat.value}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="h-24 bg-muted/30 rounded-xl flex items-end gap-1 p-3">
-                      {[40, 65, 45, 80, 55, 70, 90, 60, 75, 85, 50, 95].map((h, i) => (
-                        <motion.div 
-                          key={i}
-                          initial={{ height: 0 }}
-                          animate={{ height: `${h}%` }}
-                          transition={{ delay: 1 + i * 0.05, duration: 0.5 }}
-                          className="flex-1 bg-gradient-to-t from-primary to-secondary rounded-t"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </DeviceMockup>
-              </Floating3D>
-
-              {/* Mobile Mockup - Floating */}
-              <div className="absolute -bottom-10 -left-10">
-                <Floating3D amplitude={12} duration={5} delay={0.5}>
-                  <DeviceMockup type="mobile" className="scale-75 origin-bottom-left">
-                    <div className="p-3 space-y-2 min-h-[300px]">
-                      <div className="h-2 w-16 bg-primary/30 rounded mx-auto" />
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="p-2 rounded-lg bg-primary/20">
-                          <CreditCard size={16} className="text-primary mb-1" />
-                          <div className="text-[8px] text-muted-foreground">Caisse</div>
-                        </div>
-                        <div className="p-2 rounded-lg bg-secondary/20">
-                          <Package size={16} className="text-secondary mb-1" />
-                          <div className="text-[8px] text-muted-foreground">Stocks</div>
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        {[1, 2, 3].map(i => (
-                          <div key={i} className="flex gap-2 p-2 bg-muted/30 rounded-lg">
-                            <div className="w-8 h-8 bg-muted rounded" />
-                            <div className="flex-1 space-y-1">
-                              <div className="h-2 w-full bg-muted rounded" />
-                              <div className="h-2 w-2/3 bg-muted/60 rounded" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </DeviceMockup>
-                </Floating3D>
-              </div>
-
-              {/* Floating Stats Cards */}
-              <div className="absolute -top-4 -right-4">
-                <Floating3D amplitude={10} duration={4.5} delay={0.2}>
-                  <div className="bg-card/80 backdrop-blur-xl rounded-2xl p-4 shadow-xl min-w-[140px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="p-1.5 rounded-lg bg-primary/20">
-                        <TrendingUp size={14} className="text-primary" />
-                      </div>
-                      <span className="text-xs text-muted-foreground">Croissance</span>
-                    </div>
-                    <div className="text-xl font-bold text-foreground">↑ 23%</div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <TrendingUp size={12} className="text-success" />
-                      <span className="text-xs text-success">+12% ce mois</span>
-                    </div>
-                  </div>
-                </Floating3D>
-              </div>
-              
-              <div className="absolute top-1/2 -right-16">
-                <Floating3D amplitude={10} duration={5} delay={0.8}>
-                  <div className="bg-card/80 backdrop-blur-xl rounded-2xl p-4 shadow-xl min-w-[140px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="p-1.5 rounded-lg bg-primary/20">
-                        <Package size={14} className="text-primary" />
-                      </div>
-                      <span className="text-xs text-muted-foreground">Produits</span>
-                    </div>
-                    <div className="text-xl font-bold text-foreground">1,247</div>
-                  </div>
-                </Floating3D>
-              </div>
-
-              <div className="absolute -bottom-4 right-20">
-                <Floating3D amplitude={8} duration={4} delay={1.2}>
-                  <div className="bg-card/80 backdrop-blur-xl rounded-2xl p-3 shadow-xl flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-warning/20">
-                      <Bell size={18} className="text-warning" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-foreground">Alerte Stock</p>
-                      <p className="text-[10px] text-muted-foreground">Riz 5kg - Stock bas</p>
-                    </div>
-                  </div>
-                </Floating3D>
-              </div>
-            </PerspectiveWrapper>
-          </MouseParallax>
+          {/* Right Content - Clean Stats */}
+          <div className="relative hidden lg:block">
+            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+              {[
+                { label: "Entreprises actives", value: "500+", sub: "en Côte d'Ivoire" },
+                { label: "Transactions/jour", value: "12K+", sub: "traitées en temps réel" },
+                { label: "Taux de satisfaction", value: "98%", sub: "clients satisfaits" },
+                { label: "Disponibilité", value: "99.9%", sub: "uptime garanti" },
+              ].map((stat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
+                  className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-5"
+                >
+                  <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
+                  <div className="text-sm font-medium text-foreground">{stat.label}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

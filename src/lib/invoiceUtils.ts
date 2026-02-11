@@ -5,11 +5,11 @@ import { fr } from 'date-fns/locale';
 import { Invoice, InvoiceItem } from '@/hooks/useInvoices';
 
 const formatAmount = (amount: number): string => {
-  const formatted = amount.toLocaleString('fr-FR', {
+  const formatted = new Intl.NumberFormat('fr-FR', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
     useGrouping: true
-  }).replace(/\s/g, '.').replace(',', '.');
+  }).format(amount);
   
   return `${formatted} FCFA`;
 };

@@ -67,7 +67,7 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate(`/app/${documentType === 'facture' ? 'factures' : 'devis'}`)}
+              onClick={() => navigate('/app/facturation')}
               className="self-start"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

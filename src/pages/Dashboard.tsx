@@ -21,7 +21,7 @@ export default function Dashboard() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const isEmailConfirmed = urlParams.get('confirmed') === 'true';
-  const hasSeenWelcomeGuide = user?.id ? localStorage.getItem(`welcome-guide-seen-${user.id}`) === 'true' : false;
+  const isFirstLogin = user?.id ? localStorage.getItem(`welcome-guide-seen-${user.id}`) !== 'true' : false;
   const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
 
   const metrics = useMemo(() => {
@@ -63,14 +63,16 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user?.id) {
-      if (isEmailConfirmed || !hasSeenWelcomeGuide) {
+      // Only show on first login (email confirmed or never seen guide)
+      if (isEmailConfirmed && isFirstLogin) {
         setShowWelcomeGuide(true);
-        if (isEmailConfirmed) {
-          window.history.replaceState(null, '', '/app');
-        }
+        window.history.replaceState(null, '', '/app');
+      } else if (isFirstLogin && !isEmailConfirmed) {
+        // First time accessing dashboard after signup
+        setShowWelcomeGuide(true);
       }
     }
-  }, [user?.id, hasSeenWelcomeGuide, isEmailConfirmed]);
+  }, [user?.id, isFirstLogin, isEmailConfirmed]);
 
   const handleCloseWelcomeGuide = () => {
     if (user?.id) {

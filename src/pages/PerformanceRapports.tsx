@@ -13,12 +13,16 @@ const sections = [
     title: "Performance",
     description: "Analysez vos KPIs et tendances en temps réel",
     icon: TrendingUp,
+    color: "text-primary",
+    bgColor: "bg-primary/10",
   },
   {
     id: "rapports" as const,
     title: "Rapports",
     description: "Générez des rapports détaillés et personnalisés",
     icon: FileText,
+    color: "text-secondary",
+    bgColor: "bg-secondary/10",
   },
 ];
 
@@ -54,25 +58,29 @@ export default function PerformanceRapports() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Cartes de navigation */}
+      <div className="mb-2">
+        <h1 className="text-2xl font-bold text-foreground">Performance & Rapports</h1>
+        <p className="text-sm text-muted-foreground">Analysez vos données et générez des rapports</p>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sections.map((section) => (
           <Card
             key={section.id}
             onClick={() => setActiveSection(section.id)}
-            className="cursor-pointer transition-all duration-200 hover:shadow-medium hover:border-primary/20"
+            className="cursor-pointer group transition-all duration-200 hover:shadow-md hover:border-primary/30"
           >
             <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="h-12 w-12 bg-primary/10 flex items-center justify-center">
-                  <section.icon className="h-6 w-6 text-primary" />
+              <div className="flex items-start justify-between mb-5">
+                <div className={`h-12 w-12 ${section.bgColor} flex items-center justify-center`}>
+                  <section.icon className={`h-6 w-6 ${section.color}`} />
                 </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-1">
                 {section.title}
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {section.description}
               </p>
             </CardContent>

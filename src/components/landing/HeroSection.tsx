@@ -105,27 +105,34 @@ const HeroSection = () => {
             </div>
           </AnimatedEntry>
 
-          {/* Right Content - Clean Stats */}
+          {/* Right Content - Neon Animated Glow */}
           <div className="relative hidden lg:block">
-            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-              {[
-                { label: "Entreprises actives", value: "500+", sub: "en Côte d'Ivoire" },
-                { label: "Transactions/jour", value: "12K+", sub: "traitées en temps réel" },
-                { label: "Taux de satisfaction", value: "98%", sub: "clients satisfaits" },
-                { label: "Disponibilité", value: "99.9%", sub: "uptime garanti" },
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
-                  className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-5"
-                >
-                  <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
-                  <div className="text-sm font-medium text-foreground">{stat.label}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
-                </motion.div>
-              ))}
+            <div className="relative w-full h-[400px] flex items-center justify-center">
+              {/* Neon orbs */}
+              <motion.div
+                className="absolute w-64 h-64 rounded-full opacity-60 blur-3xl"
+                style={{ background: 'linear-gradient(135deg, #ff00ff, #00ffff)' }}
+                animate={{ scale: [1, 1.3, 1], x: [0, 30, -20, 0], y: [0, -20, 30, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              <motion.div
+                className="absolute w-48 h-48 rounded-full opacity-50 blur-3xl"
+                style={{ background: 'linear-gradient(225deg, #00ff88, #ffff00)' }}
+                animate={{ scale: [1.2, 1, 1.2], x: [0, -40, 20, 0], y: [0, 30, -10, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              <motion.div
+                className="absolute w-56 h-56 rounded-full opacity-40 blur-3xl"
+                style={{ background: 'linear-gradient(315deg, #ff6600, #ff0066)' }}
+                animate={{ scale: [1, 1.15, 1], x: [20, -10, 30, 20], y: [-10, 20, -30, -10] }}
+                transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              <motion.div
+                className="absolute w-40 h-40 rounded-full opacity-50 blur-3xl"
+                style={{ background: 'linear-gradient(45deg, #3b82f6, #a855f7)' }}
+                animate={{ scale: [1.1, 1, 1.1], x: [-20, 20, -20], y: [20, -20, 20] }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+              />
             </div>
           </div>
         </div>

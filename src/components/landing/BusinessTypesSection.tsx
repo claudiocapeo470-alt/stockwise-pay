@@ -14,7 +14,7 @@ const businessTypes = [
 
 const BusinessTypesSection = () => {
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative py-12 sm:py-16 overflow-hidden">
       {/* Background */}
       <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
         <GlowOrb color="secondary" size="lg" className="absolute top-0 left-1/4 opacity-30" />

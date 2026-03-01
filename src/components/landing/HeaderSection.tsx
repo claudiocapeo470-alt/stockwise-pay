@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import stocknixLogo from '@/assets/stocknix-logo.png';
 
@@ -18,6 +18,14 @@ const HeaderSection = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const toggleTheme = () => {
+    const root = document.documentElement;
+    const isDark = root.classList.contains('dark');
+    root.classList.remove('dark', 'light');
+    root.classList.add(isDark ? 'light' : 'dark');
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  };
+
   const navLinks = [
     { label: "Fonctionnalités", href: "/fonctionnalites" },
     { label: "Tarifs", href: "/tarifs" },
@@ -25,19 +33,19 @@ const HeaderSection = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8">
       <div
-        className={`transition-all duration-300 ${
+        className={`transition-all duration-500 ease-in-out mx-auto ${
           scrolled
-            ? 'bg-background/80 backdrop-blur-xl border-b border-primary/30 shadow-lg shadow-primary/5'
-            : 'bg-transparent'
+            ? 'mt-3 max-w-5xl bg-background/70 backdrop-blur-2xl border border-border/60 rounded-2xl shadow-2xl shadow-black/20'
+            : 'mt-0 max-w-full bg-transparent border border-transparent rounded-none'
         }`}
       >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="px-4 sm:px-6">
+          <div className={`flex items-center justify-between transition-all duration-500 ${scrolled ? 'h-14' : 'h-16 sm:h-20'}`}>
             {/* Logo */}
             <Link to="/" className="flex-shrink-0">
-              <img src={stocknixLogo} alt="Stocknix" className="h-9 sm:h-10 w-auto" />
+              <img src={stocknixLogo} alt="Stocknix" className={`w-auto transition-all duration-300 ${scrolled ? 'h-7 sm:h-8' : 'h-9 sm:h-10'}`} />
             </Link>
 
             {/* Desktop Nav */}
@@ -56,6 +64,14 @@ const HeaderSection = () => {
 
             {/* Desktop CTA */}
             <div className="hidden lg:flex items-center gap-3">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                aria-label="Changer le thème"
+              >
+                <Sun className="h-4 w-4 hidden dark:block" />
+                <Moon className="h-4 w-4 block dark:hidden" />
+              </button>
               <Button
                 variant="ghost"
                 onClick={() => navigate('/auth')}
@@ -65,28 +81,34 @@ const HeaderSection = () => {
               </Button>
               <Button
                 onClick={() => navigate('/auth')}
-                className={`font-semibold transition-all duration-300 ${
-                  scrolled
-                    ? 'bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-lg shadow-primary/20 border border-primary/40'
-                    : 'bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-lg shadow-primary/20'
-                }`}
+                className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 font-semibold shadow-lg shadow-primary/20"
               >
                 Essai Gratuit
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6 text-foreground" />
-              ) : (
-                <Menu className="h-6 w-6 text-foreground" />
-              )}
-            </button>
+            {/* Mobile Right */}
+            <div className="flex lg:hidden items-center gap-2">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                aria-label="Changer le thème"
+              >
+                <Sun className="h-5 w-5 hidden dark:block" />
+                <Moon className="h-5 w-5 block dark:hidden" />
+              </button>
+              <button
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? (
+                  <X className="h-6 w-6 text-foreground" />
+                ) : (
+                  <Menu className="h-6 w-6 text-foreground" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -98,9 +120,9 @@ const HeaderSection = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-primary/30 overflow-hidden"
+            className="lg:hidden mx-4 mt-2 bg-background/90 backdrop-blur-xl border border-border/60 rounded-2xl overflow-hidden shadow-2xl"
           >
-            <div className="container mx-auto px-4 py-4">
+            <div className="px-4 py-4">
               <nav className="flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <Link
@@ -115,19 +137,13 @@ const HeaderSection = () => {
                 <div className="pt-4 mt-2 border-t border-border/40 flex flex-col gap-2">
                   <Button
                     variant="outline"
-                    onClick={() => {
-                      navigate('/auth');
-                      setMobileMenuOpen(false);
-                    }}
+                    onClick={() => { navigate('/auth'); setMobileMenuOpen(false); }}
                     className="w-full"
                   >
                     Connexion
                   </Button>
                   <Button
-                    onClick={() => {
-                      navigate('/auth');
-                      setMobileMenuOpen(false);
-                    }}
+                    onClick={() => { navigate('/auth'); setMobileMenuOpen(false); }}
                     className="w-full bg-gradient-to-r from-primary to-secondary"
                   >
                     Essai Gratuit

@@ -35,7 +35,7 @@ const HowItWorksSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative py-12 sm:py-16 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <AnimatedEntry type="fade-zoom">
           <div className="text-center mb-16">

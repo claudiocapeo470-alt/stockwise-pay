@@ -13,7 +13,7 @@ import {
 // Synchronisation Section
 export const SyncSection = () => {
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative py-12 sm:py-16 overflow-hidden">
       <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
         <GridPattern className="opacity-20" />
         <GlowOrb color="secondary" size="xl" className="absolute left-1/4 top-0" />
@@ -122,7 +122,7 @@ export const SecuritySection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden bg-muted/10">
+    <section className="relative py-12 sm:py-16 overflow-hidden bg-muted/10">
       <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
         <GlowOrb color="accent" size="xl" className="absolute -right-40 top-1/3" />
       </ParallaxContainer>

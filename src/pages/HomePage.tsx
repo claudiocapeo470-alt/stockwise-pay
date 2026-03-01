@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import HeaderSection from "@/components/landing/HeaderSection";
 import HeroSection from "@/components/landing/HeroSection";
 import BusinessTypesSection from "@/components/landing/BusinessTypesSection";
@@ -9,20 +8,6 @@ import CTASection from "@/components/landing/CTASection";
 import FooterSection from "@/components/landing/FooterSection";
 
 const HomePage = () => {
-  // Force dark mode on landing page
-  useEffect(() => {
-    const root = document.documentElement;
-    const previousTheme = root.classList.contains('dark') ? 'dark' : 'light';
-    root.classList.remove('light');
-    root.classList.add('dark');
-    
-    return () => {
-      // Restore previous theme when leaving landing page
-      const savedTheme = localStorage.getItem('theme') || previousTheme;
-      root.classList.remove('dark', 'light');
-      root.classList.add(savedTheme);
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">

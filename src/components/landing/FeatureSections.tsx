@@ -46,7 +46,7 @@ export const StocksSection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative py-12 sm:py-16 overflow-hidden">
       <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
         <GridPattern className="opacity-30" />
         <GlowOrb color="primary" size="xl" className="absolute -left-40 top-1/4" />
@@ -167,7 +167,7 @@ export const POSSection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden bg-muted/10">
+    <section className="relative py-12 sm:py-16 overflow-hidden bg-muted/10">
       <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
         <GlowOrb color="secondary" size="xl" className="absolute -right-40 top-1/4" />
       </ParallaxContainer>
@@ -278,7 +278,7 @@ export const InvoicingSection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative py-12 sm:py-16 overflow-hidden">
       <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
         <GridPattern className="opacity-30" />
         <GlowOrb color="accent" size="xl" className="absolute -left-40 top-1/4" />
@@ -382,7 +382,7 @@ export const AnalyticsSection = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden bg-muted/10">
+    <section className="relative py-12 sm:py-16 overflow-hidden bg-muted/10">
       <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
         <GlowOrb color="primary" size="xl" className="absolute -right-40 top-1/4" />
       </ParallaxContainer>

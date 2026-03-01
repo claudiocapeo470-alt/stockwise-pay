@@ -174,76 +174,9 @@ export const POSSection = () => {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Visual - Mobile First */}
-          <DisplacementMotion direction="diagonal" distance={25}>
-            <AnimatedEntry type="fade-zoom">
-              <div className="relative order-2 lg:order-1">
-                <div className="flex justify-center items-end gap-6">
-                  {/* Main Phone */}
-                  <DeviceMockup type="mobile">
-                    <div className="p-4 min-h-[300px]">
-                      <div className="text-center mb-4">
-                        <div className="text-xs text-muted-foreground">Total</div>
-                        <div className="text-2xl font-bold text-primary">25,500 F</div>
-                      </div>
-                      
-                      {/* Items */}
-                      <div className="space-y-2 mb-4">
-                        {[
-                          { name: "Riz 5kg", price: "15,000 F" },
-                          { name: "Huile 1L", price: "5,500 F" },
-                          { name: "Sucre 1kg", price: "5,000 F" },
-                        ].map((item, i) => (
-                          <div key={i} className="flex justify-between text-xs p-2 bg-muted/30 rounded-lg">
-                            <span className="text-foreground">{item.name}</span>
-                            <span className="text-muted-foreground">{item.price}</span>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* Payment Methods */}
-                      <div className="grid grid-cols-3 gap-2 mb-4">
-                        {["Espèces", "Orange", "Wave"].map((method, i) => (
-                          <div 
-                            key={i}
-                            className={`p-2 rounded-lg text-center text-[10px] font-medium ${
-                              i === 0 ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground'
-                            }`}
-                          >
-                            {method}
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <div className="p-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-center text-white text-sm font-semibold">
-                        Valider
-                      </div>
-                    </div>
-                  </DeviceMockup>
-
-                  {/* Payment Icons Floating */}
-                  <div className="hidden sm:flex flex-col gap-4">
-                    {[
-                      { icon: "🔶", label: "Orange Money" },
-                      { icon: "🌊", label: "Wave" },
-                      { icon: "💛", label: "MTN" },
-                    ].map((payment, i) => (
-                      <Floating3D key={i} delay={i * 0.3} duration={4} amplitude={8}>
-                        <div className="bg-card/80 backdrop-blur-xl rounded-xl p-3 flex items-center gap-2 shadow-lg">
-                          <span className="text-xl">{payment.icon}</span>
-                          <span className="text-xs font-medium text-foreground">{payment.label}</span>
-                        </div>
-                      </Floating3D>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </AnimatedEntry>
-          </DisplacementMotion>
-
           {/* Content */}
-          <AnimatedEntry type="fade-zoom" delay={0.2}>
-            <div className="order-1 lg:order-2">
+          <AnimatedEntry type="fade-zoom">
+            <div>
               <span className="inline-block px-4 py-2 rounded-full bg-secondary/10 text-sm font-medium text-secondary mb-4">
                 💳 Caisse & POS
               </span>
@@ -265,6 +198,70 @@ export const POSSection = () => {
               </StaggerContainer>
             </div>
           </AnimatedEntry>
+
+          {/* Visual */}
+          <DisplacementMotion direction="diagonal" distance={25}>
+            <AnimatedEntry type="fade-zoom" delay={0.2}>
+              <div className="relative">
+                <div className="flex justify-center items-end gap-6">
+                  {/* Main Phone */}
+                  <DeviceMockup type="mobile">
+                    <div className="p-4 min-h-[300px]">
+                      <div className="text-center mb-4">
+                        <div className="text-xs text-muted-foreground">Total</div>
+                        <div className="text-2xl font-bold text-primary">25 500 F</div>
+                      </div>
+                      
+                      <div className="space-y-2 mb-4">
+                        {[
+                          { name: "Riz 5kg", price: "15 000 F" },
+                          { name: "Huile 1L", price: "5 500 F" },
+                          { name: "Sucre 1kg", price: "5 000 F" },
+                        ].map((item, i) => (
+                          <div key={i} className="flex justify-between text-xs p-2 bg-muted/30 rounded-lg">
+                            <span className="text-foreground">{item.name}</span>
+                            <span className="text-muted-foreground">{item.price}</span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        {["Espèces", "Orange", "Wave"].map((method, i) => (
+                          <div 
+                            key={i}
+                            className={`p-2 rounded-lg text-center text-[10px] font-medium ${
+                              i === 0 ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground'
+                            }`}
+                          >
+                            {method}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="p-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-center text-white text-sm font-semibold">
+                        Valider
+                      </div>
+                    </div>
+                  </DeviceMockup>
+
+                  <div className="hidden sm:flex flex-col gap-4">
+                    {[
+                      { icon: "🔶", label: "Orange Money" },
+                      { icon: "🌊", label: "Wave" },
+                      { icon: "💛", label: "MTN" },
+                    ].map((payment, i) => (
+                      <Floating3D key={i} delay={i * 0.3} duration={4} amplitude={8}>
+                        <div className="bg-card/80 backdrop-blur-xl rounded-xl p-3 flex items-center gap-2 shadow-lg">
+                          <span className="text-xl">{payment.icon}</span>
+                          <span className="text-xs font-medium text-foreground">{payment.label}</span>
+                        </div>
+                      </Floating3D>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </AnimatedEntry>
+          </DisplacementMotion>
         </div>
       </div>
     </section>
@@ -392,74 +389,8 @@ export const AnalyticsSection = () => {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Visual */}
-          <DisplacementMotion direction="diagonal" distance={20}>
-            <AnimatedEntry type="fade-zoom">
-              <div className="relative">
-                <DeviceMockup type="desktop">
-                  <div className="p-6 min-h-[320px]">
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div>
-                        <div className="text-sm font-semibold text-foreground">Analytics</div>
-                        <div className="text-xs text-muted-foreground">Janvier 2025</div>
-                      </div>
-                      <div className="flex gap-2">
-                        {["Jour", "Semaine", "Mois"].map((period, i) => (
-                          <div 
-                            key={i}
-                            className={`px-2 py-1 rounded text-[10px] ${
-                              i === 2 ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
-                            }`}
-                          >
-                            {period}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {/* Chart */}
-                    <div className="h-32 bg-muted/20 rounded-xl mb-4 flex items-end gap-2 p-4">
-                      {[35, 52, 41, 78, 45, 65, 88, 55, 72, 95, 60, 82].map((h, i) => (
-                        <motion.div 
-                          key={i}
-                          initial={{ height: 0 }}
-                          animate={{ height: `${h}%` }}
-                          transition={{ delay: 0.8 + i * 0.05, duration: 0.5 }}
-                          className="flex-1 bg-gradient-to-t from-primary to-secondary rounded-t opacity-80"
-                        />
-                      ))}
-                    </div>
-                    
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-4">
-                      {[
-                        { label: "Chiffre d'affaires", value: "12.5M F", change: "+18%" },
-                        { label: "Transactions", value: "1,847", change: "+12%" },
-                        { label: "Panier moyen", value: "6,750 F", change: "+5%" },
-                      ].map((stat, i) => (
-                        <div key={i} className="text-center">
-                          <div className="text-xs text-muted-foreground">{stat.label}</div>
-                          <div className="text-sm font-bold text-foreground">{stat.value}</div>
-                          <div className="text-[10px] text-success">{stat.change}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </DeviceMockup>
-
-                {/* Floating Chart Icon */}
-                <Floating3D amplitude={15} duration={5} delay={0.8} className="absolute -right-6 top-1/4">
-                  <div className="bg-card/80 backdrop-blur-xl rounded-2xl p-4 shadow-lg">
-                    <TrendingUp size={32} className="text-primary" />
-                  </div>
-                </Floating3D>
-              </div>
-            </AnimatedEntry>
-          </DisplacementMotion>
-
           {/* Content */}
-          <AnimatedEntry type="fade-zoom" delay={0.2}>
+          <AnimatedEntry type="fade-zoom">
             <div>
               <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-sm font-medium text-primary mb-4">
                 📊 Analytics
@@ -482,6 +413,68 @@ export const AnalyticsSection = () => {
               </StaggerContainer>
             </div>
           </AnimatedEntry>
+
+          {/* Visual */}
+          <DisplacementMotion direction="diagonal" distance={20}>
+            <AnimatedEntry type="fade-zoom" delay={0.2}>
+              <div className="relative">
+                <DeviceMockup type="desktop">
+                  <div className="p-6 min-h-[320px]">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <div className="text-sm font-semibold text-foreground">Analytics</div>
+                        <div className="text-xs text-muted-foreground">Janvier 2025</div>
+                      </div>
+                      <div className="flex gap-2">
+                        {["Jour", "Semaine", "Mois"].map((period, i) => (
+                          <div 
+                            key={i}
+                            className={`px-2 py-1 rounded text-[10px] ${
+                              i === 2 ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                            }`}
+                          >
+                            {period}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="h-32 bg-muted/20 rounded-xl mb-4 flex items-end gap-2 p-4">
+                      {[35, 52, 41, 78, 45, 65, 88, 55, 72, 95, 60, 82].map((h, i) => (
+                        <motion.div 
+                          key={i}
+                          initial={{ height: 0 }}
+                          animate={{ height: `${h}%` }}
+                          transition={{ delay: 0.8 + i * 0.05, duration: 0.5 }}
+                          className="flex-1 bg-gradient-to-t from-primary to-secondary rounded-t opacity-80"
+                        />
+                      ))}
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-4">
+                      {[
+                        { label: "Chiffre d'affaires", value: "12.5M F", change: "+18%" },
+                        { label: "Transactions", value: "1,847", change: "+12%" },
+                        { label: "Panier moyen", value: "6,750 F", change: "+5%" },
+                      ].map((stat, i) => (
+                        <div key={i} className="text-center">
+                          <div className="text-xs text-muted-foreground">{stat.label}</div>
+                          <div className="text-sm font-bold text-foreground">{stat.value}</div>
+                          <div className="text-[10px] text-success">{stat.change}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </DeviceMockup>
+
+                <Floating3D amplitude={15} duration={5} delay={0.8} className="absolute -right-6 top-1/4">
+                  <div className="bg-card/80 backdrop-blur-xl rounded-2xl p-4 shadow-lg">
+                    <TrendingUp size={32} className="text-primary" />
+                  </div>
+                </Floating3D>
+              </div>
+            </AnimatedEntry>
+          </DisplacementMotion>
         </div>
       </div>
     </section>

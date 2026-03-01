@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowRight } from "lucide-react";
@@ -8,6 +8,15 @@ import stocknixLogo from '@/assets/stocknix-logo.png';
 const HeaderSection = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
     { label: "Fonctionnalités", href: "/fonctionnalites" },
@@ -17,7 +26,13 @@ const HeaderSection = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-      <div className="glass-strong border-b border-border/40">
+      <div
+        className={`transition-all duration-300 ${
+          scrolled
+            ? 'bg-background/80 backdrop-blur-xl border-b border-primary/30 shadow-lg shadow-primary/5'
+            : 'bg-transparent'
+        }`}
+      >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
@@ -50,7 +65,11 @@ const HeaderSection = () => {
               </Button>
               <Button
                 onClick={() => navigate('/auth')}
-                className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 font-semibold shadow-lg shadow-primary/20"
+                className={`font-semibold transition-all duration-300 ${
+                  scrolled
+                    ? 'bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-lg shadow-primary/20 border border-primary/40'
+                    : 'bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-lg shadow-primary/20'
+                }`}
               >
                 Essai Gratuit
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -79,7 +98,7 @@ const HeaderSection = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden glass-strong border-b border-border/40 overflow-hidden"
+            className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-primary/30 overflow-hidden"
           >
             <div className="container mx-auto px-4 py-4">
               <nav className="flex flex-col gap-2">

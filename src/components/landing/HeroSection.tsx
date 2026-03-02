@@ -38,9 +38,8 @@ const HeroSection = () => {
       </ParallaxContainer>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          {/* Left Content */}
-          <AnimatedEntry type="fade-zoom" className="text-center lg:text-left">
+        <div className="max-w-3xl mx-auto">
+          <AnimatedEntry type="fade-zoom" className="text-center">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 mb-6">
               <Sparkles className="h-4 w-4 text-primary" />
@@ -60,13 +59,13 @@ const HeroSection = () => {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto lg:mx-0 mb-8">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto mb-8">
               Stocks, ventes, factures et analytics réunis dans une plateforme 
               intuitive et puissante. Conçu pour les entrepreneurs africains.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg"
                 onClick={() => navigate('/auth')}
@@ -87,7 +86,7 @@ const HeroSection = () => {
             </div>
 
             {/* Social Proof */}
-            <div className="flex items-center gap-4 mt-10 justify-center lg:justify-start">
+            <div className="flex items-center gap-4 mt-10 justify-center">
               <div className="flex -space-x-3">
                 {["K", "F", "I", "M", "A"].map((initial, i) => (
                   <div 
@@ -104,37 +103,6 @@ const HeroSection = () => {
               </div>
             </div>
           </AnimatedEntry>
-
-          {/* Right Content - Neon Animated Glow */}
-          <div className="relative hidden lg:block">
-            <div className="relative w-full h-[400px] flex items-center justify-center">
-              {/* Neon orbs */}
-              <motion.div
-                className="absolute w-64 h-64 rounded-full opacity-60 blur-3xl"
-                style={{ background: 'linear-gradient(135deg, #ff00ff, #00ffff)' }}
-                animate={{ scale: [1, 1.3, 1], x: [0, 30, -20, 0], y: [0, -20, 30, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute w-48 h-48 rounded-full opacity-50 blur-3xl"
-                style={{ background: 'linear-gradient(225deg, #00ff88, #ffff00)' }}
-                animate={{ scale: [1.2, 1, 1.2], x: [0, -40, 20, 0], y: [0, 30, -10, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute w-56 h-56 rounded-full opacity-40 blur-3xl"
-                style={{ background: 'linear-gradient(315deg, #ff6600, #ff0066)' }}
-                animate={{ scale: [1, 1.15, 1], x: [20, -10, 30, 20], y: [-10, 20, -30, -10] }}
-                transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute w-40 h-40 rounded-full opacity-50 blur-3xl"
-                style={{ background: 'linear-gradient(45deg, #3b82f6, #a855f7)' }}
-                animate={{ scale: [1.1, 1, 1.1], x: [-20, 20, -20], y: [20, -20, 20] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-              />
-            </div>
-          </div>
         </div>
       </div>
 

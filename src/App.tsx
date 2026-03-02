@@ -100,13 +100,19 @@ const App = () => (
                 </ProtectedRoute>
               } />
               
+              {/* Caisse Tactile - Mode plein écran immersif */}
+              <Route path="/app/caisse" element={
+                <ProtectedRoute>
+                  <Caisse />
+                </ProtectedRoute>
+              } />
+
               {/* Protected App Routes */}
               <Route path="/app/*" element={
                 <ProtectedRoute>
                   <AppLayout>
                     <Routes>
                       <Route path="/" element={<Dashboard />} />
-                      <Route path="/caisse" element={<Caisse />} />
                       <Route path="/stocks" element={<Stocks />} />
                       <Route path="/ventes" element={<Ventes />} />
                       <Route path="/facturation" element={<Facturation />} />

@@ -1,4 +1,4 @@
-import { BarChart3, Package, Scan, ShoppingCart, Receipt, TrendingUp, LogOut, User, Settings as SettingsIcon } from "lucide-react"
+import { BarChart3, Package, Scan, ShoppingCart, Receipt, TrendingUp, LogOut, User, Settings as SettingsIcon, Store, ShoppingBag, ClipboardList, Star } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
 import {
@@ -24,6 +24,13 @@ const navigation = [
   { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart },
   { name: "Facturation", href: "/app/facturation", icon: Receipt },
   { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp },
+]
+
+const storeNav = [
+  { name: "Ma Boutique", href: "/app/boutique/config", icon: Store },
+  { name: "Produits en ligne", href: "/app/boutique/produits", icon: ShoppingBag },
+  { name: "Commandes reçues", href: "/app/boutique/commandes", icon: ClipboardList },
+  { name: "Avis clients", href: "/app/boutique/avis", icon: Star },
 ]
 
 const secondaryNav = [
@@ -92,6 +99,34 @@ export function AppSidebar() {
                       ? "bg-primary text-primary-foreground font-medium" 
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   } ${isActive(item.href) ? "border-l-[3px] border-l-primary" : ""}`}
+                >
+                  <NavLink to={item.href} className="flex items-center gap-3 px-3">
+                    <item.icon className="h-4 w-4 flex-shrink-0" />
+                    {!isCollapsed && <span className="text-sm">{item.name}</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </div>
+
+        {/* Boutique en ligne */}
+        <div className="mb-6">
+          {!isCollapsed && (
+            <p className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Boutique en ligne
+            </p>
+          )}
+          <SidebarMenu className="space-y-1">
+            {storeNav.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton 
+                  asChild 
+                  className={`w-full justify-start h-10 transition-colors duration-200 ${
+                    isActive(item.href) 
+                      ? "bg-primary text-primary-foreground font-medium" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
                 >
                   <NavLink to={item.href} className="flex items-center gap-3 px-3">
                     <item.icon className="h-4 w-4 flex-shrink-0" />

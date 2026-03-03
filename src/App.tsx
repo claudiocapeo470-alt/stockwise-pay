@@ -20,6 +20,11 @@ import AuthSimple from "./pages/AuthSimple";
 import InvoiceEditor from "./pages/InvoiceEditor";
 import InvoicePreview from "./pages/InvoicePreview";
 import Caisse from "./pages/Caisse";
+import StoreConfig from "./pages/store/StoreConfig";
+import StoreProducts from "./pages/store/StoreProducts";
+import StoreOrders from "./pages/store/StoreOrders";
+import StoreReviews from "./pages/store/StoreReviews";
+import PublicStore from "./pages/store/PublicStore";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -80,6 +85,9 @@ const App = () => (
               <Route path="/legal" element={<MentionsLegales />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               
+              {/* Public Store */}
+              <Route path="/boutique/:slug" element={<PublicStore />} />
+              
               {/* Auth Route */}
               <Route path="/auth" element={<AuthSimple />} />
               
@@ -125,6 +133,10 @@ const App = () => (
                       <Route path="/performance" element={<PerformanceRapports />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/settings" element={<Settings />} />
+                      <Route path="/boutique/config" element={<StoreConfig />} />
+                      <Route path="/boutique/produits" element={<StoreProducts />} />
+                      <Route path="/boutique/commandes" element={<StoreOrders />} />
+                      <Route path="/boutique/avis" element={<StoreReviews />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </AppLayout>

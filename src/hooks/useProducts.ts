@@ -13,6 +13,8 @@ export interface Product {
   min_quantity: number;
   category: string | null;
   sku: string | null;
+  icon_emoji: string | null;
+  icon_bg_color: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -26,22 +28,16 @@ export const useProducts = () => {
     queryKey: ['products', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching products:', error);
-        throw error;
-      }
-
+      if (error) throw error;
       return data as Product[];
     },
     enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,
     refetchOnMount: false,
   });
@@ -49,36 +45,26 @@ export const useProducts = () => {
   const addProduct = useMutation({
     mutationFn: async (product: Omit<Product, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
       if (!user) throw new Error('User not authenticated');
-
       const { data, error } = await supabase
         .from('products')
         .insert([{ ...product, user_id: user.id }])
         .select()
         .single();
-
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast({
-        title: 'Produit ajouté',
-        description: 'Le produit a été ajouté avec succès',
-      });
+      toast({ title: 'Produit ajouté', description: 'Le produit a été ajouté avec succès' });
     },
     onError: (error) => {
-      toast({
-        title: 'Erreur',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     },
   });
 
   const updateProduct = useMutation({
     mutationFn: async ({ id, ...product }: Partial<Product> & { id: string }) => {
       if (!user) throw new Error('User not authenticated');
-
       const { data, error } = await supabase
         .from('products')
         .update(product)
@@ -86,51 +72,30 @@ export const useProducts = () => {
         .eq('user_id', user.id)
         .select()
         .single();
-
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast({
-        title: 'Produit modifié',
-        description: 'Le produit a été modifié avec succès',
-      });
+      toast({ title: 'Produit modifié', description: 'Le produit a été modifié avec succès' });
     },
     onError: (error) => {
-      toast({
-        title: 'Erreur',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     },
   });
 
   const deleteProduct = useMutation({
     mutationFn: async (id: string) => {
       if (!user) throw new Error('User not authenticated');
-
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
-
+      const { error } = await supabase.from('products').delete().eq('id', id).eq('user_id', user.id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast({
-        title: 'Produit supprimé',
-        description: 'Le produit a été supprimé avec succès',
-      });
+      toast({ title: 'Produit supprimé', description: 'Le produit a été supprimé avec succès' });
     },
     onError: (error) => {
-      toast({
-        title: 'Erreur',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     },
   });
 

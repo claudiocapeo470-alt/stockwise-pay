@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List, Plus } from "lucide-react";
+import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List } from "lucide-react";
 import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
 import { EditProductDialog } from "@/components/stocks/EditProductDialog";
+import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -52,18 +53,18 @@ export default function Stocks() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin"></div>
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin rounded-full"></div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Stats en haut */}
+      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center">
+            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
               <Package className="h-5 w-5 text-primary" />
             </div>
             <div>
@@ -72,10 +73,9 @@ export default function Stocks() {
             </div>
           </CardContent>
         </Card>
-
         <Card className={lowStockProducts.length > 0 ? "border-warning/30" : ""}>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center">
+            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
               <AlertTriangle className="h-5 w-5 text-warning" />
             </div>
             <div>
@@ -84,10 +84,9 @@ export default function Stocks() {
             </div>
           </CardContent>
         </Card>
-
         <Card className={outOfStockProducts.length > 0 ? "border-destructive/30" : ""}>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-destructive/10 flex items-center justify-center">
+            <div className="h-10 w-10 bg-destructive/10 flex items-center justify-center rounded-xl">
               <AlertTriangle className="h-5 w-5 text-destructive" />
             </div>
             <div>
@@ -98,60 +97,36 @@ export default function Stocks() {
         </Card>
       </div>
 
-      {/* Barre d'outils */}
+      {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
         <div className="relative flex-1 max-w-md w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Rechercher par nom, catégorie ou SKU..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+          <Input placeholder="Rechercher par nom, catégorie ou SKU..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
         </div>
         <div className="flex gap-2">
           {!isMobile && (
             <>
-              <Button
-                variant={viewMode === "list" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewMode("list")}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "grid" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewMode("grid")}
-              >
-                <Grid3x3 className="h-4 w-4" />
-              </Button>
+              <Button variant={viewMode === "list" ? "default" : "outline"} size="icon" onClick={() => setViewMode("list")}><List className="h-4 w-4" /></Button>
+              <Button variant={viewMode === "grid" ? "default" : "outline"} size="icon" onClick={() => setViewMode("grid")}><Grid3x3 className="h-4 w-4" /></Button>
             </>
           )}
           <AddProductDialog />
         </div>
       </div>
 
-      {/* Liste des produits */}
+      {/* Products */}
       {filteredProducts.length === 0 ? (
         <Card>
           <CardContent className="py-16 text-center">
             <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
-              {products.length === 0 ? "Aucun produit" : "Aucun résultat"}
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              {products.length === 0 
-                ? "Commencez par ajouter votre premier produit"
-                : "Aucun produit trouvé pour cette recherche"
-              }
-            </p>
+            <h3 className="text-lg font-semibold mb-2">{products.length === 0 ? "Aucun produit" : "Aucun résultat"}</h3>
+            <p className="text-muted-foreground mb-4">{products.length === 0 ? "Commencez par ajouter votre premier produit" : "Aucun produit trouvé pour cette recherche"}</p>
             {products.length === 0 && <AddProductDialog />}
           </CardContent>
         </Card>
       ) : (
         <>
-          {/* Vue Tableau - Desktop */}
+          {/* Table view */}
           {!isMobile && viewMode === "list" && (
             <Card>
               <Table>
@@ -171,60 +146,33 @@ export default function Stocks() {
                     return (
                       <TableRow key={product.id}>
                         <TableCell>
-                          <div>
-                            <p className="font-medium">{product.name}</p>
-                            {product.sku && (
-                              <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
-                            )}
+                          <div className="flex items-center gap-3">
+                            <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
+                              <span className="text-xl">{product.icon_emoji || '📦'}</span>
+                            </div>
+                            <div>
+                              <p className="font-medium">{product.name}</p>
+                              {product.sku && <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>}
+                            </div>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          {product.category ? (
-                            <Badge variant="outline">{product.category}</Badge>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          {product.price.toLocaleString()} FCFA
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <span className="font-medium">{product.quantity}</span>
-                          <span className="text-muted-foreground text-sm"> / {product.min_quantity}</span>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant={status.variant}>{status.label}</Badge>
-                        </TableCell>
+                        <TableCell>{product.category ? <Badge variant="outline">{product.category}</Badge> : <span className="text-muted-foreground">—</span>}</TableCell>
+                        <TableCell className="text-right font-medium">{product.price.toLocaleString()} FCFA</TableCell>
+                        <TableCell className="text-center"><span className="font-medium">{product.quantity}</span><span className="text-muted-foreground text-sm"> / {product.min_quantity}</span></TableCell>
+                        <TableCell className="text-center"><Badge variant={status.variant}>{status.label}</Badge></TableCell>
                         <TableCell>
                           <div className="flex gap-1 justify-end">
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => handleEditProduct(product)}
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}><Edit2 className="h-4 w-4" /></Button>
                             <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
+                              <AlertDialogTrigger asChild><Button variant="ghost" size="icon"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Êtes-vous sûr de vouloir supprimer "{product.name}" ?
-                                  </AlertDialogDescription>
+                                  <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer "{product.name}" ?</AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                   <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => handleDeleteProduct(product)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Supprimer
-                                  </AlertDialogAction>
+                                  <AlertDialogAction onClick={() => handleDeleteProduct(product)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>
                             </AlertDialog>
@@ -238,29 +186,29 @@ export default function Stocks() {
             </Card>
           )}
 
-          {/* Vue Grille - Mobile ou sélectionnée */}
+          {/* Grid view */}
           {(isMobile || viewMode === "grid") && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredProducts.map((product) => {
                 const status = getStockStatus(product);
                 return (
-                  <Card key={product.id}>
+                  <Card key={product.id} className="hover:shadow-md transition-all">
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <CardTitle className="text-base truncate">{product.name}</CardTitle>
-                          {product.sku && (
-                            <p className="text-xs text-muted-foreground mt-1">SKU: {product.sku}</p>
-                          )}
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
+                            <span className="text-2xl">{product.icon_emoji || '📦'}</span>
+                          </div>
+                          <div className="min-w-0">
+                            <CardTitle className="text-base truncate">{product.name}</CardTitle>
+                            {product.sku && <p className="text-xs text-muted-foreground mt-0.5">SKU: {product.sku}</p>}
+                          </div>
                         </div>
                         <Badge variant={status.variant}>{status.label}</Badge>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {product.category && (
-                        <Badge variant="outline">{product.category}</Badge>
-                      )}
-                      
+                      {product.category && <Badge variant="outline">{product.category}</Badge>}
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <p className="text-xs text-muted-foreground">Prix unitaire</p>
@@ -268,45 +216,21 @@ export default function Stocks() {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground">Stock</p>
-                          <p className="text-lg font-bold">
-                            {product.quantity}
-                            <span className="text-xs font-normal text-muted-foreground"> / {product.min_quantity}</span>
-                          </p>
+                          <p className="text-lg font-bold">{product.quantity}<span className="text-xs font-normal text-muted-foreground"> / {product.min_quantity}</span></p>
                         </div>
                       </div>
-                      
                       <div className="flex gap-2 pt-2 border-t border-border">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleEditProduct(product)}
-                          className="flex-1"
-                        >
-                          <Edit2 className="h-3.5 w-3.5 mr-1.5" />
-                          Modifier
-                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handleEditProduct(product)} className="flex-1"><Edit2 className="h-3.5 w-3.5 mr-1.5" />Modifier</Button>
                         <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="outline" size="sm" className="flex-1">
-                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                              Supprimer
-                            </Button>
-                          </AlertDialogTrigger>
+                          <AlertDialogTrigger asChild><Button variant="outline" size="sm" className="flex-1"><Trash2 className="h-3.5 w-3.5 mr-1.5" />Supprimer</Button></AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Êtes-vous sûr de vouloir supprimer "{product.name}" ?
-                              </AlertDialogDescription>
+                              <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer "{product.name}" ?</AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction 
-                                onClick={() => handleDeleteProduct(product)}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              >
-                                Supprimer
-                              </AlertDialogAction>
+                              <AlertDialogAction onClick={() => handleDeleteProduct(product)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
@@ -321,13 +245,10 @@ export default function Stocks() {
       )}
 
       {editingProduct && (
-        <EditProductDialog 
+        <EditProductDialog
           product={editingProduct}
           open={showEditDialog}
-          onOpenChange={(open) => {
-            setShowEditDialog(open);
-            if (!open) setEditingProduct(null);
-          }}
+          onOpenChange={(open) => { setShowEditDialog(open); if (!open) setEditingProduct(null); }}
         />
       )}
     </div>

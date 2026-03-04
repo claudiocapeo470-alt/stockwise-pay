@@ -1,7 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { useOnlineStore, useStoreProducts } from "@/hooks/useOnlineStore";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import { toast } from "sonner";
-import { Star, Trash2, Eye } from "lucide-react";
+import { Star, Trash2 } from "lucide-react";
 
 export default function StoreProducts() {
   const { store } = useOnlineStore();
@@ -60,6 +60,12 @@ export default function StoreProducts() {
     </div>
   );
 
+  const ProductIcon = ({ product }: { product: any }) => (
+    <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
+      <span className="text-lg">{product.icon_emoji || '📦'}</span>
+    </div>
+  );
+
   return (
     <div className="space-y-6 animate-fade-in">
       <h1 className="text-2xl font-bold">📦 Produits en ligne</h1>
@@ -71,7 +77,8 @@ export default function StoreProducts() {
         </TabsList>
 
         <TabsContent value="online" className="mt-4">
-          <Card>
+          {/* Desktop table */}
+          <Card className="hidden md:block">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -90,9 +97,7 @@ export default function StoreProducts() {
                     <TableRow key={sp.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
-                            <span className="text-lg">{product.icon_emoji || '📦'}</span>
-                          </div>
+                          <ProductIcon product={product} />
                           <span className="font-medium">{product.name}</span>
                         </div>
                       </TableCell>
@@ -113,6 +118,37 @@ export default function StoreProducts() {
               </TableBody>
             </Table>
           </Card>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {storeProducts.map((sp: any) => {
+              const product = sp.products;
+              if (!product) return null;
+              return (
+                <Card key={sp.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <ProductIcon product={product} />
+                        <div className="min-w-0">
+                          <p className="font-medium truncate">{product.name}</p>
+                          <p className="text-sm font-bold text-primary">{(sp.online_price || product.price).toLocaleString()} FCFA</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {sp.is_featured && <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />}
+                        {product.quantity === 0 ? <Badge variant="destructive">Rupture</Badge> : <span className="text-xs text-muted-foreground">Stock: {product.quantity}</span>}
+                        <Button variant="ghost" size="icon" onClick={() => handleRemove(sp.product_id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+            {storeProducts.length === 0 && (
+              <p className="text-center py-8 text-muted-foreground">Aucun produit publié</p>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="unpublished" className="mt-4 space-y-4">
@@ -121,7 +157,9 @@ export default function StoreProducts() {
               ✅ Publier la sélection ({selected.size} produits)
             </Button>
           )}
-          <Card>
+
+          {/* Desktop table */}
+          <Card className="hidden md:block">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -141,9 +179,7 @@ export default function StoreProducts() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
-                          <span className="text-lg">{product.icon_emoji || '📦'}</span>
-                        </div>
+                        <ProductIcon product={product} />
                         <span className="font-medium">{product.name}</span>
                       </div>
                     </TableCell>
@@ -165,6 +201,39 @@ export default function StoreProducts() {
               </TableBody>
             </Table>
           </Card>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {unpublished.map(product => (
+              <Card key={product.id}>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Checkbox checked={selected.has(product.id)} onCheckedChange={() => toggleSelect(product.id)} />
+                    <ProductIcon product={product} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{product.name}</p>
+                      <p className="text-xs text-muted-foreground">{product.category || 'Sans catégorie'}</p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-sm font-bold">{product.price.toLocaleString()} FCFA</span>
+                        <span className="text-xs text-muted-foreground">Stock: {product.quantity}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <Input
+                      type="number" min="0" className="h-8 text-sm"
+                      placeholder="Prix boutique"
+                      defaultValue={product.price}
+                      onChange={e => setOnlinePrices(p => ({ ...p, [product.id]: Number(e.target.value) }))}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            {unpublished.length === 0 && (
+              <p className="text-center py-8 text-muted-foreground">Tous les produits sont déjà publiés</p>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

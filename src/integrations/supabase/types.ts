@@ -440,6 +440,7 @@ export type Database = {
           icon_bg_color: string | null
           icon_emoji: string | null
           id: string
+          image_url: string | null
           min_quantity: number
           name: string
           price: number
@@ -455,6 +456,7 @@ export type Database = {
           icon_bg_color?: string | null
           icon_emoji?: string | null
           id?: string
+          image_url?: string | null
           min_quantity?: number
           name: string
           price?: number
@@ -470,6 +472,7 @@ export type Database = {
           icon_bg_color?: string | null
           icon_emoji?: string | null
           id?: string
+          image_url?: string | null
           min_quantity?: number
           name?: string
           price?: number

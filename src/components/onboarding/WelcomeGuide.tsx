@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Package, ShoppingCart, FileText, BarChart3, Scan, X, ArrowRight, ArrowLeft } from "lucide-react";
+import { CheckCircle, Package, ShoppingCart, FileText, BarChart3, Store, Scan, X, ArrowRight, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+export const WELCOME_GUIDE_VERSION = "2";
 
 interface WelcomeGuideProps {
   onClose?: () => void;
@@ -36,6 +38,20 @@ const steps = [
     action: "Voir les rapports",
     route: "/app/performance",
   },
+  {
+    title: "Boutique en ligne",
+    description: "Créez et publiez votre propre boutique en ligne. Vos clients peuvent commander directement depuis leur téléphone, avec synchronisation du stock en temps réel.",
+    icon: Store,
+    action: "Configurer ma boutique",
+    route: "/app/boutique/config",
+  },
+  {
+    title: "Scannez vos produits",
+    description: "Scannez les codes-barres depuis la caisse avec la caméra de votre téléphone ou un scanner USB. Les produits sont ajoutés automatiquement au ticket.",
+    icon: Scan,
+    action: "Ouvrir la Caisse",
+    route: "/app/caisse",
+  },
 ];
 
 export function WelcomeGuide({ onClose }: WelcomeGuideProps) {
@@ -63,7 +79,7 @@ export function WelcomeGuide({ onClose }: WelcomeGuideProps) {
       {/* Header */}
       <div className="bg-gradient-to-r from-primary to-secondary p-6 text-white">
         <h2 className="text-xl font-bold mb-1">Bienvenue sur Stocknix 🎉</h2>
-        <p className="text-sm text-white/80">Découvrez les fonctionnalités principales en 4 étapes</p>
+        <p className="text-sm text-white/80">Découvrez les fonctionnalités principales en {steps.length} étapes</p>
       </div>
 
       {/* Progress bar */}

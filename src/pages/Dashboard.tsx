@@ -7,7 +7,7 @@ import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import { useMemo, useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { WelcomeGuide } from "@/components/onboarding/WelcomeGuide";
+import { WelcomeGuide, WELCOME_GUIDE_VERSION } from "@/components/onboarding/WelcomeGuide";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -21,7 +21,8 @@ export default function Dashboard() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const isEmailConfirmed = urlParams.get('confirmed') === 'true';
-  const isFirstLogin = user?.id ? localStorage.getItem(`welcome-guide-seen-${user.id}`) !== 'true' : false;
+  const storedVersion = user?.id ? localStorage.getItem(`welcome-guide-version-${user.id}`) : null;
+  const isFirstLogin = user?.id ? (!storedVersion || storedVersion < WELCOME_GUIDE_VERSION) : false;
   const [showWelcomeGuide, setShowWelcomeGuide] = useState(false);
 
   const metrics = useMemo(() => {
@@ -76,7 +77,7 @@ export default function Dashboard() {
 
   const handleCloseWelcomeGuide = () => {
     if (user?.id) {
-      localStorage.setItem(`welcome-guide-seen-${user.id}`, 'true');
+      localStorage.setItem(`welcome-guide-version-${user.id}`, WELCOME_GUIDE_VERSION);
     }
     setShowWelcomeGuide(false);
   };

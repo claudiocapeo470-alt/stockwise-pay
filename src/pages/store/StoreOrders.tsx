@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useOnlineStore, useStoreOrders } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
-import { Phone, MessageCircle, Printer, Package, Clock, DollarSign, TrendingUp } from "lucide-react";
+import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp } from "lucide-react";
 
 const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }> = {
   pending: { label: "En attente", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", emoji: "⏳" },
@@ -41,7 +41,7 @@ export default function StoreOrders() {
       <h1 className="text-2xl font-bold">📋 Commandes reçues</h1>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { icon: Package, label: "Aujourd'hui", value: todayOrders.length, color: "text-primary" },
           { icon: Clock, label: "En attente", value: pendingOrders.length, color: "text-yellow-600" },
@@ -49,16 +49,19 @@ export default function StoreOrders() {
           { icon: TrendingUp, label: "Total commandes", value: orders.length, color: "text-blue-600" },
         ].map((s, i) => (
           <Card key={i}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <s.icon className={`h-8 w-8 ${s.color}`} />
-              <div><p className="text-xl font-bold">{s.value}</p><p className="text-xs text-muted-foreground">{s.label}</p></div>
+            <CardContent className="p-3 sm:p-4 flex items-center gap-3">
+              <s.icon className={`h-6 w-6 sm:h-8 sm:w-8 ${s.color} flex-shrink-0`} />
+              <div className="min-w-0">
+                <p className="text-lg sm:text-xl font-bold truncate">{s.value}</p>
+                <p className="text-xs text-muted-foreground truncate">{s.label}</p>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Orders table */}
-      <Card>
+      {/* Desktop table */}
+      <Card className="hidden md:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -84,7 +87,7 @@ export default function StoreOrders() {
                   <TableCell><span className={`px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>{status.emoji} {status.label}</span></TableCell>
                   <TableCell className="text-sm text-muted-foreground">{new Date(order.created_at).toLocaleDateString('fr-FR')}</TableCell>
                   <TableCell>
-                    <Select value={order.status} onValueChange={v => { handleStatusChange(order.id, v); }}>
+                    <Select value={order.status} onValueChange={v => handleStatusChange(order.id, v)}>
                       <SelectTrigger className="w-32 h-8 text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {Object.entries(STATUS_MAP).map(([key, val]) => (
@@ -100,6 +103,46 @@ export default function StoreOrders() {
           </TableBody>
         </Table>
       </Card>
+
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {orders.map(order => {
+          const status = STATUS_MAP[order.status] || STATUS_MAP.pending;
+          const items = Array.isArray(order.items) ? order.items : [];
+          return (
+            <Card key={order.id} className="cursor-pointer" onClick={() => setSelectedOrder(order)}>
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-sm font-medium">{order.order_number}</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>{status.emoji} {status.label}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-sm">{order.customer_name}</p>
+                    <p className="text-xs text-muted-foreground">{order.customer_phone}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold">{(order.total || 0).toLocaleString()} F</p>
+                    <p className="text-xs text-muted-foreground">{items.length} article{items.length > 1 ? 's' : ''}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString('fr-FR')}</span>
+                  <Select value={order.status} onValueChange={v => handleStatusChange(order.id, v)}>
+                    <SelectTrigger className="w-32 h-8 text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(STATUS_MAP).map(([key, val]) => (
+                        <SelectItem key={key} value={key}>{val.emoji} {val.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+        {orders.length === 0 && <p className="text-center py-8 text-muted-foreground">Aucune commande reçue</p>}
+      </div>
 
       {/* Order detail modal */}
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
@@ -130,8 +173,8 @@ export default function StoreOrders() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" asChild className="flex-1 gap-1"><a href={`tel:${selectedOrder.customer_phone}`}><Phone className="h-4 w-4" />📞 Appeler</a></Button>
-                  <Button variant="outline" size="sm" asChild className="flex-1 gap-1"><a href={`https://wa.me/${selectedOrder.customer_phone?.replace(/\s/g, '')}?text=${encodeURIComponent(`Bonjour ${selectedOrder.customer_name}, votre commande ${selectedOrder.order_number} est ${STATUS_MAP[selectedOrder.status]?.label || selectedOrder.status}. Merci !`)}`} target="_blank"><MessageCircle className="h-4 w-4" />💬 WhatsApp</a></Button>
+                  <Button variant="outline" size="sm" asChild className="flex-1 gap-1"><a href={`tel:${selectedOrder.customer_phone}`}><Phone className="h-4 w-4" />Appeler</a></Button>
+                  <Button variant="outline" size="sm" asChild className="flex-1 gap-1"><a href={`https://wa.me/${selectedOrder.customer_phone?.replace(/\s/g, '')}?text=${encodeURIComponent(`Bonjour ${selectedOrder.customer_name}, votre commande ${selectedOrder.order_number} est ${STATUS_MAP[selectedOrder.status]?.label || selectedOrder.status}. Merci !`)}`} target="_blank"><MessageCircle className="h-4 w-4" />WhatsApp</a></Button>
                 </div>
               </div>
             </>

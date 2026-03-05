@@ -62,6 +62,7 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
         sku: formData.sku,
         icon_emoji: formData.icon_emoji,
         icon_bg_color: formData.icon_bg_color,
+        image_url: formData.image_url,
       });
       onOpenChange(false);
       toast.success("Produit modifié avec succès");

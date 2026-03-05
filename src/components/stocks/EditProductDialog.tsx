@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useProducts } from "@/hooks/useProducts";
 import { toast } from "sonner";
 import { EmojiPicker, IconColorPicker, getIconBgStyle } from "./EmojiPicker";
+import { ImageCropUpload } from "./ImageCropUpload";
 
 interface Product {
   id: string;
@@ -19,6 +20,7 @@ interface Product {
   sku?: string;
   icon_emoji?: string;
   icon_bg_color?: string;
+  image_url?: string | null;
 }
 
 interface EditProductDialogProps {
@@ -41,6 +43,7 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
     sku: product?.sku || "",
     icon_emoji: product?.icon_emoji || "📦",
     icon_bg_color: product?.icon_bg_color || "bg-blue",
+    image_url: product?.image_url || null,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,6 +62,7 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
         sku: formData.sku,
         icon_emoji: formData.icon_emoji,
         icon_bg_color: formData.icon_bg_color,
+        image_url: formData.image_url,
       });
       onOpenChange(false);
       toast.success("Produit modifié avec succès");
@@ -81,6 +85,7 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
         sku: product.sku || "",
         icon_emoji: product.icon_emoji || "📦",
         icon_bg_color: product.icon_bg_color || "bg-blue",
+        image_url: product.image_url || null,
       });
       setShowPicker(false);
     }
@@ -163,6 +168,11 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
               <Label htmlFor="minQuantity">Stock minimum *</Label>
               <Input id="minQuantity" type="number" min="0" value={formData.min_quantity} onChange={e => setFormData(p => ({ ...p, min_quantity: Number(e.target.value) }))} required />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Photo du produit</Label>
+            <ImageCropUpload currentImageUrl={formData.image_url} onImageUploaded={url => setFormData(p => ({ ...p, image_url: url }))} />
           </div>
 
           <div className="flex gap-2 pt-2">

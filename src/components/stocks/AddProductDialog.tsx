@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { EmojiPicker, IconColorPicker, getIconBgStyle } from "./EmojiPicker";
+import { ImageCropUpload } from "./ImageCropUpload";
 
 export function AddProductDialog() {
   const [open, setOpen] = useState(false);
@@ -21,6 +22,7 @@ export function AddProductDialog() {
     sku: "",
     icon_emoji: "📦",
     icon_bg_color: "bg-blue",
+    image_url: "" as string | null,
   });
 
   const { addProduct } = useProducts();
@@ -38,8 +40,9 @@ export function AddProductDialog() {
         sku: formData.sku || null,
         icon_emoji: formData.icon_emoji,
         icon_bg_color: formData.icon_bg_color,
+        image_url: formData.image_url || null,
       });
-      setFormData({ name: "", description: "", price: "", quantity: "", min_quantity: "10", category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue" });
+      setFormData({ name: "", description: "", price: "", quantity: "", min_quantity: "10", category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue", image_url: null });
       setShowPicker(false);
       setOpen(false);
     } catch (error) {}
@@ -134,6 +137,11 @@ export function AddProductDialog() {
           <div className="space-y-2">
             <Label htmlFor="sku">SKU/Code produit</Label>
             <Input id="sku" name="sku" value={formData.sku} onChange={handleInputChange} placeholder="Ex: IPH14-128GB-BLK" />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Photo du produit</Label>
+            <ImageCropUpload currentImageUrl={formData.image_url} onImageUploaded={url => setFormData(p => ({ ...p, image_url: url }))} />
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

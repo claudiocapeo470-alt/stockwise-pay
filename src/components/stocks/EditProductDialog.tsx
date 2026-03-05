@@ -85,6 +85,7 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
         sku: product.sku || "",
         icon_emoji: product.icon_emoji || "📦",
         icon_bg_color: product.icon_bg_color || "bg-blue",
+        image_url: product.image_url || null,
       });
       setShowPicker(false);
     }

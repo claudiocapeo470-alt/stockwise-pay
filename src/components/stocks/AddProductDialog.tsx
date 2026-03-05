@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { EmojiPicker, IconColorPicker, getIconBgStyle } from "./EmojiPicker";
+import { ImageCropUpload } from "./ImageCropUpload";
 
 export function AddProductDialog() {
   const [open, setOpen] = useState(false);

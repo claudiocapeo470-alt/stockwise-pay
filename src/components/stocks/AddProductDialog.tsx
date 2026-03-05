@@ -42,7 +42,7 @@ export function AddProductDialog() {
         icon_bg_color: formData.icon_bg_color,
         image_url: formData.image_url || null,
       });
-      setFormData({ name: "", description: "", price: "", quantity: "", min_quantity: "10", category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue" });
+      setFormData({ name: "", description: "", price: "", quantity: "", min_quantity: "10", category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue", image_url: null });
       setShowPicker(false);
       setOpen(false);
     } catch (error) {}

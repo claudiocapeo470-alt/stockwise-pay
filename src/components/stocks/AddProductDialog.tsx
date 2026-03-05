@@ -22,6 +22,7 @@ export function AddProductDialog() {
     sku: "",
     icon_emoji: "📦",
     icon_bg_color: "bg-blue",
+    image_url: "" as string | null,
   });
 
   const { addProduct } = useProducts();

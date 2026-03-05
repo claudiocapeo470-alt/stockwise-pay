@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useProducts } from "@/hooks/useProducts";
 import { toast } from "sonner";
 import { EmojiPicker, IconColorPicker, getIconBgStyle } from "./EmojiPicker";
+import { ImageCropUpload } from "./ImageCropUpload";
 
 interface Product {
   id: string;

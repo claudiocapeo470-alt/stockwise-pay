@@ -170,6 +170,11 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
             </div>
           </div>
 
+          <div className="space-y-2">
+            <Label>Photo du produit</Label>
+            <ImageCropUpload currentImageUrl={formData.image_url} onImageUploaded={url => setFormData(p => ({ ...p, image_url: url }))} />
+          </div>
+
           <div className="flex gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">Annuler</Button>
             <Button type="submit" disabled={isSubmitting} className="flex-1">{isSubmitting ? "Modification..." : "💾 Enregistrer"}</Button>

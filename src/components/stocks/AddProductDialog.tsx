@@ -139,6 +139,11 @@ export function AddProductDialog() {
             <Input id="sku" name="sku" value={formData.sku} onChange={handleInputChange} placeholder="Ex: IPH14-128GB-BLK" />
           </div>
 
+          <div className="space-y-2">
+            <Label>Photo du produit</Label>
+            <ImageCropUpload currentImageUrl={formData.image_url} onImageUploaded={url => setFormData(p => ({ ...p, image_url: url }))} />
+          </div>
+
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Annuler</Button>
             <Button type="submit" disabled={addProduct.isPending}>{addProduct.isPending ? "Ajout..." : "Ajouter"}</Button>

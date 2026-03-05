@@ -20,6 +20,7 @@ interface Product {
   sku?: string;
   icon_emoji?: string;
   icon_bg_color?: string;
+  image_url?: string | null;
 }
 
 interface EditProductDialogProps {

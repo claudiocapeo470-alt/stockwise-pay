@@ -40,6 +40,7 @@ export function AddProductDialog() {
         sku: formData.sku || null,
         icon_emoji: formData.icon_emoji,
         icon_bg_color: formData.icon_bg_color,
+        image_url: formData.image_url || null,
       });
       setFormData({ name: "", description: "", price: "", quantity: "", min_quantity: "10", category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue" });
       setShowPicker(false);

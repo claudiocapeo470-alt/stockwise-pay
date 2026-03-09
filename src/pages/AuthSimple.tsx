@@ -89,8 +89,19 @@ export default function AuthSimple() {
         return;
       }
 
-      // Store member info for the session
-      localStorage.setItem('stocknix_member', JSON.stringify(data.member));
+      // Store member info in AuthContext and localStorage
+      const mi = {
+        member_id: data.member.id,
+        member_first_name: data.member.first_name,
+        member_last_name: data.member.last_name || null,
+        member_photo_url: data.member.photo_url || null,
+        member_role_name: data.member.role_name || '',
+        member_permissions: data.member.permissions || {},
+        company_id: data.member.company_id,
+        company_name: data.member.company_name,
+        company_logo_url: data.member.company_logo_url || null,
+      };
+      setMemberInfo(mi);
 
       // Use the magic link token to authenticate
       const { error: otpError } = await supabase.auth.verifyOtp({

@@ -1,142 +1,134 @@
 
 
-# Plan d'implémentation -- Modifications Stocknix
+# Plan d'implementation -- Refonte Caisse & Gestion de Stock Stocknix
 
-Ce plan couvre 6 axes majeurs : navigation mobile, refonte caisse, scan produits, responsive boutique, guide de bienvenue mis a jour, et correction URL boutique.
-
----
-
-## 1. Navigation mobile -- Bouton "Menu" avec drawer
-
-**Fichier:** `src/components/layout/BottomNav.tsx`
-
-- Remplacer le 6e bouton "Perfs" (TrendingUp) par "Menu" (Menu icon)
-- Au tap sur "Menu", ouvrir un Drawer (vaul) qui monte du bas
-- Le Drawer contient tous les elements du sidebar desktop : Navigation principale, Boutique en ligne, Compte (Profil, Parametres), Deconnexion
-- Chaque element navigue et ferme le drawer
-- Les 5 premiers boutons restent inchanges : Accueil, Stocks, Caisse, Ventes, Factures
+Ce document est extremement volumineux. L'implementation sera decoupee en phases priorisees pour eviter de casser l'existant.
 
 ---
 
-## 2. Refonte interface Caisse
+## Phase 1 -- Interface Caisse (refonte visuelle conforme a l'image de reference)
+
+**Fichier principal:** `src/pages/Caisse.tsx` (938 lignes, rewrite partiel)
+
+L'interface actuelle a deja le layout 3 colonnes (35% ticket/numpad, 15% categories, 50% produits) avec dark theme. Les ajustements necessaires :
+
+- Affiner le header : date a gauche, cadenas au centre, nom caissier + hamburger a droite (deja en place partiellement)
+- Grille produits : garder 2 colonnes par defaut, ajouter les barres de couleur de categorie en bas de chaque tile (deja fait)
+- Bottom bar 6 boutons : TICKETS, CLIENTS, QR CODE, RECHERCHER, AIDE, SORTIE (deja fait)
+- Ameliorer le numpad : C rouge, point, backspace, 7-9/4-6/1-3/00-0-×, boutons NOM TABLE/ACTIONS/TABLE/PAYER/EN COMPTE (deja fait)
+- **Nouveau** : Ajouter le bouton ACTIONS fonctionnel avec dropdown (Remise %, Remise montant, Annuler dernier article, Note interne, Ouvrir tiroir caisse, Cloturer caisse)
+
+## Phase 2 -- Scanner ameliore
 
 **Fichier:** `src/pages/Caisse.tsx`
 
-### 2.1 Header enrichi
-Ajouter dans la top bar les boutons :
-- Verrouiller (Lock icon) -- affiche un overlay PIN (fonctionnel basique)
-- Autres Actions (MoreHorizontal) -- dropdown avec options
-- Tickets en cours (ClipboardList) -- badge + liste
-- Ma Caisse (Home, actif)
-- Statistiques (BarChart3) -- lien vers /app/performance
-- Parametrages (Settings) -- lien vers /app/settings
+- Le scanner camera (html5-qrcode) et USB/HID sont deja implementes
+- **Ameliorations** : Ajouter overlay de guidage avec ligne laser animee, indicateur d'etat ("Camera active", "Code detecte"), anti-double-scan 1.5s (actuellement absent), vibration tactile, son indicatif, popup "Produit non trouve - Voulez-vous le creer ?" avec pre-remplissage SKU
+- Ajouter fallback champ de saisie manuelle si camera indisponible
 
-### 2.2 Grille produits
-- Grille 2 colonnes par defaut (au lieu de 2-4)
-- Quand categorie "Tout" est selectionnee : afficher des separateurs visuels entre chaque categorie (titre de section)
-- Produits en rupture : grises avec badge "Rupture"
+## Phase 3 -- Gestion du tiroir caisse (amelioration)
 
-### 2.3 Support images produit
-- Ajouter colonne `image_url` a la table `products` (migration)
-- Dans les cards produit de la caisse : si `image_url` existe, afficher l'image au lieu de l'emoji
-- Sinon, afficher l'emoji avec fond colore comme actuellement
+**Fichiers:** `src/pages/Caisse.tsx`, nouveau composant `src/components/caisse/CashReport.tsx`
 
-### 2.4 Clavier numerique tactile
-- Ajouter un clavier numerique retractable en bas a droite (desktop)
-- Boutons 0-9, virgule, effacer, valider
-- Permet de saisir quantite pour l'article selectionne dans le ticket
-- Bouton toggle pour afficher/masquer
+Les tables `cash_sessions` et `cash_movements` existent deja. L'ouverture/fermeture basique est implementee.
 
----
+- **Ameliorer l'ouverture** : modal obligatoire au demarrage, ventilation optionnelle billets/pieces, impossible d'utiliser la caisse sans session ouverte
+- **Ameliorer la fermeture** : comptage physique, ventilation par mode de paiement (especes/mobile/CB), calcul ecart theorique vs reel, commentaire, **generation PDF** du rapport
+- **Ajout entrees/depenses** : formulaire montant + motif + categorie + photo optionnelle, liste chronologique visible
+- **Rapport journalier** : resume complet (heure ouverture/fermeture, fond, ventes par mode de paiement, depenses, entrees, solde theorique/reel, ecart), export PDF, historique par date
 
-## 3. Scan de produits
+## Phase 4 -- CRM Clients
 
-**Fichier:** `src/pages/Caisse.tsx`
+**Nouveaux fichiers:** `src/pages/Clients.tsx`, `src/hooks/useCustomers.ts`
 
-### 3.1 Scan mobile (camera)
-- Ajouter bouton "Scanner" dans le header mobile
-- Utiliser `html5-qrcode` (deja installe) pour ouvrir la camera
-- Scanner code-barres → chercher produit par SKU/barcode → ajouter au ticket
-- Toast si non trouve
+La table `customers` existe deja avec tous les champs (loyalty_points, credit_enabled, credit_limit, credit_balance, etc.)
 
-### 3.2 Scan PC (USB/HID)
-- Ajouter un `useEffect` avec ecouteur `keydown` global
-- Detecter saisie rapide (<50ms entre touches) terminee par Enter
-- Interpreter comme code-barres, chercher et ajouter au ticket
-- Aucun bouton visible, tout automatique
+- Page complete de gestion clients : CRUD fiche client (nom, prenom, tel, email, adresse, photo, notes)
+- Historique achats par client (requete croisee sales/customers)
+- Credit client : activation/desactivation, plafond, paiement a credit en caisse, suivi solde, historique remboursements
+- Points fidelite : config globale (X points par Y FCFA), accumulation auto, conversion en reduction
+- **Integration caisse** : selection client dans le ticket, affichage solde points/credit
+- Ajout route `/app/clients` dans `App.tsx` et navigation dans `AppSidebar.tsx`
 
-### 3.3 Permissions camera
-- `useEffect` au montage demandant `getUserMedia` pour pre-autoriser
-- Ajouter `<meta name="permissions-policy" content="camera=*">` dans `index.html`
-- Toast informatif premiere fois
+**Migration DB** : Ajouter table `customer_transactions` pour historique credit/points, ajouter `customer_id` a la table `sales`
 
----
+## Phase 5 -- Promotions
 
-## 4. Responsive Boutique en ligne
+**Nouveaux fichiers:** `src/pages/Promotions.tsx`, `src/hooks/usePromotions.ts`
 
-### 4.1 StoreConfig (`src/pages/store/StoreConfig.tsx`)
-- Changer URL affichee de `stocknix.lovable.app/boutique/` vers `stocknix.space/boutique/`
-- Layout deja responsive (grid lg:grid-cols-3), verifier pas de scroll horizontal
+La table `promotions` existe deja.
 
-### 4.2 StoreProducts (`src/pages/store/StoreProducts.tsx`)
-- Sur mobile : remplacer les tableaux par des cards empilees (responsive via `hidden md:table-cell` + cards mobiles)
+- Page CRUD promotions : nom, type (% ou montant), valeur, dates, produits/categories concernes, code promo, max utilisations
+- **Integration caisse** : badge "PROMO" sur produits en promotion, prix barre + prix promo, saisie code promo dans le ticket, application auto de la reduction, ligne de reduction dans le ticket
+- Ajout route `/app/promotions`
 
-### 4.3 StoreOrders (`src/pages/store/StoreOrders.tsx`)
-- Sur mobile : afficher des cards au lieu du tableau
-- Filtres en haut, wrappés
+## Phase 6 -- Statistiques temps reel (amelioration)
 
-### 4.4 StoreReviews (`src/pages/store/StoreReviews.tsx`)
-- Grille responsive de cards au lieu du tableau sur mobile
-- Texte tronque avec "Voir plus"
+**Fichier existant:** `src/pages/PerformanceRapports.tsx` ou `src/pages/Performance.tsx`
 
----
+- Dashboard : CA du jour avec comparaison J-1, nombre tickets, panier moyen, clients servis
+- Analyses : top produits, ventes par caissier, par categorie, par heure (graphique courbe), par mode de paiement (camembert), evolution CA 7j/30j/12mois
+- Filtres par periode + caissier, export PDF/Excel
 
-## 5. Guide de bienvenue mis a jour
+## Phase 7 -- Extension gestion de stock
 
-**Fichier:** `src/components/onboarding/WelcomeGuide.tsx`
+**Migrations DB** : Tables `suppliers`, `purchase_orders`, `purchase_order_items`, `product_variants`, `warehouses`, `warehouse_stock`, `stock_transfers`, `inventories`, `inventory_items`
 
-- Ajouter de nouvelles etapes pour les fonctionnalites ajoutees :
-  - Etape 5 : "Boutique en ligne" -- creez et publiez votre boutique
-  - Etape 6 : "Scanner vos produits" -- scannez les codes-barres depuis la caisse
-- Passer de 4 a 6 etapes dans le guide
-- Modifier le texte "4 etapes" en "6 etapes"
+- Sous-categories et variantes produit (taille, couleur) avec stock individuel
+- Fournisseurs : CRUD fiche fournisseur, produits associes, historique achats
+- Commandes fournisseur : creation, statuts (brouillon/envoyee/recue), reception marchandise, mise a jour stock auto
+- Multi-entrepots : creation, stock par entrepot, transferts inter-entrepots
+- Inventaire : liste tous produits, saisie quantites reelles, scan pour comptage, calcul ecarts, validation = correction stock auto
+- Rapports stock : valeur totale, mouvements, marges, alertes stock faible, export Excel/PDF
 
-**Logique d'affichage :**
-- Ajouter un systeme de versioning : `localStorage` stocke `welcome-guide-version-{userId}`
-- Si la version stockee est inferieure a la version actuelle (ex: "2"), re-afficher le guide
-- Le guide se ferme et stocke la nouvelle version
+## Phase 8 -- Facturation PDF amelioree
+
+Ameliorer le systeme existant (pages Facturation, InvoiceEditor, InvoicePreview) :
+- Facture personnalisee avec logo
+- Devis exportable PDF
+- Bon de livraison, recu de paiement
+- Numerotation auto (deja fait via `generate_document_number`)
+- Mentions legales, conditions de paiement
 
 ---
 
-## 6. Migration base de donnees
+## Fichiers crees/modifies (resume)
 
-**Nouvelle migration** pour ajouter `image_url` a products :
-```sql
-ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url text;
-```
-
----
-
-## 7. Fichiers modifies (resume)
-
-| Fichier | Modifications |
-|---------|--------------|
-| `src/components/layout/BottomNav.tsx` | 6e bouton Menu + Drawer complet |
-| `src/pages/Caisse.tsx` | Header enrichi, grille 2 cols, separateurs, clavier numerique, scan mobile/PC |
-| `src/pages/store/StoreConfig.tsx` | URL stocknix.space |
-| `src/pages/store/StoreProducts.tsx` | Cards responsive mobile |
-| `src/pages/store/StoreOrders.tsx` | Cards responsive mobile |
-| `src/pages/store/StoreReviews.tsx` | Cards responsive mobile |
-| `src/components/onboarding/WelcomeGuide.tsx` | 6 etapes + versioning |
-| `src/pages/Dashboard.tsx` | Versioning guide |
-| `index.html` | Meta permissions-policy camera |
-| `supabase/migrations/...` | Colonne image_url |
-| `src/integrations/supabase/types.ts` | Type image_url |
+| Fichier | Action |
+|---------|--------|
+| `src/pages/Caisse.tsx` | Refonte continue + scan ameliore + tiroir caisse complet |
+| `src/components/caisse/CashReport.tsx` | Nouveau -- rapport PDF clôture |
+| `src/pages/Clients.tsx` | Nouveau -- CRM complet |
+| `src/hooks/useCustomers.ts` | Nouveau -- hook CRUD clients |
+| `src/pages/Promotions.tsx` | Nouveau -- gestion promotions |
+| `src/hooks/usePromotions.ts` | Nouveau -- hook CRUD promotions |
+| `src/pages/PerformanceRapports.tsx` | Amelioration stats temps reel |
+| `src/pages/Stocks.tsx` | Extension fournisseurs, variantes, inventaire |
+| `src/App.tsx` | Nouvelles routes (clients, promotions, fournisseurs, inventaire) |
+| `src/components/layout/AppSidebar.tsx` | Nouveaux liens navigation |
+| `src/components/layout/BottomNav.tsx` | Mise a jour drawer avec nouveaux liens |
+| Migrations Supabase | Tables suppliers, purchase_orders, product_variants, warehouses, inventories, customer_transactions |
 
 ---
 
-## Contraintes respectees
-- Ne pas casser stocks, ventes, facturation, dashboard existants
-- html5-qrcode deja installe
-- Coherence visuelle maintenue
+## Contraintes
+
+- Les deux themes (sombre/jour) sont preserves -- variables CSS du theme utilises partout sauf interface POS (dark panel)
+- Pas de scroll horizontal sur aucun appareil
+- Boutons tactiles min 44x44px sur mobile
+- Chaque action = toast succes ou erreur
+- react-image-crop deja installe pour recadrage carre
+- html5-qrcode deja installe pour scan
+- jspdf + jspdf-autotable deja installes pour PDF
+
+---
+
+## Ordre d'implementation recommande
+
+Vu la taille, je recommande d'implementer par blocs :
+1. **Bloc 1** : Phases 1-3 (Caisse refonte + scanner + tiroir caisse) -- un seul fichier principal
+2. **Bloc 2** : Phase 4 (CRM clients) -- nouvelles pages + integration caisse
+3. **Bloc 3** : Phase 5 (Promotions) -- nouvelles pages + integration caisse
+4. **Bloc 4** : Phases 6-7 (Stats + Stock etendu) -- ameliorations + nouvelles tables
+5. **Bloc 5** : Phase 8 (Facturation) -- ameliorations
 

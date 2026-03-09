@@ -1,12 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Settings as SettingsIcon, Palette, Shield, Database, Globe, Bell, Smartphone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Settings as SettingsIcon, Palette, Shield, Database, Globe, Bell, Smartphone, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 
 export default function Settings() {
-  const { user, profile, isAdmin } = useAuth();
+  const { user, profile, isAdmin, isEmployee } = useAuth();
+  const navigate = useNavigate();
 
   const displayName = profile?.first_name 
     ? `${profile.first_name} ${profile.last_name || ''}`.trim()
@@ -21,6 +24,22 @@ export default function Settings() {
           Configuration et préférences de votre application Stocknix
         </p>
       </div>
+
+      {/* Team Management Link - Admin only */}
+      {!isEmployee && (
+        <Card className="border-primary/20 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors" onClick={() => navigate('/app/team')}>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Users className="h-6 w-6 text-primary" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-foreground">Mon équipe</h3>
+              <p className="text-sm text-muted-foreground">Gérer les services, rôles, membres et le code entreprise</p>
+            </div>
+            <Button variant="outline" size="sm">Accéder</Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Company Settings */}
       <CompanySettings />

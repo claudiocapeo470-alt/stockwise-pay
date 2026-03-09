@@ -1,183 +1,142 @@
 
 
-# Plan d'Implementation -- Phases 2 a 5
+# Plan d'implémentation -- Modifications Stocknix
 
-Ce plan couvre toutes les fonctionnalites restantes du prompt original. Phase 1 (tables DB + PIN login) est deja implementee.
-
-## Phase 2 -- Section "Mon equipe" dans les Parametres Admin
-
-### 2A. Page TeamManagement avec 4 onglets
-
-**Nouveau fichier:** `src/pages/TeamManagement.tsx`
-
-Onglets Tabs (Shadcn) :
-
-1. **Code Entreprise** -- Affiche le code 6 chiffres de la company, bouton copier, bouton regenerer (avec confirmation AlertDialog qui avertit que tous les employes seront deconnectes). Utilise `useCompany()` existant.
-
-2. **Services** -- CRUD des services (`company_services` table). Liste avec nom, couleur (input color), icone (emoji picker simple), toggle actif/inactif. Bouton ajouter un service ouvre Dialog. Pas de suppression des services systeme.
-
-3. **Roles** -- CRUD des roles (`company_roles` table). Nom du role, service associe (select), permissions par module (checkboxes dans une grille : Stock, Achats, Ventes, Boutique, Caisse, Livraison, Rapports, Parametres × voir/creer/modifier/supprimer). Roles systeme (is_system=true) non supprimables mais editables sur les permissions. Le champ `permissions` est deja JSONB -- on y stocke `{ stock: ["read","create","update","delete"], pos: ["read","create"], ... }`.
-
-4. **Membres** -- CRUD des membres (`company_members` table). Formulaire : prenom, nom, photo (upload vers bucket avatars), service (select), role (select). Le SAAS genere un PIN 6 chiffres aleatoire. Admin peut modifier le PIN manuellement. Affichage PIN masque (******) avec bouton oeil pour reveler + bouton copier. Toggle actif/inactif. Affichage derniere connexion.
-
-### 2B. Integration dans Settings
-
-Ajouter un onglet/section "Mon equipe" dans `src/pages/Settings.tsx` qui redirige vers `/app/team` ou l'integrer directement dans Settings via Tabs.
-
-**Decision:** Creer une page dediee `/app/team` accessible depuis la sidebar (section Parametres) et depuis Settings via un lien.
-
-### 2C. Hook useTeam
-
-**Nouveau fichier:** `src/hooks/useTeam.ts`
-
-Hook avec React Query pour CRUD sur `company_services`, `company_roles`, `company_members`. Utilise `useCompany()` pour le `company_id`.
-
-### Fichiers modifies/crees :
-- `src/pages/TeamManagement.tsx` (nouveau)
-- `src/hooks/useTeam.ts` (nouveau)
-- `src/components/layout/AppSidebar.tsx` (ajout lien "Mon equipe")
-- `src/components/layout/BottomNav.tsx` (ajout dans drawer)
-- `src/App.tsx` (ajout route `/app/team`)
+Ce plan couvre 6 axes majeurs : navigation mobile, refonte caisse, scan produits, responsive boutique, guide de bienvenue mis a jour, et correction URL boutique.
 
 ---
 
-## Phase 3 -- Espaces dedies par role (Sidebar dynamique)
+## 1. Navigation mobile -- Bouton "Menu" avec drawer
 
-### 3A. AuthContext enrichi
+**Fichier:** `src/components/layout/BottomNav.tsx`
 
-Modifier `src/contexts/AuthContext.tsx` pour exposer :
-- `memberInfo` : les donnees du membre connecte par PIN (depuis localStorage `stocknix_member`)
-- `memberRole` : nom du role de l'employe
-- `memberPermissions` : permissions JSONB
-- `isEmployee` : boolean (connecte via PIN)
-- `companyId` : ID de l'entreprise
-
-### 3B. Sidebar dynamique
-
-Modifier `src/components/layout/AppSidebar.tsx` :
-- Si `isEmployee` est true, filtrer les liens de navigation selon `memberPermissions`
-- Mapping permissions → liens sidebar :
-  - `pos: true` → Caisse
-  - `stock: true` → Gestion des stocks
-  - `sales_history: true` → Ventes
-  - `boutique_orders: true` → Commandes boutique
-  - `reports: true` → Performance & Rapports
-  - `deliveries_own: true` → Mes livraisons
-  - etc.
-- Si Admin (owner), tout est visible (comportement actuel)
-
-### 3C. Redirections par role au login
-
-Deja partiellement implemente dans `AuthSimple.tsx` (lignes 118-125). Enrichir :
-- Caissier → `/app/caisse`
-- Livreur → `/app/livraisons`
-- Gestionnaire Stock → `/app/stocks`
-- Manager → `/app`
-- Vendeur → `/app/boutique/commandes`
-
-### 3D. ProtectedRoute enrichi
-
-Modifier `ProtectedRoute.tsx` pour verifier les permissions par route. Si un employe tente d'acceder a une route non autorisee, rediriger vers sa page par defaut.
-
-### Fichiers modifies :
-- `src/contexts/AuthContext.tsx`
-- `src/components/layout/AppSidebar.tsx`
-- `src/components/layout/BottomNav.tsx`
-- `src/components/auth/ProtectedRoute.tsx`
+- Remplacer le 6e bouton "Perfs" (TrendingUp) par "Menu" (Menu icon)
+- Au tap sur "Menu", ouvrir un Drawer (vaul) qui monte du bas
+- Le Drawer contient tous les elements du sidebar desktop : Navigation principale, Boutique en ligne, Compte (Profil, Parametres), Deconnexion
+- Chaque element navigue et ferme le drawer
+- Les 5 premiers boutons restent inchanges : Accueil, Stocks, Caisse, Ventes, Factures
 
 ---
 
-## Phase 4 -- Module Livraison
+## 2. Refonte interface Caisse
 
-### 4A. Pages livraison Admin/Manager
+**Fichier:** `src/pages/Caisse.tsx`
 
-**Nouveau fichier:** `src/pages/Livraisons.tsx`
+### 2.1 Header enrichi
+Ajouter dans la top bar les boutons :
+- Verrouiller (Lock icon) -- affiche un overlay PIN (fonctionnel basique)
+- Autres Actions (MoreHorizontal) -- dropdown avec options
+- Tickets en cours (ClipboardList) -- badge + liste
+- Ma Caisse (Home, actif)
+- Statistiques (BarChart3) -- lien vers /app/performance
+- Parametrages (Settings) -- lien vers /app/settings
 
-Tableau de bord livraisons :
-- Stats du jour : assignees, en cours, livrees, problemes
-- Liste/table des livraisons avec filtres (statut, livreur, date)
-- Pour chaque commande boutique : bouton "Assigner un livreur" ouvre Dialog avec liste des membres role=Livreur actifs
-- Statut en temps reel (realtime Supabase optionnel, sinon polling)
+### 2.2 Grille produits
+- Grille 2 colonnes par defaut (au lieu de 2-4)
+- Quand categorie "Tout" est selectionnee : afficher des separateurs visuels entre chaque categorie (titre de section)
+- Produits en rupture : grises avec badge "Rupture"
 
-### 4B. Vue mobile Livreur
+### 2.3 Support images produit
+- Ajouter colonne `image_url` a la table `products` (migration)
+- Dans les cards produit de la caisse : si `image_url` existe, afficher l'image au lieu de l'emoji
+- Sinon, afficher l'emoji avec fond colore comme actuellement
 
-**Nouveau fichier:** `src/pages/LivreurDashboard.tsx`
-
-Interface mobile optimisee :
-- Liste des livraisons assignees au livreur connecte (filtre `driver_member_id = memberInfo.id`)
-- Chaque carte : adresse client, articles, instructions, numero commande
-- Boutons action : "Demarrer" (→ en_cours), "Livree" (→ delivered), "Probleme" (→ problem + motif)
-- Bottom tabs : Aujourd'hui / Historique / Profil
-- Layout sans sidebar, BottomNav specifique livreur
-
-### 4C. Integration commandes boutique
-
-Modifier `src/pages/store/StoreOrders.tsx` :
-- Ajouter colonne "Livraison" dans le tableau
-- Bouton "Assigner livreur" par commande
-- Afficher le livreur assigne et le statut
-
-### 4D. Hook useDeliveries
-
-**Nouveau fichier:** `src/hooks/useDeliveries.ts`
-
-CRUD sur la table `deliveries` existante. Fonctions : assignDriver, updateStatus, getByDriver, getByCompany.
-
-### Fichiers crees/modifies :
-- `src/pages/Livraisons.tsx` (nouveau)
-- `src/pages/LivreurDashboard.tsx` (nouveau)
-- `src/hooks/useDeliveries.ts` (nouveau)
-- `src/pages/store/StoreOrders.tsx` (modifie)
-- `src/App.tsx` (routes `/app/livraisons`, `/app/livreur`)
-- `src/components/layout/AppSidebar.tsx` (lien livraisons)
+### 2.4 Clavier numerique tactile
+- Ajouter un clavier numerique retractable en bas a droite (desktop)
+- Boutons 0-9, virgule, effacer, valider
+- Permet de saisir quantite pour l'article selectionne dans le ticket
+- Bouton toggle pour afficher/masquer
 
 ---
 
-## Phase 5 -- Verrouillage de session
+## 3. Scan de produits
 
-### 5A. Integration LockScreen dans AppLayout
+**Fichier:** `src/pages/Caisse.tsx`
 
-Modifier `src/components/layout/AppLayout.tsx` :
-- State `isLocked` geré par timeout d'inactivite
-- Lire `lock_timeout_minutes` depuis `useCompany()`
-- Quand timeout atteint → afficher `<LockScreen>` par dessus tout
-- Deverrouillage = verifier PIN du membre connecte (appel local, pas edge function)
-- Bouton "Verrouiller" dans le header (deja prevu dans la Caisse)
+### 3.1 Scan mobile (camera)
+- Ajouter bouton "Scanner" dans le header mobile
+- Utiliser `html5-qrcode` (deja installe) pour ouvrir la camera
+- Scanner code-barres → chercher produit par SKU/barcode → ajouter au ticket
+- Toast si non trouve
 
-### 5B. Bouton Verrouiller dans le header
+### 3.2 Scan PC (USB/HID)
+- Ajouter un `useEffect` avec ecouteur `keydown` global
+- Detecter saisie rapide (<50ms entre touches) terminee par Enter
+- Interpreter comme code-barres, chercher et ajouter au ticket
+- Aucun bouton visible, tout automatique
 
-Ajouter un bouton Lock dans le header de `AppLayout` (visible uniquement pour les employes).
-
-### Fichiers modifies :
-- `src/components/layout/AppLayout.tsx`
-- `src/components/auth/LockScreen.tsx` (deja cree, OK)
+### 3.3 Permissions camera
+- `useEffect` au montage demandant `getUserMedia` pour pre-autoriser
+- Ajouter `<meta name="permissions-policy" content="camera=*">` dans `index.html`
+- Toast informatif premiere fois
 
 ---
 
-## Resume des fichiers
+## 4. Responsive Boutique en ligne
 
-| Fichier | Action |
-|---------|--------|
-| `src/pages/TeamManagement.tsx` | Nouveau -- gestion equipe (4 onglets) |
-| `src/hooks/useTeam.ts` | Nouveau -- hook CRUD services/roles/membres |
-| `src/pages/Livraisons.tsx` | Nouveau -- dashboard livraisons admin |
-| `src/pages/LivreurDashboard.tsx` | Nouveau -- vue mobile livreur |
-| `src/hooks/useDeliveries.ts` | Nouveau -- hook CRUD livraisons |
-| `src/contexts/AuthContext.tsx` | Enrichir avec memberInfo/permissions |
-| `src/components/layout/AppSidebar.tsx` | Sidebar dynamique par role |
-| `src/components/layout/BottomNav.tsx` | Navigation dynamique par role |
-| `src/components/layout/AppLayout.tsx` | Verrouillage session + timeout |
-| `src/components/auth/ProtectedRoute.tsx` | Verification permissions par route |
-| `src/pages/Settings.tsx` | Lien vers Mon equipe |
-| `src/pages/store/StoreOrders.tsx` | Colonne livraison + assignation |
-| `src/App.tsx` | Routes /app/team, /app/livraisons, /app/livreur |
+### 4.1 StoreConfig (`src/pages/store/StoreConfig.tsx`)
+- Changer URL affichee de `stocknix.lovable.app/boutique/` vers `stocknix.space/boutique/`
+- Layout deja responsive (grid lg:grid-cols-3), verifier pas de scroll horizontal
 
-## Pas de migration DB necessaire
-Toutes les tables requises (companies, company_services, company_roles, company_members, deliveries, lock_sessions) existent deja. Les RLS sont en place.
+### 4.2 StoreProducts (`src/pages/store/StoreProducts.tsx`)
+- Sur mobile : remplacer les tableaux par des cards empilees (responsive via `hidden md:table-cell` + cards mobiles)
 
-## Ordre d'implementation
-1. Phase 2 (Mon equipe) -- fondation pour tout le reste
-2. Phase 3 (Sidebar dynamique + AuthContext enrichi) -- depend de Phase 2
-3. Phase 4 (Module livraison) -- depend de Phase 3
-4. Phase 5 (Verrouillage session) -- independant, fait en dernier
+### 4.3 StoreOrders (`src/pages/store/StoreOrders.tsx`)
+- Sur mobile : afficher des cards au lieu du tableau
+- Filtres en haut, wrappés
+
+### 4.4 StoreReviews (`src/pages/store/StoreReviews.tsx`)
+- Grille responsive de cards au lieu du tableau sur mobile
+- Texte tronque avec "Voir plus"
+
+---
+
+## 5. Guide de bienvenue mis a jour
+
+**Fichier:** `src/components/onboarding/WelcomeGuide.tsx`
+
+- Ajouter de nouvelles etapes pour les fonctionnalites ajoutees :
+  - Etape 5 : "Boutique en ligne" -- creez et publiez votre boutique
+  - Etape 6 : "Scanner vos produits" -- scannez les codes-barres depuis la caisse
+- Passer de 4 a 6 etapes dans le guide
+- Modifier le texte "4 etapes" en "6 etapes"
+
+**Logique d'affichage :**
+- Ajouter un systeme de versioning : `localStorage` stocke `welcome-guide-version-{userId}`
+- Si la version stockee est inferieure a la version actuelle (ex: "2"), re-afficher le guide
+- Le guide se ferme et stocke la nouvelle version
+
+---
+
+## 6. Migration base de donnees
+
+**Nouvelle migration** pour ajouter `image_url` a products :
+```sql
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url text;
+```
+
+---
+
+## 7. Fichiers modifies (resume)
+
+| Fichier | Modifications |
+|---------|--------------|
+| `src/components/layout/BottomNav.tsx` | 6e bouton Menu + Drawer complet |
+| `src/pages/Caisse.tsx` | Header enrichi, grille 2 cols, separateurs, clavier numerique, scan mobile/PC |
+| `src/pages/store/StoreConfig.tsx` | URL stocknix.space |
+| `src/pages/store/StoreProducts.tsx` | Cards responsive mobile |
+| `src/pages/store/StoreOrders.tsx` | Cards responsive mobile |
+| `src/pages/store/StoreReviews.tsx` | Cards responsive mobile |
+| `src/components/onboarding/WelcomeGuide.tsx` | 6 etapes + versioning |
+| `src/pages/Dashboard.tsx` | Versioning guide |
+| `index.html` | Meta permissions-policy camera |
+| `supabase/migrations/...` | Colonne image_url |
+| `src/integrations/supabase/types.ts` | Type image_url |
+
+---
+
+## Contraintes respectees
+- Ne pas casser stocks, ventes, facturation, dashboard existants
+- html5-qrcode deja installe
+- Coherence visuelle maintenue
 

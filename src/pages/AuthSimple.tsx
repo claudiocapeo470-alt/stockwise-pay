@@ -33,7 +33,7 @@ const resetEmailSchema = z.object({
 export default function AuthSimple() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, signIn, signUp, loading } = useAuth();
+  const { user, signIn, signUp, loading, setMemberInfo } = useAuth();
   
   const [authMode, setAuthMode] = useState<'classic' | 'employee'>('classic');
   const [activeTab, setActiveTab] = useState('login');
@@ -89,8 +89,19 @@ export default function AuthSimple() {
         return;
       }
 
-      // Store member info for the session
-      localStorage.setItem('stocknix_member', JSON.stringify(data.member));
+      // Store member info in AuthContext and localStorage
+      const mi = {
+        member_id: data.member.id,
+        member_first_name: data.member.first_name,
+        member_last_name: data.member.last_name || null,
+        member_photo_url: data.member.photo_url || null,
+        member_role_name: data.member.role_name || '',
+        member_permissions: data.member.permissions || {},
+        company_id: data.member.company_id,
+        company_name: data.member.company_name,
+        company_logo_url: data.member.company_logo_url || null,
+      };
+      setMemberInfo(mi);
 
       // Use the magic link token to authenticate
       const { error: otpError } = await supabase.auth.verifyOtp({
@@ -115,13 +126,17 @@ export default function AuthSimple() {
       document.documentElement.classList.add('light');
 
       // Redirect based on role
-      const roleName = data.member.role_name?.toLowerCase();
-      if (roleName === 'caissier') {
-        navigate('/app/caisse');
-      } else if (roleName === 'livreur') {
-        navigate('/app/livraisons');
+      const roleName = (data.member.role_name || '').toLowerCase();
+      if (roleName.includes('caissier')) {
+        window.location.href = '/app/caisse';
+      } else if (roleName.includes('livreur')) {
+        window.location.href = '/app/livreur';
+      } else if (roleName.includes('gestionnaire')) {
+        window.location.href = '/app/stocks';
+      } else if (roleName.includes('vendeur')) {
+        window.location.href = '/app/boutique/commandes';
       } else {
-        navigate('/app');
+        window.location.href = '/app';
       }
     } catch (err) {
       console.error('PIN login error:', err);

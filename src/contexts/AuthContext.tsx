@@ -21,17 +21,33 @@ interface UserRole {
   created_at: string;
 }
 
+export interface MemberInfo {
+  member_id: string;
+  member_first_name: string;
+  member_last_name: string | null;
+  member_photo_url: string | null;
+  member_role_name: string;
+  member_permissions: Record<string, any>;
+  company_id: string;
+  company_name: string;
+  company_logo_url: string | null;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
   userRole: UserRole | null;
+  memberInfo: MemberInfo | null;
+  isEmployee: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any; needsConfirmation?: boolean; user?: User }>;
   signOut: () => Promise<void>;
   loading: boolean;
   isAdmin: boolean;
   refreshProfile: () => Promise<void>;
+  setMemberInfo: (info: MemberInfo | null) => void;
+  hasPermission: (module: string, action?: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,9 +69,41 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [memberInfo, setMemberInfoState] = useState<MemberInfo | null>(() => {
+    try {
+      const stored = localStorage.getItem('stocknix_member');
+      return stored ? JSON.parse(stored) : null;
+    } catch { return null; }
+  });
   const [loading, setLoading] = useState(true);
 
   const isAdmin = userRole?.role === 'admin';
+  const isEmployee = !!memberInfo;
+
+  const setMemberInfo = (info: MemberInfo | null) => {
+    setMemberInfoState(info);
+    if (info) {
+      localStorage.setItem('stocknix_member', JSON.stringify(info));
+    } else {
+      localStorage.removeItem('stocknix_member');
+    }
+  };
+
+  const hasPermission = (module: string, action: string = 'read'): boolean => {
+    // Admin owner has all permissions
+    if (!isEmployee) return true;
+    if (!memberInfo?.member_permissions) return false;
+    const perms = memberInfo.member_permissions;
+    // Check for "all" permission (Admin role)
+    if (perms.all === true) return true;
+    // Check module-level boolean (legacy format: { pos: true })
+    if (perms[module] === true) return true;
+    // Check array format: { stock: ["read", "create"] }
+    if (Array.isArray(perms[module])) {
+      return perms[module].includes(action);
+    }
+    return false;
+  };
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -83,7 +131,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // Fonction pour rafraîchir le profil
   const refreshProfile = async () => {
     if (user) {
       await fetchProfile(user.id);
@@ -91,7 +138,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setSession(session);
@@ -102,22 +148,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             fetchProfile(session.user.id);
           }, 0);
           
-          // Redirect after email confirmation
           if (event === 'SIGNED_IN' && window.location.pathname.includes('/auth')) {
             setTimeout(async () => {
-              // Forcer le mode jour
               localStorage.setItem('theme', 'light');
               document.documentElement.classList.remove('dark');
               document.documentElement.classList.add('light');
               
-              // Vérifier si l'utilisateur est admin
+              // If employee login (memberInfo already set), redirect based on role
+              const storedMember = localStorage.getItem('stocknix_member');
+              if (storedMember) {
+                const mi = JSON.parse(storedMember);
+                const roleName = mi.member_role_name?.toLowerCase() || '';
+                if (roleName.includes('caissier')) {
+                  window.location.href = '/app/caisse';
+                } else if (roleName.includes('livreur')) {
+                  window.location.href = '/app/livreur';
+                } else if (roleName.includes('gestionnaire')) {
+                  window.location.href = '/app/stocks';
+                } else if (roleName.includes('vendeur')) {
+                  window.location.href = '/app/boutique/commandes';
+                } else {
+                  window.location.href = '/app';
+                }
+                return;
+              }
+
               const { data: roleData } = await supabase
                 .from('user_roles')
                 .select('role')
                 .eq('user_id', session.user.id)
                 .maybeSingle();
               
-              // Rediriger vers admin si admin, sinon vers app
               if (roleData?.role === 'admin') {
                 window.location.href = '/admin';
               } else {
@@ -128,13 +189,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } else {
           setProfile(null);
           setUserRole(null);
+          setMemberInfo(null);
         }
         
         setLoading(false);
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -155,14 +216,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       password,
     });
     
-    // Vérifier si l'email est confirmé
     if (data?.user && !data.user.email_confirmed_at) {
       return { 
         error: new Error('Votre compte n\'est pas encore confirmé. Vérifiez votre email pour le lien de confirmation.') 
       };
     }
     
-    // Redirection immédiate après connexion réussie
     if (data?.user && !error) {
       const { data: roleData } = await supabase
         .from('user_roles')
@@ -170,12 +229,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         .eq('user_id', data.user.id)
         .maybeSingle();
       
-      // Forcer le mode jour
       localStorage.setItem('theme', 'light');
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
       
-      // Rediriger immédiatement selon le rôle
       setTimeout(() => {
         if (roleData?.role === 'admin') {
           window.location.href = '/admin';
@@ -190,7 +247,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
-      // Inscription ULTRA simplifiée - fonctionne à 100%
       const confirmationUrl = `${window.location.origin}/app?confirmed=true`;
       
       const { data, error } = await supabase.auth.signUp({
@@ -211,16 +267,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       if (data?.user) {
-        // Inscription réussie - Supabase gère automatiquement l'email de confirmation
         const needsConfirmation = !data.user.email_confirmed_at;
-        
         console.log('✅ Inscription réussie pour:', email, needsConfirmation ? '(confirmation requise)' : '(compte actif)');
-        
-        return { 
-          error: null, 
-          needsConfirmation,
-          user: data.user 
-        };
+        return { error: null, needsConfirmation, user: data.user };
       }
       
       return { error: new Error('Aucun utilisateur créé'), needsConfirmation: false };
@@ -232,24 +281,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signOut = async () => {
     try {
-      // Nettoyer d'abord les données locales
       setUser(null);
       setSession(null);
       setProfile(null);
       setUserRole(null);
+      setMemberInfo(null);
       
-      // Ensuite faire la déconnexion Supabase
       const { error } = await supabase.auth.signOut();
+      if (error) console.error('Erreur lors de la déconnexion:', error);
       
-      if (error) {
-        console.error('Erreur lors de la déconnexion:', error);
-      }
-      
-      // Forcer une redirection vers la page de connexion
       window.location.href = '/auth';
     } catch (error) {
       console.error('Erreur inattendue lors de la déconnexion:', error);
-      // En cas d'erreur, forcer quand même le nettoyage local
       localStorage.clear();
       window.location.href = '/auth';
     }
@@ -260,12 +303,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     session,
     profile,
     userRole,
+    memberInfo,
+    isEmployee,
     signIn,
     signUp,
     signOut,
     loading,
     isAdmin,
     refreshProfile,
+    setMemberInfo,
+    hasPermission,
   };
 
   return (

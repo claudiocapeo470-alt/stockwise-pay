@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Loader2, Eye, EyeOff, ArrowLeft, Package, TrendingUp, BarChart3, Wallet } from "lucide-react";
+import { Loader2, Eye, EyeOff, ArrowLeft, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,10 +9,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { PinKeypad } from "@/components/auth/PinKeypad";
 import stocknixLogo from '@/assets/stocknix-logo.png';
 import entrepreneursImage from "@/assets/african-entrepreneur-tablet.png";
 
-// Schémas de validation ultra-simples
+// Schémas de validation
 const loginSchema = z.object({
   email: z.string().email('Email invalide'),
   password: z.string().min(1, 'Mot de passe requis')
@@ -34,11 +35,18 @@ export default function AuthSimple() {
   const [searchParams] = useSearchParams();
   const { user, signIn, signUp, loading } = useAuth();
   
+  const [authMode, setAuthMode] = useState<'classic' | 'employee'>('classic');
   const [activeTab, setActiveTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'success' | null>(null);
   
+  // PIN login state
+  const [pinStep, setPinStep] = useState<'company' | 'pin'>('company');
+  const [companyCode, setCompanyCode] = useState('');
+  const [pinError, setPinError] = useState('');
+  const [pinLoading, setPinLoading] = useState(false);
+
   // États des formulaires
   const [formData, setFormData] = useState({
     email: '',
@@ -65,7 +73,71 @@ export default function AuthSimple() {
     }
   }, [searchParams, user, navigate]);
 
-  // Réinitialisation de mot de passe SIMPLE avec Supabase natif
+  // PIN Login handler
+  const handlePinLogin = async (pin: string) => {
+    setPinLoading(true);
+    setPinError('');
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('pin-login', {
+        body: { company_code: companyCode, pin_code: pin }
+      });
+
+      if (error || !data?.success) {
+        setPinError(data?.error || 'Code entreprise ou PIN incorrect');
+        setPinLoading(false);
+        return;
+      }
+
+      // Store member info for the session
+      localStorage.setItem('stocknix_member', JSON.stringify(data.member));
+
+      // Use the magic link token to authenticate
+      const { error: otpError } = await supabase.auth.verifyOtp({
+        email: data.email,
+        token: data.token_hash,
+        type: 'magiclink',
+      });
+
+      if (otpError) {
+        console.error('OTP verification error:', otpError);
+        setPinError('Erreur de connexion. Réessayez.');
+        setPinLoading(false);
+        return;
+      }
+
+      toast.success('✅ Connexion réussie !', {
+        description: `Bienvenue ${data.member.first_name}`
+      });
+
+      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+
+      // Redirect based on role
+      const roleName = data.member.role_name?.toLowerCase();
+      if (roleName === 'caissier') {
+        navigate('/app/caisse');
+      } else if (roleName === 'livreur') {
+        navigate('/app/livraisons');
+      } else {
+        navigate('/app');
+      }
+    } catch (err) {
+      console.error('PIN login error:', err);
+      setPinError('Erreur de connexion');
+    } finally {
+      setPinLoading(false);
+    }
+  };
+
+  const handleCompanyCodeComplete = (code: string) => {
+    setCompanyCode(code);
+    setPinStep('pin');
+    setPinError('');
+  };
+
+  // Réinitialisation de mot de passe
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -78,7 +150,6 @@ export default function AuthSimple() {
         return;
       }
 
-      // Utilisation de la réinitialisation native Supabase
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
         redirectTo: `${window.location.origin}/auth?reset=true`
       });
@@ -94,11 +165,8 @@ export default function AuthSimple() {
       toast.success('✅ Email envoyé !', {
         description: 'Vérifiez votre boîte email pour réinitialiser votre mot de passe'
       });
-
     } catch (error: any) {
-      toast.error('❌ Erreur', {
-        description: 'Une erreur est survenue'
-      });
+      toast.error('❌ Erreur', { description: 'Une erreur est survenue' });
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +180,6 @@ export default function AuthSimple() {
 
     try {
       if (activeTab === 'login') {
-        // LOGIN
         const validation = loginSchema.safeParse({
           email: formData.email,
           password: formData.password
@@ -131,30 +198,22 @@ export default function AuthSimple() {
         
         if (error) {
           if (error.message.includes('Invalid login credentials')) {
-            toast.error('❌ Connexion échouée', {
-              description: 'Email ou mot de passe incorrect'
-            });
+            toast.error('❌ Connexion échouée', { description: 'Email ou mot de passe incorrect' });
           } else if (error.message.includes('pas encore confirmé')) {
-            toast.error('❌ Compte non confirmé', {
-              description: 'Vérifiez votre email pour confirmer votre compte'
-            });
+            toast.error('❌ Compte non confirmé', { description: 'Vérifiez votre email pour confirmer votre compte' });
           } else {
-            toast.error('❌ Erreur de connexion', {
-              description: error.message
-            });
+            toast.error('❌ Erreur de connexion', { description: error.message });
           }
           return;
         }
 
         toast.success('✅ Connexion réussie !');
-        // Forcer le mode jour
         localStorage.setItem('theme', 'light');
         document.documentElement.classList.remove('dark');
         document.documentElement.classList.add('light');
         navigate('/app');
         
       } else {
-        // INSCRIPTION
         const validation = signupSchema.safeParse(formData);
         
         if (!validation.success) {
@@ -175,24 +234,17 @@ export default function AuthSimple() {
 
         if (error) {
           if (error.message.includes('already registered')) {
-            toast.error('❌ Inscription échouée', {
-              description: 'Un compte avec cet email existe déjà'
-            });
+            toast.error('❌ Inscription échouée', { description: 'Un compte avec cet email existe déjà' });
           } else {
-            toast.error('❌ Erreur d\'inscription', {
-              description: error.message
-            });
+            toast.error('❌ Erreur d\'inscription', { description: error.message });
           }
           return;
         }
 
         if (needsConfirmation) {
-          toast.success('✅ Inscription réussie !', {
-            description: 'Vérifiez votre email pour confirmer votre compte'
-          });
+          toast.success('✅ Inscription réussie !', { description: 'Vérifiez votre email pour confirmer votre compte' });
         } else {
           toast.success('✅ Compte créé et activé !');
-          // Forcer le mode jour
           localStorage.setItem('theme', 'light');
           document.documentElement.classList.remove('dark');
           document.documentElement.classList.add('light');
@@ -200,9 +252,7 @@ export default function AuthSimple() {
         }
       }
     } catch (error: any) {
-      toast.error('❌ Erreur', {
-        description: 'Une erreur inattendue est survenue'
-      });
+      toast.error('❌ Erreur', { description: 'Une erreur inattendue est survenue' });
     } finally {
       setIsLoading(false);
     }
@@ -276,17 +326,11 @@ export default function AuthSimple() {
                 <p className="text-sm text-muted-foreground">
                   Un email avec les instructions a été envoyé à <strong>{resetEmail}</strong>
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  Vérifiez aussi votre dossier spam
-                </p>
+                <p className="text-xs text-muted-foreground">Vérifiez aussi votre dossier spam</p>
               </div>
             )}
             
-            <Button 
-              variant="outline"
-              onClick={() => setResetStep(null)}
-              className="w-full"
-            >
+            <Button variant="outline" onClick={() => setResetStep(null)} className="w-full">
               Retour à la connexion
             </Button>
           </div>
@@ -300,10 +344,8 @@ export default function AuthSimple() {
     <div className="min-h-screen flex overflow-hidden">
       {/* Left Side - Branding & Illustration */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-primary via-blue-600 to-slate-900 p-12 flex-col justify-between overflow-hidden">
-        {/* Animated gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-transparent to-white/10 animate-pulse"></div>
         
-        {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 1px)',
@@ -335,7 +377,6 @@ export default function AuthSimple() {
           </div>
         </div>
 
-        {/* Image entrepreneurs africains */}
         <div className="absolute right-0 top-0 bottom-0 w-3/5 overflow-hidden opacity-40">
           <img 
             src={entrepreneursImage} 
@@ -351,7 +392,6 @@ export default function AuthSimple() {
 
       {/* Right Side - Auth Forms */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
-        {/* Back button for mobile */}
         <Link 
           to="/" 
           className="absolute top-6 left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -360,7 +400,7 @@ export default function AuthSimple() {
           Retour
         </Link>
 
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-md space-y-6">
           {/* Mobile logo */}
           <div className="lg:hidden text-center">
             <img src={stocknixLogo} alt="Stocknix" className="h-8 w-auto object-contain mx-auto mb-4" />
@@ -369,167 +409,239 @@ export default function AuthSimple() {
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold tracking-tight">Bienvenue</h1>
             <p className="text-muted-foreground">
-              Connectez-vous ou créez un compte pour continuer
+              {authMode === 'classic' 
+                ? 'Connectez-vous ou créez un compte' 
+                : 'Connexion employé avec code PIN'
+              }
             </p>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="login">Connexion</TabsTrigger>
-              <TabsTrigger value="register">Inscription</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="login" className="space-y-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="votre@email.com"
-                    className={getFieldError('email') ? 'border-destructive' : ''}
-                  />
-                  {getFieldError('email') && (
-                    <p className="text-sm text-destructive">{getFieldError('email')}</p>
-                  )}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="password">Mot de passe</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={formData.password}
-                      onChange={(e) => handleInputChange('password', e.target.value)}
-                      placeholder="••••••••"
-                      className={getFieldError('password') ? 'border-destructive' : ''}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                  {getFieldError('password') && (
-                    <p className="text-sm text-destructive">{getFieldError('password')}</p>
-                  )}
-                </div>
-                
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Connexion...
-                    </>
-                  ) : (
-                    'Se connecter'
-                  )}
-                </Button>
-              </form>
+          {/* Auth mode toggle */}
+          <div className="flex rounded-xl border border-border overflow-hidden">
+            <button
+              type="button"
+              onClick={() => { setAuthMode('classic'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                authMode === 'classic' 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'bg-muted/50 text-muted-foreground'
+              }`}
+            >
+              Admin / Propriétaire
+            </button>
+            <button
+              type="button"
+              onClick={() => { setAuthMode('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
+              className={`flex-1 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+                authMode === 'employee' 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'bg-muted/50 text-muted-foreground'
+              }`}
+            >
+              <Users className="h-4 w-4" />
+              Employé
+            </button>
+          </div>
+
+          {/* CLASSIC AUTH MODE */}
+          {authMode === 'classic' && (
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="login">Connexion</TabsTrigger>
+                <TabsTrigger value="register">Inscription</TabsTrigger>
+              </TabsList>
               
-              <div className="text-center">
-                <Button 
-                  variant="link" 
-                  onClick={() => setResetStep('email')}
-                  className="text-sm"
-                >
-                  Mot de passe oublié ?
-                </Button>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="register" className="space-y-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+              <TabsContent value="login" className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">Prénom (optionnel)</Label>
+                    <Label htmlFor="email">Email</Label>
                     <Input
-                      id="firstName"
-                      value={formData.firstName}
-                      onChange={(e) => handleInputChange('firstName', e.target.value)}
-                      placeholder="John"
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="votre@email.com"
+                      className={getFieldError('email') ? 'border-destructive' : ''}
                     />
+                    {getFieldError('email') && (
+                      <p className="text-sm text-destructive">{getFieldError('email')}</p>
+                    )}
                   </div>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Nom (optionnel)</Label>
-                    <Input
-                      id="lastName"
-                      value={formData.lastName}
-                      onChange={(e) => handleInputChange('lastName', e.target.value)}
-                      placeholder="Doe"
-                    />
+                    <Label htmlFor="password">Mot de passe</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={formData.password}
+                        onChange={(e) => handleInputChange('password', e.target.value)}
+                        placeholder="••••••••"
+                        className={getFieldError('password') ? 'border-destructive' : ''}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    {getFieldError('password') && (
+                      <p className="text-sm text-destructive">{getFieldError('password')}</p>
+                    )}
                   </div>
-                </div>
+                  
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Connexion...
+                      </>
+                    ) : (
+                      'Se connecter'
+                    )}
+                  </Button>
+                </form>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="registerEmail">Email</Label>
-                  <Input
-                    id="registerEmail"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="votre@email.com"
-                    className={getFieldError('email') ? 'border-destructive' : ''}
+                <div className="text-center">
+                  <Button variant="link" onClick={() => setResetStep('email')} className="text-sm">
+                    Mot de passe oublié ?
+                  </Button>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="register" className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">Prénom (optionnel)</Label>
+                      <Input
+                        id="firstName"
+                        value={formData.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        placeholder="John"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Nom (optionnel)</Label>
+                      <Input
+                        id="lastName"
+                        value={formData.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        placeholder="Doe"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="registerEmail">Email</Label>
+                    <Input
+                      id="registerEmail"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="votre@email.com"
+                      className={getFieldError('email') ? 'border-destructive' : ''}
+                    />
+                    {getFieldError('email') && (
+                      <p className="text-sm text-destructive">{getFieldError('email')}</p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="registerPassword">Mot de passe</Label>
+                    <div className="relative">
+                      <Input
+                        id="registerPassword"
+                        type={showPassword ? 'text' : 'password'}
+                        value={formData.password}
+                        onChange={(e) => handleInputChange('password', e.target.value)}
+                        placeholder="Minimum 6 caractères"
+                        className={getFieldError('password') ? 'border-destructive' : ''}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    {getFieldError('password') && (
+                      <p className="text-sm text-destructive">{getFieldError('password')}</p>
+                    )}
+                  </div>
+                  
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Inscription...
+                      </>
+                    ) : (
+                      'Créer un compte'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          )}
+
+          {/* EMPLOYEE PIN AUTH MODE */}
+          {authMode === 'employee' && (
+            <div className="space-y-6 py-4">
+              {pinStep === 'company' && (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <div className="mx-auto w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                      <span className="text-2xl">🏢</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-6">
+                      Saisissez le code de votre entreprise (6 chiffres)
+                    </p>
+                  </div>
+                  <PinKeypad
+                    length={6}
+                    onComplete={handleCompanyCodeComplete}
+                    label="Code entreprise"
+                    error={pinError}
                   />
-                  {getFieldError('email') && (
-                    <p className="text-sm text-destructive">{getFieldError('email')}</p>
-                  )}
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="registerPassword">Mot de passe</Label>
-                  <div className="relative">
-                    <Input
-                      id="registerPassword"
-                      type={showPassword ? 'text' : 'password'}
-                      value={formData.password}
-                      onChange={(e) => handleInputChange('password', e.target.value)}
-                      placeholder="Minimum 6 caractères"
-                      className={getFieldError('password') ? 'border-destructive' : ''}
-                    />
-                    <Button
+              )}
+
+              {pinStep === 'pin' && (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <div className="mx-auto w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
+                      <span className="text-2xl">🔑</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Entreprise : <span className="font-mono font-bold text-foreground">{companyCode}</span>
+                    </p>
+                    <button 
                       type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => { setPinStep('company'); setCompanyCode(''); setPinError(''); }}
+                      className="text-xs text-primary underline"
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
+                      Changer
+                    </button>
                   </div>
-                  {getFieldError('password') && (
-                    <p className="text-sm text-destructive">{getFieldError('password')}</p>
-                  )}
+                  <PinKeypad
+                    length={6}
+                    onComplete={handlePinLogin}
+                    label="Votre code PIN"
+                    isLoading={pinLoading}
+                    error={pinError}
+                  />
                 </div>
-                
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Inscription...
-                    </>
-                  ) : (
-                    'Créer un compte'
-                  )}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

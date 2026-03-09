@@ -1,122 +1,142 @@
 
 
-# Refonte Complete Interface Caisse — Plan
+# Plan d'implémentation -- Modifications Stocknix
 
-## Objectif
-Rewrite complet de `src/pages/Caisse.tsx` pour correspondre au design ShopCaisse (fond clair #F0F2F5, sidebar categories blanche, grille produits avec images, panneau commande a droite) tout en conservant toute la logique metier existante (cart, scanner, cash sessions, held tickets, discounts, etc).
+Ce plan couvre 6 axes majeurs : navigation mobile, refonte caisse, scan produits, responsive boutique, guide de bienvenue mis a jour, et correction URL boutique.
 
-## Architecture Layout
+---
 
-### Desktop (>= 1024px) — 4 zones
-```text
-┌──────────────────────────────────────────────────┐
-│  HEADER (56px, fond #1A1F36, sticky)             │
-├────────┬─────────────────────────┬───────────────┤
-│SIDEBAR │  GRILLE PRODUITS        │  PANNEAU      │
-│CATEGS  │  (flex:1, scrollable)   │  COMMANDE     │
-│(88px)  │  grid auto-fill 148px   │  (300px)      │
-│fond    │  fond #F0F2F5           │  fond blanc   │
-│blanc   │  + barre recherche      │  + ticket     │
-│        │                         │  + total      │
-│        │                         │  + actions    │
-└────────┴─────────────────────────┴───────────────┘
+## 1. Navigation mobile -- Bouton "Menu" avec drawer
+
+**Fichier:** `src/components/layout/BottomNav.tsx`
+
+- Remplacer le 6e bouton "Perfs" (TrendingUp) par "Menu" (Menu icon)
+- Au tap sur "Menu", ouvrir un Drawer (vaul) qui monte du bas
+- Le Drawer contient tous les elements du sidebar desktop : Navigation principale, Boutique en ligne, Compte (Profil, Parametres), Deconnexion
+- Chaque element navigue et ferme le drawer
+- Les 5 premiers boutons restent inchanges : Accueil, Stocks, Caisse, Ventes, Factures
+
+---
+
+## 2. Refonte interface Caisse
+
+**Fichier:** `src/pages/Caisse.tsx`
+
+### 2.1 Header enrichi
+Ajouter dans la top bar les boutons :
+- Verrouiller (Lock icon) -- affiche un overlay PIN (fonctionnel basique)
+- Autres Actions (MoreHorizontal) -- dropdown avec options
+- Tickets en cours (ClipboardList) -- badge + liste
+- Ma Caisse (Home, actif)
+- Statistiques (BarChart3) -- lien vers /app/performance
+- Parametrages (Settings) -- lien vers /app/settings
+
+### 2.2 Grille produits
+- Grille 2 colonnes par defaut (au lieu de 2-4)
+- Quand categorie "Tout" est selectionnee : afficher des separateurs visuels entre chaque categorie (titre de section)
+- Produits en rupture : grises avec badge "Rupture"
+
+### 2.3 Support images produit
+- Ajouter colonne `image_url` a la table `products` (migration)
+- Dans les cards produit de la caisse : si `image_url` existe, afficher l'image au lieu de l'emoji
+- Sinon, afficher l'emoji avec fond colore comme actuellement
+
+### 2.4 Clavier numerique tactile
+- Ajouter un clavier numerique retractable en bas a droite (desktop)
+- Boutons 0-9, virgule, effacer, valider
+- Permet de saisir quantite pour l'article selectionne dans le ticket
+- Bouton toggle pour afficher/masquer
+
+---
+
+## 3. Scan de produits
+
+**Fichier:** `src/pages/Caisse.tsx`
+
+### 3.1 Scan mobile (camera)
+- Ajouter bouton "Scanner" dans le header mobile
+- Utiliser `html5-qrcode` (deja installe) pour ouvrir la camera
+- Scanner code-barres → chercher produit par SKU/barcode → ajouter au ticket
+- Toast si non trouve
+
+### 3.2 Scan PC (USB/HID)
+- Ajouter un `useEffect` avec ecouteur `keydown` global
+- Detecter saisie rapide (<50ms entre touches) terminee par Enter
+- Interpreter comme code-barres, chercher et ajouter au ticket
+- Aucun bouton visible, tout automatique
+
+### 3.3 Permissions camera
+- `useEffect` au montage demandant `getUserMedia` pour pre-autoriser
+- Ajouter `<meta name="permissions-policy" content="camera=*">` dans `index.html`
+- Toast informatif premiere fois
+
+---
+
+## 4. Responsive Boutique en ligne
+
+### 4.1 StoreConfig (`src/pages/store/StoreConfig.tsx`)
+- Changer URL affichee de `stocknix.lovable.app/boutique/` vers `stocknix.space/boutique/`
+- Layout deja responsive (grid lg:grid-cols-3), verifier pas de scroll horizontal
+
+### 4.2 StoreProducts (`src/pages/store/StoreProducts.tsx`)
+- Sur mobile : remplacer les tableaux par des cards empilees (responsive via `hidden md:table-cell` + cards mobiles)
+
+### 4.3 StoreOrders (`src/pages/store/StoreOrders.tsx`)
+- Sur mobile : afficher des cards au lieu du tableau
+- Filtres en haut, wrappés
+
+### 4.4 StoreReviews (`src/pages/store/StoreReviews.tsx`)
+- Grille responsive de cards au lieu du tableau sur mobile
+- Texte tronque avec "Voir plus"
+
+---
+
+## 5. Guide de bienvenue mis a jour
+
+**Fichier:** `src/components/onboarding/WelcomeGuide.tsx`
+
+- Ajouter de nouvelles etapes pour les fonctionnalites ajoutees :
+  - Etape 5 : "Boutique en ligne" -- creez et publiez votre boutique
+  - Etape 6 : "Scanner vos produits" -- scannez les codes-barres depuis la caisse
+- Passer de 4 a 6 etapes dans le guide
+- Modifier le texte "4 etapes" en "6 etapes"
+
+**Logique d'affichage :**
+- Ajouter un systeme de versioning : `localStorage` stocke `welcome-guide-version-{userId}`
+- Si la version stockee est inferieure a la version actuelle (ex: "2"), re-afficher le guide
+- Le guide se ferme et stocke la nouvelle version
+
+---
+
+## 6. Migration base de donnees
+
+**Nouvelle migration** pour ajouter `image_url` a products :
+```sql
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url text;
 ```
 
-### Tablet (768-1023px)
-- Sidebar reduite (icones seulement, ~56px)
-- Grille produits 3 colonnes
-- Panneau commande en drawer bas
+---
 
-### Mobile (< 768px)
-- Pas de sidebar visible (drawer categories)
-- Grille produits 2 colonnes
-- Panneau commande en modal/drawer bas
-- Toggle products/ticket comme actuellement
+## 7. Fichiers modifies (resume)
 
-## Changements Cles
+| Fichier | Modifications |
+|---------|--------------|
+| `src/components/layout/BottomNav.tsx` | 6e bouton Menu + Drawer complet |
+| `src/pages/Caisse.tsx` | Header enrichi, grille 2 cols, separateurs, clavier numerique, scan mobile/PC |
+| `src/pages/store/StoreConfig.tsx` | URL stocknix.space |
+| `src/pages/store/StoreProducts.tsx` | Cards responsive mobile |
+| `src/pages/store/StoreOrders.tsx` | Cards responsive mobile |
+| `src/pages/store/StoreReviews.tsx` | Cards responsive mobile |
+| `src/components/onboarding/WelcomeGuide.tsx` | 6 etapes + versioning |
+| `src/pages/Dashboard.tsx` | Versioning guide |
+| `index.html` | Meta permissions-policy camera |
+| `supabase/migrations/...` | Colonne image_url |
+| `src/integrations/supabase/types.ts` | Type image_url |
 
-### 1. Palette couleurs — fond CLAIR
-- Fond app: `#F0F2F5` au lieu de `#1a1a2e`
-- Cartes produits: `#FFFFFF` avec border-radius 14px, box-shadow legere
-- Sidebar: fond `#FFFFFF`
-- Header: reste dark `#1A1F36`
-- Primaire violet: `#4F46E5`
-- Succes/Especes: `#10B981`
-- Danger: `#EF4444`
-- Texte principal: `#1F2937`, secondaire: `#6B7280`
+---
 
-### 2. Header (56px)
-- Gauche: logo/nom "Stocknix POS"
-- Centre: boutons Verrouiller, Autres Actions, Tickets en cours (badge)
-- Droite: bouton Dashboard (Home), Statistiques (BarChart3), Parametres (Settings, icone engrenage), menu hamburger
-- Fond #1A1F36, texte blanc
-
-### 3. Sidebar Categories (88px fixe)
-- Fond blanc #FFFFFF
-- Boutons empiles verticalement avec gap 6px
-- Bouton actif: fond #4F46E5, texte blanc, border-radius 10px
-- Bouton inactif: fond #F8F9FB, texte #6B7280
-- Chaque bouton: icone/image categorie (20px) + label (10px, max 8 chars)
-- Scroll vertical si beaucoup de categories
-
-### 4. Grille Produits
-- Barre de recherche en haut (fond blanc, border gris, radius 10px, loupe SVG)
-- Filtre debounce 200ms
-- Grid: `repeat(auto-fill, minmax(148px, 1fr))`
-- Carte produit: zone image 90px en haut (photo uploadee OU placeholder grise "Ajouter une photo"), nom (700, 12px), prix violet (#4F46E5, 800, 13px), radius 14px, shadow legere
-- PAS de hover/survol effects (specifie par l'utilisateur)
-- Au clic: scale(0.97) effet tactile
-- Produits sans photo: placeholder grise avec texte "Photo requise"
-- Produits en rupture: badge "Rupture" rouge + opacity reduite
-
-### 5. Panneau Commande (300px, droite)
-- En-tete: titre "Commande" + badge compteur violet
-- Pills: Sur place / A emporter / Livraison
-- Liste articles: quantite badge violet + nom + prix, scroll interne
-- Zone total: police 32px, couleur #4F46E5
-- Boutons actions: Ajouter Client, Envoyer Options, Mettre en attente, Vider
-- 2 boutons principaux cote a cote: "Total" (#4F46E5) + "Especes" (#10B981), hauteur 48px min
-
-### 6. Pave Numerique — Modal Overlay
-- S'ouvre au clic sur Total ou Especes (au lieu d'etre integre en permanence)
-- Modal centre, fond blanc, border-radius 20px
-- Overlay: rgba(0,0,0,0.5) + backdrop-filter blur(4px)
-- Affichage montant: fond #1A1F36, texte blanc, 32px
-- Grille 3 colonnes, gap 8px
-- Touche effacer: fond rouge clair #FFF0F0, texte #EF4444
-- Touche Valider: pleine largeur, fond #4F46E5
-
-### 7. Suppression des emojis
-- Retirer emoji fallback dans ProductTile — remplacer par placeholder "Photo requise"
-- Garder le champ `icon_emoji` en DB (backwards compat) mais ne plus l'afficher dans la grille caisse
-- Badge "Photo requise" sur produits sans `image_url`
-
-### 8. Responsive
-- Toutes zones tactiles >= 44px
-- Pas de hover effects (specifie)
-- Grid auto-fill minmax(148px, 1fr) s'adapte naturellement
-- Mobile: sidebar en drawer, commande en modal
-- Tablet: sidebar reduite icones, commande en drawer bas
-
-## Fichiers modifies
-| Fichier | Action |
-|---------|--------|
-| `src/pages/Caisse.tsx` | Rewrite complet du rendu (JSX/CSS), conservation de toute la logique (state, handlers, effects) |
-
-## Logique conservee integralement
-- Cart management (add, update, remove, clear)
-- Cash sessions (open, close, movements)
-- Scanner (USB/HID + camera html5-qrcode)
-- Held tickets
-- Discounts (% et montant)
-- Receipt printing
-- All modals
-- Anti-double-scan
-
-## Contraintes
-- Pas de hover/survol effects
-- Les deux themes du SaaS ne s'appliquent pas a la caisse (mode immersif dedie)
-- Pas de scroll horizontal
-- Boutons tactiles min 44x44px
-- Debounce recherche 200ms
+## Contraintes respectees
+- Ne pas casser stocks, ventes, facturation, dashboard existants
+- html5-qrcode deja installe
+- Coherence visuelle maintenue
 

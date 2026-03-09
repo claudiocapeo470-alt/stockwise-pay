@@ -20,6 +20,9 @@ import AuthSimple from "./pages/AuthSimple";
 import InvoiceEditor from "./pages/InvoiceEditor";
 import InvoicePreview from "./pages/InvoicePreview";
 import Caisse from "./pages/Caisse";
+import TeamManagement from "./pages/TeamManagement";
+import Livraisons from "./pages/Livraisons";
+import LivreurDashboard from "./pages/LivreurDashboard";
 import StoreConfig from "./pages/store/StoreConfig";
 import StoreProducts from "./pages/store/StoreProducts";
 import StoreOrders from "./pages/store/StoreOrders";
@@ -44,10 +47,9 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
       retry: (failureCount, error: any) => {
-        // Ne pas refaire si c'est une erreur d'authentification
         if (error?.status === 401 || error?.message?.includes('JWT')) {
           return false;
         }
@@ -115,6 +117,13 @@ const App = () => (
                 </ProtectedRoute>
               } />
 
+              {/* Livreur Dashboard - Mode mobile dédié */}
+              <Route path="/app/livreur" element={
+                <ProtectedRoute>
+                  <LivreurDashboard />
+                </ProtectedRoute>
+              } />
+
               {/* Protected App Routes */}
               <Route path="/app/*" element={
                 <ProtectedRoute>
@@ -133,6 +142,8 @@ const App = () => (
                       <Route path="/performance" element={<PerformanceRapports />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/settings" element={<Settings />} />
+                      <Route path="/team" element={<TeamManagement />} />
+                      <Route path="/livraisons" element={<Livraisons />} />
                       <Route path="/boutique/config" element={<StoreConfig />} />
                       <Route path="/boutique/produits" element={<StoreProducts />} />
                       <Route path="/boutique/commandes" element={<StoreOrders />} />

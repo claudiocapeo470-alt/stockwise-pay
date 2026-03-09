@@ -1,43 +1,60 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { BarChart3, Package, Scan, ShoppingCart, Receipt, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X } from "lucide-react";
+import { BarChart3, Package, Scan, ShoppingCart, Receipt, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X, Users, Truck } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { useAuth } from "@/contexts/AuthContext";
 
-const navigation = [
+interface NavItem {
+  name: string;
+  href: string;
+  icon: any;
+  label?: string;
+  permission?: string;
+}
+
+const allBottomNav: NavItem[] = [
   { name: "Dashboard", href: "/app", icon: BarChart3, label: "Accueil" },
-  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks" },
-  { name: "Caisse", href: "/app/caisse", icon: Scan, label: "Caisse" },
-  { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes" },
-  { name: "Facturation", href: "/app/facturation", icon: Receipt, label: "Factures" },
+  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock" },
+  { name: "Caisse", href: "/app/caisse", icon: Scan, label: "Caisse", permission: "pos" },
+  { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes", permission: "sales" },
+  { name: "Facturation", href: "/app/facturation", icon: Receipt, label: "Factures", permission: "sales" },
 ];
 
-const drawerNavigation = [
+const allDrawerNavigation = [
   { section: "Navigation", items: [
     { name: "Tableau de bord", href: "/app", icon: BarChart3 },
-    { name: "Gestion des stocks", href: "/app/stocks", icon: Package },
-    { name: "Caisse", href: "/app/caisse", icon: Scan },
-    { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart },
-    { name: "Facturation", href: "/app/facturation", icon: Receipt },
-    { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp },
+    { name: "Gestion des stocks", href: "/app/stocks", icon: Package, permission: "stock" },
+    { name: "Caisse", href: "/app/caisse", icon: Scan, permission: "pos" },
+    { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart, permission: "sales" },
+    { name: "Facturation", href: "/app/facturation", icon: Receipt, permission: "sales" },
+    { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp, permission: "reports" },
   ]},
   { section: "Boutique en ligne", items: [
-    { name: "Ma Boutique", href: "/app/boutique/config", icon: Store },
-    { name: "Produits en ligne", href: "/app/boutique/produits", icon: ShoppingBag },
-    { name: "Commandes reçues", href: "/app/boutique/commandes", icon: ClipboardList },
-    { name: "Avis clients", href: "/app/boutique/avis", icon: Star },
+    { name: "Ma Boutique", href: "/app/boutique/config", icon: Store, permission: "boutique" },
+    { name: "Produits en ligne", href: "/app/boutique/produits", icon: ShoppingBag, permission: "boutique" },
+    { name: "Commandes reçues", href: "/app/boutique/commandes", icon: ClipboardList, permission: "boutique_orders" },
+    { name: "Avis clients", href: "/app/boutique/avis", icon: Star, permission: "boutique" },
+    { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries" },
   ]},
   { section: "Compte", items: [
+    { name: "Mon équipe", href: "/app/team", icon: Users, permission: "settings" },
     { name: "Profil", href: "/app/profile", icon: User },
-    { name: "Paramètres", href: "/app/settings", icon: Settings },
+    { name: "Paramètres", href: "/app/settings", icon: Settings, permission: "settings" },
   ]},
 ];
 
 export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, isEmployee, hasPermission } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const filterItems = (items: NavItem[]) => {
+    if (!isEmployee) return items;
+    return items.filter(item => !item.permission || hasPermission(item.permission));
+  };
+
+  const navigation = filterItems(allBottomNav).slice(0, 4); // Max 4 + menu
 
   const isActive = (path: string) => {
     if (path === "/app" && location.pathname === "/app") return true;
@@ -66,12 +83,11 @@ export function BottomNav() {
               >
                 <item.icon className={`h-5 w-5 ${active ? "stroke-[2.5]" : "stroke-2"}`} />
                 <span className={`text-[10px] truncate ${active ? "font-semibold" : "font-normal"}`}>
-                  {item.label}
+                  {item.label || item.name}
                 </span>
               </NavLink>
             );
           })}
-          {/* Menu button */}
           <button
             onClick={() => setDrawerOpen(true)}
             className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors duration-200 min-w-0 text-muted-foreground"
@@ -91,30 +107,33 @@ export function BottomNav() {
             </DrawerClose>
           </DrawerHeader>
           <div className="overflow-y-auto px-4 pb-8 space-y-6">
-            {drawerNavigation.map((section) => (
-              <div key={section.section}>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 px-2">
-                  {section.section}
-                </p>
-                <div className="space-y-1">
-                  {section.items.map((item) => (
-                    <button
-                      key={item.href}
-                      onClick={() => handleNavClick(item.href)}
-                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm transition-colors ${
-                        isActive(item.href)
-                          ? "bg-primary text-primary-foreground font-medium"
-                          : "text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
-                      {item.name}
-                    </button>
-                  ))}
+            {allDrawerNavigation.map((section) => {
+              const items = filterItems(section.items);
+              if (items.length === 0) return null;
+              return (
+                <div key={section.section}>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 px-2">
+                    {section.section}
+                  </p>
+                  <div className="space-y-1">
+                    {items.map((item) => (
+                      <button
+                        key={item.href}
+                        onClick={() => handleNavClick(item.href)}
+                        className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm transition-colors ${
+                          isActive(item.href)
+                            ? "bg-primary text-primary-foreground font-medium"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        {item.name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-            {/* Logout */}
+              );
+            })}
             <button
               onClick={() => { signOut(); setDrawerOpen(false); }}
               className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"

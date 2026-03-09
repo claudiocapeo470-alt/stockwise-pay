@@ -33,7 +33,7 @@ const resetEmailSchema = z.object({
 export default function AuthSimple() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, signIn, signUp, loading } = useAuth();
+  const { user, signIn, signUp, loading, setMemberInfo } = useAuth();
   
   const [authMode, setAuthMode] = useState<'classic' | 'employee'>('classic');
   const [activeTab, setActiveTab] = useState('login');

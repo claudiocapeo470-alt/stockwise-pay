@@ -126,13 +126,17 @@ export default function AuthSimple() {
       document.documentElement.classList.add('light');
 
       // Redirect based on role
-      const roleName = data.member.role_name?.toLowerCase();
-      if (roleName === 'caissier') {
-        navigate('/app/caisse');
-      } else if (roleName === 'livreur') {
-        navigate('/app/livraisons');
+      const roleName = (data.member.role_name || '').toLowerCase();
+      if (roleName.includes('caissier')) {
+        window.location.href = '/app/caisse';
+      } else if (roleName.includes('livreur')) {
+        window.location.href = '/app/livreur';
+      } else if (roleName.includes('gestionnaire')) {
+        window.location.href = '/app/stocks';
+      } else if (roleName.includes('vendeur')) {
+        window.location.href = '/app/boutique/commandes';
       } else {
-        navigate('/app');
+        window.location.href = '/app';
       }
     } catch (err) {
       console.error('PIN login error:', err);

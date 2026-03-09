@@ -1,7 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Settings as SettingsIcon, Palette, Shield, Database, Globe, Bell, Smartphone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Settings as SettingsIcon, Palette, Shield, Database, Globe, Bell, Smartphone, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 

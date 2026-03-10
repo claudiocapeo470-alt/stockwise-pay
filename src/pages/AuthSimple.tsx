@@ -240,7 +240,7 @@ export default function AuthSimple() {
           return;
         }
 
-        const { error, needsConfirmation } = await signUp(
+        const { error, needsConfirmation, user: newUser } = await signUp(
           formData.email,
           formData.password,
           formData.firstName,

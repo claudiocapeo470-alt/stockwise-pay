@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { BarChart3, Package, Scan, ShoppingCart, Receipt, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X, Users, Truck } from "lucide-react";
+import { BarChart3, Package, Scan, ShoppingCart, Receipt, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X, Users, Truck, FileText, FileCheck, CreditCard } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -17,29 +17,38 @@ const allBottomNav: NavItem[] = [
   { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock" },
   { name: "Caisse", href: "/app/caisse", icon: Scan, label: "Caisse", permission: "pos" },
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes", permission: "sales" },
-  { name: "Facturation", href: "/app/facturation", icon: Receipt, label: "Factures", permission: "sales" },
 ];
 
 const allDrawerNavigation = [
-  { section: "Navigation", items: [
+  { section: "PRINCIPAL", items: [
     { name: "Tableau de bord", href: "/app", icon: BarChart3 },
+  ]},
+  { section: "MAGASIN", items: [
     { name: "Gestion des stocks", href: "/app/stocks", icon: Package, permission: "stock" },
     { name: "Caisse", href: "/app/caisse", icon: Scan, permission: "pos" },
     { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart, permission: "sales" },
-    { name: "Facturation", href: "/app/facturation", icon: Receipt, permission: "sales" },
-    { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp, permission: "reports" },
   ]},
-  { section: "Boutique en ligne", items: [
+  { section: "FACTURATION", items: [
+    { name: "Factures", href: "/app/factures", icon: FileText, permission: "sales" },
+    { name: "Devis", href: "/app/devis", icon: FileCheck, permission: "sales" },
+    { name: "Paiements", href: "/app/paiements", icon: CreditCard, permission: "sales" },
+  ]},
+  { section: "BOUTIQUE EN LIGNE", items: [
     { name: "Ma Boutique", href: "/app/boutique/config", icon: Store, permission: "boutique" },
     { name: "Produits en ligne", href: "/app/boutique/produits", icon: ShoppingBag, permission: "boutique" },
     { name: "Commandes reçues", href: "/app/boutique/commandes", icon: ClipboardList, permission: "boutique_orders" },
     { name: "Avis clients", href: "/app/boutique/avis", icon: Star, permission: "boutique" },
+  ]},
+  { section: "LIVRAISONS", items: [
     { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries" },
   ]},
-  { section: "Compte", items: [
+  { section: "ANALYTIQUE", items: [
+    { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp, permission: "reports" },
+  ]},
+  { section: "ÉQUIPE & COMPTE", items: [
     { name: "Mon équipe", href: "/app/team", icon: Users, permission: "settings" },
     { name: "Profil", href: "/app/profile", icon: User },
-    { name: "Paramètres", href: "/app/settings", icon: Settings, permission: "settings" },
+    { name: "Paramètres", href: "/app/settings", icon: Settings },
   ]},
 ];
 
@@ -54,7 +63,7 @@ export function BottomNav() {
     return items.filter(item => !item.permission || hasPermission(item.permission));
   };
 
-  const navigation = filterItems(allBottomNav).slice(0, 4); // Max 4 + menu
+  const navigation = filterItems(allBottomNav).slice(0, 4);
 
   const isActive = (path: string) => {
     if (path === "/app" && location.pathname === "/app") return true;
@@ -112,7 +121,7 @@ export function BottomNav() {
               if (items.length === 0) return null;
               return (
                 <div key={section.section}>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 px-2">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">
                     {section.section}
                   </p>
                   <div className="space-y-1">

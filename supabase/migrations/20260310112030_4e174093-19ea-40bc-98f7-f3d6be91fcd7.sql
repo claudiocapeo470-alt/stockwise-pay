@@ -1,0 +1,1 @@
+ALTER TABLE online_store ADD COLUMN IF NOT EXISTS theme_id TEXT DEFAULT 'classic';

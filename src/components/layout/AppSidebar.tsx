@@ -1,4 +1,4 @@
-import { BarChart3, Package, Scan, ShoppingCart, Receipt, TrendingUp, LogOut, User, Settings as SettingsIcon, Store, ShoppingBag, ClipboardList, Star, Users, Truck, Lock } from "lucide-react"
+import { BarChart3, Package, Scan, ShoppingCart, Receipt, LogOut, User, Settings as SettingsIcon, Store, ShoppingBag, ClipboardList, Star, Users, Truck, Lock, FileText, FileCheck, CreditCard, TrendingUp } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
 import {
@@ -22,30 +22,68 @@ interface NavItem {
   href: string;
   icon: any;
   permission?: string;
+  indent?: boolean;
 }
 
-const allNavigation: NavItem[] = [
-  { name: "Tableau de bord", href: "/app", icon: BarChart3 },
-  { name: "Gestion des stocks", href: "/app/stocks", icon: Package, permission: "stock" },
-  { name: "Caisse", href: "/app/caisse", icon: Scan, permission: "pos" },
-  { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart, permission: "sales" },
-  { name: "Facturation", href: "/app/facturation", icon: Receipt, permission: "sales" },
-  { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp, permission: "reports" },
-]
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+  permissions?: string[]; // Any of these permissions grants visibility
+}
 
-const allStoreNav: NavItem[] = [
-  { name: "Ma Boutique", href: "/app/boutique/config", icon: Store, permission: "boutique" },
-  { name: "Produits en ligne", href: "/app/boutique/produits", icon: ShoppingBag, permission: "boutique" },
-  { name: "Commandes reçues", href: "/app/boutique/commandes", icon: ClipboardList, permission: "boutique_orders" },
-  { name: "Avis clients", href: "/app/boutique/avis", icon: Star, permission: "boutique" },
-  { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries" },
-]
-
-const allSecondaryNav: NavItem[] = [
-  { name: "Mon équipe", href: "/app/team", icon: Users, permission: "settings" },
-  { name: "Profil", href: "/app/profile", icon: User },
-  { name: "Paramètres", href: "/app/settings", icon: SettingsIcon, permission: "settings" },
-]
+const allGroups: NavGroup[] = [
+  {
+    label: "PRINCIPAL",
+    items: [
+      { name: "Tableau de bord", href: "/app", icon: BarChart3 },
+    ],
+  },
+  {
+    label: "MAGASIN",
+    items: [
+      { name: "Gestion des stocks", href: "/app/stocks", icon: Package, permission: "stock" },
+      { name: "Caisse", href: "/app/caisse", icon: Scan, permission: "pos" },
+      { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart, permission: "sales" },
+    ],
+  },
+  {
+    label: "FACTURATION",
+    items: [
+      { name: "Factures", href: "/app/factures", icon: FileText, permission: "sales" },
+      { name: "Devis", href: "/app/devis", icon: FileCheck, permission: "sales" },
+      { name: "Paiements", href: "/app/paiements", icon: CreditCard, permission: "sales" },
+    ],
+  },
+  {
+    label: "BOUTIQUE EN LIGNE",
+    items: [
+      { name: "Ma Boutique", href: "/app/boutique/config", icon: Store, permission: "boutique" },
+      { name: "Produits en ligne", href: "/app/boutique/produits", icon: ShoppingBag, permission: "boutique" },
+      { name: "Commandes reçues", href: "/app/boutique/commandes", icon: ClipboardList, permission: "boutique_orders" },
+      { name: "Avis clients", href: "/app/boutique/avis", icon: Star, permission: "boutique" },
+    ],
+  },
+  {
+    label: "LIVRAISONS",
+    items: [
+      { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries" },
+    ],
+  },
+  {
+    label: "ANALYTIQUE",
+    items: [
+      { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp, permission: "reports" },
+    ],
+  },
+  {
+    label: "ÉQUIPE & COMPTE",
+    items: [
+      { name: "Mon équipe", href: "/app/team", icon: Users, permission: "settings" },
+      { name: "Profil", href: "/app/profile", icon: User },
+      { name: "Paramètres", href: "/app/settings", icon: SettingsIcon },
+    ],
+  },
+];
 
 export function AppSidebar() {
   const { state, isMobile } = useSidebar()
@@ -54,18 +92,13 @@ export function AppSidebar() {
   const location = useLocation()
   const isCollapsed = state === "collapsed"
 
-  // Filter navigation based on permissions
-  const filterNav = (items: NavItem[]) => {
-    if (!isEmployee) return items; // Admin owner sees everything
-    return items.filter(item => {
+  const filterGroup = (group: NavGroup): NavItem[] => {
+    if (!isEmployee) return group.items;
+    return group.items.filter(item => {
       if (!item.permission) return true;
       return hasPermission(item.permission);
     });
   };
-
-  const navigation = filterNav(allNavigation);
-  const storeNav = filterNav(allStoreNav);
-  const secondaryNav = filterNav(allSecondaryNav);
 
   const displayName = isEmployee
     ? `${memberInfo?.member_first_name || ''} ${memberInfo?.member_last_name || ''}`.trim()
@@ -85,38 +118,6 @@ export function AppSidebar() {
     if (path !== "/app" && location.pathname.startsWith(path)) return true
     return false
   }
-
-  const renderNavSection = (title: string, items: NavItem[]) => {
-    if (items.length === 0) return null;
-    return (
-      <div className="mb-6">
-        {!isCollapsed && (
-          <p className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            {title}
-          </p>
-        )}
-        <SidebarMenu className="space-y-1">
-          {items.map((item) => (
-            <SidebarMenuItem key={item.name}>
-              <SidebarMenuButton 
-                asChild 
-                className={`w-full justify-start h-10 transition-colors duration-200 ${
-                  isActive(item.href) 
-                    ? "bg-primary text-primary-foreground font-medium" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                } ${isActive(item.href) ? "border-l-[3px] border-l-primary" : ""}`}
-              >
-                <NavLink to={item.href} className="flex items-center gap-3 px-3">
-                  <item.icon className="h-4 w-4 flex-shrink-0" />
-                  {!isCollapsed && <span className="text-sm">{item.name}</span>}
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </div>
-    );
-  };
 
   return (
     <Sidebar className={`${isCollapsed ? "w-16" : "w-60"} bg-sidebar border-r border-sidebar-border`} collapsible="icon">
@@ -141,14 +142,43 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-3 py-4">
-        {renderNavSection("Navigation", navigation)}
-        {renderNavSection("Boutique en ligne", storeNav)}
-        {renderNavSection("Compte", secondaryNav)}
+        {allGroups.map((group) => {
+          const items = filterGroup(group);
+          if (items.length === 0) return null;
+          return (
+            <div key={group.label} className="mb-5">
+              {!isCollapsed && (
+                <p className="px-3 mb-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  {group.label}
+                </p>
+              )}
+              <SidebarMenu className="space-y-0.5">
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton 
+                      asChild 
+                      className={`w-full justify-start h-9 transition-colors duration-200 ${
+                        isActive(item.href) 
+                          ? "bg-primary text-primary-foreground font-medium" 
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <NavLink to={item.href} className="flex items-center gap-3 px-3">
+                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                        {!isCollapsed && <span className="text-sm">{item.name}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </div>
+          );
+        })}
       </SidebarContent>
 
       <SidebarFooter className="p-3 border-t border-sidebar-border">
         {!isCollapsed && user && (
-          <div className="px-3 py-3 mb-2 bg-muted">
+          <div className="px-3 py-3 mb-2 bg-muted rounded-lg">
             <div className="flex items-center gap-3">
               <Avatar className="h-9 w-9">
                 <AvatarImage src={isEmployee ? (memberInfo?.member_photo_url || '') : (profile?.avatar_url || '')} alt={displayName} />

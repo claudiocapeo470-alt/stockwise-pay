@@ -733,6 +733,7 @@ export type Database = {
           primary_color: string | null
           show_stock: boolean | null
           slug: string
+          theme_id: string | null
           updated_at: string | null
           user_id: string
           whatsapp: string | null
@@ -757,6 +758,7 @@ export type Database = {
           primary_color?: string | null
           show_stock?: boolean | null
           slug: string
+          theme_id?: string | null
           updated_at?: string | null
           user_id: string
           whatsapp?: string | null
@@ -781,6 +783,7 @@ export type Database = {
           primary_color?: string | null
           show_stock?: boolean | null
           slug?: string
+          theme_id?: string | null
           updated_at?: string | null
           user_id?: string
           whatsapp?: string | null

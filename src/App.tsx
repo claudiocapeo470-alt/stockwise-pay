@@ -18,6 +18,7 @@ import Devis from "./pages/Devis";
 import Paiements from "./pages/Paiements";
 import Performance from "./pages/Performance";
 import Rapports from "./pages/Rapports";
+import RapportEmployes from "./pages/RapportEmployes";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AuthSimple from "./pages/AuthSimple";

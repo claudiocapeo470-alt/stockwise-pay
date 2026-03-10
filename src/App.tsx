@@ -116,10 +116,19 @@ const App = () => (
                 </ProtectedRoute>
               } />
               
+              {/* Subscription Callback */}
+              <Route path="/app/subscription-callback" element={
+                <ProtectedRoute>
+                  <SubscriptionCallback />
+                </ProtectedRoute>
+              } />
+
               {/* Caisse Tactile - Mode plein écran immersif */}
               <Route path="/app/caisse" element={
                 <ProtectedRoute>
-                  <Caisse />
+                  <SubscriptionGuard>
+                    <Caisse />
+                  </SubscriptionGuard>
                 </ProtectedRoute>
               } />
 
@@ -133,8 +142,9 @@ const App = () => (
               {/* Protected App Routes */}
               <Route path="/app/*" element={
                 <ProtectedRoute>
-                  <AppLayout>
-                    <Routes>
+                  <SubscriptionGuard>
+                    <AppLayout>
+                      <Routes>
                       <Route path="/" element={<Dashboard />} />
                       <Route path="/stocks" element={<Stocks />} />
                       <Route path="/ventes" element={<Ventes />} />

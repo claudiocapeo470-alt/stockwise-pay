@@ -46,6 +46,9 @@ import Tarifs from "./pages/Tarifs";
 import Fonctionnalites from "./pages/Fonctionnalites";
 import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
+import SubscriptionCallback from "./pages/SubscriptionCallback";
+import MySubscription from "./pages/MySubscription";
+import { SubscriptionGuard } from "./components/auth/SubscriptionGuard";
 
 const queryClient = new QueryClient({
   defaultOptions: {

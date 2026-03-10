@@ -72,7 +72,8 @@ const allGroups: NavGroup[] = [
   {
     label: "ANALYTIQUE",
     items: [
-      { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp, permission: "reports" },
+      { name: "Performance", href: "/app/performance", icon: TrendingUp, permission: "reports" },
+      { name: "Rapports", href: "/app/rapports", icon: FileText, permission: "reports" },
     ],
   },
   {

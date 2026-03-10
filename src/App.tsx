@@ -159,7 +159,8 @@ const App = () => (
                       <Route path="/devis/:id" element={<InvoiceEditor documentType="devis" />} />
                       <Route path="/devis/:id/preview" element={<InvoicePreview documentType="devis" />} />
                       <Route path="/paiements" element={<Paiements />} />
-                      <Route path="/performance" element={<PerformanceRapports />} />
+                      <Route path="/performance" element={<Performance />} />
+                      <Route path="/rapports" element={<Rapports />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="/team" element={<TeamManagement />} />

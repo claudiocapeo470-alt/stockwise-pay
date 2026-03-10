@@ -80,7 +80,8 @@ export function AppLayout({ children }: AppLayoutProps) {
     if (path.includes('/stocks')) return 'Gestion des stocks';
     if (path.includes('/ventes')) return 'Suivi des ventes';
     if (path.includes('/facturation')) return 'Facturation';
-    if (path.includes('/performance')) return 'Performance & Rapports';
+    if (path.includes('/rapports')) return 'Rapports & Analyses';
+    if (path.includes('/performance')) return 'Performance';
     if (path.includes('/profile')) return 'Profil';
     if (path.includes('/settings')) return 'Paramètres';
     if (path.includes('/team')) return 'Mon équipe';

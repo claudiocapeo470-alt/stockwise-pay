@@ -43,7 +43,8 @@ const allDrawerNavigation = [
     { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries" },
   ]},
   { section: "ANALYTIQUE", items: [
-    { name: "Performance & Rapports", href: "/app/performance", icon: TrendingUp, permission: "reports" },
+    { name: "Performance", href: "/app/performance", icon: TrendingUp, permission: "reports" },
+    { name: "Rapports", href: "/app/rapports", icon: FileText, permission: "reports" },
   ]},
   { section: "ÉQUIPE & COMPTE", items: [
     { name: "Mon équipe", href: "/app/team", icon: Users, permission: "settings" },

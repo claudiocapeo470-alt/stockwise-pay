@@ -74,6 +74,7 @@ const allGroups: NavGroup[] = [
     items: [
       { name: "Performance", href: "/app/performance", icon: TrendingUp, permission: "reports" },
       { name: "Rapports", href: "/app/rapports", icon: FileText, permission: "reports" },
+      { name: "Rapport Employés", href: "/app/rapport-employes", icon: Users, permission: "reports" },
     ],
   },
   {

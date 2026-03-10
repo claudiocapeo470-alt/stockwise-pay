@@ -18,6 +18,7 @@ import Devis from "./pages/Devis";
 import Paiements from "./pages/Paiements";
 import Performance from "./pages/Performance";
 import Rapports from "./pages/Rapports";
+import RapportEmployes from "./pages/RapportEmployes";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AuthSimple from "./pages/AuthSimple";
@@ -161,6 +162,7 @@ const App = () => (
                       <Route path="/paiements" element={<Paiements />} />
                       <Route path="/performance" element={<Performance />} />
                       <Route path="/rapports" element={<Rapports />} />
+                      <Route path="/rapport-employes" element={<RapportEmployes />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="/team" element={<TeamManagement />} />

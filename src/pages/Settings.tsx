@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Building2, Palette, User, Shield, Database, Globe, ChevronRight, ArrowLeft, Smartphone } from "lucide-react";
+import { Building2, Palette, User, Shield, Database, Globe, ChevronRight, ArrowLeft, Crown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FileText, Eye, Edit, Trash2, Copy, Download, Search, MoreVertical } from "lucide-react";
+import { Plus, FileText, Eye, Edit, Trash2, Copy, Download, Search, MoreVertical, Grid3x3, List } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
@@ -41,6 +41,7 @@ export default function Factures() {
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const isMobile = useIsMobile();
 
   const filteredInvoices = invoices.filter((invoice) =>
@@ -64,19 +65,24 @@ export default function Factures() {
     navigate(`/app/factures/${id}/preview`);
   };
 
-  const statusColors = {
-    brouillon: "bg-gray-500",
-    envoye: "bg-blue-500",
-    paye: "bg-green-500",
-    annule: "bg-red-500",
+  const statusColors: Record<string, string> = {
+    brouillon: "bg-muted text-muted-foreground",
+    envoye: "bg-primary/10 text-primary",
+    paye: "bg-success/10 text-success",
+    annule: "bg-destructive/10 text-destructive",
   };
 
-  const statusLabels = {
+  const statusLabels: Record<string, string> = {
     brouillon: "Brouillon",
     envoye: "Envoyé",
     paye: "Payé",
     annule: "Annulé",
   };
+
+  // Stats
+  const totalAmount = invoices.reduce((sum, inv) => sum + inv.total_amount, 0);
+  const paidCount = invoices.filter(i => i.status === 'paye').length;
+  const pendingCount = invoices.filter(i => i.status === 'envoye' || i.status === 'brouillon').length;
 
   if (isLoading) {
     return (
@@ -87,232 +93,187 @@ export default function Factures() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-secondary bg-clip-text text-transparent">Factures</h1>
-          <p className="text-muted-foreground">
-            Gérez vos factures clients
-          </p>
-        </div>
-        <Button 
-          onClick={() => navigate('/app/factures/new')}
-          className="shrink-0"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Nouvelle Facture
-        </Button>
+    <div className="space-y-6 animate-fade-in">
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
+              <FileText className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{invoices.length}</p>
+              <p className="text-sm text-muted-foreground">Total Factures</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
+              <FileText className="h-5 w-5 text-success" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{paidCount}</p>
+              <p className="text-sm text-muted-foreground">Payées</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
+              <FileText className="h-5 w-5 text-warning" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{pendingCount}</p>
+              <p className="text-sm text-muted-foreground">En attente</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Recherche
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Rechercher par client ou numéro..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <div className="relative flex-1 max-w-md w-full">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input placeholder="Rechercher par client ou numéro..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+        </div>
+        <div className="flex gap-2">
+          {!isMobile && (
+            <>
+              <Button variant={viewMode === "list" ? "default" : "outline"} size="icon" onClick={() => setViewMode("list")}><List className="h-4 w-4" /></Button>
+              <Button variant={viewMode === "grid" ? "default" : "outline"} size="icon" onClick={() => setViewMode("grid")}><Grid3x3 className="h-4 w-4" /></Button>
+            </>
+          )}
+          <Button onClick={() => navigate('/app/factures/new')}>
+            <Plus className="mr-2 h-4 w-4" />
+            Nouvelle Facture
+          </Button>
+        </div>
+      </div>
 
-      <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10 border-blue-200 dark:border-blue-800">
-        <CardHeader>
-          <CardTitle className="text-blue-900 dark:text-blue-100">Liste des Factures</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {filteredInvoices.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">Aucune facture</h3>
-              <p className="text-muted-foreground mb-4">
-                Commencez par créer votre première facture
-              </p>
+      {/* Content */}
+      {filteredInvoices.length === 0 ? (
+        <Card>
+          <CardContent className="py-16 text-center">
+            <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">{invoices.length === 0 ? "Aucune facture" : "Aucun résultat"}</h3>
+            <p className="text-muted-foreground mb-4">{invoices.length === 0 ? "Commencez par créer votre première facture" : "Aucune facture trouvée pour cette recherche"}</p>
+            {invoices.length === 0 && (
               <Button onClick={() => navigate('/app/factures/new')}>
-                <Plus className="mr-2 h-4 w-4" />
-                Créer une facture
+                <Plus className="mr-2 h-4 w-4" />Créer une facture
               </Button>
-            </div>
-          ) : isMobile ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredInvoices.map((invoice) => (
-                <Card key={invoice.id} className="hover:shadow-lg transition-shadow bg-background/50">
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className="text-base font-semibold text-foreground truncate">
-                          {invoice.document_number}
-                        </CardTitle>
-                        <p className="text-xs text-muted-foreground mt-1 truncate">
-                          {invoice.client_name}
-                        </p>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => navigate(`/app/factures/${invoice.id}/preview`)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Voir
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/app/factures/${invoice.id}`)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Modifier
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDuplicate(invoice.id!)}>
-                            <Copy className="mr-2 h-4 w-4" />
-                            Dupliquer
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDownload(invoice.id!)}>
-                            <Download className="mr-2 h-4 w-4" />
-                            Télécharger
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => {
-                              setInvoiceToDelete(invoice.id!);
-                              setDeleteDialogOpen(true);
-                            }}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Supprimer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex justify-between items-center py-2 border-b border-border/50">
-                      <span className="text-sm text-muted-foreground">Date</span>
-                      <span className="text-sm font-medium">
-                        {format(new Date(invoice.issue_date), 'dd/MM/yyyy', { locale: fr })}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center py-2 border-b border-border/50">
-                      <span className="text-sm text-muted-foreground">Montant</span>
-                      <span className="text-sm font-semibold">
-                        {new Intl.NumberFormat('fr-FR', {
-                          style: 'currency',
-                          currency: 'XOF',
-                          minimumFractionDigits: 0
-                        }).format(invoice.total_amount).replace('XOF', 'FCFA')}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center pt-2">
-                      <span className="text-sm text-muted-foreground">Statut</span>
-                      <Badge className={statusColors[invoice.status]}>
-                        {statusLabels[invoice.status]}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {/* Table view */}
+          {!isMobile && viewMode === "list" && (
+            <Card>
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Numéro</TableHead>
                     <TableHead>Client</TableHead>
                     <TableHead>Date</TableHead>
-                    <TableHead>Montant</TableHead>
-                    <TableHead>Statut</TableHead>
+                    <TableHead className="text-right">Montant</TableHead>
+                    <TableHead className="text-center">Statut</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredInvoices.map((invoice) => (
                     <TableRow key={invoice.id}>
-                      <TableCell className="font-medium">
-                        {invoice.document_number}
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 bg-primary/10">
+                            <FileText className="h-4 w-4 text-primary" />
+                          </div>
+                          <p className="font-medium">{invoice.document_number}</p>
+                        </div>
                       </TableCell>
                       <TableCell>{invoice.client_name}</TableCell>
-                      <TableCell>
-                        {format(new Date(invoice.issue_date), 'dd/MM/yyyy', { locale: fr })}
+                      <TableCell>{format(new Date(invoice.issue_date), 'dd/MM/yyyy', { locale: fr })}</TableCell>
+                      <TableCell className="text-right font-medium">{invoice.total_amount.toLocaleString()} FCFA</TableCell>
+                      <TableCell className="text-center">
+                        <Badge className={statusColors[invoice.status]}>{statusLabels[invoice.status]}</Badge>
                       </TableCell>
                       <TableCell>
-                        {new Intl.NumberFormat('fr-FR', {
-                          style: 'currency',
-                          currency: 'XOF',
-                        }).format(invoice.total_amount)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={statusColors[invoice.status]}>
-                          {statusLabels[invoice.status]}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => navigate(`/app/factures/${invoice.id}/preview`)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => navigate(`/app/factures/${invoice.id}`)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDuplicate(invoice.id!)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDownload(invoice.id!)}
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setInvoiceToDelete(invoice.id!);
-                            setDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        <div className="flex gap-1 justify-end">
+                          <Button variant="ghost" size="icon" onClick={() => navigate(`/app/factures/${invoice.id}/preview`)}><Eye className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => navigate(`/app/factures/${invoice.id}`)}><Edit className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDuplicate(invoice.id!)}><Copy className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => { setInvoiceToDelete(invoice.id!); setDeleteDialogOpen(true); }}><Trash2 className="h-4 w-4" /></Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+            </Card>
+          )}
+
+          {/* Grid view */}
+          {(isMobile || viewMode === "grid") && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredInvoices.map((invoice) => (
+                <Card key={invoice.id} className="hover:shadow-md transition-all">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0 bg-primary/10">
+                          <FileText className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="min-w-0">
+                          <CardTitle className="text-base truncate">{invoice.document_number}</CardTitle>
+                          <p className="text-xs text-muted-foreground mt-0.5 truncate">{invoice.client_name}</p>
+                        </div>
+                      </div>
+                      <Badge className={statusColors[invoice.status]}>{statusLabels[invoice.status]}</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Date</p>
+                        <p className="text-sm font-medium">{format(new Date(invoice.issue_date), 'dd/MM/yyyy', { locale: fr })}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Montant</p>
+                        <p className="text-lg font-bold">{invoice.total_amount.toLocaleString()} <span className="text-xs font-normal">FCFA</span></p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 pt-2 border-t border-border">
+                      <Button variant="outline" size="sm" onClick={() => navigate(`/app/factures/${invoice.id}/preview`)} className="flex-1"><Eye className="h-3.5 w-3.5 mr-1.5" />Voir</Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="sm"><MoreVertical className="h-3.5 w-3.5" /></Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => navigate(`/app/factures/${invoice.id}`)}><Edit className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDuplicate(invoice.id!)}><Copy className="mr-2 h-4 w-4" />Dupliquer</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDownload(invoice.id!)}><Download className="mr-2 h-4 w-4" />Télécharger</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => { setInvoiceToDelete(invoice.id!); setDeleteDialogOpen(true); }} className="text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </>
+      )}
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-            <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer cette facture ? Cette action est irréversible.
-            </AlertDialogDescription>
+            <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer cette facture ? Cette action est irréversible.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Supprimer</AlertDialogAction>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

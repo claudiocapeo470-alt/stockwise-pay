@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, Download, TrendingUp, TrendingDown, ShoppingCart, Receipt, BarChart3 } from "lucide-react";
+import { CalendarIcon, Download, TrendingUp, ShoppingCart, Receipt, BarChart3 } from "lucide-react";
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, parseISO, isWithinInterval } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
@@ -16,7 +16,6 @@ import { TopProducts } from "@/components/performance/TopProducts";
 import { TopCustomers } from "@/components/performance/TopCustomers";
 import { DateRange } from "react-day-picker";
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 type PeriodType = "today" | "week" | "month" | "custom";
 
@@ -24,7 +23,6 @@ export default function Performance() {
   const [period, setPeriod] = useState<PeriodType>("month");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedProduct, setSelectedProduct] = useState<string>("all");
-  const isMobile = useIsMobile();
 
   const { products, isLoading: productsLoading } = useProducts();
   const { sales, isLoading: salesLoading } = useSales();
@@ -35,37 +33,28 @@ export default function Performance() {
   const getDateRange = useMemo(() => {
     const now = new Date();
     switch (period) {
-      case "today":
-        return { from: startOfDay(now), to: endOfDay(now) };
-      case "week":
-        return { from: startOfWeek(now, { locale: fr }), to: endOfWeek(now, { locale: fr }) };
-      case "month":
-        return { from: startOfMonth(now), to: endOfMonth(now) };
+      case "today": return { from: startOfDay(now), to: endOfDay(now) };
+      case "week": return { from: startOfWeek(now, { locale: fr }), to: endOfWeek(now, { locale: fr }) };
+      case "month": return { from: startOfMonth(now), to: endOfMonth(now) };
       case "custom":
-        return dateRange?.from && dateRange?.to 
+        return dateRange?.from && dateRange?.to
           ? { from: startOfDay(dateRange.from), to: endOfDay(dateRange.to) }
           : { from: startOfMonth(now), to: endOfMonth(now) };
-      default:
-        return { from: startOfMonth(now), to: endOfMonth(now) };
+      default: return { from: startOfMonth(now), to: endOfMonth(now) };
     }
   }, [period, dateRange]);
 
   const filteredData = useMemo(() => {
     if (!sales || !products || !payments) return { sales: [], products: [], payments: [] };
     const { from, to } = getDateRange;
-    
-    let filteredSales = sales.filter(sale => {
+    const filteredSales = sales.filter(sale => {
       const saleDate = parseISO(sale.sale_date);
-      const inDateRange = isWithinInterval(saleDate, { start: from, end: to });
-      const matchesProduct = selectedProduct === "all" || sale.product_id === selectedProduct;
-      return inDateRange && matchesProduct;
+      return isWithinInterval(saleDate, { start: from, end: to }) && (selectedProduct === "all" || sale.product_id === selectedProduct);
     });
-
-    let filteredPayments = payments.filter(payment => {
+    const filteredPayments = payments.filter(payment => {
       const paymentDate = parseISO(payment.payment_date);
       return isWithinInterval(paymentDate, { start: from, end: to });
     });
-
     return { sales: filteredSales, products, payments: filteredPayments };
   }, [sales, products, payments, getDateRange, selectedProduct]);
 
@@ -89,114 +78,102 @@ export default function Performance() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin"></div>
+      <div className="flex items-center justify-center h-64">
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin rounded-full"></div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* KPIs */}
+      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Chiffre d'affaires</p>
-                <p className="text-2xl font-bold mt-1">{metrics.totalRevenue.toLocaleString()} FCFA</p>
-              </div>
-              <div className="h-10 w-10 bg-primary/10 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-primary" />
-              </div>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
+              <TrendingUp className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{metrics.totalRevenue.toLocaleString()}</p>
+              <p className="text-sm text-muted-foreground">Chiffre d'affaires (FCFA)</p>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Transactions</p>
-                <p className="text-2xl font-bold mt-1">{metrics.totalSales}</p>
-              </div>
-              <div className="h-10 w-10 bg-success/10 flex items-center justify-center">
-                <ShoppingCart className="h-5 w-5 text-success" />
-              </div>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
+              <ShoppingCart className="h-5 w-5 text-success" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{metrics.totalSales}</p>
+              <p className="text-sm text-muted-foreground">Transactions</p>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Panier moyen</p>
-                <p className="text-2xl font-bold mt-1">{metrics.totalSales > 0 ? Math.round(metrics.totalRevenue / metrics.totalSales).toLocaleString() : 0} FCFA</p>
-              </div>
-              <div className="h-10 w-10 bg-secondary/10 flex items-center justify-center">
-                <Receipt className="h-5 w-5 text-secondary" />
-              </div>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-secondary/10 flex items-center justify-center rounded-xl">
+              <Receipt className="h-5 w-5 text-secondary-foreground" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{metrics.totalSales > 0 ? Math.round(metrics.totalRevenue / metrics.totalSales).toLocaleString() : 0}</p>
+              <p className="text-sm text-muted-foreground">Panier moyen (FCFA)</p>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Marge estimée</p>
-                <p className="text-2xl font-bold mt-1">{Math.round(metrics.grossMargin).toLocaleString()} FCFA</p>
-              </div>
-              <div className="h-10 w-10 bg-warning/10 flex items-center justify-center">
-                <BarChart3 className="h-5 w-5 text-warning" />
-              </div>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
+              <BarChart3 className="h-5 w-5 text-warning" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{Math.round(metrics.grossMargin).toLocaleString()}</p>
+              <p className="text-sm text-muted-foreground">Marge estimée (FCFA)</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filtres */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-3 items-end">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Période</label>
-              <Select value={period} onValueChange={(v: PeriodType) => setPeriod(v)}>
-                <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="today">Aujourd'hui</SelectItem>
-                  <SelectItem value="week">Cette semaine</SelectItem>
-                  <SelectItem value="month">Ce mois</SelectItem>
-                  <SelectItem value="custom">Personnalisée</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {period === "custom" && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    <CalendarIcon className="h-4 w-4" />
-                    {dateRange?.from && dateRange?.to ? `${format(dateRange.from, "dd/MM")} - ${format(dateRange.to, "dd/MM")}` : "Dates"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0"><Calendar mode="range" selected={dateRange} onSelect={setDateRange} locale={fr} /></PopoverContent>
-              </Popover>
-            )}
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Produit</label>
-              <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous</SelectItem>
-                  {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex gap-2 ml-auto">
-              <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}><Download className="h-4 w-4 mr-1" />PDF</Button>
-              <Button variant="outline" size="sm" onClick={() => handleExport('excel')}><Download className="h-4 w-4 mr-1" />Excel</Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Toolbar / Filters */}
+      <div className="flex flex-wrap gap-3 items-end">
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Période</label>
+          <Select value={period} onValueChange={(v: PeriodType) => setPeriod(v)}>
+            <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="today">Aujourd'hui</SelectItem>
+              <SelectItem value="week">Cette semaine</SelectItem>
+              <SelectItem value="month">Ce mois</SelectItem>
+              <SelectItem value="custom">Personnalisée</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        {period === "custom" && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <CalendarIcon className="h-4 w-4" />
+                {dateRange?.from && dateRange?.to ? `${format(dateRange.from, "dd/MM")} - ${format(dateRange.to, "dd/MM")}` : "Dates"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0"><Calendar mode="range" selected={dateRange} onSelect={setDateRange} locale={fr} /></PopoverContent>
+          </Popover>
+        )}
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Produit</label>
+          <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+            <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous</SelectItem>
+              {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex gap-2 ml-auto">
+          <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}><Download className="h-4 w-4 mr-1" />PDF</Button>
+          <Button variant="outline" size="sm" onClick={() => handleExport('excel')}><Download className="h-4 w-4 mr-1" />Excel</Button>
+        </div>
+      </div>
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">

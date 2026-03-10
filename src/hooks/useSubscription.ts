@@ -14,16 +14,17 @@ export interface SubscriptionStatus {
 
 export function useSubscription() {
   const { user } = useAuth();
-  const [status, setStatus] = useState<SubscriptionStatus>({
+  // Payment system disabled — always return active status
+  const [status] = useState<SubscriptionStatus>({
     isActive: true,
     isTrial: false,
     isExpired: false,
     trialDaysLeft: 0,
-    planName: null,
+    planName: 'pro',
     subscriptionEnd: null,
     subscription: null,
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading] = useState(false);
 
   const fetchSubscription = useCallback(async () => {
     if (!user) {

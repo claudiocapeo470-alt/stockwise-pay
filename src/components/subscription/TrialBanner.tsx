@@ -6,10 +6,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function TrialBanner() {
-  const { status } = useSubscription();
-  const { isEmployee } = useAuth();
-  const navigate = useNavigate();
-  const [dismissed, setDismissed] = useState(false);
+  // Payment system disabled — hide trial banner
+  return null;
 
   useEffect(() => {
     const wasDismissed = sessionStorage.getItem('trial_banner_dismissed');

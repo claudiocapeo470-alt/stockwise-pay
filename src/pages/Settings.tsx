@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Building2, Palette, User, Shield, Database, Globe, ChevronRight, ArrowLeft, Smartphone } from "lucide-react";
+import { Building2, Palette, User, Shield, Database, Globe, ChevronRight, ArrowLeft, Crown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
-type SettingsPage = "main" | "company" | "appearance" | "profile" | "security" | "data" | "system";
+type SettingsPage = "main" | "company" | "appearance" | "profile" | "security" | "data" | "system" | "subscription";
 
 interface SettingsCard {
   id: SettingsPage;
@@ -30,6 +30,7 @@ const settingsCards: SettingsCard[] = [
   { id: "security", title: "Sécurité & Accès", description: "Méthode auth, sessions actives, déconnexion", icon: Shield, iconBg: "bg-destructive/10", iconColor: "text-destructive", roles: ["owner", "admin"] },
   { id: "data", title: "Données & Sauvegarde", description: "Sauvegarde auto, chiffrement, export", icon: Database, iconBg: "bg-warning/10", iconColor: "text-warning", roles: ["owner", "admin"] },
   { id: "system", title: "Informations système", description: "Version, statut service, BDD, performance, support", icon: Globe, iconBg: "bg-muted", iconColor: "text-muted-foreground", roles: ["owner", "admin", "manager"] },
+  { id: "subscription", title: "Mon abonnement", description: "Plan actuel, historique des paiements, changer de plan", icon: Crown, iconBg: "bg-primary/10", iconColor: "text-primary", roles: ["owner", "admin"] },
 ];
 
 export default function Settings() {
@@ -86,7 +87,7 @@ export default function Settings() {
           <Card
             key={card.id}
             className="cursor-pointer hover:shadow-md transition-all duration-200 group border-border"
-            onClick={() => card.id === "profile" ? navigate('/app/profile') : setActivePage(card.id)}
+            onClick={() => card.id === "profile" ? navigate('/app/profile') : card.id === "subscription" ? navigate('/app/subscription') : setActivePage(card.id)}
           >
             <CardContent className="p-4 flex items-center gap-4">
               <div className={`h-12 w-12 rounded-xl ${card.iconBg} flex items-center justify-center flex-shrink-0`}>

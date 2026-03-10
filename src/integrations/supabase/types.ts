@@ -817,6 +817,48 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_history: {
+        Row: {
+          amount: number
+          billing_cycle: string | null
+          created_at: string | null
+          currency: string | null
+          id: string
+          moneroo_payment_id: string | null
+          paid_at: string | null
+          payment_method: string | null
+          plan_name: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          billing_cycle?: string | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          moneroo_payment_id?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          plan_name: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          billing_cycle?: string | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          moneroo_payment_id?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          plan_name?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -1398,43 +1440,70 @@ export type Database = {
       subscribers: {
         Row: {
           amount: number
+          billing_cycle: string | null
+          cancelled_at: string | null
           created_at: string
           currency: string
           email: string
           id: string
           is_legacy_user: boolean
+          is_trial: boolean | null
+          moneroo_payment_id: string | null
+          next_billing_date: string | null
           paystack_customer_code: string | null
+          plan_name: string | null
+          plan_price: number | null
           subscribed: boolean
           subscription_code: string | null
           subscription_end: string | null
+          subscription_start: string | null
+          trial_ends_at: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
           amount?: number
+          billing_cycle?: string | null
+          cancelled_at?: string | null
           created_at?: string
           currency?: string
           email: string
           id?: string
           is_legacy_user?: boolean
+          is_trial?: boolean | null
+          moneroo_payment_id?: string | null
+          next_billing_date?: string | null
           paystack_customer_code?: string | null
+          plan_name?: string | null
+          plan_price?: number | null
           subscribed?: boolean
           subscription_code?: string | null
           subscription_end?: string | null
+          subscription_start?: string | null
+          trial_ends_at?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
           amount?: number
+          billing_cycle?: string | null
+          cancelled_at?: string | null
           created_at?: string
           currency?: string
           email?: string
           id?: string
           is_legacy_user?: boolean
+          is_trial?: boolean | null
+          moneroo_payment_id?: string | null
+          next_billing_date?: string | null
           paystack_customer_code?: string | null
+          plan_name?: string | null
+          plan_price?: number | null
           subscribed?: boolean
           subscription_code?: string | null
           subscription_end?: string | null
+          subscription_start?: string | null
+          trial_ends_at?: string | null
           updated_at?: string
           user_id?: string | null
         }

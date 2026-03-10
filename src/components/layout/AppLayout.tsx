@@ -11,6 +11,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
+import { TrialBanner } from "@/components/subscription/TrialBanner";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -147,6 +148,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
           </header>
           
+          <TrialBanner />
           <div className={`flex-1 p-4 md:p-6 lg:px-12 ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
             {children}
           </div>

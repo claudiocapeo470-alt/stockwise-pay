@@ -260,10 +260,10 @@ export default function AuthSimple() {
           toast.success('✅ Inscription réussie !', { description: 'Vérifiez votre email pour confirmer votre compte' });
         } else {
           // Create trial subscription
-          if (data?.user) {
+          if (newUser) {
             try {
               await supabase.functions.invoke('create-trial', {
-                body: { user_id: data.user.id, email: formData.email }
+                body: { user_id: newUser.id, email: formData.email }
               });
             } catch (trialErr) {
               console.error('Trial creation error:', trialErr);

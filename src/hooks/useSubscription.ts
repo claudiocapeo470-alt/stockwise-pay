@@ -1,6 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
 
 export interface SubscriptionStatus {
   isActive: boolean;
@@ -13,8 +11,7 @@ export interface SubscriptionStatus {
 }
 
 export function useSubscription() {
-  const { user } = useAuth();
-  // Payment system disabled — always return active status
+  // Payment system disabled — always return active/free status
   const [status] = useState<SubscriptionStatus>({
     isActive: true,
     isTrial: false,
@@ -24,67 +21,6 @@ export function useSubscription() {
     subscriptionEnd: null,
     subscription: null,
   });
-  const [isLoading] = useState(false);
 
-  const fetchSubscription = useCallback(async () => {
-    if (!user) {
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('subscribers')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error || !data) {
-        setStatus({
-          isActive: false,
-          isTrial: false,
-          isExpired: true,
-          trialDaysLeft: 0,
-          planName: null,
-          subscriptionEnd: null,
-          subscription: null,
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const now = new Date();
-      const subEnd = data.subscription_end ? new Date(data.subscription_end) : null;
-      const trialEnd = data.trial_ends_at ? new Date(data.trial_ends_at) : null;
-      const isTrial = data.is_trial === true;
-      const isSubscribed = data.subscribed === true;
-      const isActive = isSubscribed && subEnd ? subEnd > now : false;
-      const isExpired = !isActive;
-
-      let trialDaysLeft = 0;
-      if (isTrial && trialEnd) {
-        trialDaysLeft = Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-      }
-
-      setStatus({
-        isActive,
-        isTrial,
-        isExpired,
-        trialDaysLeft,
-        planName: (data.plan_name as any) || null,
-        subscriptionEnd: subEnd,
-        subscription: data,
-      });
-    } catch (err) {
-      console.error('useSubscription error:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    fetchSubscription();
-  }, [fetchSubscription]);
-
-  return { status, isLoading, refetch: fetchSubscription };
+  return { status, isLoading: false, refetch: async () => {} };
 }

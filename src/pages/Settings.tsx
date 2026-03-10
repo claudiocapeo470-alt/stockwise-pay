@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
-type SettingsPage = "main" | "company" | "appearance" | "profile" | "security" | "data" | "system";
+type SettingsPage = "main" | "company" | "appearance" | "profile" | "security" | "data" | "system" | "subscription";
 
 interface SettingsCard {
   id: SettingsPage;

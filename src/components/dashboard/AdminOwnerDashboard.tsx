@@ -99,7 +99,7 @@ export function AdminOwnerDashboard() {
             <Button variant="outline" className="w-full justify-start h-12" onClick={() => navigate('/app/caisse')}><Plus className="h-4 w-4 mr-3" />Nouvelle vente</Button>
             <Button variant="outline" className="w-full justify-start h-12" onClick={() => navigate('/app/stocks')}><Package className="h-4 w-4 mr-3" />Ajouter un produit</Button>
             <Button variant="outline" className="w-full justify-start h-12" onClick={() => navigate('/app/factures/new')}><Receipt className="h-4 w-4 mr-3" />Créer une facture</Button>
-            <Button variant="outline" className="w-full justify-start h-12" onClick={() => navigate('/app/performance')}><TrendingUp className="h-4 w-4 mr-3" />Voir les rapports</Button>
+            <Button variant="outline" className="w-full justify-start h-12" onClick={() => navigate('/app/rapports')}><TrendingUp className="h-4 w-4 mr-3" />Voir les rapports</Button>
           </CardContent>
         </Card>
 

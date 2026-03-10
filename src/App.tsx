@@ -16,7 +16,8 @@ import Facturation from "./pages/Facturation";
 import Factures from "./pages/Factures";
 import Devis from "./pages/Devis";
 import Paiements from "./pages/Paiements";
-import PerformanceRapports from "./pages/PerformanceRapports";
+import Performance from "./pages/Performance";
+import Rapports from "./pages/Rapports";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AuthSimple from "./pages/AuthSimple";
@@ -158,7 +159,8 @@ const App = () => (
                       <Route path="/devis/:id" element={<InvoiceEditor documentType="devis" />} />
                       <Route path="/devis/:id/preview" element={<InvoicePreview documentType="devis" />} />
                       <Route path="/paiements" element={<Paiements />} />
-                      <Route path="/performance" element={<PerformanceRapports />} />
+                      <Route path="/performance" element={<Performance />} />
+                      <Route path="/rapports" element={<Rapports />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="/team" element={<TeamManagement />} />

@@ -30,6 +30,7 @@ const settingsCards: SettingsCard[] = [
   { id: "security", title: "Sécurité & Accès", description: "Méthode auth, sessions actives, déconnexion", icon: Shield, iconBg: "bg-destructive/10", iconColor: "text-destructive", roles: ["owner", "admin"] },
   { id: "data", title: "Données & Sauvegarde", description: "Sauvegarde auto, chiffrement, export", icon: Database, iconBg: "bg-warning/10", iconColor: "text-warning", roles: ["owner", "admin"] },
   { id: "system", title: "Informations système", description: "Version, statut service, BDD, performance, support", icon: Globe, iconBg: "bg-muted", iconColor: "text-muted-foreground", roles: ["owner", "admin", "manager"] },
+  { id: "subscription", title: "Mon abonnement", description: "Plan actuel, historique des paiements, changer de plan", icon: Crown, iconBg: "bg-primary/10", iconColor: "text-primary", roles: ["owner", "admin"] },
 ];
 
 export default function Settings() {

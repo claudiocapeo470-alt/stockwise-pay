@@ -87,7 +87,7 @@ export default function Settings() {
           <Card
             key={card.id}
             className="cursor-pointer hover:shadow-md transition-all duration-200 group border-border"
-            onClick={() => card.id === "profile" ? navigate('/app/profile') : setActivePage(card.id)}
+            onClick={() => card.id === "profile" ? navigate('/app/profile') : card.id === "subscription" ? navigate('/app/subscription') : setActivePage(card.id)}
           >
             <CardContent className="p-4 flex items-center gap-4">
               <div className={`h-12 w-12 rounded-xl ${card.iconBg} flex items-center justify-center flex-shrink-0`}>

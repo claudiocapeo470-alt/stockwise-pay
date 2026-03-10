@@ -259,6 +259,16 @@ export default function AuthSimple() {
         if (needsConfirmation) {
           toast.success('✅ Inscription réussie !', { description: 'Vérifiez votre email pour confirmer votre compte' });
         } else {
+          // Create trial subscription
+          if (data?.user) {
+            try {
+              await supabase.functions.invoke('create-trial', {
+                body: { user_id: data.user.id, email: formData.email }
+              });
+            } catch (trialErr) {
+              console.error('Trial creation error:', trialErr);
+            }
+          }
           toast.success('✅ Compte créé et activé !');
           localStorage.setItem('theme', 'light');
           document.documentElement.classList.remove('dark');

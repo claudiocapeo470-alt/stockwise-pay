@@ -11,6 +11,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
+import { TrialBanner } from "@/components/subscription/TrialBanner";
 
 interface AppLayoutProps {
   children: React.ReactNode;

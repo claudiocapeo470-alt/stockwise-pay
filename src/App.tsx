@@ -167,9 +167,11 @@ const App = () => (
                       <Route path="/boutique/produits" element={<StoreProducts />} />
                       <Route path="/boutique/commandes" element={<StoreOrders />} />
                       <Route path="/boutique/avis" element={<StoreReviews />} />
+                      <Route path="/subscription" element={<MySubscription />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </AppLayout>
+                </SubscriptionGuard>
                 </ProtectedRoute>
               } />
               

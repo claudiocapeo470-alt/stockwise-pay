@@ -294,9 +294,6 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
 }
 
 
-    if (newPassword !== confirmPassword) { toast.error("Les mots de passe ne correspondent pas"); return; }
-    setIsUpdating(true);
-    try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
       toast.success("Mot de passe modifié avec succès");

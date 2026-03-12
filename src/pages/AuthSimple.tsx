@@ -259,12 +259,12 @@ export default function AuthSimple() {
         if (needsConfirmation) {
           toast.success('✅ Inscription réussie !', { description: 'Vérifiez votre email pour confirmer votre compte' });
         } else {
-          // Trial/payment system disabled — skip trial creation
-          toast.success('✅ Compte créé et activé !');
+          // Nouveau compte → onboarding sélection de modules
+          toast.success('✅ Compte créé !', { description: 'Choisissez vos modules pour démarrer' });
           localStorage.setItem('theme', 'light');
           document.documentElement.classList.remove('dark');
           document.documentElement.classList.add('light');
-          navigate('/app?confirmed=true');
+          navigate('/onboarding');
         }
       }
     } catch (error: any) {

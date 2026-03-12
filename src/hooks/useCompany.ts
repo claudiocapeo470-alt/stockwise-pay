@@ -9,6 +9,9 @@ interface Company {
   company_code: string;
   logo_url: string | null;
   lock_timeout_minutes: number;
+  selected_modules: string[] | null;
+  onboarding_completed: boolean;
+  company_name_set: boolean;
   created_at: string;
   updated_at: string;
 }

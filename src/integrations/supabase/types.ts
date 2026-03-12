@@ -121,32 +121,41 @@ export type Database = {
       companies: {
         Row: {
           company_code: string
+          company_name_set: boolean | null
           created_at: string
           id: string
           lock_timeout_minutes: number
           logo_url: string | null
           name: string
+          onboarding_completed: boolean | null
           owner_id: string
+          selected_modules: string[] | null
           updated_at: string
         }
         Insert: {
           company_code: string
+          company_name_set?: boolean | null
           created_at?: string
           id?: string
           lock_timeout_minutes?: number
           logo_url?: string | null
           name?: string
+          onboarding_completed?: boolean | null
           owner_id: string
+          selected_modules?: string[] | null
           updated_at?: string
         }
         Update: {
           company_code?: string
+          company_name_set?: boolean | null
           created_at?: string
           id?: string
           lock_timeout_minutes?: number
           logo_url?: string | null
           name?: string
+          onboarding_completed?: boolean | null
           owner_id?: string
+          selected_modules?: string[] | null
           updated_at?: string
         }
         Relationships: []

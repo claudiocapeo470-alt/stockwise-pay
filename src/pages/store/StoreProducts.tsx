@@ -247,7 +247,7 @@ export default function StoreProducts() {
 
       <CreateProductDialog open={showCreateDialog} onClose={() => setShowCreateDialog(false)} storeId={store.id} onCreated={refreshAll} />
       {editingProduct && (
-        <StoreProductEditDialog storeProduct={editingProduct.storeProduct} product={editingProduct.product} open={true} onClose={() => setEditingProduct(null)} onSaved={refreshAll} />
+        <StoreProductEditDialog storeProduct={editingProduct.storeProduct} product={editingProduct.product} storeId={store.id} open={true} onOpenChange={v => !v && setEditingProduct(null)} onSaved={refreshAll} />
       )}
     </div>
   );

@@ -370,7 +370,7 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
     supabase.from('profiles').select('id').limit(1).then(({ error }) => {
       setDbStatus(error ? 'error' : 'connected');
     });
-  });
+  }, []);
 
   return (
     <Card>

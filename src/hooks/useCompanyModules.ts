@@ -9,7 +9,6 @@ export interface ModuleConfig {
   icon: string;
   color: string;
   routes: string[];
-  employeeRoles: string[];
 }
 
 export const MODULE_CONFIGS: ModuleConfig[] = [
@@ -20,7 +19,6 @@ export const MODULE_CONFIGS: ModuleConfig[] = [
     icon: '🛍️',
     color: 'from-violet-500 to-purple-600',
     routes: ['/app/boutique/config', '/app/boutique/produits', '/app/boutique/commandes', '/app/boutique/avis'],
-    employeeRoles: ['vendeur'],
   },
   {
     key: 'pos',
@@ -29,7 +27,6 @@ export const MODULE_CONFIGS: ModuleConfig[] = [
     icon: '🖥️',
     color: 'from-emerald-500 to-teal-600',
     routes: ['/app/caisse', '/app/ventes', '/app/paiements'],
-    employeeRoles: ['caissier'],
   },
   {
     key: 'stock',
@@ -38,9 +35,26 @@ export const MODULE_CONFIGS: ModuleConfig[] = [
     icon: '📦',
     color: 'from-orange-500 to-amber-600',
     routes: ['/app/stocks', '/app/factures', '/app/devis', '/app/livraisons'],
-    employeeRoles: ['gestionnaire', 'livreur'],
   },
 ];
+
+export const MODULE_PLANS = [
+  { keys: ['boutique'] as ModuleKey[], planId: 'boutique', label: 'Plan Boutique', description: 'Boutique en ligne + commandes + avis', icon: '🛍️', color: 'from-violet-500 to-purple-600' },
+  { keys: ['pos'] as ModuleKey[], planId: 'pos', label: 'Plan Caisse POS', description: 'Caisse tactile + ventes + paiements', icon: '🖥️', color: 'from-emerald-500 to-teal-600' },
+  { keys: ['stock'] as ModuleKey[], planId: 'stock', label: 'Plan Stock', description: 'Inventaire + factures + devis + livraisons', icon: '📦', color: 'from-orange-500 to-amber-600' },
+  { keys: ['pos', 'stock'] as ModuleKey[], planId: 'magasin', label: 'Plan Magasin', description: 'Caisse POS + Gestion de stock', icon: '🏪', color: 'from-blue-500 to-cyan-600' },
+  { keys: ['boutique', 'stock'] as ModuleKey[], planId: 'ecommerce', label: 'Plan E-commerce', description: 'Boutique en ligne + Inventaire', icon: '🌐', color: 'from-indigo-500 to-violet-600' },
+  { keys: ['boutique', 'pos'] as ModuleKey[], planId: 'multicanal', label: 'Plan Multi-canal', description: 'Boutique en ligne + Caisse POS', icon: '⚡', color: 'from-orange-500 to-rose-500' },
+  { keys: ['boutique', 'pos', 'stock'] as ModuleKey[], planId: 'toutEnUn', label: 'Plan Tout-en-un', description: 'Boutique + Caisse + Stock — accès complet', icon: '🚀', color: 'from-blue-600 via-violet-600 to-indigo-700', popular: true },
+];
+
+export function getMatchingPlan(modules: ModuleKey[]) {
+  const sorted = [...modules].sort();
+  return MODULE_PLANS.find(p => {
+    const ps = [...p.keys].sort();
+    return ps.length === sorted.length && ps.every((k, i) => k === sorted[i]);
+  }) || null;
+}
 
 export function useCompanyModules() {
   const { company, loading, updateCompany } = useCompany();
@@ -49,7 +63,6 @@ export function useCompanyModules() {
   const onboardingCompleted = company?.onboarding_completed ?? false;
 
   const hasModule = (key: ModuleKey): boolean => selectedModules.includes(key);
-  const hasAnyModule = (): boolean => selectedModules.length > 0;
 
   const saveModules = async (modules: ModuleKey[], companyName?: string) => {
     const updates: Record<string, unknown> = {
@@ -66,20 +79,15 @@ export function useCompanyModules() {
   const getActiveModuleConfigs = (): ModuleConfig[] =>
     MODULE_CONFIGS.filter(m => selectedModules.includes(m.key));
 
-  const getAllowedRoutes = (): string[] => {
-    const base = ['/app', '/app/performance', '/app/rapports', '/app/rapport-employes', '/app/team', '/app/profile', '/app/settings', '/app/subscription'];
-    const moduleRoutes = getActiveModuleConfigs().flatMap(m => m.routes);
-    return [...base, ...moduleRoutes];
-  };
+  const currentPlan = getMatchingPlan(selectedModules);
 
   return {
     selectedModules,
     onboardingCompleted,
     hasModule,
-    hasAnyModule,
     saveModules,
     getActiveModuleConfigs,
-    getAllowedRoutes,
+    currentPlan,
     loading,
     company,
   };

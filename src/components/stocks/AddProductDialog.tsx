@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { EmojiPicker, IconColorPicker, getIconBgStyle } from "./EmojiPicker";
-import { ImageCropUpload } from "./ImageCropUpload";
+import { MultiImageUpload } from "./MultiImageUpload";
 
 const UNITS = ["pièce", "kg", "L", "m"];
 
@@ -20,21 +20,29 @@ export function AddProductDialog() {
     name: "", description: "", price: "", quantity: "", min_quantity: "10",
     category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue",
     image_url: "" as string | null, unit: "pièce",
+    extraImages: [] as string[],
   });
   const { addProduct } = useProducts();
 
   const handleSubmit = async () => {
     try {
+      // Use first extra image as main image_url if no main image set
+      const mainImage = formData.image_url || formData.extraImages[0] || null;
       await addProduct.mutateAsync({
         name: formData.name, description: formData.description || null,
         price: parseFloat(formData.price) || 0, quantity: parseInt(formData.quantity) || 0,
         min_quantity: parseInt(formData.min_quantity) || 10, category: formData.category || null,
         sku: formData.sku || null, icon_emoji: formData.icon_emoji, icon_bg_color: formData.icon_bg_color,
-        image_url: formData.image_url || null,
+        image_url: mainImage,
       });
-      setFormData({ name: "", description: "", price: "", quantity: "", min_quantity: "10", category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue", image_url: null, unit: "pièce" });
-      setStep(1); setShowPicker(false); setOpen(false);
+      // TODO: Save extra images to product_images table after product creation
+      resetForm();
     } catch {}
+  };
+
+  const resetForm = () => {
+    setFormData({ name: "", description: "", price: "", quantity: "", min_quantity: "10", category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue", image_url: null, unit: "pièce", extraImages: [] });
+    setStep(1); setShowPicker(false); setOpen(false);
   };
 
   const canNext = (s: number) => {
@@ -72,28 +80,13 @@ export function AddProductDialog() {
             <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={getIconBgStyle(formData.icon_bg_color)}>
               <span className="text-2xl">{formData.icon_emoji}</span>
             </div>
-            {step === 1 ? "Identité du produit" : step === 2 ? "Prix & Stock" : "Détails & Média"}
+            {step === 1 ? "Identité du produit" : step === 2 ? "Prix & Stock" : "Média & Détails"}
           </DialogTitle>
         </DialogHeader>
         <StepIndicator />
         <div className="space-y-3">
           {step === 1 && (
             <>
-              <div className="space-y-2">
-                <Label>Icône du produit</Label>
-                <div className="flex items-center gap-3">
-                  <button type="button" onClick={() => setShowPicker(!showPicker)} className="h-14 w-14 rounded-xl flex items-center justify-center border-2 border-dashed border-border hover:border-primary transition-colors" style={getIconBgStyle(formData.icon_bg_color)}>
-                    <span className="text-3xl">{formData.icon_emoji}</span>
-                  </button>
-                  <p className="text-sm text-muted-foreground">Cliquez pour changer</p>
-                </div>
-                {showPicker && (
-                  <div className="space-y-3 p-3 border border-border rounded-xl bg-card">
-                    <EmojiPicker value={formData.icon_emoji} onChange={v => setFormData(p => ({ ...p, icon_emoji: v }))} />
-                    <IconColorPicker value={formData.icon_bg_color} onChange={v => setFormData(p => ({ ...p, icon_bg_color: v }))} />
-                  </div>
-                )}
-              </div>
               <div><Label>Nom du produit *</Label><Input value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="Ex: iPhone 14" /></div>
               <div className="grid grid-cols-2 gap-4">
                 <div><Label>Catégorie</Label><Input value={formData.category} onChange={e => setFormData(p => ({ ...p, category: e.target.value }))} placeholder="Ex: Électronique" /></div>
@@ -119,8 +112,35 @@ export function AddProductDialog() {
           )}
           {step === 3 && (
             <>
-              <div><Label>Description</Label><Textarea value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Description détaillée" rows={3} /></div>
-              <div><Label>Photo du produit</Label><ImageCropUpload currentImageUrl={formData.image_url} onImageUploaded={url => setFormData(p => ({ ...p, image_url: url }))} /></div>
+              {/* Icon picker */}
+              <div className="space-y-2">
+                <Label>Icône du produit (optionnel)</Label>
+                <div className="flex items-center gap-3">
+                  <button type="button" onClick={() => setShowPicker(!showPicker)} className="h-14 w-14 rounded-xl flex items-center justify-center border-2 border-dashed border-border hover:border-primary transition-colors" style={getIconBgStyle(formData.icon_bg_color)}>
+                    <span className="text-3xl">{formData.icon_emoji}</span>
+                  </button>
+                  <p className="text-sm text-muted-foreground">Cliquez pour changer l'icône</p>
+                </div>
+                {showPicker && (
+                  <div className="space-y-3 p-3 border border-border rounded-xl bg-card">
+                    <EmojiPicker value={formData.icon_emoji} onChange={v => setFormData(p => ({ ...p, icon_emoji: v }))} />
+                    <IconColorPicker value={formData.icon_bg_color} onChange={v => setFormData(p => ({ ...p, icon_bg_color: v }))} />
+                  </div>
+                )}
+              </div>
+
+              {/* Multiple images */}
+              <div className="space-y-2">
+                <Label>Photos du produit (optionnel)</Label>
+                <MultiImageUpload
+                  images={formData.extraImages}
+                  onImagesChange={imgs => setFormData(p => ({ ...p, extraImages: imgs, image_url: imgs[0] || null }))}
+                  maxImages={5}
+                />
+              </div>
+
+              {/* Description */}
+              <div><Label>Description (optionnel)</Label><Textarea value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Description détaillée du produit..." rows={3} /></div>
             </>
           )}
         </div>

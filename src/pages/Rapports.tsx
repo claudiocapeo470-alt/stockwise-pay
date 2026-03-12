@@ -653,15 +653,56 @@ export default function Rapports() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden">
-      {/* Header Block with Description */}
-      <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800/40 rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-2">
-          {isMobile ? "Rapports" : "Rapports et analyses"}
-        </h2>
-        <p className="text-blue-700 dark:text-blue-300">
-          {isMobile ? "Vos rapports d'activité" : "Générez et consultez vos rapports d'activité"}
-        </p>
+    <div className="space-y-6 animate-fade-in">
+      {/* Plain text description */}
+      <p className="text-sm text-muted-foreground">Générez et consultez vos rapports d'activité</p>
+
+      {/* Stats cards like Stocks page */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
+              <TrendingUp className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{metrics.totalSales}</p>
+              <p className="text-sm text-muted-foreground">Ventes</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
+              <BarChart3 className="h-5 w-5 text-success" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{metrics.totalRevenue.toLocaleString()}</p>
+              <p className="text-sm text-muted-foreground">CA (CFA)</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
+              <PieChart className="h-5 w-5 text-warning" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{metrics.totalProducts}</p>
+              <p className="text-sm text-muted-foreground">Produits</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="h-10 w-10 bg-destructive/10 flex items-center justify-center rounded-xl">
+              <FileText className="h-5 w-5 text-destructive" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{metrics.paymentRate}%</p>
+              <p className="text-sm text-muted-foreground">Taux encaissement</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Quick Export Actions */}

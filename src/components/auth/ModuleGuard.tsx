@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
-import { useCompanyModules } from "@/hooks/useCompanyModules";
-import { useAuth } from "@/contexts/AuthContext";
-import { Loader2 } from "lucide-react";
+import { ReactNode } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useCompanyModules } from '@/hooks/useCompanyModules';
+import { useAuth } from '@/contexts/AuthContext';
+import { Loader2 } from 'lucide-react';
 
 interface ModuleGuardProps {
   children: ReactNode;
@@ -12,7 +12,6 @@ export function ModuleGuard({ children }: ModuleGuardProps) {
   const { loading: authLoading, isEmployee } = useAuth();
   const { onboardingCompleted, loading: companyLoading } = useCompanyModules();
 
-  // Les employés ne passent jamais par l'onboarding
   if (isEmployee) return <>{children}</>;
 
   if (authLoading || companyLoading) {

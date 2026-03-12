@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Building2, Palette, User, Shield, Database, Globe, ChevronRight, ArrowLeft, Crown, Save, Download, LogOut, Moon, Sun, Monitor } from "lucide-react";
+import { Building2, Palette, User, Shield, Globe, ChevronRight, ArrowLeft, Crown, Save, Download, LogOut, Moon, Sun, Monitor } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -115,7 +115,7 @@ export default function Settings() {
   );
 }
 
-// ─── Apparence & Thème (fully editable) ───
+// ─── Apparence & Thème ───
 function AppearanceSettings() {
   const { theme, setTheme } = useTheme();
   const [currency, setCurrency] = useState(() => localStorage.getItem('app_currency') || 'XOF');
@@ -293,152 +293,7 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
   );
 }
 
-
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-      if (error) throw error;
-      toast.success("Mot de passe modifié avec succès");
-      setIsChangingPassword(false);
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch {
-      toast.error("Erreur lors de la modification du mot de passe");
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  return (
-    <Card>
-      <CardHeader><CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5" /> Sécurité & Accès</CardTitle></CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div><p className="font-medium">Méthode d'authentification</p><p className="text-sm text-muted-foreground">Connexion sécurisée</p></div>
-          <Badge variant="outline">Email + Mot de passe</Badge>
-        </div>
-        <Separator />
-
-        {/* Change password */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div><p className="font-medium">Mot de passe</p><p className="text-sm text-muted-foreground">Modifier votre mot de passe</p></div>
-            {!isChangingPassword && (
-              <Button variant="outline" size="sm" onClick={() => setIsChangingPassword(true)}>Modifier</Button>
-            )}
-          </div>
-          {isChangingPassword && (
-            <form onSubmit={handlePasswordChange} className="space-y-3 p-4 rounded-lg bg-muted/50">
-              <div>
-                <Label htmlFor="new_password">Nouveau mot de passe</Label>
-                <Input id="new_password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 6 caractères" required />
-              </div>
-              <div>
-                <Label htmlFor="confirm_password">Confirmer le mot de passe</Label>
-                <Input id="confirm_password" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
-              </div>
-              <div className="flex gap-2">
-                <Button type="submit" size="sm" disabled={isUpdating}>{isUpdating ? "Modification..." : "Confirmer"}</Button>
-                <Button type="button" variant="ghost" size="sm" onClick={() => { setIsChangingPassword(false); setNewPassword(""); setConfirmPassword(""); }}>Annuler</Button>
-              </div>
-            </form>
-          )}
-        </div>
-        <Separator />
-
-        <div className="flex items-center justify-between">
-          <div><p className="font-medium">Sessions actives</p><p className="text-sm text-muted-foreground">Connexions en cours</p></div>
-          <Badge variant="outline">1 session</Badge>
-        </div>
-        <Separator />
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button variant="outline" className="text-destructive border-destructive/30" onClick={signOut}>
-            <LogOut className="h-4 w-4 mr-2" /> Déconnecter toutes les sessions
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// ─── Données & Sauvegarde (fully functional with real export) ───
-function DataSettings() {
-  const { products = [] } = useProducts();
-  const { sales = [] } = useSales();
-  const { payments = [] } = usePayments();
-  const [isExporting, setIsExporting] = useState(false);
-
-  const handleExportAllData = async () => {
-    setIsExporting(true);
-    try {
-      const wb = XLSX.utils.book_new();
-
-      // Products sheet
-      if (products.length > 0) {
-        const productsData = products.map(p => ({
-          Nom: p.name, Catégorie: p.category || '', Prix: p.price, Quantité: p.quantity, 'Stock min': p.min_quantity, SKU: p.sku || ''
-        }));
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(productsData), 'Produits');
-      }
-
-      // Sales sheet
-      if (sales.length > 0) {
-        const salesData = sales.map(s => ({
-          Date: new Date(s.created_at).toLocaleDateString('fr-FR'), Client: s.customer_name || '', Quantité: s.quantity, 'Prix unitaire': s.unit_price, Total: s.total_amount
-        }));
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(salesData), 'Ventes');
-      }
-
-      // Payments sheet
-      if (payments.length > 0) {
-        const paymentsData = payments.map(p => ({
-          Date: new Date(p.created_at).toLocaleDateString('fr-FR'), Client: `${p.customer_first_name || ''} ${p.customer_last_name || ''}`.trim(), Montant: p.total_amount, Méthode: p.payment_method, Statut: p.status
-        }));
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(paymentsData), 'Paiements');
-      }
-
-      XLSX.writeFile(wb, `export_complet_${new Date().toISOString().split('T')[0]}.xlsx`);
-      toast.success("Export complet téléchargé avec succès");
-    } catch {
-      toast.error("Erreur lors de l'export");
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  return (
-    <Card>
-      <CardHeader><CardTitle className="flex items-center gap-2"><Database className="h-5 w-5" /> Données & Sauvegarde</CardTitle></CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div><p className="font-medium text-sm">Sauvegarde automatique</p><p className="text-xs text-muted-foreground">Sauvegarde en temps réel via Supabase</p></div>
-          <Badge variant="secondary" className="bg-success/10 text-success">Activée</Badge>
-        </div>
-        <Separator />
-        <div className="flex items-center justify-between">
-          <div><p className="font-medium text-sm">Chiffrement des données</p><p className="text-xs text-muted-foreground">Protection des informations</p></div>
-          <Badge variant="secondary" className="bg-success/10 text-success">SSL/TLS</Badge>
-        </div>
-        <Separator />
-        <div className="space-y-3">
-          <div><p className="font-medium text-sm">Export des données</p><p className="text-xs text-muted-foreground">Télécharger toutes vos données (produits, ventes, paiements)</p></div>
-          <Button onClick={handleExportAllData} disabled={isExporting} variant="outline" className="w-full sm:w-auto">
-            <Download className="h-4 w-4 mr-2" /> {isExporting ? "Export en cours..." : "Exporter toutes les données (Excel)"}
-          </Button>
-        </div>
-        <Separator />
-        <div className="rounded-lg bg-muted/50 p-4 space-y-2">
-          <p className="text-sm font-medium">Résumé des données</p>
-          <div className="grid grid-cols-3 gap-4 text-sm">
-            <div><p className="text-muted-foreground">Produits</p><p className="font-bold">{products.length}</p></div>
-            <div><p className="text-muted-foreground">Ventes</p><p className="font-bold">{sales.length}</p></div>
-            <div><p className="text-muted-foreground">Paiements</p><p className="font-bold">{payments.length}</p></div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// ─── Informations système (real data) ───
+// ─── Informations système ───
 function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin: boolean }) {
   const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error'>('checking');
   
@@ -493,7 +348,7 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
   );
 }
 
-// ─── Mon abonnement (redirect to subscription page) ───
+// ─── Mon abonnement (redirect) ───
 function SubscriptionSettings({ navigate }: { navigate: (path: string) => void }) {
   navigate('/app/subscription');
   return null;

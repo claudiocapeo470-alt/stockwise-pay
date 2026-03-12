@@ -21,7 +21,7 @@ import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import * as XLSX from 'xlsx';
 
-type SettingsPage = "main" | "company" | "appearance" | "profile" | "security" | "data" | "system" | "subscription";
+type SettingsPage = "main" | "company" | "appearance" | "profile" | "security-data" | "system" | "subscription";
 
 interface SettingsCard {
   id: SettingsPage;

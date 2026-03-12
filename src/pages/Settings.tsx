@@ -77,8 +77,7 @@ export default function Settings() {
         {activePage === "company" && <CompanySettings />}
         {activePage === "appearance" && <AppearanceSettings />}
         {activePage === "profile" && <ProfileSettingsPage navigate={navigate} />}
-        {activePage === "security" && <SecuritySettings signOut={signOut} />}
-        {activePage === "data" && <DataSettings />}
+        {activePage === "security-data" && <SecurityDataSettings signOut={signOut} />}
         {activePage === "system" && <SystemSettings displayName={displayName} isAdmin={isAdmin} />}
         {activePage === "subscription" && <SubscriptionSettings navigate={navigate} />}
       </div>

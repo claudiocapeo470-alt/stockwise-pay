@@ -203,11 +203,95 @@ function ProfileSettingsPage({ navigate }: { navigate: (path: string) => void })
   return null;
 }
 
-// ─── Sécurité & Accès (fully functional) ───
-function SecuritySettings({ signOut }: { signOut: () => void }) {
+// ─── Sécurité & Données (combined) ───
+function SecurityDataSettings({ signOut }: { signOut: () => void }) {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const { products = [] } = useProducts();
+  const { sales = [] } = useSales();
+  const { payments = [] } = usePayments();
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 6) { toast.error("Le mot de passe doit contenir au moins 6 caractères"); return; }
+    if (newPassword !== confirmPassword) { toast.error("Les mots de passe ne correspondent pas"); return; }
+    setIsUpdating(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast.success("Mot de passe modifié avec succès");
+      setIsChangingPassword(false); setNewPassword(""); setConfirmPassword("");
+    } catch {
+      toast.error("Erreur lors de la modification");
+    } finally { setIsUpdating(false); }
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const wb = XLSX.utils.book_new();
+      if (products.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(products.map(p => ({ Nom: p.name, Catégorie: p.category || '', Prix: p.price, Quantité: p.quantity, SKU: p.sku || '' }))), 'Produits');
+      if (sales.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(sales.map(s => ({ Date: new Date(s.created_at).toLocaleDateString('fr-FR'), Client: s.customer_name || '', Quantité: s.quantity, Total: s.total_amount }))), 'Ventes');
+      if (payments.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(payments.map(p => ({ Date: new Date(p.created_at).toLocaleDateString('fr-FR'), Client: `${p.customer_first_name || ''} ${p.customer_last_name || ''}`.trim(), Montant: p.total_amount, Statut: p.status }))), 'Paiements');
+      XLSX.writeFile(wb, `export_${new Date().toISOString().split('T')[0]}.xlsx`);
+      toast.success("Export téléchargé");
+    } catch { toast.error("Erreur lors de l'export"); }
+    finally { setIsExporting(false); }
+  };
+
+  return (
+    <Card>
+      <CardHeader><CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5" /> Sécurité & Données</CardTitle></CardHeader>
+      <CardContent className="space-y-5">
+        <div className="flex items-center justify-between">
+          <div><p className="font-medium text-sm">Authentification</p><p className="text-xs text-muted-foreground">Connexion sécurisée</p></div>
+          <Badge variant="outline">Email + Mot de passe</Badge>
+        </div>
+        <Separator />
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div><p className="font-medium text-sm">Mot de passe</p><p className="text-xs text-muted-foreground">Modifier votre mot de passe</p></div>
+            {!isChangingPassword && <Button variant="outline" size="sm" onClick={() => setIsChangingPassword(true)}>Modifier</Button>}
+          </div>
+          {isChangingPassword && (
+            <form onSubmit={handlePasswordChange} className="space-y-3 p-4 rounded-lg bg-muted/50">
+              <div><Label htmlFor="new_password">Nouveau mot de passe</Label><Input id="new_password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 6 caractères" required /></div>
+              <div><Label htmlFor="confirm_password">Confirmer</Label><Input id="confirm_password" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required /></div>
+              <div className="flex gap-2">
+                <Button type="submit" size="sm" disabled={isUpdating}>{isUpdating ? "Modification..." : "Confirmer"}</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => { setIsChangingPassword(false); setNewPassword(""); setConfirmPassword(""); }}>Annuler</Button>
+              </div>
+            </form>
+          )}
+        </div>
+        <Separator />
+        <div className="flex items-center justify-between">
+          <div><p className="font-medium text-sm">Sessions actives</p></div>
+          <Badge variant="outline">1 session</Badge>
+        </div>
+        <Separator />
+        <div className="flex items-center justify-between">
+          <div><p className="font-medium text-sm">Sauvegarde & Chiffrement</p><p className="text-xs text-muted-foreground">Temps réel · SSL/TLS</p></div>
+          <Badge variant="secondary" className="bg-success/10 text-success">Activé</Badge>
+        </div>
+        <Separator />
+        <div className="space-y-3">
+          <div><p className="font-medium text-sm">Export des données</p><p className="text-xs text-muted-foreground">{products.length} produits · {sales.length} ventes · {payments.length} paiements</p></div>
+          <Button onClick={handleExport} disabled={isExporting} variant="outline" size="sm">
+            <Download className="h-4 w-4 mr-2" /> {isExporting ? "Export..." : "Exporter (Excel)"}
+          </Button>
+        </div>
+        <Separator />
+        <Button variant="outline" size="sm" className="text-destructive border-destructive/30" onClick={signOut}>
+          <LogOut className="h-4 w-4 mr-2" /> Déconnecter toutes les sessions
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handlePasswordChange = async (e: React.FormEvent) => {

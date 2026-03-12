@@ -8,16 +8,20 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useProducts } from "@/hooks/useProducts";
 import { useOnlineStore, useStoreProducts } from "@/hooks/useOnlineStore";
+import { useQueryClient } from "@tanstack/react-query";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import { toast } from "sonner";
-import { Star, Trash2 } from "lucide-react";
+import { Star, Trash2, Edit2 } from "lucide-react";
+import { StoreProductEditDialog } from "@/components/store/StoreProductEditDialog";
 
 export default function StoreProducts() {
   const { store } = useOnlineStore();
   const { products } = useProducts();
   const { storeProducts, publishProducts, removeProduct } = useStoreProducts(store?.id);
+  const queryClient = useQueryClient();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [onlinePrices, setOnlinePrices] = useState<Record<string, number>>({});
+  const [editingProduct, setEditingProduct] = useState<{ storeProduct: any; product: any } | null>(null);
 
   const publishedProductIds = new Set(storeProducts.map((sp: any) => sp.product_id));
   const unpublished = products.filter(p => !publishedProductIds.has(p.id));
@@ -54,6 +58,17 @@ export default function StoreProducts() {
     }
   };
 
+  const handleEdit = (sp: any) => {
+    const product = sp.products;
+    if (!product) return;
+    setEditingProduct({ storeProduct: sp, product });
+  };
+
+  const handleSaved = () => {
+    queryClient.invalidateQueries({ queryKey: ['store-products'] });
+    queryClient.invalidateQueries({ queryKey: ['products'] });
+  };
+
   if (!store) return (
     <div className="text-center py-16">
       <p className="text-muted-foreground">Veuillez d'abord configurer votre boutique dans "Ma Boutique"</p>
@@ -61,9 +76,13 @@ export default function StoreProducts() {
   );
 
   const ProductIcon = ({ product }: { product: any }) => (
-    <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
-      <span className="text-lg">{product.icon_emoji || '📦'}</span>
-    </div>
+    product.image_url ? (
+      <img src={product.image_url} alt={product.name} className="h-8 w-8 rounded-lg object-cover flex-shrink-0" />
+    ) : (
+      <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
+        <span className="text-lg">{product.icon_emoji || '📦'}</span>
+      </div>
+    )
   );
 
   return (
@@ -86,7 +105,7 @@ export default function StoreProducts() {
                   <TableHead>Prix boutique</TableHead>
                   <TableHead>Stock</TableHead>
                   <TableHead>Vedette</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -107,7 +126,14 @@ export default function StoreProducts() {
                       </TableCell>
                       <TableCell>{sp.is_featured && <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />}</TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" onClick={() => handleRemove(sp.product_id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                        <div className="flex gap-1 justify-end">
+                          <Button variant="ghost" size="icon" onClick={() => handleEdit(sp)} title="Modifier">
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleRemove(sp.product_id)} title="Retirer">
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -125,7 +151,7 @@ export default function StoreProducts() {
               const product = sp.products;
               if (!product) return null;
               return (
-                <Card key={sp.id}>
+                <Card key={sp.id} className="cursor-pointer" onClick={() => handleEdit(sp)}>
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 min-w-0">
@@ -138,7 +164,7 @@ export default function StoreProducts() {
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {sp.is_featured && <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />}
                         {product.quantity === 0 ? <Badge variant="destructive">Rupture</Badge> : <span className="text-xs text-muted-foreground">Stock: {product.quantity}</span>}
-                        <Button variant="ghost" size="icon" onClick={() => handleRemove(sp.product_id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                        <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleRemove(sp.product_id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                       </div>
                     </div>
                   </CardContent>
@@ -236,6 +262,18 @@ export default function StoreProducts() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Edit Dialog */}
+      {editingProduct && store && (
+        <StoreProductEditDialog
+          storeProduct={editingProduct.storeProduct}
+          product={editingProduct.product}
+          storeId={store.id}
+          open={!!editingProduct}
+          onOpenChange={(open) => { if (!open) setEditingProduct(null); }}
+          onSaved={handleSaved}
+        />
+      )}
     </div>
   );
 }

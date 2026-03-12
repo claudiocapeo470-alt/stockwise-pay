@@ -292,11 +292,8 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
     </Card>
   );
 }
-  const [isUpdating, setIsUpdating] = useState(false);
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newPassword.length < 6) { toast.error("Le mot de passe doit contenir au moins 6 caractères"); return; }
+
     if (newPassword !== confirmPassword) { toast.error("Les mots de passe ne correspondent pas"); return; }
     setIsUpdating(true);
     try {

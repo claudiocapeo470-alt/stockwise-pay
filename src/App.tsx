@@ -9,6 +9,7 @@ import { AdminLayout } from "./components/layout/AdminLayout";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { ModuleGuard } from "./components/auth/ModuleGuard";
 import Dashboard from "./pages/Dashboard";
 import Stocks from "./pages/Stocks";
 import Ventes from "./pages/Ventes";
@@ -33,6 +34,7 @@ import StoreProducts from "./pages/store/StoreProducts";
 import StoreOrders from "./pages/store/StoreOrders";
 import StoreReviews from "./pages/store/StoreReviews";
 import PublicStore from "./pages/store/PublicStore";
+import ModuleSelection from "./pages/ModuleSelection";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -100,6 +102,13 @@ const App = () => (
               
               {/* Auth Route */}
               <Route path="/auth" element={<AuthSimple />} />
+
+              {/* Onboarding - Sélection des modules */}
+              <Route path="/onboarding" element={
+                <ProtectedRoute>
+                  <ModuleSelection />
+                </ProtectedRoute>
+              } />
               
               {/* Admin Routes */}
               <Route path="/admin/*" element={
@@ -145,36 +154,38 @@ const App = () => (
               <Route path="/app/*" element={
                 <ProtectedRoute>
                   <SubscriptionGuard>
-                    <AppLayout>
-                      <Routes>
-                      <Route path="/" element={<Dashboard />} />
-                      <Route path="/stocks" element={<Stocks />} />
-                      <Route path="/ventes" element={<Ventes />} />
-                      <Route path="/facturation" element={<Facturation />} />
-                      <Route path="/factures" element={<Factures />} />
-                      <Route path="/factures/new" element={<InvoiceEditor documentType="facture" />} />
-                      <Route path="/factures/:id" element={<InvoiceEditor documentType="facture" />} />
-                      <Route path="/factures/:id/preview" element={<InvoicePreview documentType="facture" />} />
-                      <Route path="/devis" element={<Devis />} />
-                      <Route path="/devis/new" element={<InvoiceEditor documentType="devis" />} />
-                      <Route path="/devis/:id" element={<InvoiceEditor documentType="devis" />} />
-                      <Route path="/devis/:id/preview" element={<InvoicePreview documentType="devis" />} />
-                      <Route path="/paiements" element={<Paiements />} />
-                      <Route path="/performance" element={<Performance />} />
-                      <Route path="/rapports" element={<Rapports />} />
-                      <Route path="/rapport-employes" element={<RapportEmployes />} />
-                      <Route path="/profile" element={<Profile />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/team" element={<TeamManagement />} />
-                      <Route path="/livraisons" element={<Livraisons />} />
-                      <Route path="/boutique/config" element={<StoreConfig />} />
-                      <Route path="/boutique/produits" element={<StoreProducts />} />
-                      <Route path="/boutique/commandes" element={<StoreOrders />} />
-                      <Route path="/boutique/avis" element={<StoreReviews />} />
-                      <Route path="/subscription" element={<MySubscription />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </AppLayout>
+                    <ModuleGuard>
+                      <AppLayout>
+                        <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/stocks" element={<Stocks />} />
+                        <Route path="/ventes" element={<Ventes />} />
+                        <Route path="/facturation" element={<Facturation />} />
+                        <Route path="/factures" element={<Factures />} />
+                        <Route path="/factures/new" element={<InvoiceEditor documentType="facture" />} />
+                        <Route path="/factures/:id" element={<InvoiceEditor documentType="facture" />} />
+                        <Route path="/factures/:id/preview" element={<InvoicePreview documentType="facture" />} />
+                        <Route path="/devis" element={<Devis />} />
+                        <Route path="/devis/new" element={<InvoiceEditor documentType="devis" />} />
+                        <Route path="/devis/:id" element={<InvoiceEditor documentType="devis" />} />
+                        <Route path="/devis/:id/preview" element={<InvoicePreview documentType="devis" />} />
+                        <Route path="/paiements" element={<Paiements />} />
+                        <Route path="/performance" element={<Performance />} />
+                        <Route path="/rapports" element={<Rapports />} />
+                        <Route path="/rapport-employes" element={<RapportEmployes />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/team" element={<TeamManagement />} />
+                        <Route path="/livraisons" element={<Livraisons />} />
+                        <Route path="/boutique/config" element={<StoreConfig />} />
+                        <Route path="/boutique/produits" element={<StoreProducts />} />
+                        <Route path="/boutique/commandes" element={<StoreOrders />} />
+                        <Route path="/boutique/avis" element={<StoreReviews />} />
+                        <Route path="/subscription" element={<MySubscription />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </AppLayout>
+                  </ModuleGuard>
                 </SubscriptionGuard>
                 </ProtectedRoute>
               } />

@@ -1,72 +1,48 @@
-import { BarChart3, Package, Scan, ShoppingCart, Receipt, LogOut, User, Settings as SettingsIcon, Store, ShoppingBag, ClipboardList, Star, Users, Truck, Lock, FileText, FileCheck, CreditCard, TrendingUp } from "lucide-react"
+import { BarChart3, Package, Scan, ShoppingCart, LogOut, User, Settings as SettingsIcon, Store, ShoppingBag, ClipboardList, Star, Users, Truck, FileText, FileCheck, CreditCard, TrendingUp, Layers } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
-
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarFooter,
-  useSidebar,
-} from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar } from "@/components/ui/sidebar"
 import { useAuth } from "@/contexts/AuthContext"
 import { useCompanySettings } from "@/hooks/useCompanySettings"
+import { useCompanyModules } from "@/hooks/useCompanyModules"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import stocknixLogo from "@/assets/stocknix-logo-official.png";
 
-interface NavItem {
-  name: string;
-  href: string;
-  icon: any;
-  permission?: string;
-  indent?: boolean;
-}
+interface NavItem { name: string; href: string; icon: any; permission?: string; }
+interface NavGroup { label: string; items: NavItem[]; modules?: ('boutique' | 'pos' | 'stock')[]; }
 
-interface NavGroup {
-  label: string;
-  items: NavItem[];
-  permissions?: string[]; // Any of these permissions grants visibility
-}
-
-const allGroups: NavGroup[] = [
+const ALL_GROUPS: NavGroup[] = [
   {
     label: "PRINCIPAL",
-    items: [
-      { name: "Tableau de bord", href: "/app", icon: BarChart3 },
-    ],
+    items: [{ name: "Tableau de bord", href: "/app", icon: BarChart3 }],
   },
   {
-    label: "MAGASIN",
+    label: "CAISSE & VENTES",
+    modules: ["pos"],
     items: [
-      { name: "Gestion des stocks", href: "/app/stocks", icon: Package, permission: "stock" },
-      { name: "Caisse", href: "/app/caisse", icon: Scan, permission: "pos" },
+      { name: "Caisse POS", href: "/app/caisse", icon: Scan, permission: "pos" },
       { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart, permission: "sales" },
-    ],
-  },
-  {
-    label: "FACTURATION",
-    items: [
-      { name: "Factures", href: "/app/factures", icon: FileText, permission: "sales" },
-      { name: "Devis", href: "/app/devis", icon: FileCheck, permission: "sales" },
       { name: "Paiements", href: "/app/paiements", icon: CreditCard, permission: "sales" },
     ],
   },
   {
+    label: "STOCK & INVENTAIRE",
+    modules: ["stock"],
+    items: [
+      { name: "Gestion des stocks", href: "/app/stocks", icon: Package, permission: "stock" },
+      { name: "Factures", href: "/app/factures", icon: FileText, permission: "sales" },
+      { name: "Devis", href: "/app/devis", icon: FileCheck, permission: "sales" },
+      { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries" },
+    ],
+  },
+  {
     label: "BOUTIQUE EN LIGNE",
+    modules: ["boutique"],
     items: [
       { name: "Ma Boutique", href: "/app/boutique/config", icon: Store, permission: "boutique" },
       { name: "Produits en ligne", href: "/app/boutique/produits", icon: ShoppingBag, permission: "boutique" },
       { name: "Commandes reçues", href: "/app/boutique/commandes", icon: ClipboardList, permission: "boutique_orders" },
       { name: "Avis clients", href: "/app/boutique/avis", icon: Star, permission: "boutique" },
-    ],
-  },
-  {
-    label: "LIVRAISONS",
-    items: [
-      { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries" },
     ],
   },
   {
@@ -83,69 +59,68 @@ const allGroups: NavGroup[] = [
       { name: "Mon équipe", href: "/app/team", icon: Users, permission: "settings" },
       { name: "Profil", href: "/app/profile", icon: User },
       { name: "Paramètres", href: "/app/settings", icon: SettingsIcon },
+      { name: "Mes modules", href: "/onboarding", icon: Layers },
     ],
   },
 ];
 
 export function AppSidebar() {
-  const { state, isMobile } = useSidebar()
-  const { signOut, user, profile, isAdmin, isEmployee, hasPermission, memberInfo } = useAuth()
-  const { settings } = useCompanySettings()
-  const location = useLocation()
-  const isCollapsed = state === "collapsed"
+  const { state } = useSidebar();
+  const { signOut, user, profile, isAdmin, isEmployee, hasPermission, memberInfo } = useAuth();
+  const { settings } = useCompanySettings();
+  const { selectedModules } = useCompanyModules();
+  const location = useLocation();
+  const isCollapsed = state === "collapsed";
 
-  const filterGroup = (group: NavGroup): NavItem[] => {
+  const shouldShowGroup = (group: NavGroup): boolean => {
+    if (!group.modules) return true;
+    if (isEmployee) return true;
+    return group.modules.some(m => selectedModules.includes(m));
+  };
+
+  const filterItems = (group: NavGroup): NavItem[] => {
     if (!isEmployee) return group.items;
-    return group.items.filter(item => {
-      if (!item.permission) return true;
-      return hasPermission(item.permission);
-    });
+    return group.items.filter(item => !item.permission || hasPermission(item.permission));
   };
 
   const displayName = isEmployee
     ? `${memberInfo?.member_first_name || ''} ${memberInfo?.member_last_name || ''}`.trim()
-    : profile?.company_name || 
-      (profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}`.trim() : user?.email?.split('@')[0] || 'Utilisateur');
+    : profile?.company_name || (profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}`.trim() : user?.email?.split('@')[0] || 'Utilisateur');
 
   const initials = isEmployee
     ? `${(memberInfo?.member_first_name || 'E')[0]}${(memberInfo?.member_last_name || '')[0] || ''}`.toUpperCase()
-    : profile?.company_name 
+    : profile?.company_name
       ? profile.company_name.substring(0, 2).toUpperCase()
-      : (profile?.first_name && profile?.last_name
-          ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase()
-          : (user?.email?.[0] || 'U').toUpperCase());
+      : (profile?.first_name && profile?.last_name ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase() : (user?.email?.[0] || 'U').toUpperCase());
 
   const isActive = (path: string) => {
-    if (path === "/app" && location.pathname === "/app") return true
-    if (path !== "/app" && location.pathname.startsWith(path)) return true
-    return false
-  }
+    if (path === "/app" && location.pathname === "/app") return true;
+    if (path !== "/app" && location.pathname.startsWith(path)) return true;
+    return false;
+  };
+
+  const companyLogo = isEmployee ? (memberInfo?.company_logo_url || stocknixLogo) : (settings?.logo_url || stocknixLogo);
+  const companyLabel = isEmployee ? (memberInfo?.company_name || "Stocknix") : (settings?.company_name || "Stocknix");
+  const roleLabel = isEmployee ? (memberInfo?.member_role_name || 'Employé') : 'Gestion commerciale';
 
   return (
     <Sidebar className={`${isCollapsed ? "w-16" : "w-60"} bg-sidebar border-r border-sidebar-border`} collapsible="icon">
       <SidebarHeader className="h-16 flex items-center px-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <img 
-            src={isEmployee ? (memberInfo?.company_logo_url || stocknixLogo) : (settings?.logo_url || stocknixLogo)} 
-            alt={isEmployee ? (memberInfo?.company_name || "Stocknix") : (settings?.company_name || "Stocknix")} 
-            className="h-8 w-8 object-contain"
-          />
+          <img src={companyLogo} alt={companyLabel} className="h-8 w-8 object-contain" />
           {!isCollapsed && (
             <div>
-              <h1 className="font-semibold text-foreground text-sm tracking-tight">
-                {isEmployee ? (memberInfo?.company_name || "Stocknix") : (settings?.company_name || "Stocknix")}
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                {isEmployee ? (memberInfo?.member_role_name || 'Employé') : 'Gestion commerciale'}
-              </p>
+              <h1 className="font-semibold text-foreground text-sm tracking-tight">{companyLabel}</h1>
+              <p className="text-xs text-muted-foreground">{roleLabel}</p>
             </div>
           )}
         </div>
       </SidebarHeader>
 
       <SidebarContent className="px-3 py-4">
-        {allGroups.map((group) => {
-          const items = filterGroup(group);
+        {ALL_GROUPS.map(group => {
+          if (!shouldShowGroup(group)) return null;
+          const items = filterItems(group);
           if (items.length === 0) return null;
           return (
             <div key={group.label} className="mb-5">
@@ -155,13 +130,13 @@ export function AppSidebar() {
                 </p>
               )}
               <SidebarMenu className="space-y-0.5">
-                {items.map((item) => (
+                {items.map(item => (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton 
-                      asChild 
+                    <SidebarMenuButton
+                      asChild
                       className={`w-full justify-start h-9 transition-colors duration-200 ${
-                        isActive(item.href) 
-                          ? "bg-primary text-primary-foreground font-medium" 
+                        isActive(item.href)
+                          ? "bg-primary text-primary-foreground font-medium"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted"
                       }`}
                     >
@@ -200,7 +175,7 @@ export function AppSidebar() {
             </div>
           </div>
         )}
-        
+
         <SidebarMenuItem>
           <Button
             variant="ghost"
@@ -215,5 +190,5 @@ export function AppSidebar() {
         </SidebarMenuItem>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,10 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Building2, Palette, User, Shield, Database, Globe, ChevronRight, ArrowLeft, Crown } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Building2, Palette, User, Shield, Database, Globe, ChevronRight, ArrowLeft, Crown, Save, Download, LogOut, Moon, Sun, Monitor } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useProducts } from "@/hooks/useProducts";
+import { useSales } from "@/hooks/useSales";
+import { usePayments } from "@/hooks/usePayments";
+import * as XLSX from 'xlsx';
 
 type SettingsPage = "main" | "company" | "appearance" | "profile" | "security" | "data" | "system" | "subscription";
 
@@ -20,7 +30,7 @@ interface SettingsCard {
   icon: any;
   iconBg: string;
   iconColor: string;
-  roles: string[]; // empty = all
+  roles: string[];
 }
 
 const settingsCards: SettingsCard[] = [
@@ -55,7 +65,7 @@ export default function Settings() {
   const currentRole = getRoleName();
 
   const visibleCards = settingsCards.filter(card => {
-    if (card.roles.length === 0) return true; // visible to all
+    if (card.roles.length === 0) return true;
     return card.roles.includes(currentRole);
   });
 
@@ -67,10 +77,11 @@ export default function Settings() {
         </Button>
         {activePage === "company" && <CompanySettings />}
         {activePage === "appearance" && <AppearanceSettings />}
-        {activePage === "profile" && <ProfileSettingsPage />}
+        {activePage === "profile" && <ProfileSettingsPage navigate={navigate} />}
         {activePage === "security" && <SecuritySettings signOut={signOut} />}
         {activePage === "data" && <DataSettings />}
         {activePage === "system" && <SystemSettings displayName={displayName} isAdmin={isAdmin} />}
+        {activePage === "subscription" && <SubscriptionSettings navigate={navigate} />}
       </div>
     );
   }
@@ -106,49 +117,120 @@ export default function Settings() {
   );
 }
 
+// ─── Apparence & Thème (fully editable) ───
 function AppearanceSettings() {
+  const { theme, setTheme } = useTheme();
+  const [currency, setCurrency] = useState(() => localStorage.getItem('app_currency') || 'XOF');
+  const [dateFormat, setDateFormat] = useState(() => localStorage.getItem('app_date_format') || 'DD/MM/YYYY');
+  const [language, setLanguage] = useState(() => localStorage.getItem('app_language') || 'fr');
+
+  const handleSave = () => {
+    localStorage.setItem('app_currency', currency);
+    localStorage.setItem('app_date_format', dateFormat);
+    localStorage.setItem('app_language', language);
+    toast.success("Préférences d'apparence enregistrées");
+  };
+
   return (
     <Card>
       <CardHeader><CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5" /> Apparence & Thème</CardTitle></CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-3">
           <Label>Thème de l'interface</Label>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <span className="text-sm text-muted-foreground">Cliquez pour changer le thème</span>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { value: 'light', label: 'Clair', icon: Sun },
+              { value: 'dark', label: 'Sombre', icon: Moon },
+              { value: 'system', label: 'Système', icon: Monitor },
+            ].map(t => (
+              <Button
+                key={t.value}
+                variant={theme === t.value ? "default" : "outline"}
+                className="flex flex-col items-center gap-2 h-auto py-4"
+                onClick={() => setTheme(t.value)}
+              >
+                <t.icon className="h-5 w-5" />
+                <span className="text-xs">{t.label}</span>
+              </Button>
+            ))}
           </div>
         </div>
         <Separator />
-        <div className="flex items-center justify-between">
-          <div><Label>Langue</Label><p className="text-sm text-muted-foreground">Langue de l'interface</p></div>
-          <Badge variant="outline">Français</Badge>
+        <div className="space-y-2">
+          <Label>Langue</Label>
+          <Select value={language} onValueChange={setLanguage}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="fr">Français</SelectItem>
+              <SelectItem value="en">English</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <Separator />
-        <div className="flex items-center justify-between">
-          <div><Label>Devise</Label><p className="text-sm text-muted-foreground">Format des montants</p></div>
-          <Badge variant="outline">CFA (FCFA)</Badge>
+        <div className="space-y-2">
+          <Label>Devise</Label>
+          <Select value={currency} onValueChange={setCurrency}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="XOF">CFA (FCFA)</SelectItem>
+              <SelectItem value="EUR">Euro (€)</SelectItem>
+              <SelectItem value="USD">Dollar ($)</SelectItem>
+              <SelectItem value="GBP">Livre (£)</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <Separator />
-        <div className="flex items-center justify-between">
-          <div><Label>Format de date</Label><p className="text-sm text-muted-foreground">Affichage des dates</p></div>
-          <Badge variant="outline">DD/MM/YYYY</Badge>
+        <div className="space-y-2">
+          <Label>Format de date</Label>
+          <Select value={dateFormat} onValueChange={setDateFormat}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
+              <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
+              <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+        <Button onClick={handleSave} className="w-full sm:w-auto">
+          <Save className="h-4 w-4 mr-2" /> Enregistrer les préférences
+        </Button>
       </CardContent>
     </Card>
   );
 }
 
-function ProfileSettingsPage() {
-  return (
-    <Card>
-      <CardContent className="pt-6 text-center">
-        <p className="text-muted-foreground">Redirection vers la page Profil...</p>
-      </CardContent>
-    </Card>
-  );
+// ─── Profile redirect ───
+function ProfileSettingsPage({ navigate }: { navigate: (path: string) => void }) {
+  navigate('/app/profile');
+  return null;
 }
 
+// ─── Sécurité & Accès (fully functional) ───
 function SecuritySettings({ signOut }: { signOut: () => void }) {
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 6) { toast.error("Le mot de passe doit contenir au moins 6 caractères"); return; }
+    if (newPassword !== confirmPassword) { toast.error("Les mots de passe ne correspondent pas"); return; }
+    setIsUpdating(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast.success("Mot de passe modifié avec succès");
+      setIsChangingPassword(false);
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch {
+      toast.error("Erreur lors de la modification du mot de passe");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader><CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5" /> Sécurité & Accès</CardTitle></CardHeader>
@@ -158,6 +240,34 @@ function SecuritySettings({ signOut }: { signOut: () => void }) {
           <Badge variant="outline">Email + Mot de passe</Badge>
         </div>
         <Separator />
+
+        {/* Change password */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div><p className="font-medium">Mot de passe</p><p className="text-sm text-muted-foreground">Modifier votre mot de passe</p></div>
+            {!isChangingPassword && (
+              <Button variant="outline" size="sm" onClick={() => setIsChangingPassword(true)}>Modifier</Button>
+            )}
+          </div>
+          {isChangingPassword && (
+            <form onSubmit={handlePasswordChange} className="space-y-3 p-4 rounded-lg bg-muted/50">
+              <div>
+                <Label htmlFor="new_password">Nouveau mot de passe</Label>
+                <Input id="new_password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 6 caractères" required />
+              </div>
+              <div>
+                <Label htmlFor="confirm_password">Confirmer le mot de passe</Label>
+                <Input id="confirm_password" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit" size="sm" disabled={isUpdating}>{isUpdating ? "Modification..." : "Confirmer"}</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => { setIsChangingPassword(false); setNewPassword(""); setConfirmPassword(""); }}>Annuler</Button>
+              </div>
+            </form>
+          )}
+        </div>
+        <Separator />
+
         <div className="flex items-center justify-between">
           <div><p className="font-medium">Sessions actives</p><p className="text-sm text-muted-foreground">Connexions en cours</p></div>
           <Badge variant="outline">1 session</Badge>
@@ -165,7 +275,7 @@ function SecuritySettings({ signOut }: { signOut: () => void }) {
         <Separator />
         <div className="flex flex-col sm:flex-row gap-3">
           <Button variant="outline" className="text-destructive border-destructive/30" onClick={signOut}>
-            Déconnecter toutes les sessions
+            <LogOut className="h-4 w-4 mr-2" /> Déconnecter toutes les sessions
           </Button>
         </div>
       </CardContent>
@@ -173,30 +283,95 @@ function SecuritySettings({ signOut }: { signOut: () => void }) {
   );
 }
 
+// ─── Données & Sauvegarde (fully functional with real export) ───
 function DataSettings() {
+  const { products = [] } = useProducts();
+  const { sales = [] } = useSales();
+  const { payments = [] } = usePayments();
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportAllData = async () => {
+    setIsExporting(true);
+    try {
+      const wb = XLSX.utils.book_new();
+
+      // Products sheet
+      if (products.length > 0) {
+        const productsData = products.map(p => ({
+          Nom: p.name, Catégorie: p.category || '', Prix: p.price, Quantité: p.quantity, 'Stock min': p.min_quantity, SKU: p.sku || ''
+        }));
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(productsData), 'Produits');
+      }
+
+      // Sales sheet
+      if (sales.length > 0) {
+        const salesData = sales.map(s => ({
+          Date: new Date(s.created_at).toLocaleDateString('fr-FR'), Client: s.customer_name || '', Quantité: s.quantity, 'Prix unitaire': s.unit_price, Total: s.total_amount
+        }));
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(salesData), 'Ventes');
+      }
+
+      // Payments sheet
+      if (payments.length > 0) {
+        const paymentsData = payments.map(p => ({
+          Date: new Date(p.created_at).toLocaleDateString('fr-FR'), Client: `${p.customer_first_name || ''} ${p.customer_last_name || ''}`.trim(), Montant: p.total_amount, Méthode: p.payment_method, Statut: p.status
+        }));
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(paymentsData), 'Paiements');
+      }
+
+      XLSX.writeFile(wb, `export_complet_${new Date().toISOString().split('T')[0]}.xlsx`);
+      toast.success("Export complet téléchargé avec succès");
+    } catch {
+      toast.error("Erreur lors de l'export");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader><CardTitle className="flex items-center gap-2"><Database className="h-5 w-5" /> Données & Sauvegarde</CardTitle></CardHeader>
       <CardContent className="space-y-4">
-        {[
-          { label: "Sauvegarde automatique", desc: "Sauvegarde en temps réel", status: "Activée" },
-          { label: "Chiffrement des données", desc: "Protection des informations", status: "SSL/TLS" },
-          { label: "Export des données", desc: "Télécharger vos données", status: "Disponible" },
-        ].map(item => (
-          <div key={item.label}>
-            <div className="flex items-center justify-between">
-              <div><p className="font-medium text-sm">{item.label}</p><p className="text-xs text-muted-foreground">{item.desc}</p></div>
-              <Badge variant="secondary" className="bg-success/10 text-success">{item.status}</Badge>
-            </div>
-            <Separator className="mt-4" />
+        <div className="flex items-center justify-between">
+          <div><p className="font-medium text-sm">Sauvegarde automatique</p><p className="text-xs text-muted-foreground">Sauvegarde en temps réel via Supabase</p></div>
+          <Badge variant="secondary" className="bg-success/10 text-success">Activée</Badge>
+        </div>
+        <Separator />
+        <div className="flex items-center justify-between">
+          <div><p className="font-medium text-sm">Chiffrement des données</p><p className="text-xs text-muted-foreground">Protection des informations</p></div>
+          <Badge variant="secondary" className="bg-success/10 text-success">SSL/TLS</Badge>
+        </div>
+        <Separator />
+        <div className="space-y-3">
+          <div><p className="font-medium text-sm">Export des données</p><p className="text-xs text-muted-foreground">Télécharger toutes vos données (produits, ventes, paiements)</p></div>
+          <Button onClick={handleExportAllData} disabled={isExporting} variant="outline" className="w-full sm:w-auto">
+            <Download className="h-4 w-4 mr-2" /> {isExporting ? "Export en cours..." : "Exporter toutes les données (Excel)"}
+          </Button>
+        </div>
+        <Separator />
+        <div className="rounded-lg bg-muted/50 p-4 space-y-2">
+          <p className="text-sm font-medium">Résumé des données</p>
+          <div className="grid grid-cols-3 gap-4 text-sm">
+            <div><p className="text-muted-foreground">Produits</p><p className="font-bold">{products.length}</p></div>
+            <div><p className="text-muted-foreground">Ventes</p><p className="font-bold">{sales.length}</p></div>
+            <div><p className="text-muted-foreground">Paiements</p><p className="font-bold">{payments.length}</p></div>
           </div>
-        ))}
+        </div>
       </CardContent>
     </Card>
   );
 }
 
+// ─── Informations système (real data) ───
 function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin: boolean }) {
+  const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error'>('checking');
+  
+  useEffect(() => {
+    supabase.from('profiles').select('id').limit(1).then(({ error }) => {
+      setDbStatus(error ? 'error' : 'connected');
+    });
+  }, []);
+
   return (
     <Card>
       <CardHeader><CardTitle className="flex items-center gap-2"><Globe className="h-5 w-5" /> Informations système</CardTitle></CardHeader>
@@ -207,8 +382,9 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
             {[
               { label: "Version", value: "v1.0.0" },
               { label: "Statut", value: "Opérationnel", success: true },
-              { label: "Base de données", value: "Connectée", success: true },
+              { label: "Base de données", value: dbStatus === 'connected' ? "Connectée" : dbStatus === 'error' ? "Erreur" : "Vérification...", success: dbStatus === 'connected' },
               { label: "Utilisateur", value: displayName },
+              { label: "Rôle", value: isAdmin ? "Administrateur" : "Propriétaire" },
             ].map(item => (
               <div key={item.label} className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{item.label}</span>
@@ -225,6 +401,7 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
               { label: "Disponibilité", value: "99.9%", success: true },
               { label: "Support technique", value: "24h/7j" },
               { label: "Mises à jour", value: "Automatiques", success: true },
+              { label: "Hébergement", value: "Supabase Cloud", success: true },
             ].map(item => (
               <div key={item.label} className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{item.label}</span>
@@ -238,4 +415,10 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
       </CardContent>
     </Card>
   );
+}
+
+// ─── Mon abonnement (redirect to subscription page) ───
+function SubscriptionSettings({ navigate }: { navigate: (path: string) => void }) {
+  navigate('/app/subscription');
+  return null;
 }

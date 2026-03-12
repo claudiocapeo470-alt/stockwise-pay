@@ -366,7 +366,7 @@ function DataSettings() {
 function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin: boolean }) {
   const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error'>('checking');
   
-  useState(() => {
+  useEffect(() => {
     supabase.from('profiles').select('id').limit(1).then(({ error }) => {
       setDbStatus(error ? 'error' : 'connected');
     });

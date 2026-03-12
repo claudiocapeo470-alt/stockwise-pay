@@ -1,278 +1,253 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useProducts } from "@/hooks/useProducts";
-import { useOnlineStore, useStoreProducts } from "@/hooks/useOnlineStore";
-import { useQueryClient } from "@tanstack/react-query";
-import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
-import { toast } from "sonner";
-import { Star, Trash2, Edit2 } from "lucide-react";
-import { StoreProductEditDialog } from "@/components/store/StoreProductEditDialog";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useProducts } from '@/hooks/useProducts';
+import { useOnlineStore, useStoreProducts } from '@/hooks/useOnlineStore';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { Plus, Trash2, Edit2, Globe, Package, Search } from 'lucide-react';
+import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
+
+function ProductIcon({ product }: { product: any }) {
+  if (product.image_url) return <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover" />;
+  return (
+    <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-lg">
+      {product.icon_emoji || '📦'}
+    </div>
+  );
+}
+
+function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: boolean; onClose: () => void; storeId: string; onCreated: () => void }) {
+  const { addProduct } = useProducts();
+  const { publishProducts } = useStoreProducts(storeId);
+  const [form, setForm] = useState({ name: '', description: '', price: '', category: '', imageUrl: '' });
+  const [saving, setSaving] = useState(false);
+
+  const handleCreate = async () => {
+    if (!form.name.trim()) { toast.error('Le nom du produit est requis'); return; }
+    if (!form.price || isNaN(Number(form.price)) || Number(form.price) <= 0) { toast.error('Entrez un prix valide'); return; }
+    setSaving(true);
+    try {
+      const newProduct = await addProduct.mutateAsync({
+        name: form.name.trim(),
+        description: form.description.trim() || null,
+        price: Number(form.price),
+        quantity: 0,
+        min_quantity: 0,
+        category: form.category.trim() || null,
+        sku: null,
+        icon_emoji: '🛍️',
+        icon_bg_color: null,
+        image_url: form.imageUrl.trim() || null,
+      });
+      await publishProducts.mutateAsync([{ product_id: newProduct.id, online_price: Number(form.price) }]);
+      toast.success('✅ Produit créé et publié dans la boutique !');
+      onCreated();
+      onClose();
+      setForm({ name: '', description: '', price: '', category: '', imageUrl: '' });
+    } catch (e: any) {
+      toast.error('Erreur', { description: e.message });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={v => !v && onClose()}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2"><Plus className="h-5 w-5" /> Nouveau produit en ligne</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label>Nom du produit *</Label>
+            <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Ex: T-shirt Wax Ankara" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label>Prix (XOF) *</Label>
+              <Input type="number" value={form.price} onChange={e => setForm(p => ({ ...p, price: e.target.value }))} placeholder="5000" />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Catégorie</Label>
+              <Input value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} placeholder="Vêtements..." />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Description</Label>
+            <Textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Décrivez votre produit..." rows={3} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>URL image (optionnel)</Label>
+            <Input value={form.imageUrl} onChange={e => setForm(p => ({ ...p, imageUrl: e.target.value }))} placeholder="https://..." />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>Annuler</Button>
+          <Button onClick={handleCreate} disabled={saving}>{saving ? 'Création...' : 'Créer et publier'}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default function StoreProducts() {
   const { store } = useOnlineStore();
   const { products } = useProducts();
   const { storeProducts, publishProducts, removeProduct } = useStoreProducts(store?.id);
   const queryClient = useQueryClient();
+
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [onlinePrices, setOnlinePrices] = useState<Record<string, number>>({});
   const [editingProduct, setEditingProduct] = useState<{ storeProduct: any; product: any } | null>(null);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [search, setSearch] = useState('');
 
-  const publishedProductIds = new Set(storeProducts.map((sp: any) => sp.product_id));
-  const unpublished = products.filter(p => !publishedProductIds.has(p.id));
+  const publishedIds = new Set(storeProducts.map((sp: any) => sp.product_id));
+  const unpublished = products.filter(p => !publishedIds.has(p.id));
+  const filteredUnpublished = unpublished.filter(p => !search || p.name.toLowerCase().includes(search.toLowerCase()));
+  const filteredOnline = storeProducts.filter((sp: any) => !search || sp.products?.name?.toLowerCase().includes(search.toLowerCase()));
 
   const toggleSelect = (id: string) => {
-    setSelected(prev => {
-      const n = new Set(prev);
-      n.has(id) ? n.delete(id) : n.add(id);
-      return n;
-    });
+    setSelected(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
   };
 
   const handlePublishSelected = async () => {
     if (selected.size === 0) return;
     try {
-      const items = Array.from(selected).map(pid => ({
-        product_id: pid,
-        online_price: onlinePrices[pid] || products.find(p => p.id === pid)?.price || 0,
-      }));
-      await publishProducts.mutateAsync(items);
+      await publishProducts.mutateAsync(Array.from(selected).map(pid => ({ product_id: pid, online_price: onlinePrices[pid] || products.find(p => p.id === pid)?.price || 0 })));
       toast.success(`${selected.size} produit(s) publié(s) !`);
       setSelected(new Set());
-    } catch (e: any) {
-      toast.error(e.message);
-    }
+    } catch (e: any) { toast.error(e.message); }
   };
 
-  const handleRemove = async (productId: string) => {
-    try {
-      await removeProduct.mutateAsync(productId);
-      toast.success("Produit retiré de la boutique");
-    } catch (e: any) {
-      toast.error(e.message);
-    }
-  };
-
-  const handleEdit = (sp: any) => {
-    const product = sp.products;
-    if (!product) return;
-    setEditingProduct({ storeProduct: sp, product });
-  };
-
-  const handleSaved = () => {
+  const refreshAll = () => {
     queryClient.invalidateQueries({ queryKey: ['store-products'] });
     queryClient.invalidateQueries({ queryKey: ['products'] });
   };
 
   if (!store) return (
-    <div className="text-center py-16">
-      <p className="text-muted-foreground">Veuillez d'abord configurer votre boutique dans "Ma Boutique"</p>
+    <div className="text-center py-16 space-y-3">
+      <Globe className="h-12 w-12 mx-auto text-muted-foreground/30" />
+      <p className="text-muted-foreground font-medium">Configurez d'abord votre boutique dans "Ma Boutique"</p>
     </div>
   );
 
-  const ProductIcon = ({ product }: { product: any }) => (
-    product.image_url ? (
-      <img src={product.image_url} alt={product.name} className="h-8 w-8 rounded-lg object-cover flex-shrink-0" />
-    ) : (
-      <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
-        <span className="text-lg">{product.icon_emoji || '📦'}</span>
-      </div>
-    )
-  );
-
   return (
-    <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold">📦 Produits en ligne</h1>
+    <div className="space-y-5 max-w-5xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold flex items-center gap-2"><Globe className="h-5 w-5" /> Produits en ligne</h1>
+          <p className="text-sm text-muted-foreground">{storeProducts.length} en ligne · {unpublished.length} en stock non publiés</p>
+        </div>
+        <Button onClick={() => setShowCreateDialog(true)} className="gap-2 self-start sm:self-auto"><Plus className="h-4 w-4" /> Créer un produit</Button>
+      </div>
+
+      <div className="relative max-w-xs">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input className="pl-9" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)} />
+      </div>
 
       <Tabs defaultValue="online">
         <TabsList>
-          <TabsTrigger value="online">En ligne ({storeProducts.length})</TabsTrigger>
-          <TabsTrigger value="unpublished">À publier ({unpublished.length})</TabsTrigger>
+          <TabsTrigger value="online">En ligne <Badge variant="secondary" className="ml-1.5 text-xs">{storeProducts.length}</Badge></TabsTrigger>
+          <TabsTrigger value="stock">Depuis le stock <Badge variant="secondary" className="ml-1.5 text-xs">{unpublished.length}</Badge></TabsTrigger>
         </TabsList>
 
-        <TabsContent value="online" className="mt-4">
-          {/* Desktop table */}
-          <Card className="hidden md:block">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Produit</TableHead>
-                  <TableHead>Prix boutique</TableHead>
-                  <TableHead>Stock</TableHead>
-                  <TableHead>Vedette</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {storeProducts.map((sp: any) => {
-                  const product = sp.products;
-                  if (!product) return null;
-                  return (
-                    <TableRow key={sp.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <ProductIcon product={product} />
-                          <span className="font-medium">{product.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-bold">{(sp.online_price || product.price).toLocaleString()} FCFA</TableCell>
-                      <TableCell>
-                        {product.quantity === 0 ? <Badge variant="destructive">Rupture</Badge> : <span>{product.quantity}</span>}
-                      </TableCell>
-                      <TableCell>{sp.is_featured && <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-1 justify-end">
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(sp)} title="Modifier">
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleRemove(sp.product_id)} title="Retirer">
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-                {storeProducts.length === 0 && (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucun produit publié</TableCell></TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-
-          {/* Mobile cards */}
-          <div className="md:hidden space-y-3">
-            {storeProducts.map((sp: any) => {
-              const product = sp.products;
-              if (!product) return null;
-              return (
-                <Card key={sp.id} className="cursor-pointer" onClick={() => handleEdit(sp)}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <ProductIcon product={product} />
-                        <div className="min-w-0">
-                          <p className="font-medium truncate">{product.name}</p>
-                          <p className="text-sm font-bold text-primary">{(sp.online_price || product.price).toLocaleString()} FCFA</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {sp.is_featured && <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />}
-                        {product.quantity === 0 ? <Badge variant="destructive">Rupture</Badge> : <span className="text-xs text-muted-foreground">Stock: {product.quantity}</span>}
-                        <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleRemove(sp.product_id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-            {storeProducts.length === 0 && (
-              <p className="text-center py-8 text-muted-foreground">Aucun produit publié</p>
-            )}
-          </div>
+        <TabsContent value="online">
+          {filteredOnline.length === 0 ? (
+            <Card><CardContent className="py-14 text-center space-y-3">
+              <Globe className="h-10 w-10 mx-auto text-muted-foreground/30" />
+              <p className="text-muted-foreground">Aucun produit en ligne</p>
+              <Button variant="outline" className="gap-2" onClick={() => setShowCreateDialog(true)}><Plus className="h-4 w-4" /> Créer votre premier produit</Button>
+            </CardContent></Card>
+          ) : (
+            <Card>
+              <Table>
+                <TableHeader><TableRow>
+                  <TableHead>Produit</TableHead><TableHead>Catégorie</TableHead><TableHead>Prix en ligne</TableHead><TableHead>Statut</TableHead><TableHead className="text-right">Actions</TableHead>
+                </TableRow></TableHeader>
+                <TableBody>
+                  {filteredOnline.map((sp: any) => {
+                    const product = sp.products;
+                    return (
+                      <TableRow key={sp.id}>
+                        <TableCell><div className="flex items-center gap-3">{product && <ProductIcon product={product} />}<span className="font-medium text-sm">{product?.name || '—'}</span></div></TableCell>
+                        <TableCell className="text-muted-foreground text-sm">{product?.category || '—'}</TableCell>
+                        <TableCell className="font-semibold">{sp.online_price?.toLocaleString()} XOF</TableCell>
+                        <TableCell><Badge variant={sp.is_active ? 'default' : 'secondary'} className="text-xs">{sp.is_active ? 'Actif' : 'Inactif'}</Badge></TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => product && setEditingProduct({ storeProduct: sp, product })}><Edit2 className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={async () => { try { await removeProduct.mutateAsync(sp.product_id); toast.success('Produit retiré'); } catch (e: any) { toast.error(e.message); } }}><Trash2 className="h-4 w-4" /></Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </Card>
+          )}
         </TabsContent>
 
-        <TabsContent value="unpublished" className="mt-4 space-y-4">
-          {selected.size > 0 && (
-            <Button onClick={handlePublishSelected} disabled={publishProducts.isPending} className="gap-2">
-              ✅ Publier la sélection ({selected.size} produits)
-            </Button>
+        <TabsContent value="stock">
+          {filteredUnpublished.length === 0 ? (
+            <Card><CardContent className="py-14 text-center space-y-2">
+              <Package className="h-10 w-10 mx-auto text-muted-foreground/30" />
+              <p className="text-muted-foreground">{unpublished.length === 0 ? 'Tous vos produits en stock sont déjà publiés' : 'Aucun résultat pour cette recherche'}</p>
+            </CardContent></Card>
+          ) : (
+            <Card>
+              {selected.size > 0 && (
+                <div className="p-3 border-b flex items-center justify-between bg-primary/5">
+                  <span className="text-sm font-medium">{selected.size} produit(s) sélectionné(s)</span>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => setSelected(new Set())}>Annuler</Button>
+                    <Button size="sm" className="gap-1.5" onClick={handlePublishSelected}><Globe className="h-3.5 w-3.5" /> Publier la sélection</Button>
+                  </div>
+                </div>
+              )}
+              <Table>
+                <TableHeader><TableRow>
+                  <TableHead className="w-10"><Checkbox checked={selected.size === filteredUnpublished.length && filteredUnpublished.length > 0} onCheckedChange={checked => setSelected(checked ? new Set(filteredUnpublished.map(p => p.id)) : new Set())} /></TableHead>
+                  <TableHead>Produit</TableHead><TableHead>Catégorie</TableHead><TableHead>Prix stock</TableHead><TableHead>Prix en ligne</TableHead><TableHead className="text-right">Action</TableHead>
+                </TableRow></TableHeader>
+                <TableBody>
+                  {filteredUnpublished.map(p => (
+                    <TableRow key={p.id} className={selected.has(p.id) ? 'bg-primary/5' : ''}>
+                      <TableCell><Checkbox checked={selected.has(p.id)} onCheckedChange={() => toggleSelect(p.id)} /></TableCell>
+                      <TableCell><div className="flex items-center gap-3"><ProductIcon product={p} /><span className="font-medium text-sm">{p.name}</span></div></TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{p.category || '—'}</TableCell>
+                      <TableCell className="text-sm">{p.price?.toLocaleString()} XOF</TableCell>
+                      <TableCell>
+                        <Input type="number" className="w-28 h-8 text-sm" value={onlinePrices[p.id] ?? p.price} onChange={e => setOnlinePrices(prev => ({ ...prev, [p.id]: Number(e.target.value) }))} onClick={e => e.stopPropagation()} />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button size="sm" variant="outline" className="gap-1.5" onClick={async () => { try { await publishProducts.mutateAsync([{ product_id: p.id, online_price: onlinePrices[p.id] || p.price }]); toast.success('Produit publié !'); } catch (e: any) { toast.error(e.message); } }}>
+                          <Globe className="h-3.5 w-3.5" /> Publier
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
           )}
-
-          {/* Desktop table */}
-          <Card className="hidden md:block">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-10"></TableHead>
-                  <TableHead>Produit</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Prix actuel</TableHead>
-                  <TableHead>Prix boutique</TableHead>
-                  <TableHead>Stock</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {unpublished.map(product => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <Checkbox checked={selected.has(product.id)} onCheckedChange={() => toggleSelect(product.id)} />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <ProductIcon product={product} />
-                        <span className="font-medium">{product.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{product.category || '—'}</TableCell>
-                    <TableCell>{product.price.toLocaleString()} FCFA</TableCell>
-                    <TableCell>
-                      <Input
-                        type="number" min="0" className="w-28 h-8 text-sm"
-                        defaultValue={product.price}
-                        onChange={e => setOnlinePrices(p => ({ ...p, [product.id]: Number(e.target.value) }))}
-                      />
-                    </TableCell>
-                    <TableCell>{product.quantity}</TableCell>
-                  </TableRow>
-                ))}
-                {unpublished.length === 0 && (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Tous les produits sont déjà publiés</TableCell></TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-
-          {/* Mobile cards */}
-          <div className="md:hidden space-y-3">
-            {unpublished.map(product => (
-              <Card key={product.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <Checkbox checked={selected.has(product.id)} onCheckedChange={() => toggleSelect(product.id)} />
-                    <ProductIcon product={product} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">{product.category || 'Sans catégorie'}</p>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className="text-sm font-bold">{product.price.toLocaleString()} FCFA</span>
-                        <span className="text-xs text-muted-foreground">Stock: {product.quantity}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <Input
-                      type="number" min="0" className="h-8 text-sm"
-                      placeholder="Prix boutique"
-                      defaultValue={product.price}
-                      onChange={e => setOnlinePrices(p => ({ ...p, [product.id]: Number(e.target.value) }))}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-            {unpublished.length === 0 && (
-              <p className="text-center py-8 text-muted-foreground">Tous les produits sont déjà publiés</p>
-            )}
-          </div>
         </TabsContent>
       </Tabs>
 
-      {/* Edit Dialog */}
-      {editingProduct && store && (
-        <StoreProductEditDialog
-          storeProduct={editingProduct.storeProduct}
-          product={editingProduct.product}
-          storeId={store.id}
-          open={!!editingProduct}
-          onOpenChange={(open) => { if (!open) setEditingProduct(null); }}
-          onSaved={handleSaved}
-        />
+      <CreateProductDialog open={showCreateDialog} onClose={() => setShowCreateDialog(false)} storeId={store.id} onCreated={refreshAll} />
+      {editingProduct && (
+        <StoreProductEditDialog storeProduct={editingProduct.storeProduct} product={editingProduct.product} open={true} onClose={() => setEditingProduct(null)} onSaved={refreshAll} />
       )}
     </div>
   );

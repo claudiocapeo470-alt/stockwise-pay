@@ -50,6 +50,16 @@ import Tarifs from './pages/Tarifs';
 import Fonctionnalites from './pages/Fonctionnalites';
 import FAQ from './pages/FAQ';
 import NotFound from './pages/NotFound';
+import CeoLogin from './pages/CeoLogin';
+import CeoDashboard from './pages/ceo/CeoDashboard';
+import CeoUsers from './pages/ceo/CeoUsers';
+import CeoSubscriptions from './pages/ceo/CeoSubscriptions';
+import CeoLanding from './pages/ceo/CeoLanding';
+import CeoAnalytics from './pages/ceo/CeoAnalytics';
+import CeoNotifications from './pages/ceo/CeoNotifications';
+import CeoSettings from './pages/ceo/CeoSettings';
+import { CeoGuard } from './components/auth/CeoGuard';
+import { CeoLayout } from './components/layout/CeoLayout';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -135,7 +145,17 @@ const App = () => (
                           <Route path="/boutique/commandes" element={<StoreOrders />} />
                           <Route path="/boutique/avis" element={<StoreReviews />} />
                           <Route path="/subscription" element={<MySubscription />} />
-                          <Route path="*" element={<NotFound />} />
+              {/* CEO Super Admin */}
+              <Route path="/ceo" element={<CeoLogin />} />
+              <Route path="/ceo/dashboard" element={<CeoGuard><CeoLayout><CeoDashboard /></CeoLayout></CeoGuard>} />
+              <Route path="/ceo/users" element={<CeoGuard><CeoLayout><CeoUsers /></CeoLayout></CeoGuard>} />
+              <Route path="/ceo/subscriptions" element={<CeoGuard><CeoLayout><CeoSubscriptions /></CeoLayout></CeoGuard>} />
+              <Route path="/ceo/landing" element={<CeoGuard><CeoLayout><CeoLanding /></CeoLayout></CeoGuard>} />
+              <Route path="/ceo/analytics" element={<CeoGuard><CeoLayout><CeoAnalytics /></CeoLayout></CeoGuard>} />
+              <Route path="/ceo/notifications" element={<CeoGuard><CeoLayout><CeoNotifications /></CeoLayout></CeoGuard>} />
+              <Route path="/ceo/settings" element={<CeoGuard><CeoLayout><CeoSettings /></CeoLayout></CeoGuard>} />
+              <Route path="/ceo/appearance" element={<CeoGuard><CeoLayout><CeoSettings /></CeoLayout></CeoGuard>} />
+              <Route path="*" element={<NotFound />} />
                         </Routes>
                       </AppLayout>
                     </SubscriptionGuard>

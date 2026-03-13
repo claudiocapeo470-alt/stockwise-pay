@@ -61,7 +61,19 @@ export default function AuthSimple() {
   // Redirection si déjà connecté
   useEffect(() => {
     if (user && !loading) {
-      navigate('/app');
+      // If employee, redirect to role-appropriate page
+      const storedMember = localStorage.getItem('stocknix_member');
+      if (storedMember) {
+        try {
+          const mi = JSON.parse(storedMember);
+          const roleName = mi.member_role_name?.toLowerCase() || '';
+          if (roleName.includes('caissier')) { navigate('/app/caisse', { replace: true }); return; }
+          if (roleName.includes('livreur')) { navigate('/app/livreur', { replace: true }); return; }
+          if (roleName.includes('gestionnaire')) { navigate('/app/stocks', { replace: true }); return; }
+          if (roleName.includes('vendeur')) { navigate('/app/boutique/commandes', { replace: true }); return; }
+        } catch {}
+      }
+      navigate('/app', { replace: true });
     }
   }, [user, loading, navigate]);
 

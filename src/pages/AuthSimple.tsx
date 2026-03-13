@@ -208,24 +208,26 @@ export default function AuthSimple() {
           return;
         }
 
-        const { error } = await signIn(formData.email, formData.password);
+        const result = await signIn(formData.email, formData.password);
         
-        if (error) {
-          if (error.message.includes('Invalid login credentials')) {
+        if (result.error) {
+          if (result.error.message.includes('Invalid login credentials')) {
             toast.error('❌ Connexion échouée', { description: 'Email ou mot de passe incorrect' });
-          } else if (error.message.includes('pas encore confirmé')) {
+          } else if (result.error.message.includes('pas encore confirmé')) {
             toast.error('❌ Compte non confirmé', { description: 'Vérifiez votre email pour confirmer votre compte' });
           } else {
-            toast.error('❌ Erreur de connexion', { description: error.message });
+            toast.error('❌ Erreur de connexion', { description: result.error.message });
           }
           return;
         }
 
         toast.success('✅ Connexion réussie !');
-        localStorage.setItem('theme', 'light');
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-        navigate('/app');
+        // Navigate smoothly without full page reload
+        if ((result as any).isAdmin) {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/app', { replace: true });
+        }
         
       } else {
         const validation = signupSchema.safeParse(formData);

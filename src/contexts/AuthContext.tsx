@@ -40,7 +40,7 @@ interface AuthContextType {
   userRole: UserRole | null;
   memberInfo: MemberInfo | null;
   isEmployee: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<{ error: any; isAdmin?: boolean }>;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any; needsConfirmation?: boolean; user?: User }>;
   signOut: () => Promise<void>;
   loading: boolean;
@@ -138,54 +138,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          // Use setTimeout to avoid Supabase deadlock on auth state change
           setTimeout(() => {
             fetchProfile(session.user.id);
           }, 0);
           
-          if (event === 'SIGNED_IN' && window.location.pathname.includes('/auth')) {
-            setTimeout(async () => {
-              localStorage.setItem('theme', 'light');
-              document.documentElement.classList.remove('dark');
-              document.documentElement.classList.add('light');
-              
-              // If employee login (memberInfo already set), redirect based on role
-              const storedMember = localStorage.getItem('stocknix_member');
-              if (storedMember) {
-                const mi = JSON.parse(storedMember);
-                const roleName = mi.member_role_name?.toLowerCase() || '';
-                if (roleName.includes('caissier')) {
-                  window.location.href = '/app/caisse';
-                } else if (roleName.includes('livreur')) {
-                  window.location.href = '/app/livreur';
-                } else if (roleName.includes('gestionnaire')) {
-                  window.location.href = '/app/stocks';
-                } else if (roleName.includes('vendeur')) {
-                  window.location.href = '/app/boutique/commandes';
-                } else {
-                  window.location.href = '/app';
-                }
-                return;
-              }
-
-              const { data: roleData } = await supabase
-                .from('user_roles')
-                .select('role')
-                .eq('user_id', session.user.id)
-                .maybeSingle();
-              
-              if (roleData?.role === 'admin') {
-                window.location.href = '/admin';
-              } else {
-                window.location.href = '/app';
-              }
-            }, 100);
-          }
+          // Don't auto-redirect from onAuthStateChange — let the login/signup handlers do it
+          // This prevents race conditions and double navigations
         } else {
           setProfile(null);
           setUserRole(null);
@@ -223,6 +189,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     
     if (data?.user && !error) {
+      // Fetch role to determine redirect target
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
@@ -233,13 +200,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
       
-      setTimeout(() => {
-        if (roleData?.role === 'admin') {
-          window.location.href = '/admin';
-        } else {
-          window.location.href = '/app';
-        }
-      }, 100);
+      // Return redirect target instead of navigating here
+      const isAdminUser = roleData?.role === 'admin';
+      return { error: null, isAdmin: isAdminUser };
     }
     
     return { error };

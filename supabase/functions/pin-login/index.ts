@@ -100,9 +100,18 @@ Deno.serve(async (req) => {
     }
 
     // Generate magic link for login
+    // Get the email to use for the magic link
+    let loginEmail = memberEmail;
+    if (authUserId) {
+      const { data: existingUser } = await supabaseAdmin.auth.admin.getUserById(authUserId);
+      if (existingUser?.user?.email) {
+        loginEmail = existingUser.user.email;
+      }
+    }
+
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
-      email: memberEmail,
+      email: loginEmail,
     });
 
     if (linkError || !linkData) {
@@ -113,10 +122,16 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Extract token from the action link
-    const actionLink = linkData.properties?.action_link || "";
-    const url = new URL(actionLink);
-    const tokenHash = url.searchParams.get("token") || url.hash?.split("token=")[1]?.split("&")[0] || "";
+    // Extract the hashed token from the generated link properties
+    const hashedToken = linkData.properties?.hashed_token;
+    
+    if (!hashedToken) {
+      console.error("No hashed_token in link properties:", JSON.stringify(linkData.properties));
+      return new Response(
+        JSON.stringify({ error: "Erreur de génération du token" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     
     // Update last login
     await supabaseAdmin
@@ -127,8 +142,8 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        email: memberEmail,
-        token_hash: linkData.properties?.hashed_token || tokenHash,
+        email: loginEmail,
+        token_hash: hashedToken,
         member: {
           id: member.member_id,
           first_name: member.member_first_name,

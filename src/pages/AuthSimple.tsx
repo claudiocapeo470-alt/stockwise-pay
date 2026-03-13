@@ -61,7 +61,19 @@ export default function AuthSimple() {
   // Redirection si déjà connecté
   useEffect(() => {
     if (user && !loading) {
-      navigate('/app');
+      // If employee, redirect to role-appropriate page
+      const storedMember = localStorage.getItem('stocknix_member');
+      if (storedMember) {
+        try {
+          const mi = JSON.parse(storedMember);
+          const roleName = mi.member_role_name?.toLowerCase() || '';
+          if (roleName.includes('caissier')) { navigate('/app/caisse', { replace: true }); return; }
+          if (roleName.includes('livreur')) { navigate('/app/livreur', { replace: true }); return; }
+          if (roleName.includes('gestionnaire')) { navigate('/app/stocks', { replace: true }); return; }
+          if (roleName.includes('vendeur')) { navigate('/app/boutique/commandes', { replace: true }); return; }
+        } catch {}
+      }
+      navigate('/app', { replace: true });
     }
   }, [user, loading, navigate]);
 
@@ -103,10 +115,9 @@ export default function AuthSimple() {
       };
       setMemberInfo(mi);
 
-      // Use the magic link token to authenticate
+      // Use the magic link hashed token to authenticate
       const { error: otpError } = await supabase.auth.verifyOtp({
-        email: data.email,
-        token: data.token_hash,
+        token_hash: data.token_hash,
         type: 'magiclink',
       });
 
@@ -125,18 +136,18 @@ export default function AuthSimple() {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
 
-      // Redirect based on role
+      // Navigate smoothly based on role
       const roleName = (data.member.role_name || '').toLowerCase();
       if (roleName.includes('caissier')) {
-        window.location.href = '/app/caisse';
+        navigate('/app/caisse', { replace: true });
       } else if (roleName.includes('livreur')) {
-        window.location.href = '/app/livreur';
+        navigate('/app/livreur', { replace: true });
       } else if (roleName.includes('gestionnaire')) {
-        window.location.href = '/app/stocks';
+        navigate('/app/stocks', { replace: true });
       } else if (roleName.includes('vendeur')) {
-        window.location.href = '/app/boutique/commandes';
+        navigate('/app/boutique/commandes', { replace: true });
       } else {
-        window.location.href = '/app';
+        navigate('/app', { replace: true });
       }
     } catch (err) {
       console.error('PIN login error:', err);
@@ -209,24 +220,26 @@ export default function AuthSimple() {
           return;
         }
 
-        const { error } = await signIn(formData.email, formData.password);
+        const result = await signIn(formData.email, formData.password);
         
-        if (error) {
-          if (error.message.includes('Invalid login credentials')) {
+        if (result.error) {
+          if (result.error.message.includes('Invalid login credentials')) {
             toast.error('❌ Connexion échouée', { description: 'Email ou mot de passe incorrect' });
-          } else if (error.message.includes('pas encore confirmé')) {
+          } else if (result.error.message.includes('pas encore confirmé')) {
             toast.error('❌ Compte non confirmé', { description: 'Vérifiez votre email pour confirmer votre compte' });
           } else {
-            toast.error('❌ Erreur de connexion', { description: error.message });
+            toast.error('❌ Erreur de connexion', { description: result.error.message });
           }
           return;
         }
 
         toast.success('✅ Connexion réussie !');
-        localStorage.setItem('theme', 'light');
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-        navigate('/app');
+        // Navigate smoothly without full page reload
+        if ((result as any).isAdmin) {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/app', { replace: true });
+        }
         
       } else {
         const validation = signupSchema.safeParse(formData);
@@ -259,12 +272,11 @@ export default function AuthSimple() {
         if (needsConfirmation) {
           toast.success('✅ Inscription réussie !', { description: 'Vérifiez votre email pour confirmer votre compte' });
         } else {
-          // Nouveau compte → onboarding sélection de modules
           toast.success('✅ Compte créé !', { description: 'Choisissez vos modules pour démarrer' });
           localStorage.setItem('theme', 'light');
           document.documentElement.classList.remove('dark');
           document.documentElement.classList.add('light');
-          navigate('/onboarding');
+          navigate('/onboarding', { replace: true });
         }
       }
     } catch (error: any) {

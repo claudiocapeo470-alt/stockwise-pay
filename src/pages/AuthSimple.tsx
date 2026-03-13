@@ -103,10 +103,9 @@ export default function AuthSimple() {
       };
       setMemberInfo(mi);
 
-      // Use the magic link token to authenticate
+      // Use the magic link hashed token to authenticate
       const { error: otpError } = await supabase.auth.verifyOtp({
-        email: data.email,
-        token: data.token_hash,
+        token_hash: data.token_hash,
         type: 'magiclink',
       });
 

@@ -50,6 +50,16 @@ import Tarifs from './pages/Tarifs';
 import Fonctionnalites from './pages/Fonctionnalites';
 import FAQ from './pages/FAQ';
 import NotFound from './pages/NotFound';
+import CeoLogin from './pages/CeoLogin';
+import CeoDashboard from './pages/ceo/CeoDashboard';
+import CeoUsers from './pages/ceo/CeoUsers';
+import CeoSubscriptions from './pages/ceo/CeoSubscriptions';
+import CeoLanding from './pages/ceo/CeoLanding';
+import CeoAnalytics from './pages/ceo/CeoAnalytics';
+import CeoNotifications from './pages/ceo/CeoNotifications';
+import CeoSettings from './pages/ceo/CeoSettings';
+import { CeoGuard } from './components/auth/CeoGuard';
+import { CeoLayout } from './components/layout/CeoLayout';
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -145,6 +145,14 @@ const App = () => (
                           <Route path="/boutique/commandes" element={<StoreOrders />} />
                           <Route path="/boutique/avis" element={<StoreReviews />} />
                           <Route path="/subscription" element={<MySubscription />} />
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </AppLayout>
+                    </SubscriptionGuard>
+                  </ModuleGuard>
+                </ProtectedRoute>
+              } />
+
               {/* CEO Super Admin */}
               <Route path="/ceo" element={<CeoLogin />} />
               <Route path="/ceo/dashboard" element={<CeoGuard><CeoLayout><CeoDashboard /></CeoLayout></CeoGuard>} />
@@ -155,13 +163,7 @@ const App = () => (
               <Route path="/ceo/notifications" element={<CeoGuard><CeoLayout><CeoNotifications /></CeoLayout></CeoGuard>} />
               <Route path="/ceo/settings" element={<CeoGuard><CeoLayout><CeoSettings /></CeoLayout></CeoGuard>} />
               <Route path="/ceo/appearance" element={<CeoGuard><CeoLayout><CeoSettings /></CeoLayout></CeoGuard>} />
-              <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </AppLayout>
-                    </SubscriptionGuard>
-                  </ModuleGuard>
-                </ProtectedRoute>
-              } />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

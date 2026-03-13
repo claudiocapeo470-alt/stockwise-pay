@@ -40,7 +40,7 @@ interface AuthContextType {
   userRole: UserRole | null;
   memberInfo: MemberInfo | null;
   isEmployee: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<{ error: any; isAdmin?: boolean }>;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any; needsConfirmation?: boolean; user?: User }>;
   signOut: () => Promise<void>;
   loading: boolean;

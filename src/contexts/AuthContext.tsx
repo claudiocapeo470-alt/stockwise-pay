@@ -138,8 +138,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    // Flag to prevent onAuthStateChange from redirecting when login handlers manage it
-    let redirectHandledExternally = false;
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {

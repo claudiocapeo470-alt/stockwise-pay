@@ -191,6 +191,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     
     if (data?.user && !error) {
+      // Fetch role to determine redirect target
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
@@ -201,13 +202,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
       
-      setTimeout(() => {
-        if (roleData?.role === 'admin') {
-          window.location.href = '/admin';
-        } else {
-          window.location.href = '/app';
-        }
-      }, 100);
+      // Return redirect target instead of navigating here
+      const isAdminUser = roleData?.role === 'admin';
+      return { error: null, isAdmin: isAdminUser };
     }
     
     return { error };

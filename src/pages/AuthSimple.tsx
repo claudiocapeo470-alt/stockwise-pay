@@ -124,18 +124,18 @@ export default function AuthSimple() {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
 
-      // Redirect based on role
+      // Navigate smoothly based on role
       const roleName = (data.member.role_name || '').toLowerCase();
       if (roleName.includes('caissier')) {
-        window.location.href = '/app/caisse';
+        navigate('/app/caisse', { replace: true });
       } else if (roleName.includes('livreur')) {
-        window.location.href = '/app/livreur';
+        navigate('/app/livreur', { replace: true });
       } else if (roleName.includes('gestionnaire')) {
-        window.location.href = '/app/stocks';
+        navigate('/app/stocks', { replace: true });
       } else if (roleName.includes('vendeur')) {
-        window.location.href = '/app/boutique/commandes';
+        navigate('/app/boutique/commandes', { replace: true });
       } else {
-        window.location.href = '/app';
+        navigate('/app', { replace: true });
       }
     } catch (err) {
       console.error('PIN login error:', err);

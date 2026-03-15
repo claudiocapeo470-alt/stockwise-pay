@@ -73,9 +73,34 @@ export function AppSidebar() {
   const isCollapsed = state === 'collapsed';
 
   const shouldShowGroup = (group: NavGroup): boolean => {
+    const role = (memberInfo?.member_role_name || '').toLowerCase();
+
+    // Caissier : ne passe jamais par ici (redirect vers /app/caisse)
+    if (isEmployee && role.includes('caissier')) return false;
+
+    // Livreur : aucune sidebar
+    if (isEmployee && role.includes('livreur')) return false;
+
+    // Stock Manager : seulement stock + analytique + equipe
+    if (isEmployee && role.includes('stock') && !role.includes('manager general')) {
+      if (!group.modules) return true;
+      return group.modules.includes('stock');
+    }
+
+    // Gestionnaire Commandes : seulement boutique + principal
+    if (isEmployee && role.includes('commande')) {
+      if (!group.modules) return true;
+      return group.modules.includes('boutique');
+    }
+
+    // Sections sans module : toujours visibles
     if (!group.modules) return true;
-    if (isEmployee) return true;
-    return group.modules.some(m => selectedModules.includes(m));
+
+    // Proprietaire : filtre par modules souscrits
+    if (!isEmployee) return group.modules.some(m => selectedModules.includes(m));
+
+    // Employe generique : filtre par permissions
+    return group.modules.some(m => hasPermission(m));
   };
 
   const filterItems = (group: NavGroup): NavItem[] => {

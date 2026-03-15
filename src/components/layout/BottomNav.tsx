@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { BarChart3, Package, Scan, ShoppingCart, Receipt, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X, Users, Truck, FileText, FileCheck, CreditCard } from "lucide-react";
+import { BarChart3, Package, Scan, ShoppingCart, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X, Users, Truck, FileText, FileCheck, CreditCard } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -54,18 +54,56 @@ const allDrawerNavigation = [
   ]},
 ];
 
+// Role-specific simplified bottom navs
+const livreurNav: NavItem[] = [
+  { name: "Livraisons", href: "/app/livreur", icon: Truck, label: "Livraisons" },
+  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+];
+
+const stockManagerNav: NavItem[] = [
+  { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks" },
+  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+];
+
+const commandesNav: NavItem[] = [
+  { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Boutique", href: "/app/boutique/commandes", icon: Store, label: "Boutique" },
+  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+];
+
 export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { signOut, isEmployee, hasPermission } = useAuth();
+  const { signOut, isEmployee, hasPermission, memberInfo } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const role = (memberInfo?.member_role_name || '').toLowerCase();
+
+  // Caissier : pas de BottomNav (stand-alone sur /app/caisse)
+  if (isEmployee && role.includes('caissier')) return null;
 
   const filterItems = (items: NavItem[]) => {
     if (!isEmployee) return items;
     return items.filter(item => !item.permission || hasPermission(item.permission));
   };
 
-  const navigation = filterItems(allBottomNav).slice(0, 4);
+  // Determine which nav items to show based on role
+  let navigation: NavItem[];
+  let showMenuButton = true;
+
+  if (isEmployee && role.includes('livreur')) {
+    navigation = livreurNav;
+    showMenuButton = false;
+  } else if (isEmployee && role.includes('stock') && !role.includes('manager general')) {
+    navigation = stockManagerNav;
+    showMenuButton = false;
+  } else if (isEmployee && role.includes('commande')) {
+    navigation = commandesNav;
+    showMenuButton = false;
+  } else {
+    navigation = filterItems(allBottomNav).slice(0, 4);
+  }
 
   const isActive = (path: string) => {
     if (path === "/app" && location.pathname === "/app") return true;
@@ -99,13 +137,15 @@ export function BottomNav() {
               </NavLink>
             );
           })}
-          <button
-            onClick={() => setDrawerOpen(true)}
-            className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors duration-200 min-w-0 text-muted-foreground"
-          >
-            <Menu className="h-5 w-5 stroke-2" />
-            <span className="text-[10px] font-normal">Menu</span>
-          </button>
+          {showMenuButton && (
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors duration-200 min-w-0 text-muted-foreground"
+            >
+              <Menu className="h-5 w-5 stroke-2" />
+              <span className="text-[10px] font-normal">Menu</span>
+            </button>
+          )}
         </div>
       </nav>
 

@@ -22,6 +22,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }
 export default function StoreOrders() {
   const { store } = useOnlineStore();
   const { orders, updateOrderStatus } = useStoreOrders(store?.id);
+  useOrderNotifications(store?.id);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   const todayOrders = orders.filter(o => new Date(o.created_at).toDateString() === new Date().toDateString());

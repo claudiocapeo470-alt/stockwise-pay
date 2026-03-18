@@ -186,13 +186,31 @@ export function BottomNav() {
                 </div>
               );
             })}
-            <button
-              onClick={() => { signOut(); setDrawerOpen(false); }}
-              className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"
-            >
-              <LogOut className="h-5 w-5 flex-shrink-0" />
-              Déconnexion
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors">
+                  <LogOut className="h-5 w-5 flex-shrink-0" />
+                  Déconnexion
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Se déconnecter ?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Êtes-vous sûr de vouloir vous déconnecter ? Toute vente en cours à la caisse sera perdue.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={() => { signOut(); setDrawerOpen(false); }}
+                  >
+                    Se déconnecter
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </DrawerContent>
       </Drawer>

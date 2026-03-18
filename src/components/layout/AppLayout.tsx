@@ -24,6 +24,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation();
   const isMobile = useIsMobile();
   const { company } = useCompany();
+  useSessionWarning();
   const [isLocked, setIsLocked] = useState(false);
   const lastActivityRef = useRef(Date.now());
 

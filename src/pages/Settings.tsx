@@ -34,11 +34,11 @@ interface SettingsCard {
 }
 
 const settingsCards: SettingsCard[] = [
-  { id: "company", title: "Informations de l'entreprise", description: "Nom, adresse, téléphone, email, SIRET, TVA, logo", icon: Building2, iconBg: "bg-primary/10", iconColor: "text-primary", roles: ["owner", "admin"] },
-  { id: "appearance", title: "Apparence & Thème", description: "Thème interface, langue, devise, format de date", icon: Palette, iconBg: "bg-secondary/10", iconColor: "text-secondary", roles: ["owner", "admin", "manager", "gestionnaire"] },
-  { id: "security-data", title: "Sécurité & Données", description: "Mot de passe, sessions, export, sauvegarde", icon: Shield, iconBg: "bg-destructive/10", iconColor: "text-destructive", roles: ["owner", "admin"] },
-  { id: "system", title: "Informations système", description: "Version, statut service, BDD, performance, support", icon: Globe, iconBg: "bg-muted", iconColor: "text-muted-foreground", roles: ["owner", "admin", "manager"] },
-  { id: "subscription", title: "Mon abonnement", description: "Plan actuel, historique des paiements, changer de plan", icon: Crown, iconBg: "bg-primary/10", iconColor: "text-primary", roles: ["owner", "admin"] },
+  { id: "company", title: "Informations de l'entreprise", description: "Nom, adresse, téléphone, email, SIRET, TVA, logo", icon: Building2, iconBg: "bg-primary/10", iconColor: "text-primary", roles: ["owner"] },
+  { id: "appearance", title: "Apparence & Thème", description: "Thème interface, langue, devise, format de date", icon: Palette, iconBg: "bg-secondary/10", iconColor: "text-secondary", roles: ["owner", "manager", "gestionnaire", "caissier", "livreur", "employee"] },
+  { id: "security-data", title: "Sécurité & Données", description: "Mot de passe, sessions, export, sauvegarde", icon: Shield, iconBg: "bg-destructive/10", iconColor: "text-destructive", roles: ["owner"] },
+  { id: "system", title: "Informations système", description: "Version, statut service, BDD, performance, support", icon: Globe, iconBg: "bg-muted", iconColor: "text-muted-foreground", roles: ["owner", "manager"] },
+  { id: "subscription", title: "Mon abonnement", description: "Plan actuel, historique des paiements, changer de plan", icon: Crown, iconBg: "bg-primary/10", iconColor: "text-primary", roles: ["owner"] },
 ];
 
 export default function Settings() {

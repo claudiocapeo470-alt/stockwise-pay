@@ -39,6 +39,18 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 export default function TeamManagement() {
+  const { isEmployee } = useAuth();
+  const navigate = useNavigate();
+
+  // Employees should never reach this page
+  useEffect(() => {
+    if (isEmployee) {
+      navigate('/app', { replace: true });
+    }
+  }, [isEmployee, navigate]);
+
+  if (isEmployee) return null;
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       <div>

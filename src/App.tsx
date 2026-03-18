@@ -24,6 +24,8 @@ import RapportEmployes from './pages/RapportEmployes';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import AuthSimple from './pages/AuthSimple';
+import AuthConfirm from './pages/AuthConfirm';
+import ResetPassword from './pages/ResetPassword';
 import InvoiceEditor from './pages/InvoiceEditor';
 import InvoicePreview from './pages/InvoicePreview';
 import Caisse from './pages/Caisse';

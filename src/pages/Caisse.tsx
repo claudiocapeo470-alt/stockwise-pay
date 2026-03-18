@@ -1015,53 +1015,89 @@ export default function Caisse() {
         </div>
       )}
 
-      {/* Scanner Modal */}
+      {/* Scanner Modal — supports QR, barcode 1D/2D, all formats */}
       {showScanner && (
         <ModalOverlay onClose={stopScanner}>
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-sm" style={{ color: '#1F2937' }}>Scanner</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-sm" style={{ color: '#1F2937' }}>Scanner de produit</h3>
             <div className="flex items-center gap-2">
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                scannerStatus === 'active' ? 'bg-green-100 text-green-600' :
-                scannerStatus === 'detected' ? 'bg-blue-100 text-blue-600' :
-                scannerStatus === 'not_found' ? 'bg-red-100 text-red-600' :
-                'bg-gray-100 text-gray-500'
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                scannerStatus === 'active'   ? 'bg-green-100 text-green-700' :
+                scannerStatus === 'detected' ? 'bg-blue-100 text-blue-700' :
+                scannerStatus === 'not_found'? 'bg-red-100 text-red-700' :
+                                              'bg-gray-100 text-gray-500'
               }`}>
-                {scannerStatus === 'active' ? 'Caméra active' : scannerStatus === 'detected' ? 'Code détecté' : scannerStatus === 'not_found' ? 'Non trouvé' : 'En attente'}
+                {scannerStatus === 'active'    ? '● Caméra active' :
+                 scannerStatus === 'detected'  ? '✓ Code détecté' :
+                 scannerStatus === 'not_found' ? '✗ Non trouvé' :
+                                                '◌ Démarrage...'}
               </span>
               <button onClick={stopScanner} style={{ color: '#6B7280' }}><X className="h-4 w-4" /></button>
             </div>
           </div>
-          <div className="relative rounded-xl overflow-hidden">
-            <div id="qr-reader" className="w-full aspect-square bg-black" />
+          <div className="relative rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '4/3' }}>
+            <div id="qr-reader" className="w-full h-full" />
             <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute inset-4 border-2 border-white/30 rounded-lg" />
-              <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-red-500/70 animate-pulse" />
-              <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-green-400 rounded-tl" />
-              <div className="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-green-400 rounded-tr" />
-              <div className="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-green-400 rounded-bl" />
-              <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-green-400 rounded-br" />
+              <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 60px rgba(0,0,0,0.5)' }} />
+              <div className="absolute" style={{ top: '20%', left: '8%', right: '8%', bottom: '20%', border: '2px solid rgba(255,255,255,0.4)', borderRadius: 8 }} />
+              <div className="absolute left-[10%] right-[10%] h-0.5 bg-red-500/80 animate-pulse" style={{ top: '40%' }} />
+              <div className="absolute w-6 h-6 border-t-2 border-l-2 border-green-400" style={{ top: '18%', left: '6%' }} />
+              <div className="absolute w-6 h-6 border-t-2 border-r-2 border-green-400" style={{ top: '18%', right: '6%' }} />
+              <div className="absolute w-6 h-6 border-b-2 border-l-2 border-green-400" style={{ bottom: '18%', left: '6%' }} />
+              <div className="absolute w-6 h-6 border-b-2 border-r-2 border-green-400" style={{ bottom: '18%', right: '6%' }} />
+              <div className="absolute bottom-3 left-0 right-0 text-center">
+                <span className="text-[10px] text-white/60 bg-black/30 px-2 py-0.5 rounded">QR Code • Code-barres 1D/2D • EAN • UPC</span>
+              </div>
             </div>
+            {scannerStatus === 'detected' && (
+              <div className="absolute inset-0 bg-green-400/20 rounded-xl animate-pulse pointer-events-none" />
+            )}
           </div>
-          <button onClick={() => { stopScanner(); setShowManualScan(true); }}
-            className="w-full py-2.5 rounded-xl text-sm font-medium" style={{ background: '#F8F9FB', color: '#6B7280' }}>
-            Saisie manuelle
-          </button>
+          <p className="text-center text-xs mt-2" style={{ color: '#9CA3AF' }}>Centrez le code dans le cadre • Restez stable</p>
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <button onClick={() => { stopScanner(); setShowManualScan(true); }}
+              className="py-2.5 rounded-xl text-sm font-medium" style={{ background: '#F8F9FB', color: '#6B7280' }}>
+              ⌨ Saisie manuelle
+            </button>
+            <button onClick={stopScanner}
+              className="py-2.5 rounded-xl text-sm font-medium" style={{ background: '#FEE2E2', color: '#EF4444' }}>
+              ✕ Fermer
+            </button>
+          </div>
         </ModalOverlay>
       )}
 
-      {/* Manual scan */}
+      {/* Manual scan — accepts barcode, SKU, number, text */}
       {showManualScan && (
         <ModalOverlay onClose={() => setShowManualScan(false)}>
-          <h3 className="font-bold text-center" style={{ color: '#1F2937' }}>Saisie manuelle</h3>
-          <input value={manualBarcode} onChange={e => setManualBarcode(e.target.value)}
-            placeholder="Code-barres / SKU..."
-            className="w-full h-12 text-center font-mono text-lg rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30"
+          <h3 className="font-bold text-center mb-1" style={{ color: '#1F2937' }}>Saisie manuelle</h3>
+          <p className="text-xs text-center mb-3" style={{ color: '#9CA3AF' }}>Code-barres • SKU • Référence • Numéro</p>
+          <input
+            value={manualBarcode}
+            onChange={e => setManualBarcode(e.target.value)}
+            placeholder="Code-barres / SKU / Référence..."
+            className="w-full h-12 text-center font-mono text-base rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30"
             style={{ background: '#F8F9FB', border: '1px solid #E8EAF0', color: '#1F2937' }}
-            autoFocus onKeyDown={e => { if (e.key === 'Enter') { handleScanResult(manualBarcode); setManualBarcode(""); setShowManualScan(false); } }} />
-          <div className="grid grid-cols-2 gap-2">
-            <ModalBtn label="Annuler" onClick={() => setShowManualScan(false)} />
-            <ModalBtn label="Rechercher" primary onClick={() => { handleScanResult(manualBarcode); setManualBarcode(""); setShowManualScan(false); }} />
+            autoFocus autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && manualBarcode.trim()) {
+                handleScanResult(manualBarcode.trim());
+                setManualBarcode('');
+                setShowManualScan(false);
+              }
+              if (e.key === 'Escape') setShowManualScan(false);
+            }}
+          />
+          <p className="text-[10px] text-center mt-1" style={{ color: '#C4C9D4' }}>Appuyez sur Entrée ou cliquez Rechercher</p>
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <ModalBtn label="Annuler" onClick={() => { setShowManualScan(false); setManualBarcode(''); }} />
+            <ModalBtn label="Rechercher" primary onClick={() => {
+              if (manualBarcode.trim()) {
+                handleScanResult(manualBarcode.trim());
+                setManualBarcode('');
+                setShowManualScan(false);
+              }
+            }} />
           </div>
         </ModalOverlay>
       )}

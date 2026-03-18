@@ -59,7 +59,7 @@ const ALL_GROUPS: NavGroup[] = [
       { name: 'Mon équipe', href: '/app/team', icon: Users, permission: 'settings' },
       { name: 'Profil', href: '/app/profile', icon: User },
       { name: 'Paramètres', href: '/app/settings', icon: SettingsIcon },
-      { name: 'Mon abonnement', href: '/app/subscription', icon: Crown },
+      { name: 'Mon abonnement', href: '/app/subscription', icon: Crown, ownerOnly: true },
     ],
   },
 ];

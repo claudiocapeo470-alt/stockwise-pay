@@ -369,21 +369,57 @@ export default function Caisse() {
 
   const startScanner = async () => {
     setShowScanner(true);
-    setScannerStatus('active');
+    setScannerStatus('idle');
     try {
+      const devices = await Html5Qrcode.getCameras();
+      if (!devices || devices.length === 0) {
+        setShowScanner(false);
+        setScannerStatus('idle');
+        setShowManualScan(true);
+        toast({ title: "Pas de caméra détectée", description: "Utilisez un lecteur USB ou la saisie manuelle." });
+        return;
+      }
+      const cameraId = devices.find(d =>
+        d.label.toLowerCase().includes('back') ||
+        d.label.toLowerCase().includes('arrière') ||
+        d.label.toLowerCase().includes('rear')
+      )?.id || devices[0].id;
+
       const html5Qrcode = new Html5Qrcode("qr-reader");
       scannerRef.current = html5Qrcode;
-      await html5Qrcode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (text) => handleScanResult(text), () => {});
-    } catch {
-      toast({ title: "Erreur caméra", description: "Impossible d'ouvrir la caméra. Utilisez la saisie manuelle.", variant: "destructive" });
+      await html5Qrcode.start(
+        cameraId,
+        {
+          fps: 15,
+          qrbox: { width: 280, height: 180 },
+          aspectRatio: 1.5,
+          disableFlip: false,
+        },
+        (decodedText) => {
+          const cleaned = decodedText.trim().replace(/\s+/g, ' ');
+          setScannerStatus('detected');
+          handleScanResult(cleaned);
+          setTimeout(() => setScannerStatus('active'), 1500);
+        },
+        () => {
+          if (scannerStatus !== 'detected') setScannerStatus('active');
+        }
+      );
+      setScannerStatus('active');
+    } catch (err: any) {
+      console.error('Scanner error:', err);
       setShowScanner(false);
+      setScannerStatus('idle');
       setShowManualScan(true);
+      toast({ title: "Erreur caméra", description: "Impossible d'accéder à la caméra. Utilisez la saisie manuelle.", variant: "destructive" });
     }
   };
 
   const stopScanner = () => {
-    scannerRef.current?.stop().catch(() => {});
-    scannerRef.current = null;
+    if (scannerRef.current) {
+      scannerRef.current.stop().catch(() => {});
+      scannerRef.current = null;
+    }
     setShowScanner(false);
     setScannerStatus('idle');
   };

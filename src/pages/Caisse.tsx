@@ -320,27 +320,52 @@ export default function Caisse() {
     }
   }, [products, toast]);
 
-  // USB/HID barcode
+  // USB/HID barcode scanner + keyboard shortcut scanner
   useEffect(() => {
-    if (isMobile) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isLocked || showCashModal || showReceipt || showCustomerModal || showOpenCashModal || showNumpad) return;
-      const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
-      if (e.key === "Enter" && barcodeBufferRef.current.length >= 4) {
-        handleScanResult(barcodeBufferRef.current);
-        barcodeBufferRef.current = "";
+      if (isLocked || showCashModal || showReceipt ||
+          showCustomerModal || showOpenCashModal || showNumpad ||
+          showManualScan || showScanner) return;
+      // Ignore modifier keys
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+      // F2 key shortcut to open manual scan
+      if (e.key === 'F2') {
+        e.preventDefault();
+        setShowManualScan(true);
         return;
       }
+      // Escape key to close scanner
+      if (e.key === 'Escape') {
+        if (showScanner) stopScanner();
+        if (showManualScan) setShowManualScan(false);
+        return;
+      }
+
+      if (e.key === 'Enter') {
+        const buf = barcodeBufferRef.current.trim();
+        // Accept any input of 2+ chars (numbers, text, mixed)
+        if (buf.length >= 2) {
+          handleScanResult(buf);
+          barcodeBufferRef.current = '';
+        }
+        return;
+      }
+      // Accept printable characters (numbers, letters, symbols)
       if (e.key.length === 1) {
         barcodeBufferRef.current += e.key;
         if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
-        barcodeTimerRef.current = setTimeout(() => { barcodeBufferRef.current = ""; }, 100);
+        // USB scanners send chars very fast (< 50ms between chars)
+        barcodeTimerRef.current = setTimeout(() => {
+          barcodeBufferRef.current = '';
+        }, 80);
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isMobile, isLocked, showCashModal, showReceipt, showCustomerModal, showOpenCashModal, showNumpad, handleScanResult]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLocked, showCashModal, showReceipt, showCustomerModal,
+      showOpenCashModal, showNumpad, showManualScan, showScanner,
+      handleScanResult]);
 
   const startScanner = async () => {
     setShowScanner(true);

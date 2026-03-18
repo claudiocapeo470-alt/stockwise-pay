@@ -181,17 +181,54 @@ export default function Caisse() {
     });
   }, [user]);
 
-  // Check for existing open session on mount
+  // Check for existing open session on mount and restore state
   useEffect(() => {
     if (!user) return;
-    supabase.from('cash_sessions').select('*').eq('user_id', user.id).eq('status', 'open').order('opened_at', { ascending: false }).limit(1).then(({ data }) => {
-      if (data && data.length > 0) {
+    const fetchActiveSession = async () => {
+      const { data } = await supabase
+        .from('cash_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'open')
+        .order('opened_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (data) {
         setCashSessionOpen(true);
-        setCurrentSessionId(data[0].id);
-        setOpeningAmount(String(data[0].opening_amount));
+        setCurrentSessionId(data.id);
+        setOpeningAmount(String(data.opening_amount));
         setShowOpenCashModal(false);
+
+        // Load existing movements for this session
+        const { data: movements } = await supabase
+          .from('cash_movements')
+          .select('*')
+          .eq('session_id', data.id)
+          .order('created_at', { ascending: true });
+        if (movements) setSessionMovements(movements as CashMovement[]);
+
+        // Recalculate session sales from existing sales
+        const { data: sessionSalesData } = await supabase
+          .from('sales')
+          .select('total_amount, payment_method')
+          .gte('created_at', data.opened_at);
+
+        if (sessionSalesData) {
+          const totals = sessionSalesData.reduce((acc, sale) => ({
+            total: acc.total + (sale.total_amount || 0),
+            cash: acc.cash + (sale.payment_method === 'Espèces' ? sale.total_amount : 0),
+            mobile: acc.mobile + (sale.payment_method === 'Mobile Money' ? sale.total_amount : 0),
+            card: acc.card + (sale.payment_method === 'Carte bancaire' ? sale.total_amount : 0),
+          }), { total: 0, cash: 0, mobile: 0, card: 0 });
+          setSessionSales(totals);
+        }
+      } else {
+        setCashSessionOpen(false);
+        setShowOpenCashModal(true);
       }
-    });
+    };
+    fetchActiveSession();
   }, [user]);
 
   const categories = useMemo(() => {
@@ -361,6 +398,19 @@ export default function Caisse() {
   // ─── Cash Session ─────────────────────────────────────
   const openCashSession = async () => {
     if (!user) return;
+    // Check for existing open session first
+    const { data: existing } = await supabase
+      .from('cash_sessions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('status', 'open')
+      .maybeSingle();
+    if (existing) {
+      setCurrentSessionId(existing.id);
+      setCashSessionOpen(true);
+      setShowOpenCashModal(false);
+      return;
+    }
     const amount = parseFloat(openingAmount) || 0;
     const { data, error } = await supabase.from('cash_sessions').insert({ user_id: user.id, opening_amount: amount, status: 'open' }).select().single();
     if (error) { toast({ title: "Erreur", description: "Impossible d'ouvrir la caisse", variant: "destructive" }); return; }

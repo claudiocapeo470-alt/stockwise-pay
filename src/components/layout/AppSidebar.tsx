@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import stocknixLogo from '@/assets/stocknix-logo-official.png';
 
-interface NavItem { name: string; href: string; icon: any; permission?: string; }
+interface NavItem { name: string; href: string; icon: any; permission?: string; ownerOnly?: boolean; }
 interface NavGroup { label: string; items: NavItem[]; modules?: ('boutique' | 'pos' | 'stock')[]; }
 
 const ALL_GROUPS: NavGroup[] = [
@@ -59,7 +59,7 @@ const ALL_GROUPS: NavGroup[] = [
       { name: 'Mon équipe', href: '/app/team', icon: Users, permission: 'settings' },
       { name: 'Profil', href: '/app/profile', icon: User },
       { name: 'Paramètres', href: '/app/settings', icon: SettingsIcon },
-      { name: 'Mon abonnement', href: '/app/subscription', icon: Crown },
+      { name: 'Mon abonnement', href: '/app/subscription', icon: Crown, ownerOnly: true },
     ],
   },
 ];
@@ -104,8 +104,14 @@ export function AppSidebar() {
   };
 
   const filterItems = (group: NavGroup): NavItem[] => {
-    if (!isEmployee) return group.items;
-    return group.items.filter(item => !item.permission || hasPermission(item.permission));
+    return group.items.filter(item => {
+      // ownerOnly items: never show to employees
+      if (item.ownerOnly && isEmployee) return false;
+      // permission check
+      if (!item.permission) return true;
+      if (!isEmployee) return true;
+      return hasPermission(item.permission);
+    });
   };
 
   const displayName = isEmployee

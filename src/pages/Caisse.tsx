@@ -274,67 +274,152 @@ export default function Caisse() {
   const companyName = settings?.company_name || profile?.company_name || "Stocknix";
 
   // ─── Scanner ──────────────────────────────────────────
-  const handleScanResult = useCallback((code: string) => {
+  const handleScanResult = useCallback((text: string) => {
+    if (!text || text.trim().length < 1) return;
+    const code = text.trim();
     const now = Date.now();
     if (code === lastScanCodeRef.current && now - lastScanTimeRef.current < 1500) return;
     lastScanTimeRef.current = now;
     lastScanCodeRef.current = code;
-    const found = products.find(p => p.sku === code || p.name.toLowerCase() === code.toLowerCase());
+
+    // Search product by: barcode, SKU, name (case-insensitive)
+    const found = products.find(p =>
+      p.sku === code ||
+      p.sku?.toLowerCase() === code.toLowerCase() ||
+      p.name?.toLowerCase() === code.toLowerCase()
+    );
+
     if (found) {
-      addToCart(found);
+      setScannerStatus('detected');
+      setCart(prev => {
+        const existing = prev.find(i => i.id === found.id);
+        if (existing) {
+          return prev.map(i => i.id === found.id
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
+          );
+        }
+        return [...prev, {
+          id: found.id, name: found.name, price: found.price,
+          quantity: 1, icon_emoji: found.icon_emoji || '📦',
+          icon_bg_color: found.icon_bg_color || '#E8EAF0',
+          category: found.category || null,
+          image_url: found.image_url || null,
+        }];
+      });
       playBeep();
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-      setScannerStatus('detected');
-      toast({ title: "✅ Produit scanné", description: found.name });
+      toast({ title: '✅ Produit ajouté', description: found.name });
       setTimeout(() => setScannerStatus('active'), 1500);
     } else {
       setScannerStatus('not_found');
       setNotFoundCode(code);
       setShowProductNotFound(true);
       toast({ title: "Produit non trouvé", description: `Code: ${code}`, variant: "destructive" });
-      setTimeout(() => setScannerStatus('active'), 2000);
+      setTimeout(() => setScannerStatus('idle'), 3000);
     }
-  }, [products, addToCart, toast]);
+  }, [products, toast]);
 
-  // USB/HID barcode
+  // USB/HID barcode scanner + keyboard shortcut scanner
   useEffect(() => {
-    if (isMobile) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isLocked || showCashModal || showReceipt || showCustomerModal || showOpenCashModal || showNumpad) return;
-      const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
-      if (e.key === "Enter" && barcodeBufferRef.current.length >= 4) {
-        handleScanResult(barcodeBufferRef.current);
-        barcodeBufferRef.current = "";
+      if (isLocked || showCashModal || showReceipt ||
+          showCustomerModal || showOpenCashModal || showNumpad ||
+          showManualScan || showScanner) return;
+      // Ignore modifier keys
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+      // F2 key shortcut to open manual scan
+      if (e.key === 'F2') {
+        e.preventDefault();
+        setShowManualScan(true);
         return;
       }
+      // Escape key to close scanner
+      if (e.key === 'Escape') {
+        if (showScanner) stopScanner();
+        if (showManualScan) setShowManualScan(false);
+        return;
+      }
+
+      if (e.key === 'Enter') {
+        const buf = barcodeBufferRef.current.trim();
+        // Accept any input of 2+ chars (numbers, text, mixed)
+        if (buf.length >= 2) {
+          handleScanResult(buf);
+          barcodeBufferRef.current = '';
+        }
+        return;
+      }
+      // Accept printable characters (numbers, letters, symbols)
       if (e.key.length === 1) {
         barcodeBufferRef.current += e.key;
         if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
-        barcodeTimerRef.current = setTimeout(() => { barcodeBufferRef.current = ""; }, 100);
+        // USB scanners send chars very fast (< 50ms between chars)
+        barcodeTimerRef.current = setTimeout(() => {
+          barcodeBufferRef.current = '';
+        }, 80);
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isMobile, isLocked, showCashModal, showReceipt, showCustomerModal, showOpenCashModal, showNumpad, handleScanResult]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLocked, showCashModal, showReceipt, showCustomerModal,
+      showOpenCashModal, showNumpad, showManualScan, showScanner,
+      handleScanResult]);
 
   const startScanner = async () => {
     setShowScanner(true);
-    setScannerStatus('active');
+    setScannerStatus('idle');
     try {
+      const devices = await Html5Qrcode.getCameras();
+      if (!devices || devices.length === 0) {
+        setShowScanner(false);
+        setScannerStatus('idle');
+        setShowManualScan(true);
+        toast({ title: "Pas de caméra détectée", description: "Utilisez un lecteur USB ou la saisie manuelle." });
+        return;
+      }
+      const cameraId = devices.find(d =>
+        d.label.toLowerCase().includes('back') ||
+        d.label.toLowerCase().includes('arrière') ||
+        d.label.toLowerCase().includes('rear')
+      )?.id || devices[0].id;
+
       const html5Qrcode = new Html5Qrcode("qr-reader");
       scannerRef.current = html5Qrcode;
-      await html5Qrcode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (text) => handleScanResult(text), () => {});
-    } catch {
-      toast({ title: "Erreur caméra", description: "Impossible d'ouvrir la caméra. Utilisez la saisie manuelle.", variant: "destructive" });
+      await html5Qrcode.start(
+        cameraId,
+        {
+          fps: 15,
+          qrbox: { width: 280, height: 180 },
+          aspectRatio: 1.5,
+          disableFlip: false,
+        },
+        (decodedText) => {
+          const cleaned = decodedText.trim().replace(/\s+/g, ' ');
+          setScannerStatus('detected');
+          handleScanResult(cleaned);
+          setTimeout(() => setScannerStatus('active'), 1500);
+        },
+        () => {
+          if (scannerStatus !== 'detected') setScannerStatus('active');
+        }
+      );
+      setScannerStatus('active');
+    } catch (err: any) {
+      console.error('Scanner error:', err);
       setShowScanner(false);
+      setScannerStatus('idle');
       setShowManualScan(true);
+      toast({ title: "Erreur caméra", description: "Impossible d'accéder à la caméra. Utilisez la saisie manuelle.", variant: "destructive" });
     }
   };
 
   const stopScanner = () => {
-    scannerRef.current?.stop().catch(() => {});
-    scannerRef.current = null;
+    if (scannerRef.current) {
+      scannerRef.current.stop().catch(() => {});
+      scannerRef.current = null;
+    }
     setShowScanner(false);
     setScannerStatus('idle');
   };
@@ -543,20 +628,71 @@ export default function Caisse() {
   // ═══════════════════════════════════════════════════════
   if (isLocked) {
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
-        <div className="text-center space-y-6 max-w-sm px-4">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center"
+        style={{ background: '#1A1F36' }}>
+        <div className="text-center space-y-6 max-w-xs px-4 w-full">
           <Lock className="h-16 w-16 mx-auto" style={{ color: '#6B7280' }} />
-          <h2 className="text-xl font-black text-white" style={{ fontFamily: 'Nunito, sans-serif' }}>Caisse verrouillée</h2>
-          <p className="text-sm" style={{ color: '#6B7280' }}>Entrez le PIN pour déverrouiller</p>
-          <input type="password" value={lockPin} onChange={e => setLockPin(e.target.value)} placeholder="PIN"
-            className="w-full text-center text-2xl tracking-widest h-14 rounded-xl border focus:outline-none focus:ring-2" maxLength={4}
+          <h2 className="text-xl font-black text-white">Caisse verrouillée</h2>
+          <p className="text-sm" style={{ color: '#9CA3AF' }}>
+            Entrez votre code à 4 chiffres
+          </p>
+          {/* 4-dot PIN indicator */}
+          <div className="flex justify-center gap-4">
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} className="w-4 h-4 rounded-full border-2"
+                style={{
+                  background: lockPin.length > i ? '#4F46E5' : 'transparent',
+                  borderColor: lockPin.length > i ? '#4F46E5' : '#6B7280'
+                }} />
+            ))}
+          </div>
+          {/* Hidden input for keyboard entry */}
+          <input
+            type="password"
+            value={lockPin}
+            onChange={e => {
+              const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+              setLockPin(val);
+              if (val.length === 4) {
+                setTimeout(() => { setIsLocked(false); setLockPin(''); }, 200);
+              }
+            }}
+            className="w-full text-center text-2xl tracking-widest h-14 rounded-xl border focus:outline-none focus:ring-2"
             style={{ background: '#F0F2F5', border: '1px solid #E8EAF0', color: '#1F2937' }}
-            onKeyDown={e => { if (e.key === "Enter" && lockPin.length >= 4) { setIsLocked(false); setLockPin(""); } }}
+            maxLength={4}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoFocus
+            placeholder="• • • •"
           />
-          <button onClick={() => { if (lockPin.length >= 4) { setIsLocked(false); setLockPin(""); } }}
-            className="w-full h-12 rounded-xl text-white font-bold" style={{ background: '#4F46E5' }}>
-            Déverrouiller
-          </button>
+          {/* Numpad for mobile */}
+          <div className="grid grid-cols-3 gap-3">
+            {['1','2','3','4','5','6','7','8','9','','0','⌫'].map((key, i) => (
+              <button
+                key={i}
+                disabled={!key}
+                onClick={() => {
+                  if (key === '⌫') {
+                    setLockPin(p => p.slice(0, -1));
+                  } else if (key && lockPin.length < 4) {
+                    const newPin = lockPin + key;
+                    setLockPin(newPin);
+                    if (newPin.length === 4) {
+                      setTimeout(() => { setIsLocked(false); setLockPin(''); }, 200);
+                    }
+                  }
+                }}
+                className="h-14 rounded-xl text-xl font-bold transition-all active:scale-95"
+                style={{
+                  background: key ? '#2A2F4A' : 'transparent',
+                  color: key === '⌫' ? '#EF4444' : '#FFFFFF',
+                  opacity: key ? 1 : 0
+                }}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -879,53 +1015,89 @@ export default function Caisse() {
         </div>
       )}
 
-      {/* Scanner Modal */}
+      {/* Scanner Modal — supports QR, barcode 1D/2D, all formats */}
       {showScanner && (
         <ModalOverlay onClose={stopScanner}>
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-sm" style={{ color: '#1F2937' }}>Scanner</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-sm" style={{ color: '#1F2937' }}>Scanner de produit</h3>
             <div className="flex items-center gap-2">
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                scannerStatus === 'active' ? 'bg-green-100 text-green-600' :
-                scannerStatus === 'detected' ? 'bg-blue-100 text-blue-600' :
-                scannerStatus === 'not_found' ? 'bg-red-100 text-red-600' :
-                'bg-gray-100 text-gray-500'
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                scannerStatus === 'active'   ? 'bg-green-100 text-green-700' :
+                scannerStatus === 'detected' ? 'bg-blue-100 text-blue-700' :
+                scannerStatus === 'not_found'? 'bg-red-100 text-red-700' :
+                                              'bg-gray-100 text-gray-500'
               }`}>
-                {scannerStatus === 'active' ? 'Caméra active' : scannerStatus === 'detected' ? 'Code détecté' : scannerStatus === 'not_found' ? 'Non trouvé' : 'En attente'}
+                {scannerStatus === 'active'    ? '● Caméra active' :
+                 scannerStatus === 'detected'  ? '✓ Code détecté' :
+                 scannerStatus === 'not_found' ? '✗ Non trouvé' :
+                                                '◌ Démarrage...'}
               </span>
               <button onClick={stopScanner} style={{ color: '#6B7280' }}><X className="h-4 w-4" /></button>
             </div>
           </div>
-          <div className="relative rounded-xl overflow-hidden">
-            <div id="qr-reader" className="w-full aspect-square bg-black" />
+          <div className="relative rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '4/3' }}>
+            <div id="qr-reader" className="w-full h-full" />
             <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute inset-4 border-2 border-white/30 rounded-lg" />
-              <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-red-500/70 animate-pulse" />
-              <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-green-400 rounded-tl" />
-              <div className="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-green-400 rounded-tr" />
-              <div className="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-green-400 rounded-bl" />
-              <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-green-400 rounded-br" />
+              <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 60px rgba(0,0,0,0.5)' }} />
+              <div className="absolute" style={{ top: '20%', left: '8%', right: '8%', bottom: '20%', border: '2px solid rgba(255,255,255,0.4)', borderRadius: 8 }} />
+              <div className="absolute left-[10%] right-[10%] h-0.5 bg-red-500/80 animate-pulse" style={{ top: '40%' }} />
+              <div className="absolute w-6 h-6 border-t-2 border-l-2 border-green-400" style={{ top: '18%', left: '6%' }} />
+              <div className="absolute w-6 h-6 border-t-2 border-r-2 border-green-400" style={{ top: '18%', right: '6%' }} />
+              <div className="absolute w-6 h-6 border-b-2 border-l-2 border-green-400" style={{ bottom: '18%', left: '6%' }} />
+              <div className="absolute w-6 h-6 border-b-2 border-r-2 border-green-400" style={{ bottom: '18%', right: '6%' }} />
+              <div className="absolute bottom-3 left-0 right-0 text-center">
+                <span className="text-[10px] text-white/60 bg-black/30 px-2 py-0.5 rounded">QR Code • Code-barres 1D/2D • EAN • UPC</span>
+              </div>
             </div>
+            {scannerStatus === 'detected' && (
+              <div className="absolute inset-0 bg-green-400/20 rounded-xl animate-pulse pointer-events-none" />
+            )}
           </div>
-          <button onClick={() => { stopScanner(); setShowManualScan(true); }}
-            className="w-full py-2.5 rounded-xl text-sm font-medium" style={{ background: '#F8F9FB', color: '#6B7280' }}>
-            Saisie manuelle
-          </button>
+          <p className="text-center text-xs mt-2" style={{ color: '#9CA3AF' }}>Centrez le code dans le cadre • Restez stable</p>
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <button onClick={() => { stopScanner(); setShowManualScan(true); }}
+              className="py-2.5 rounded-xl text-sm font-medium" style={{ background: '#F8F9FB', color: '#6B7280' }}>
+              ⌨ Saisie manuelle
+            </button>
+            <button onClick={stopScanner}
+              className="py-2.5 rounded-xl text-sm font-medium" style={{ background: '#FEE2E2', color: '#EF4444' }}>
+              ✕ Fermer
+            </button>
+          </div>
         </ModalOverlay>
       )}
 
-      {/* Manual scan */}
+      {/* Manual scan — accepts barcode, SKU, number, text */}
       {showManualScan && (
         <ModalOverlay onClose={() => setShowManualScan(false)}>
-          <h3 className="font-bold text-center" style={{ color: '#1F2937' }}>Saisie manuelle</h3>
-          <input value={manualBarcode} onChange={e => setManualBarcode(e.target.value)}
-            placeholder="Code-barres / SKU..."
-            className="w-full h-12 text-center font-mono text-lg rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30"
+          <h3 className="font-bold text-center mb-1" style={{ color: '#1F2937' }}>Saisie manuelle</h3>
+          <p className="text-xs text-center mb-3" style={{ color: '#9CA3AF' }}>Code-barres • SKU • Référence • Numéro</p>
+          <input
+            value={manualBarcode}
+            onChange={e => setManualBarcode(e.target.value)}
+            placeholder="Code-barres / SKU / Référence..."
+            className="w-full h-12 text-center font-mono text-base rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30"
             style={{ background: '#F8F9FB', border: '1px solid #E8EAF0', color: '#1F2937' }}
-            autoFocus onKeyDown={e => { if (e.key === 'Enter') { handleScanResult(manualBarcode); setManualBarcode(""); setShowManualScan(false); } }} />
-          <div className="grid grid-cols-2 gap-2">
-            <ModalBtn label="Annuler" onClick={() => setShowManualScan(false)} />
-            <ModalBtn label="Rechercher" primary onClick={() => { handleScanResult(manualBarcode); setManualBarcode(""); setShowManualScan(false); }} />
+            autoFocus autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && manualBarcode.trim()) {
+                handleScanResult(manualBarcode.trim());
+                setManualBarcode('');
+                setShowManualScan(false);
+              }
+              if (e.key === 'Escape') setShowManualScan(false);
+            }}
+          />
+          <p className="text-[10px] text-center mt-1" style={{ color: '#C4C9D4' }}>Appuyez sur Entrée ou cliquez Rechercher</p>
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <ModalBtn label="Annuler" onClick={() => { setShowManualScan(false); setManualBarcode(''); }} />
+            <ModalBtn label="Rechercher" primary onClick={() => {
+              if (manualBarcode.trim()) {
+                handleScanResult(manualBarcode.trim());
+                setManualBarcode('');
+                setShowManualScan(false);
+              }
+            }} />
           </div>
         </ModalOverlay>
       )}

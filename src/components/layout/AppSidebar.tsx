@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import stocknixLogo from '@/assets/stocknix-logo-official.png';
 
-interface NavItem { name: string; href: string; icon: any; permission?: string; }
+interface NavItem { name: string; href: string; icon: any; permission?: string; ownerOnly?: boolean; }
 interface NavGroup { label: string; items: NavItem[]; modules?: ('boutique' | 'pos' | 'stock')[]; }
 
 const ALL_GROUPS: NavGroup[] = [

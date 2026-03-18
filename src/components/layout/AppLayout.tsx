@@ -12,6 +12,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { TrialBanner } from "@/components/subscription/TrialBanner";
+import { useSessionWarning } from "@/hooks/useSessionWarning";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation();
   const isMobile = useIsMobile();
   const { company } = useCompany();
+  useSessionWarning();
   const [isLocked, setIsLocked] = useState(false);
   const lastActivityRef = useRef(Date.now());
 

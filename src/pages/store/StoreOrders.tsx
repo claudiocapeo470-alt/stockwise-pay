@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useOnlineStore, useStoreOrders } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
 import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp } from "lucide-react";
+import { useOrderNotifications } from '@/hooks/useOrderNotifications';
 
 const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }> = {
   pending: { label: "En attente", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", emoji: "⏳" },
@@ -21,6 +22,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }
 export default function StoreOrders() {
   const { store } = useOnlineStore();
   const { orders, updateOrderStatus } = useStoreOrders(store?.id);
+  useOrderNotifications(store?.id);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   const todayOrders = orders.filter(o => new Date(o.created_at).toDateString() === new Date().toDateString());

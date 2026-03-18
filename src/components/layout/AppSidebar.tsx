@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCompanySettings } from '@/hooks/useCompanySettings';
 import { useCompanyModules } from '@/hooks/useCompanyModules';
 import { Button } from '@/components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import stocknixLogo from '@/assets/stocknix-logo-official.png';
 
@@ -192,10 +193,31 @@ export function AppSidebar() {
             </div>
           </div>
         )}
-        <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive" onClick={() => signOut()}>
-          <LogOut className="h-4 w-4 mr-2" />
-          {!isCollapsed && <span>Déconnexion</span>}
-        </Button>
+      <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive">
+              <LogOut className="h-4 w-4 mr-2" />
+              {!isCollapsed && <span>Déconnexion</span>}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Se déconnecter ?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Êtes-vous sûr de vouloir vous déconnecter ? Toute vente en cours à la caisse sera perdue.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => signOut()}
+              >
+                Se déconnecter
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </SidebarFooter>
     </Sidebar>
   );

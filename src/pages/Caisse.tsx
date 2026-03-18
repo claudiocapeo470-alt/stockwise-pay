@@ -543,20 +543,71 @@ export default function Caisse() {
   // ═══════════════════════════════════════════════════════
   if (isLocked) {
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
-        <div className="text-center space-y-6 max-w-sm px-4">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center"
+        style={{ background: '#1A1F36' }}>
+        <div className="text-center space-y-6 max-w-xs px-4 w-full">
           <Lock className="h-16 w-16 mx-auto" style={{ color: '#6B7280' }} />
-          <h2 className="text-xl font-black text-white" style={{ fontFamily: 'Nunito, sans-serif' }}>Caisse verrouillée</h2>
-          <p className="text-sm" style={{ color: '#6B7280' }}>Entrez le PIN pour déverrouiller</p>
-          <input type="password" value={lockPin} onChange={e => setLockPin(e.target.value)} placeholder="PIN"
-            className="w-full text-center text-2xl tracking-widest h-14 rounded-xl border focus:outline-none focus:ring-2" maxLength={4}
+          <h2 className="text-xl font-black text-white">Caisse verrouillée</h2>
+          <p className="text-sm" style={{ color: '#9CA3AF' }}>
+            Entrez votre code à 4 chiffres
+          </p>
+          {/* 4-dot PIN indicator */}
+          <div className="flex justify-center gap-4">
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} className="w-4 h-4 rounded-full border-2"
+                style={{
+                  background: lockPin.length > i ? '#4F46E5' : 'transparent',
+                  borderColor: lockPin.length > i ? '#4F46E5' : '#6B7280'
+                }} />
+            ))}
+          </div>
+          {/* Hidden input for keyboard entry */}
+          <input
+            type="password"
+            value={lockPin}
+            onChange={e => {
+              const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+              setLockPin(val);
+              if (val.length === 4) {
+                setTimeout(() => { setIsLocked(false); setLockPin(''); }, 200);
+              }
+            }}
+            className="w-full text-center text-2xl tracking-widest h-14 rounded-xl border focus:outline-none focus:ring-2"
             style={{ background: '#F0F2F5', border: '1px solid #E8EAF0', color: '#1F2937' }}
-            onKeyDown={e => { if (e.key === "Enter" && lockPin.length >= 4) { setIsLocked(false); setLockPin(""); } }}
+            maxLength={4}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoFocus
+            placeholder="• • • •"
           />
-          <button onClick={() => { if (lockPin.length >= 4) { setIsLocked(false); setLockPin(""); } }}
-            className="w-full h-12 rounded-xl text-white font-bold" style={{ background: '#4F46E5' }}>
-            Déverrouiller
-          </button>
+          {/* Numpad for mobile */}
+          <div className="grid grid-cols-3 gap-3">
+            {['1','2','3','4','5','6','7','8','9','','0','⌫'].map((key, i) => (
+              <button
+                key={i}
+                disabled={!key}
+                onClick={() => {
+                  if (key === '⌫') {
+                    setLockPin(p => p.slice(0, -1));
+                  } else if (key && lockPin.length < 4) {
+                    const newPin = lockPin + key;
+                    setLockPin(newPin);
+                    if (newPin.length === 4) {
+                      setTimeout(() => { setIsLocked(false); setLockPin(''); }, 200);
+                    }
+                  }
+                }}
+                className="h-14 rounded-xl text-xl font-bold transition-all active:scale-95"
+                style={{
+                  background: key ? '#2A2F4A' : 'transparent',
+                  color: key === '⌫' ? '#EF4444' : '#FFFFFF',
+                  opacity: key ? 1 : 0
+                }}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     );

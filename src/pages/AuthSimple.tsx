@@ -538,9 +538,31 @@ export default function AuthSimple() {
                   </Button>
                 </form>
                 
-                <div className="text-center">
+                <div className="text-center space-y-1">
                   <Button variant="link" onClick={() => setResetStep('email')} className="text-sm">
                     Mot de passe oublié ?
+                  </Button>
+                  <Button
+                    variant="link"
+                    className="text-xs text-muted-foreground"
+                    onClick={async () => {
+                      if (!formData.email) {
+                        toast.error('Entrez votre email pour renvoyer la confirmation');
+                        return;
+                      }
+                      const { error } = await supabase.auth.resend({
+                        type: 'signup',
+                        email: formData.email,
+                        options: { emailRedirectTo: `${window.location.origin}/auth/confirm` }
+                      });
+                      if (error) {
+                        toast.error('Erreur lors du renvoi');
+                      } else {
+                        toast.success('Email de confirmation renvoyé ! Vérifiez votre boîte mail.');
+                      }
+                    }}
+                  >
+                    Renvoyer la confirmation
                   </Button>
                 </div>
               </TabsContent>

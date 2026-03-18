@@ -95,6 +95,8 @@ const App = () => (
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/boutique/:slug" element={<PublicStore />} />
               <Route path="/auth" element={<AuthSimple />} />
+              <Route path="/auth/confirm" element={<AuthConfirm />} />
+              <Route path="/auth/reset-password" element={<ResetPassword />} />
               <Route path="/onboarding" element={<ProtectedRoute><ModuleSelection /></ProtectedRoute>} />
               <Route path="/admin/*" element={
                 <ProtectedRoute>

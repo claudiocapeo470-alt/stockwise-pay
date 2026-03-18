@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useCompany } from "@/hooks/useCompany";
 import { useTeam, CompanyMember } from "@/hooks/useTeam";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Copy, Eye, EyeOff, Plus, RefreshCw, Users, Building2, MoreVertical, Pencil, Power, Trash2, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";

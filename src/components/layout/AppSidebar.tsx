@@ -104,8 +104,14 @@ export function AppSidebar() {
   };
 
   const filterItems = (group: NavGroup): NavItem[] => {
-    if (!isEmployee) return group.items;
-    return group.items.filter(item => !item.permission || hasPermission(item.permission));
+    return group.items.filter(item => {
+      // ownerOnly items: never show to employees
+      if (item.ownerOnly && isEmployee) return false;
+      // permission check
+      if (!item.permission) return true;
+      if (!isEmployee) return true;
+      return hasPermission(item.permission);
+    });
   };
 
   const displayName = isEmployee

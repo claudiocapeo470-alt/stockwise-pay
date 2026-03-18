@@ -14,7 +14,7 @@ import { fr } from "date-fns/locale";
 import { ImageUpload } from "@/components/profile/ImageUpload";
 
 export default function Profile() {
-  const { user, profile, isAdmin, refreshProfile } = useAuth();
+  const { user, profile, isAdmin, isEmployee, memberInfo, refreshProfile } = useAuth();
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -47,26 +47,18 @@ export default function Profile() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (newPassword.length < 6) {
       toast.error("Le mot de passe doit contenir au moins 6 caractères");
       return;
     }
-    
     if (newPassword !== confirmPassword) {
       toast.error("Les mots de passe ne correspondent pas");
       return;
     }
-
     setIsUpdatingPassword(true);
-    
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
-
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
-
       toast.success("Mot de passe modifié avec succès");
       setIsChangingPassword(false);
       setNewPassword("");
@@ -80,21 +72,16 @@ export default function Profile() {
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!profileData.first_name.trim()) {
       toast.error("Le prénom est obligatoire");
       return;
     }
-
-    if (!profileData.company_name.trim()) {
+    if (!isEmployee && !profileData.company_name.trim()) {
       toast.error("Le nom de l'entreprise est obligatoire");
       return;
     }
-
     setIsUpdatingProfile(true);
-    
     try {
-      // Update profile
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
@@ -104,21 +91,13 @@ export default function Profile() {
           avatar_url: profileData.avatar_url
         })
         .eq('user_id', user?.id);
-
       if (profileError) throw profileError;
-
-      // Update auth email if changed
       if (profileData.email !== user?.email) {
-        const { error: authError } = await supabase.auth.updateUser({
-          email: profileData.email
-        });
+        const { error: authError } = await supabase.auth.updateUser({ email: profileData.email });
         if (authError) throw authError;
       }
-
       toast.success("Profil mis à jour avec succès");
       setIsEditingProfile(false);
-      
-      // Refresh profile data
       await refreshProfile();
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -134,7 +113,6 @@ export default function Profile() {
 
   const cancelProfileEdit = () => {
     setIsEditingProfile(false);
-    // Reset to original values
     if (profile && user) {
       setProfileData({
         first_name: profile.first_name || "",
@@ -146,6 +124,79 @@ export default function Profile() {
     }
   };
 
+  // ─── Employee Profile View ───
+  if (isEmployee && memberInfo) {
+    const empInitials = `${(memberInfo.member_first_name || 'E')[0]}${(memberInfo.member_last_name || '')[0] || ''}`.toUpperCase();
+
+    return (
+      <div className="space-y-6 max-w-4xl mx-auto">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Mon Profil</h1>
+          <p className="text-muted-foreground">Vos informations personnelles</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Avatar Card */}
+          <Card className="lg:col-span-1">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-20 h-20 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold mb-4 overflow-hidden">
+                {memberInfo.member_photo_url ? (
+                  <img src={memberInfo.member_photo_url} alt="Photo" className="w-full h-full object-cover" />
+                ) : (
+                  empInitials
+                )}
+              </div>
+              <CardTitle className="text-xl">
+                {memberInfo.member_first_name} {memberInfo.member_last_name || ''}
+              </CardTitle>
+              <Badge variant="secondary" className="mt-2 w-fit mx-auto">
+                {memberInfo.member_role_name}
+              </Badge>
+              <p className="text-sm text-muted-foreground mt-1">{memberInfo.company_name}</p>
+            </CardHeader>
+          </Card>
+
+          {/* Info Card */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Informations
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Prénom</Label>
+                  <Input value={memberInfo.member_first_name} disabled className="bg-muted" />
+                </div>
+                <div>
+                  <Label>Nom</Label>
+                  <Input value={memberInfo.member_last_name || '-'} disabled className="bg-muted" />
+                </div>
+              </div>
+              <div>
+                <Label>Rôle</Label>
+                <Input value={memberInfo.member_role_name} disabled className="bg-muted" />
+              </div>
+              <div>
+                <Label>Entreprise</Label>
+                <Input value={memberInfo.company_name} disabled className="bg-muted" />
+              </div>
+
+              <Separator />
+
+              <p className="text-sm text-muted-foreground">
+                Pour modifier vos informations, contactez votre responsable.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Owner/Admin Profile View ───
   const displayName = profile?.company_name || 
     (profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}`.trim() : user?.email?.split('@')[0] || 'Utilisateur');
 
@@ -157,7 +208,6 @@ export default function Profile() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">Mon Profil</h1>
         <p className="text-muted-foreground">
@@ -166,16 +216,11 @@ export default function Profile() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Profile Overview */}
         <Card className="lg:col-span-1">
           <CardHeader className="text-center">
             <div className="mx-auto w-20 h-20 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold mb-4 overflow-hidden">
               {profileData.avatar_url ? (
-                <img
-                  src={profileData.avatar_url}
-                  alt="Photo de profil"
-                  className="w-full h-full object-cover"
-                />
+                <img src={profileData.avatar_url} alt="Photo de profil" className="w-full h-full object-cover" />
               ) : (
                 initials
               )}
@@ -194,7 +239,6 @@ export default function Profile() {
           </CardHeader>
         </Card>
 
-        {/* Account Information */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
@@ -203,11 +247,7 @@ export default function Profile() {
                 Informations du compte
               </div>
               {!isEditingProfile && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsEditingProfile(true)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setIsEditingProfile(true)}>
                   <Edit2 className="h-4 w-4 mr-2" />
                   Modifier
                 </Button>
@@ -215,27 +255,15 @@ export default function Profile() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Personal Information */}
             <form onSubmit={handleProfileUpdate} className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium">Informations personnelles</h3>
                 {isEditingProfile && (
                   <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={cancelProfileEdit}
-                      disabled={isUpdatingProfile}
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      Annuler
+                    <Button type="button" variant="outline" size="sm" onClick={cancelProfileEdit} disabled={isUpdatingProfile}>
+                      <X className="h-4 w-4 mr-1" /> Annuler
                     </Button>
-                    <Button
-                      type="submit"
-                      size="sm"
-                      disabled={isUpdatingProfile}
-                    >
+                    <Button type="submit" size="sm" disabled={isUpdatingProfile}>
                       <Save className="h-4 w-4 mr-1" />
                       {isUpdatingProfile ? "Enregistrement..." : "Enregistrer"}
                     </Button>
@@ -243,7 +271,6 @@ export default function Profile() {
                 )}
               </div>
 
-              {/* Company Name Field */}
               <div>
                 <Label htmlFor="companyName">Nom de l'entreprise *</Label>
                 <Input
@@ -296,7 +323,6 @@ export default function Profile() {
                 />
               </div>
 
-              {/* Image Upload Section */}
               {isEditingProfile && (
                 <ImageUpload
                   currentImageUrl={profileData.avatar_url}
@@ -308,44 +334,30 @@ export default function Profile() {
 
             <Separator />
 
-            {/* Account Details */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Détails du compte</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Date de création</Label>
                   <Input
-                    value={user?.created_at 
-                      ? format(new Date(user.created_at), "dd MMMM yyyy", { locale: fr })
-                      : "Non disponible"
-                    }
-                    disabled
-                    className="bg-muted"
+                    value={user?.created_at ? format(new Date(user.created_at), "dd MMMM yyyy", { locale: fr }) : "Non disponible"}
+                    disabled className="bg-muted"
                   />
                 </div>
                 <div>
                   <Label>Dernière connexion</Label>
                   <Input
-                    value={user?.last_sign_in_at 
-                      ? format(new Date(user.last_sign_in_at), "dd MMMM yyyy 'à' HH:mm", { locale: fr })
-                      : "Non disponible"
-                    }
-                    disabled
-                    className="bg-muted"
+                    value={user?.last_sign_in_at ? format(new Date(user.last_sign_in_at), "dd MMMM yyyy 'à' HH:mm", { locale: fr }) : "Non disponible"}
+                    disabled className="bg-muted"
                   />
                 </div>
               </div>
               <div>
                 <Label>Statut du compte</Label>
                 <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="secondary" className="bg-success text-success-foreground">
-                    Actif
-                  </Badge>
+                  <Badge variant="secondary" className="bg-success text-success-foreground">Actif</Badge>
                   <span className="text-sm text-muted-foreground">
-                    Email vérifié le {user?.email_confirmed_at 
-                      ? format(new Date(user.email_confirmed_at), "dd/MM/yyyy", { locale: fr })
-                      : "Non vérifié"
-                    }
+                    Email vérifié le {user?.email_confirmed_at ? format(new Date(user.email_confirmed_at), "dd/MM/yyyy", { locale: fr }) : "Non vérifié"}
                   </span>
                 </div>
               </div>
@@ -353,19 +365,13 @@ export default function Profile() {
 
             <Separator />
 
-            {/* Password Change */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium flex items-center gap-2">
-                  <Key className="h-4 w-4" />
-                  Sécurité
+                  <Key className="h-4 w-4" /> Sécurité
                 </h3>
                 {!isChangingPassword && !isEditingProfile && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsChangingPassword(true)}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => setIsChangingPassword(true)}>
                     Modifier le mot de passe
                   </Button>
                 )}
@@ -385,17 +391,11 @@ export default function Profile() {
                         required
                       />
                       <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
+                        type="button" variant="ghost" size="sm"
                         className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
+                        {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                       </Button>
                     </div>
                   </div>
@@ -411,22 +411,10 @@ export default function Profile() {
                     />
                   </div>
                   <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setIsChangingPassword(false);
-                        setNewPassword("");
-                        setConfirmPassword("");
-                      }}
-                      disabled={isUpdatingPassword}
-                    >
+                    <Button type="button" variant="outline" onClick={() => { setIsChangingPassword(false); setNewPassword(""); setConfirmPassword(""); }} disabled={isUpdatingPassword}>
                       Annuler
                     </Button>
-                    <Button
-                      type="submit"
-                      disabled={isUpdatingPassword}
-                    >
+                    <Button type="submit" disabled={isUpdatingPassword}>
                       {isUpdatingPassword ? "Modification..." : "Modifier"}
                     </Button>
                   </div>
@@ -434,14 +422,8 @@ export default function Profile() {
               ) : (
                 <div>
                   <Label>Mot de passe</Label>
-                  <Input
-                    value="••••••••••••"
-                    disabled
-                    className="bg-muted"
-                  />
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Votre mot de passe est sécurisé et chiffré
-                  </p>
+                  <Input value="••••••••••••" disabled className="bg-muted" />
+                  <p className="text-sm text-muted-foreground mt-1">Votre mot de passe est sécurisé et chiffré</p>
                 </div>
               )}
             </div>

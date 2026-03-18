@@ -398,6 +398,19 @@ export default function Caisse() {
   // ─── Cash Session ─────────────────────────────────────
   const openCashSession = async () => {
     if (!user) return;
+    // Check for existing open session first
+    const { data: existing } = await supabase
+      .from('cash_sessions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('status', 'open')
+      .maybeSingle();
+    if (existing) {
+      setCurrentSessionId(existing.id);
+      setCashSessionOpen(true);
+      setShowOpenCashModal(false);
+      return;
+    }
     const amount = parseFloat(openingAmount) || 0;
     const { data, error } = await supabase.from('cash_sessions').insert({ user_id: user.id, opening_amount: amount, status: 'open' }).select().single();
     if (error) { toast({ title: "Erreur", description: "Impossible d'ouvrir la caisse", variant: "destructive" }); return; }

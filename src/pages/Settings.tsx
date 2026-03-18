@@ -46,6 +46,13 @@ export default function Settings() {
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState<SettingsPage>("main");
 
+  // Guard: employees cannot access company or subscription settings directly
+  useEffect(() => {
+    if (isEmployee && (activePage === 'company' || activePage === 'subscription' || activePage === 'security-data')) {
+      setActivePage('main');
+    }
+  }, [isEmployee, activePage]);
+
   const displayName = profile?.first_name 
     ? `${profile.first_name} ${profile.last_name || ''}`.trim()
     : user?.email?.split('@')[0] || 'Utilisateur';

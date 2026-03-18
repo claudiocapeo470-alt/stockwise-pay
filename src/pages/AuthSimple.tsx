@@ -80,8 +80,12 @@ export default function AuthSimple() {
   // Handle email confirmation redirect  
   useEffect(() => {
     const confirmed = searchParams.get('confirmed');
-    if (confirmed === 'true' && user) {
-      navigate('/app?confirmed=true');
+    if (confirmed === 'true') {
+      if (user) {
+        navigate('/app', { replace: true });
+      } else {
+        navigate('/auth/confirm', { replace: true });
+      }
     }
   }, [searchParams, user, navigate]);
 
@@ -177,7 +181,7 @@ export default function AuthSimple() {
       }
 
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/auth?reset=true`
+        redirectTo: `${window.location.origin}/auth/reset-password`
       });
 
       if (error) {
@@ -534,9 +538,31 @@ export default function AuthSimple() {
                   </Button>
                 </form>
                 
-                <div className="text-center">
+                <div className="text-center space-y-1">
                   <Button variant="link" onClick={() => setResetStep('email')} className="text-sm">
                     Mot de passe oublié ?
+                  </Button>
+                  <Button
+                    variant="link"
+                    className="text-xs text-muted-foreground"
+                    onClick={async () => {
+                      if (!formData.email) {
+                        toast.error('Entrez votre email pour renvoyer la confirmation');
+                        return;
+                      }
+                      const { error } = await supabase.auth.resend({
+                        type: 'signup',
+                        email: formData.email,
+                        options: { emailRedirectTo: `${window.location.origin}/auth/confirm` }
+                      });
+                      if (error) {
+                        toast.error('Erreur lors du renvoi');
+                      } else {
+                        toast.success('Email de confirmation renvoyé ! Vérifiez votre boîte mail.');
+                      }
+                    }}
+                  >
+                    Renvoyer la confirmation
                   </Button>
                 </div>
               </TabsContent>

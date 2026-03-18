@@ -210,7 +210,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
-      const confirmationUrl = `${window.location.origin}/app?confirmed=true`;
+      const confirmationUrl = `${window.location.origin}/auth/confirm`;
       
       const { data, error } = await supabase.auth.signUp({
         email,

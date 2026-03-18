@@ -24,6 +24,8 @@ import RapportEmployes from './pages/RapportEmployes';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import AuthSimple from './pages/AuthSimple';
+import AuthConfirm from './pages/AuthConfirm';
+import ResetPassword from './pages/ResetPassword';
 import InvoiceEditor from './pages/InvoiceEditor';
 import InvoicePreview from './pages/InvoicePreview';
 import Caisse from './pages/Caisse';
@@ -93,6 +95,8 @@ const App = () => (
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/boutique/:slug" element={<PublicStore />} />
               <Route path="/auth" element={<AuthSimple />} />
+              <Route path="/auth/confirm" element={<AuthConfirm />} />
+              <Route path="/auth/reset-password" element={<ResetPassword />} />
               <Route path="/onboarding" element={<ProtectedRoute><ModuleSelection /></ProtectedRoute>} />
               <Route path="/admin/*" element={
                 <ProtectedRoute>

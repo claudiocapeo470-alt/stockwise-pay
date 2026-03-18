@@ -274,27 +274,51 @@ export default function Caisse() {
   const companyName = settings?.company_name || profile?.company_name || "Stocknix";
 
   // ─── Scanner ──────────────────────────────────────────
-  const handleScanResult = useCallback((code: string) => {
+  const handleScanResult = useCallback((text: string) => {
+    if (!text || text.trim().length < 1) return;
+    const code = text.trim();
     const now = Date.now();
     if (code === lastScanCodeRef.current && now - lastScanTimeRef.current < 1500) return;
     lastScanTimeRef.current = now;
     lastScanCodeRef.current = code;
-    const found = products.find(p => p.sku === code || p.name.toLowerCase() === code.toLowerCase());
+
+    // Search product by: barcode, SKU, name (case-insensitive)
+    const found = products.find(p =>
+      p.sku === code ||
+      p.sku?.toLowerCase() === code.toLowerCase() ||
+      p.name?.toLowerCase() === code.toLowerCase()
+    );
+
     if (found) {
-      addToCart(found);
+      setScannerStatus('detected');
+      setCart(prev => {
+        const existing = prev.find(i => i.id === found.id);
+        if (existing) {
+          return prev.map(i => i.id === found.id
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
+          );
+        }
+        return [...prev, {
+          id: found.id, name: found.name, price: found.price,
+          quantity: 1, icon_emoji: found.icon_emoji || '📦',
+          icon_bg_color: found.icon_bg_color || '#E8EAF0',
+          category: found.category || null,
+          image_url: found.image_url || null,
+        }];
+      });
       playBeep();
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-      setScannerStatus('detected');
-      toast({ title: "✅ Produit scanné", description: found.name });
+      toast({ title: '✅ Produit ajouté', description: found.name });
       setTimeout(() => setScannerStatus('active'), 1500);
     } else {
       setScannerStatus('not_found');
       setNotFoundCode(code);
       setShowProductNotFound(true);
       toast({ title: "Produit non trouvé", description: `Code: ${code}`, variant: "destructive" });
-      setTimeout(() => setScannerStatus('active'), 2000);
+      setTimeout(() => setScannerStatus('idle'), 3000);
     }
-  }, [products, addToCart, toast]);
+  }, [products, toast]);
 
   // USB/HID barcode
   useEffect(() => {

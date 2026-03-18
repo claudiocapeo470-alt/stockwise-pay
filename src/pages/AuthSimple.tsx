@@ -80,8 +80,12 @@ export default function AuthSimple() {
   // Handle email confirmation redirect  
   useEffect(() => {
     const confirmed = searchParams.get('confirmed');
-    if (confirmed === 'true' && user) {
-      navigate('/app?confirmed=true');
+    if (confirmed === 'true') {
+      if (user) {
+        navigate('/app', { replace: true });
+      } else {
+        navigate('/auth/confirm', { replace: true });
+      }
     }
   }, [searchParams, user, navigate]);
 

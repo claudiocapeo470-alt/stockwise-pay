@@ -154,7 +154,8 @@ export default function Caisse() {
   const { addSale } = useSales();
   const { toast } = useToast();
   const { settings } = useCompanySettings();
-  const { profile, user } = useAuth();
+  const { profile, user, isEmployee } = useAuth();
+  const { company } = useCompany();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const scannerRef = useRef<Html5Qrcode | null>(null);
@@ -162,6 +163,9 @@ export default function Caisse() {
   const barcodeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScanTimeRef = useRef(0);
   const lastScanCodeRef = useRef("");
+
+  // Effective user ID for shared data
+  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
 
   // ─── Search debounce (200ms) ─────────────────────────
   useEffect(() => {

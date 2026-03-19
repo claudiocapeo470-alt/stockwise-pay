@@ -99,7 +99,7 @@ export default function FAQ() {
       questions: [
         {
           q: "Comment contacter le support ?",
-          a: "Vous pouvez nous contacter par email à support@stocknix.space ou par téléphone. Le support prioritaire est disponible pour les plans payants."
+          a: "Vous pouvez nous contacter par email à support@www.stocknix.com ou par téléphone. Le support prioritaire est disponible pour les plans payants."
         },
         {
           q: "Y a-t-il une formation disponible ?",
@@ -221,7 +221,7 @@ export default function FAQ() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" variant="outline">
-              support@stocknix.space
+              support@www.stocknix.com
             </Button>
             <Button 
               size="lg"

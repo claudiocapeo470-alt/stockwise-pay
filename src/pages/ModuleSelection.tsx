@@ -47,8 +47,10 @@ export default function ModuleSelection() {
     setSaving(true);
     try {
       await saveModules(selectedKeys, companyName.trim());
-      toast.success(`✅ Bienvenue dans ${companyName.trim()} !`, { description: `${matchingPlan?.label || 'Espace'} activé avec succès` });
-      navigate('/app');
+      toast.success(`Bienvenue dans ${companyName.trim()} !`, { description: `${matchingPlan?.label || 'Espace'} activé !` });
+      // Attendre stabilisation Supabase avant navigation
+      await new Promise(resolve => setTimeout(resolve, 800));
+      navigate('/app', { replace: true });
     } catch (e: any) {
       toast.error('Erreur', { description: e.message });
     } finally {

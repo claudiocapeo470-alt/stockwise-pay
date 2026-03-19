@@ -139,7 +139,7 @@ export default function StoreConfig() {
             <CardHeader><CardTitle>🌐 URL</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="p-4 bg-muted rounded-xl space-y-2">
-                <div className="flex items-center gap-2 text-sm"><Link2 className="h-4 w-4 text-muted-foreground" /><span className="text-muted-foreground">stocknix.space/boutique/</span></div>
+                <div className="flex items-center gap-2 text-sm"><Link2 className="h-4 w-4 text-muted-foreground" /><span className="text-muted-foreground">www.stocknix.com/boutique/</span></div>
                 <Input value={form.slug} onChange={e => handleSlugChange(e.target.value)} placeholder="mon-magasin" className="font-mono" />
                 {slugChecking && <p className="text-xs text-muted-foreground">Vérification...</p>}
                 {slugAvailable === true && form.slug.length >= 3 && <p className="text-xs text-green-600">✅ Disponible</p>}

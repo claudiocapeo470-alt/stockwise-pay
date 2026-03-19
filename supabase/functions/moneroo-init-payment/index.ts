@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://www.stocknix.com',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
@@ -47,7 +47,7 @@ serve(async (req) => {
       .eq('user_id', user_id)
       .maybeSingle();
 
-    const siteUrl = Deno.env.get('SITE_URL') || 'https://stocknix.lovable.app';
+    const siteUrl = Deno.env.get('SITE_URL') || 'https://www.stocknix.com';
 
     const monerooResponse = await fetch('https://api.moneroo.io/v1/payments/initialize', {
       method: 'POST',

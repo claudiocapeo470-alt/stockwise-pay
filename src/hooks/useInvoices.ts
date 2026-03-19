@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCompany } from "./useCompany";
 import { toast } from "sonner";
 
 export interface InvoiceItem {
@@ -52,18 +53,21 @@ export interface Invoice {
 }
 
 export const useInvoices = (documentType?: 'facture' | 'devis') => {
-  const { user } = useAuth();
+  const { user, isEmployee } = useAuth();
+  const { company } = useCompany();
   const queryClient = useQueryClient();
 
+  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+
   const invoicesQuery = useQuery({
-    queryKey: ["invoices", user?.id, documentType],
+    queryKey: ["invoices", effectiveUserId, documentType],
     queryFn: async () => {
-      if (!user?.id) throw new Error("User not authenticated");
+      if (!effectiveUserId) throw new Error("User not authenticated");
 
       let query = supabase
         .from("invoices")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", effectiveUserId)
         .order("created_at", { ascending: false });
 
       if (documentType) {
@@ -71,60 +75,44 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
       }
 
       const { data, error } = await query;
-
       if (error) throw error;
       return data as Invoice[];
     },
-    enabled: !!user?.id,
+    enabled: !!effectiveUserId,
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchInterval: 30000,
   });
 
   const generateDocumentNumber = async (type: 'facture' | 'devis') => {
-    if (!user?.id) throw new Error("User not authenticated");
-    
+    if (!effectiveUserId) throw new Error("User not authenticated");
     const { data, error } = await supabase.rpc("generate_document_number", {
-      _user_id: user.id,
+      _user_id: effectiveUserId,
       _document_type: type,
     });
-
     if (error) throw error;
     return data as string;
   };
 
   const addInvoice = useMutation({
     mutationFn: async (invoice: Invoice) => {
-      if (!user?.id) throw new Error("User not authenticated");
-
+      if (!effectiveUserId) throw new Error("User not authenticated");
       const documentNumber = await generateDocumentNumber(invoice.document_type);
-
-      // Extract items from invoice object
       const { items, ...invoiceData } = invoice;
 
       const { data: newInvoice, error: invoiceError } = await supabase
         .from("invoices")
-        .insert({
-          ...invoiceData,
-          user_id: user.id,
-          document_number: documentNumber,
-        })
+        .insert({ ...invoiceData, user_id: effectiveUserId, document_number: documentNumber })
         .select()
         .single();
-
       if (invoiceError) throw invoiceError;
 
       if (items && items.length > 0) {
-        const itemsToInsert = items.map((item, index) => ({
-          ...item,
-          invoice_id: newInvoice.id,
-          position: index,
-        }));
-
-        const { error: itemsError } = await supabase
-          .from("invoice_items")
-          .insert(itemsToInsert);
-
+        const itemsToInsert = items.map((item, index) => ({ ...item, invoice_id: newInvoice.id, position: index }));
+        const { error: itemsError } = await supabase.from("invoice_items").insert(itemsToInsert);
         if (itemsError) throw itemsError;
       }
-
       return newInvoice;
     },
     onSuccess: () => {
@@ -138,37 +126,24 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
 
   const updateInvoice = useMutation({
     mutationFn: async ({ id, ...invoice }: Invoice) => {
-      if (!user?.id || !id) throw new Error("Missing required data");
-
-      // Extract items from invoice object
+      if (!effectiveUserId || !id) throw new Error("Missing required data");
       const { items, ...invoiceData } = invoice;
 
       const { error: invoiceError } = await supabase
         .from("invoices")
         .update(invoiceData)
         .eq("id", id)
-        .eq("user_id", user.id);
-
+        .eq("user_id", effectiveUserId);
       if (invoiceError) throw invoiceError;
 
       if (items) {
         await supabase.from("invoice_items").delete().eq("invoice_id", id);
-
         if (items.length > 0) {
-          const itemsToInsert = items.map((item, index) => ({
-            ...item,
-            invoice_id: id,
-            position: index,
-          }));
-
-          const { error: itemsError } = await supabase
-            .from("invoice_items")
-            .insert(itemsToInsert);
-
+          const itemsToInsert = items.map((item, index) => ({ ...item, invoice_id: id, position: index }));
+          const { error: itemsError } = await supabase.from("invoice_items").insert(itemsToInsert);
           if (itemsError) throw itemsError;
         }
       }
-
       return { id, ...invoice };
     },
     onSuccess: () => {
@@ -182,14 +157,8 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
 
   const deleteInvoice = useMutation({
     mutationFn: async (id: string) => {
-      if (!user?.id) throw new Error("User not authenticated");
-
-      const { error } = await supabase
-        .from("invoices")
-        .delete()
-        .eq("id", id)
-        .eq("user_id", user.id);
-
+      if (!effectiveUserId) throw new Error("User not authenticated");
+      const { error } = await supabase.from("invoices").delete().eq("id", id).eq("user_id", effectiveUserId);
       if (error) throw error;
       return id;
     },
@@ -204,55 +173,26 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
 
   const duplicateInvoice = useMutation({
     mutationFn: async (id: string) => {
-      if (!user?.id) throw new Error("User not authenticated");
-
-      const { data: original, error: fetchError } = await supabase
-        .from("invoices")
-        .select("*")
-        .eq("id", id)
-        .single();
-
+      if (!effectiveUserId) throw new Error("User not authenticated");
+      const { data: original, error: fetchError } = await supabase.from("invoices").select("*").eq("id", id).single();
       if (fetchError) throw fetchError;
 
-      const { data: items, error: itemsError } = await supabase
-        .from("invoice_items")
-        .select("*")
-        .eq("invoice_id", id);
-
+      const { data: items, error: itemsError } = await supabase.from("invoice_items").select("*").eq("invoice_id", id);
       if (itemsError) throw itemsError;
 
       const documentNumber = await generateDocumentNumber(original.document_type);
-
       const { data: newInvoice, error: insertError } = await supabase
         .from("invoices")
-        .insert({
-          ...original,
-          id: undefined,
-          document_number: documentNumber,
-          status: 'brouillon',
-          created_at: undefined,
-          updated_at: undefined,
-        })
+        .insert({ ...original, id: undefined, document_number: documentNumber, status: 'brouillon', created_at: undefined, updated_at: undefined })
         .select()
         .single();
-
       if (insertError) throw insertError;
 
       if (items && items.length > 0) {
-        const newItems = items.map(item => ({
-          ...item,
-          id: undefined,
-          invoice_id: newInvoice.id,
-          created_at: undefined,
-        }));
-
-        const { error: newItemsError } = await supabase
-          .from("invoice_items")
-          .insert(newItems);
-
+        const newItems = items.map(item => ({ ...item, id: undefined, invoice_id: newInvoice.id, created_at: undefined }));
+        const { error: newItemsError } = await supabase.from("invoice_items").insert(newItems);
         if (newItemsError) throw newItemsError;
       }
-
       return newInvoice;
     },
     onSuccess: () => {
@@ -276,20 +216,20 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
 };
 
 export const useInvoiceDetails = (invoiceId: string | undefined) => {
-  const { user } = useAuth();
+  const { user, isEmployee } = useAuth();
+  const { company } = useCompany();
+  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
 
   return useQuery({
     queryKey: ["invoice", invoiceId],
     queryFn: async () => {
-      if (!user?.id || !invoiceId) throw new Error("Missing required data");
-
+      if (!effectiveUserId || !invoiceId) throw new Error("Missing required data");
       const { data: invoice, error: invoiceError } = await supabase
         .from("invoices")
         .select("*")
         .eq("id", invoiceId)
-        .eq("user_id", user.id)
+        .eq("user_id", effectiveUserId)
         .single();
-
       if (invoiceError) throw invoiceError;
 
       const { data: items, error: itemsError } = await supabase
@@ -297,11 +237,10 @@ export const useInvoiceDetails = (invoiceId: string | undefined) => {
         .select("*")
         .eq("invoice_id", invoiceId)
         .order("position");
-
       if (itemsError) throw itemsError;
 
       return { ...invoice, items } as Invoice;
     },
-    enabled: !!user?.id && !!invoiceId,
+    enabled: !!effectiveUserId && !!invoiceId,
   });
 };

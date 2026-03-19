@@ -3,6 +3,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { useToast } from "@/hooks/use-toast";
 import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { useCompany } from "@/hooks/useCompany";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -154,7 +155,8 @@ export default function Caisse() {
   const { addSale } = useSales();
   const { toast } = useToast();
   const { settings } = useCompanySettings();
-  const { profile, user } = useAuth();
+  const { profile, user, isEmployee } = useAuth();
+  const { company } = useCompany();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const scannerRef = useRef<Html5Qrcode | null>(null);
@@ -162,6 +164,9 @@ export default function Caisse() {
   const barcodeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScanTimeRef = useRef(0);
   const lastScanCodeRef = useRef("");
+
+  // Effective user ID for shared data
+  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
 
   // ─── Search debounce (200ms) ─────────────────────────
   useEffect(() => {
@@ -171,24 +176,24 @@ export default function Caisse() {
 
   // Load category colors from DB
   useEffect(() => {
-    if (!user) return;
-    supabase.from('product_categories').select('name, color').eq('user_id', user.id).then(({ data }) => {
+    if (!effectiveUserId) return;
+    supabase.from('product_categories').select('name, color').eq('user_id', effectiveUserId).then(({ data }) => {
       if (data) {
         const colors: Record<string, string> = {};
         data.forEach(c => { if (c.color) colors[c.name] = c.color; });
         setCategoryColors(colors);
       }
     });
-  }, [user]);
+  }, [effectiveUserId]);
 
   // Check for existing open session on mount and restore state
   useEffect(() => {
-    if (!user) return;
+    if (!effectiveUserId) return;
     const fetchActiveSession = async () => {
       const { data } = await supabase
         .from('cash_sessions')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', effectiveUserId)
         .eq('status', 'open')
         .order('opened_at', { ascending: false })
         .limit(1)

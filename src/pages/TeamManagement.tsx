@@ -146,6 +146,8 @@ function MembersTab() {
   const [pinCode, setPinCode] = useState("");
   const [showPinDialog, setShowPinDialog] = useState<CompanyMember | null>(null);
   const [revealedPin, setRevealedPin] = useState(false);
+  const [useCustomPin, setUseCustomPin] = useState(false);
+  const [customPin, setCustomPin] = useState("");
 
   const openCreate = () => {
     setEditMember(null);
@@ -153,6 +155,8 @@ function MembersTab() {
     setLastName("");
     setSelectedRole("");
     setPinCode(generatePin());
+    setUseCustomPin(false);
+    setCustomPin("");
     setDialogOpen(true);
   };
 
@@ -167,8 +171,6 @@ function MembersTab() {
 
   const handleSave = async () => {
     if (!firstName.trim() || !selectedRole) return;
-    
-    // Find role_id from roles list matching the selected predefined role name
     const matchingRole = roles.find(r => r.name === selectedRole);
     
     try {
@@ -182,12 +184,14 @@ function MembersTab() {
         });
         toast.success("Membre mis à jour");
       } else {
-        await createMember.mutateAsync({
+        const pinToUse = useCustomPin && customPin.length === 6 ? customPin : undefined;
+        const result = await createMember.mutateAsync({
           first_name: firstName,
           last_name: lastName,
           role_id: matchingRole?.id || undefined,
+          pin_code: pinToUse,
         });
-        toast.success("Membre créé avec succès");
+        toast.success(`Membre créé ! PIN : ${(result as any).generatedPin || result.pin_code}`);
       }
       setDialogOpen(false);
     } catch {
@@ -292,6 +296,32 @@ function MembersTab() {
                   <Input value={pinCode} onChange={e => setPinCode(e.target.value.replace(/\D/g, '').slice(0, 6))} maxLength={6} className="font-mono text-lg tracking-widest" />
                   <Button variant="outline" size="icon" onClick={() => setPinCode(generatePin())}><RefreshCw className="h-4 w-4" /></Button>
                 </div>
+              </div>
+            )}
+            {!editMember && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Switch checked={useCustomPin} onCheckedChange={setUseCustomPin} />
+                  <Label className="text-sm">Définir le PIN manuellement</Label>
+                </div>
+                {useCustomPin ? (
+                  <div>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="PIN à 6 chiffres"
+                      maxLength={6}
+                      value={customPin}
+                      onChange={e => setCustomPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      className="font-mono text-lg tracking-widest"
+                    />
+                    {customPin.length > 0 && customPin.length < 6 && (
+                      <p className="text-xs text-destructive mt-1">Le PIN doit avoir 6 chiffres</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">Un PIN sera généré automatiquement et affiché après création.</p>
+                )}
               </div>
             )}
           </div>

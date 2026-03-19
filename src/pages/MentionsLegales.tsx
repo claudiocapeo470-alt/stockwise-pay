@@ -43,7 +43,7 @@ export default function MentionsLegales() {
             <h2 className="text-2xl font-bold mb-4">1. Éditeur du Site</h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                Le site <strong className="text-foreground">stocknix.space</strong> est édité par <strong className="text-foreground">DESCHNIX</strong>, 
+                Le site <strong className="text-foreground">www.stocknix.com</strong> est édité par <strong className="text-foreground">DESCHNIX</strong>, 
                 société spécialisée dans le développement de solutions logicielles SaaS pour la gestion commerciale et d'inventaire.
               </p>
               <p>
@@ -56,7 +56,7 @@ export default function MentionsLegales() {
                 <strong className="text-foreground">Siège social :</strong> Côte d'Ivoire
               </p>
               <p>
-                <strong className="text-foreground">Email :</strong> support@stocknix.space
+                <strong className="text-foreground">Email :</strong> support@www.stocknix.com
               </p>
             </div>
           </Card>
@@ -72,7 +72,7 @@ export default function MentionsLegales() {
             <h2 className="text-2xl font-bold mb-4">3. Propriété Intellectuelle</h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                L'ensemble des contenus présents sur le site <strong className="text-foreground">stocknix.space</strong> (textes, images, logos, graphismes, interface, code source, etc.) 
+                L'ensemble des contenus présents sur le site <strong className="text-foreground">www.stocknix.com</strong> (textes, images, logos, graphismes, interface, code source, etc.) 
                 est la propriété exclusive de <strong className="text-foreground">DESCHNIX</strong>, sauf mention contraire.
               </p>
               <p>
@@ -104,7 +104,7 @@ export default function MentionsLegales() {
               </ul>
               <p>
                 Vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. 
-                Pour exercer ces droits, contactez-nous à : <strong className="text-foreground">support@stocknix.space</strong>
+                Pour exercer ces droits, contactez-nous à : <strong className="text-foreground">support@www.stocknix.com</strong>
               </p>
             </div>
           </Card>
@@ -113,7 +113,7 @@ export default function MentionsLegales() {
             <h2 className="text-2xl font-bold mb-4">5. Cookies et Traceurs</h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                Le site <strong className="text-foreground">stocknix.space</strong> utilise des cookies pour améliorer l'expérience utilisateur, 
+                Le site <strong className="text-foreground">www.stocknix.com</strong> utilise des cookies pour améliorer l'expérience utilisateur, 
                 analyser le trafic et personnaliser le contenu.
               </p>
               <p>
@@ -200,10 +200,10 @@ export default function MentionsLegales() {
                 Pour toute question concernant ces mentions légales, contactez-nous :
               </p>
               <p className="font-semibold text-foreground">
-                Email : support@stocknix.space
+                Email : support@www.stocknix.com
               </p>
               <p className="font-semibold text-foreground">
-                Site : <a href="https://stocknix.space" className="text-primary hover:underline">https://stocknix.space</a>
+                Site : <a href="https://www.stocknix.com" className="text-primary hover:underline">https://www.stocknix.com</a>
               </p>
             </div>
           </Card>

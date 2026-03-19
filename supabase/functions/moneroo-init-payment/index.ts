@@ -47,7 +47,7 @@ serve(async (req) => {
       .eq('user_id', user_id)
       .maybeSingle();
 
-    const siteUrl = Deno.env.get('SITE_URL') || 'https://stocknix.lovable.app';
+    const siteUrl = Deno.env.get('SITE_URL') || 'https://www.stocknix.com';
 
     const monerooResponse = await fetch('https://api.moneroo.io/v1/payments/initialize', {
       method: 'POST',

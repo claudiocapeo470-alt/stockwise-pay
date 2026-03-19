@@ -171,8 +171,6 @@ function MembersTab() {
 
   const handleSave = async () => {
     if (!firstName.trim() || !selectedRole) return;
-    
-    // Find role_id from roles list matching the selected predefined role name
     const matchingRole = roles.find(r => r.name === selectedRole);
     
     try {
@@ -186,12 +184,14 @@ function MembersTab() {
         });
         toast.success("Membre mis à jour");
       } else {
-        await createMember.mutateAsync({
+        const pinToUse = useCustomPin && customPin.length === 6 ? customPin : undefined;
+        const result = await createMember.mutateAsync({
           first_name: firstName,
           last_name: lastName,
           role_id: matchingRole?.id || undefined,
+          pin_code: pinToUse,
         });
-        toast.success("Membre créé avec succès");
+        toast.success(`Membre créé ! PIN : ${(result as any).generatedPin || result.pin_code}`);
       }
       setDialogOpen(false);
     } catch {

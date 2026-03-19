@@ -188,12 +188,12 @@ export default function Caisse() {
 
   // Check for existing open session on mount and restore state
   useEffect(() => {
-    if (!user) return;
+    if (!effectiveUserId) return;
     const fetchActiveSession = async () => {
       const { data } = await supabase
         .from('cash_sessions')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', effectiveUserId)
         .eq('status', 'open')
         .order('opened_at', { ascending: false })
         .limit(1)

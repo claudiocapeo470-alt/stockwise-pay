@@ -176,15 +176,15 @@ export default function Caisse() {
 
   // Load category colors from DB
   useEffect(() => {
-    if (!user) return;
-    supabase.from('product_categories').select('name, color').eq('user_id', user.id).then(({ data }) => {
+    if (!effectiveUserId) return;
+    supabase.from('product_categories').select('name, color').eq('user_id', effectiveUserId).then(({ data }) => {
       if (data) {
         const colors: Record<string, string> = {};
         data.forEach(c => { if (c.color) colors[c.name] = c.color; });
         setCategoryColors(colors);
       }
     });
-  }, [user]);
+  }, [effectiveUserId]);
 
   // Check for existing open session on mount and restore state
   useEffect(() => {

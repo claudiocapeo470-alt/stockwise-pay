@@ -13,64 +13,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useIsMobile } from "@/hooks/use-mobile"
 
-const reports = [
-  {
-    id: 1,
-    title: "Rapport des ventes",
-    description: "Analyse détaillée des ventes par période",
-    type: "sales",
-    period: "Cette semaine",
-    status: "ready",
-    lastGenerated: "2024-01-15",
-    metrics: {
-      totalSales: 15,
-      revenue: 4825000,
-      growth: "+12%"
-    }
-  },
-  {
-    id: 2,
-    title: "État des stocks",
-    description: "Inventaire et mouvements de stock",
-    type: "inventory",
-    period: "Temps réel",
-    status: "ready",
-    lastGenerated: "2024-01-15",
-    metrics: {
-      totalProducts: 156,
-      lowStock: 8,
-      outOfStock: 3
-    }
-  },
-  {
-    id: 3,
-    title: "Suivi des paiements",
-    description: "Paiements reçus et en attente",
-    type: "payments",
-    period: "Ce mois",
-    status: "ready",
-    lastGenerated: "2024-01-15",
-    metrics: {
-      paid: "85%",
-      pending: 1125000,
-      overdue: 555000
-    }
-  },
-  {
-    id: 4,
-    title: "Clients les plus rentables",
-    description: "Top des clients par chiffre d'affaires",
-    type: "customers",
-    period: "Trimestre",
-    status: "generating",
-    lastGenerated: "2024-01-14",
-    metrics: {
-      topCustomers: 5,
-      averageSpend: 580000,
-      retention: "78%"
-    }
-  }
-]
+// Reports are now computed dynamically below
 
 const quickExports = [
   {

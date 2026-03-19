@@ -298,6 +298,32 @@ function MembersTab() {
                 </div>
               </div>
             )}
+            {!editMember && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Switch checked={useCustomPin} onCheckedChange={setUseCustomPin} />
+                  <Label className="text-sm">Définir le PIN manuellement</Label>
+                </div>
+                {useCustomPin ? (
+                  <div>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="PIN à 6 chiffres"
+                      maxLength={6}
+                      value={customPin}
+                      onChange={e => setCustomPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      className="font-mono text-lg tracking-widest"
+                    />
+                    {customPin.length > 0 && customPin.length < 6 && (
+                      <p className="text-xs text-destructive mt-1">Le PIN doit avoir 6 chiffres</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">Un PIN sera généré automatiquement et affiché après création.</p>
+                )}
+              </div>
+            )}
           </div>
           <DialogFooter><Button onClick={handleSave} disabled={!firstName.trim() || !selectedRole}>Enregistrer</Button></DialogFooter>
         </DialogContent>

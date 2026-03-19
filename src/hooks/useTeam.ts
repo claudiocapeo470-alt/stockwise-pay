@@ -161,8 +161,8 @@ export function useTeam() {
   });
 
   const createMember = useMutation({
-    mutationFn: async (m: { first_name: string; last_name?: string; role_id?: string; service_id?: string; photo_url?: string }) => {
-      const pin = generatePin();
+    mutationFn: async (m: { first_name: string; last_name?: string; role_id?: string; service_id?: string; photo_url?: string; pin_code?: string }) => {
+      const pin = m.pin_code || generatePin();
       const { data, error } = await supabase.from('company_members').insert({
         company_id: companyId!,
         first_name: m.first_name,
@@ -173,7 +173,7 @@ export function useTeam() {
         pin_code: pin,
       }).select().single();
       if (error) throw error;
-      return data;
+      return { ...data, generatedPin: pin };
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['company_members', companyId] }),
   });

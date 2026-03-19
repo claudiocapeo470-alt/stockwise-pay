@@ -146,6 +146,8 @@ function MembersTab() {
   const [pinCode, setPinCode] = useState("");
   const [showPinDialog, setShowPinDialog] = useState<CompanyMember | null>(null);
   const [revealedPin, setRevealedPin] = useState(false);
+  const [useCustomPin, setUseCustomPin] = useState(false);
+  const [customPin, setCustomPin] = useState("");
 
   const openCreate = () => {
     setEditMember(null);
@@ -153,6 +155,8 @@ function MembersTab() {
     setLastName("");
     setSelectedRole("");
     setPinCode(generatePin());
+    setUseCustomPin(false);
+    setCustomPin("");
     setDialogOpen(true);
   };
 

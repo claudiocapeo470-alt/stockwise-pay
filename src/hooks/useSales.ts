@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useCompany } from './useCompany';
 
 export interface Sale {
   id: string;
@@ -23,127 +24,89 @@ export interface Sale {
 }
 
 export const useSales = () => {
-  const { user } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
+  const { company } = useCompany();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+
   const salesQuery = useQuery({
-    queryKey: ['sales', user?.id],
+    queryKey: ['sales', effectiveUserId],
     queryFn: async () => {
-      if (!user) return [];
-      
+      if (!effectiveUserId) return [];
       const { data, error } = await supabase
         .from('sales')
-        .select(`
-          *,
-          products (
-            name,
-            price
-          )
-        `)
-        .eq('user_id', user.id)
+        .select(`*, products (name, price)`)
+        .eq('user_id', effectiveUserId)
         .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
       return data as Sale[];
     },
-    enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
+    enabled: !!effectiveUserId,
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: true,
     refetchOnMount: true,
+    refetchInterval: 30000,
   });
 
   const addSale = useMutation({
     mutationFn: async (sale: Omit<Sale, 'id' | 'user_id' | 'created_at' | 'products'>) => {
-      if (!user) throw new Error('User not authenticated');
-
+      if (!effectiveUserId) throw new Error('Non authentifié');
       const { data, error } = await supabase
         .from('sales')
-        .insert([{ ...sale, user_id: user.id }])
+        .insert([{ ...sale, user_id: effectiveUserId }])
         .select()
         .single();
-
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast({
-        title: 'Vente enregistrée',
-        description: 'La vente a été enregistrée avec succès',
-      });
+      queryClient.invalidateQueries({ queryKey: ['sales', effectiveUserId] });
+      queryClient.invalidateQueries({ queryKey: ['products', effectiveUserId] });
+      toast({ title: 'Vente enregistrée', description: 'La vente a été enregistrée avec succès' });
     },
     onError: (error) => {
-      toast({
-        title: 'Erreur',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     },
   });
 
   const updateSale = useMutation({
     mutationFn: async ({ id, ...sale }: Partial<Sale> & { id: string }) => {
-      if (!user) throw new Error('User not authenticated');
-
+      if (!effectiveUserId) throw new Error('Non authentifié');
       const { data, error } = await supabase
         .from('sales')
         .update(sale)
         .eq('id', id)
-        .eq('user_id', user.id)
+        .eq('user_id', effectiveUserId)
         .select()
         .single();
-
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast({
-        title: 'Vente modifiée',
-        description: 'La vente a été modifiée avec succès',
-      });
+      queryClient.invalidateQueries({ queryKey: ['sales', effectiveUserId] });
+      queryClient.invalidateQueries({ queryKey: ['products', effectiveUserId] });
+      toast({ title: 'Vente modifiée', description: 'La vente a été modifiée avec succès' });
     },
     onError: (error) => {
-      toast({
-        title: 'Erreur',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     },
   });
 
   const deleteSale = useMutation({
     mutationFn: async (id: string) => {
-      if (!user) throw new Error('User not authenticated');
-
-      const { error } = await supabase
-        .from('sales')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
-
+      if (!effectiveUserId) throw new Error('Non authentifié');
+      const { error } = await supabase.from('sales').delete().eq('id', id).eq('user_id', effectiveUserId);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast({
-        title: 'Vente supprimée',
-        description: 'La vente a été supprimée avec succès',
-      });
+      queryClient.invalidateQueries({ queryKey: ['sales', effectiveUserId] });
+      queryClient.invalidateQueries({ queryKey: ['products', effectiveUserId] });
+      toast({ title: 'Vente supprimée', description: 'La vente a été supprimée avec succès' });
     },
     onError: (error) => {
-      toast({
-        title: 'Erreur',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     },
   });
 

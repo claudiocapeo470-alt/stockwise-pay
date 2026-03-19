@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useCompany } from './useCompany';
 
 export interface Payment {
   id: string;
@@ -24,123 +25,86 @@ export interface Payment {
 }
 
 export const usePayments = () => {
-  const { user } = useAuth();
+  const { user, isEmployee } = useAuth();
+  const { company } = useCompany();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+
   const paymentsQuery = useQuery({
-    queryKey: ['payments', user?.id],
+    queryKey: ['payments', effectiveUserId],
     queryFn: async () => {
-      if (!user) return [];
-      
+      if (!effectiveUserId) return [];
       const { data, error } = await supabase
         .from('payments')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', effectiveUserId)
         .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
       return data as Payment[];
     },
-    enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
+    enabled: !!effectiveUserId,
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: true,
     refetchOnMount: true,
+    refetchInterval: 30000,
   });
 
   const addPayment = useMutation({
     mutationFn: async (payment: Omit<Payment, 'id' | 'user_id' | 'created_at' | 'remaining_amount'>) => {
-      if (!user) throw new Error('User not authenticated');
-
+      if (!effectiveUserId) throw new Error('Non authentifié');
       const { data, error } = await supabase
         .from('payments')
-        .insert([{ 
-          ...payment, 
-          user_id: user.id,
-          // Keep the legacy amount field for compatibility
-          amount: payment.paid_amount
-        }])
+        .insert([{ ...payment, user_id: effectiveUserId, amount: payment.paid_amount }])
         .select()
         .single();
-
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
-      toast({
-        title: 'Paiement enregistré',
-        description: 'Le paiement a été enregistré avec succès',
-      });
+      queryClient.invalidateQueries({ queryKey: ['payments', effectiveUserId] });
+      toast({ title: 'Paiement enregistré', description: 'Le paiement a été enregistré avec succès' });
     },
     onError: (error) => {
-      toast({
-        title: 'Erreur',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     },
   });
 
   const updatePayment = useMutation({
     mutationFn: async ({ id, ...payment }: Partial<Payment> & { id: string }) => {
-      if (!user) throw new Error('User not authenticated');
-
+      if (!effectiveUserId) throw new Error('Non authentifié');
       const { data, error } = await supabase
         .from('payments')
         .update(payment)
         .eq('id', id)
-        .eq('user_id', user.id)
+        .eq('user_id', effectiveUserId)
         .select()
         .single();
-
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
-      toast({
-        title: 'Paiement modifié',
-        description: 'Le paiement a été modifié avec succès',
-      });
+      queryClient.invalidateQueries({ queryKey: ['payments', effectiveUserId] });
+      toast({ title: 'Paiement modifié', description: 'Le paiement a été modifié avec succès' });
     },
     onError: (error) => {
-      toast({
-        title: 'Erreur',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     },
   });
 
   const deletePayment = useMutation({
     mutationFn: async (id: string) => {
-      if (!user) throw new Error('User not authenticated');
-
-      const { error } = await supabase
-        .from('payments')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
-
+      if (!effectiveUserId) throw new Error('Non authentifié');
+      const { error } = await supabase.from('payments').delete().eq('id', id).eq('user_id', effectiveUserId);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
-      toast({
-        title: 'Paiement supprimé',
-        description: 'Le paiement a été supprimé avec succès',
-      });
+      queryClient.invalidateQueries({ queryKey: ['payments', effectiveUserId] });
+      toast({ title: 'Paiement supprimé', description: 'Le paiement a été supprimé avec succès' });
     },
     onError: (error) => {
-      toast({
-        title: 'Erreur',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     },
   });
 

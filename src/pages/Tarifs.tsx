@@ -2,13 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Check, ChevronLeft, Star, Loader2, AlertCircle } from "lucide-react";
+import { Check, ChevronLeft, Star, Rocket, AlertCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSubscription } from "@/hooks/useSubscription";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 const plans = [
   {
@@ -77,56 +73,7 @@ export default function Tarifs() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const { status } = useSubscription();
-  const [isAnnual, setIsAnnual] = useState(false);
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const isExpired = searchParams.get("expired") === "true";
-
-  const getPrice = (monthlyPrice: number) => {
-    if (isAnnual) return Math.round(monthlyPrice * 12 * 0.8);
-    return monthlyPrice;
-  };
-
-  const getMonthlyEquivalent = (monthlyPrice: number) => {
-    if (isAnnual) return Math.round(monthlyPrice * 0.8);
-    return monthlyPrice;
-  };
-
-  const handleChoosePlan = async (planId: string) => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-
-    setLoadingPlan(planId);
-    try {
-      const { data, error } = await supabase.functions.invoke("moneroo-init-payment", {
-        body: {
-          plan: planId,
-          billing: isAnnual ? "annual" : "monthly",
-          user_id: user.id,
-        },
-      });
-
-      if (error || !data?.checkout_url) {
-        toast.error("Erreur lors de l'initialisation du paiement");
-        return;
-      }
-
-      window.location.href = data.checkout_url;
-    } catch {
-      toast.error("Erreur de connexion au service de paiement");
-    } finally {
-      setLoadingPlan(null);
-    }
-  };
-
-  const getButtonProps = (planId: string) => {
-    if (!user) return { text: "Commencer l'essai gratuit", disabled: false };
-    if (status.planName === planId && status.isActive) return { text: "Mon plan actuel", disabled: true };
-    if (status.isTrial) return { text: "Choisir ce plan", disabled: false };
-    return { text: "Passer à ce plan", disabled: false };
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -156,34 +103,37 @@ export default function Tarifs() {
         </div>
       )}
 
+      {/* Launch banner */}
+      <section className={`${isExpired ? "pt-40" : "pt-32"} pb-4 px-4 sm:px-6`}>
+        <div className="container mx-auto">
+          <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-2xl p-6 text-center max-w-3xl mx-auto">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Rocket className="h-5 w-5 text-emerald-500" />
+              <Badge className="bg-emerald-500 text-white text-sm px-3 py-1">GRATUIT PENDANT LE LANCEMENT</Badge>
+              <Rocket className="h-5 w-5 text-emerald-500" />
+            </div>
+            <p className="text-foreground font-medium">
+              Stocknix est gratuit pendant sa période de lancement.
+            </p>
+            <p className="text-muted-foreground text-sm mt-1">
+              Profitez de toutes les fonctionnalités Premium sans frais, sans carte bancaire.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Hero */}
-      <section className={`${isExpired ? "pt-40" : "pt-32"} pb-8 px-4 sm:px-6`}>
+      <section className="pb-8 px-4 sm:px-6">
         <div className="container mx-auto text-center space-y-4">
           <h1 className="text-4xl sm:text-5xl font-bold">
-            Tarifs{" "}
+            Nos futurs{" "}
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Transparents
+              Tarifs
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            15 jours d'essai gratuit sur tous les plans. Sans carte bancaire.
+            Toutes les fonctionnalités incluses gratuitement pendant le lancement. Voici les prix qui s'appliqueront ensuite.
           </p>
-
-          {/* Annual toggle */}
-          <div className="flex items-center justify-center gap-3 pt-4">
-            <span className={`text-sm font-medium ${!isAnnual ? "text-foreground" : "text-muted-foreground"}`}>
-              Mensuel
-            </span>
-            <Switch checked={isAnnual} onCheckedChange={setIsAnnual} />
-            <span className={`text-sm font-medium ${isAnnual ? "text-foreground" : "text-muted-foreground"}`}>
-              Annuel
-            </span>
-            {isAnnual && (
-              <Badge variant="secondary" className="bg-success/10 text-success text-xs">
-                -20%
-              </Badge>
-            )}
-          </div>
         </div>
       </section>
 
@@ -191,95 +141,93 @@ export default function Tarifs() {
       <section className="py-8 px-4 sm:px-6">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto items-start">
-            {plans.map((plan) => {
-              const btnProps = getButtonProps(plan.id);
-              const price = getPrice(plan.monthlyPrice);
-              const monthlyEq = getMonthlyEquivalent(plan.monthlyPrice);
+            {plans.map((plan) => (
+              <Card
+                key={plan.id}
+                className={`p-6 sm:p-8 relative ${
+                  plan.popular
+                    ? "border-2 border-primary shadow-2xl md:scale-105"
+                    : "border-2 border-border"
+                }`}
+              >
+                {plan.popular && (
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-accent text-primary-foreground">
+                    <Star className="h-3 w-3 mr-1" /> Plus Populaire
+                  </Badge>
+                )}
 
-              return (
-                <Card
-                  key={plan.id}
-                  className={`p-6 sm:p-8 relative ${
-                    plan.popular
-                      ? "border-2 border-primary shadow-2xl md:scale-105"
-                      : "border-2 border-border"
-                  }`}
-                >
-                  {plan.popular && (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-accent text-primary-foreground">
-                      <Star className="h-3 w-3 mr-1" /> Plus Populaire
-                    </Badge>
-                  )}
-
-                  <div className="space-y-5">
-                    <div className="space-y-1.5">
-                      <h3 className="text-2xl font-bold">{plan.name}</h3>
-                      <p className="text-sm text-muted-foreground">{plan.description}</p>
-                    </div>
-
-                    <div className="space-y-1">
-                      {isAnnual && (
-                        <p className="text-sm text-muted-foreground line-through">
-                          {(plan.monthlyPrice * 12).toLocaleString()} XOF/an
-                        </p>
-                      )}
-                      <div className="text-3xl sm:text-4xl font-bold">
-                        {price.toLocaleString()}
-                        <span className="text-base text-muted-foreground ml-1">XOF</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {isAnnual
-                          ? `soit ${monthlyEq.toLocaleString()} XOF/mois`
-                          : "par mois"}
-                      </p>
-                    </div>
-
-                    <div className="space-y-2.5">
-                      {plan.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
-                          <span className="text-sm">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <Button
-                      className={`w-full ${plan.popular ? "bg-gradient-to-r from-primary to-accent" : ""}`}
-                      variant={plan.popular ? "default" : "outline"}
-                      size="lg"
-                      disabled={btnProps.disabled || loadingPlan === plan.id}
-                      onClick={() => handleChoosePlan(plan.id)}
-                    >
-                      {loadingPlan === plan.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      ) : null}
-                      {btnProps.text}
-                    </Button>
+                <div className="space-y-5">
+                  <div className="space-y-1.5">
+                    <h3 className="text-2xl font-bold">{plan.name}</h3>
+                    <p className="text-sm text-muted-foreground">{plan.description}</p>
                   </div>
-                </Card>
-              );
-            })}
+
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl text-muted-foreground line-through">
+                        {plan.monthlyPrice.toLocaleString()} XOF
+                      </span>
+                      <Badge className="bg-emerald-500 text-white">GRATUIT</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Pendant la période de lancement
+                    </p>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {plan.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+                        <span className="text-sm">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <Button
+                    className={`w-full ${plan.popular ? "bg-gradient-to-r from-primary to-accent" : ""}`}
+                    variant={plan.popular ? "default" : "outline"}
+                    size="lg"
+                    onClick={() => navigate(user ? "/app" : "/auth")}
+                  >
+                    {user ? "Accéder au dashboard" : "Commencer gratuitement"}
+                  </Button>
+                </div>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
+      {/* Bientôt disponible */}
+      <section className="py-12 px-4 sm:px-6 bg-card/30">
+        <div className="container mx-auto max-w-2xl text-center">
+          <h2 className="text-2xl font-bold mb-3">🔜 Bientôt disponible</h2>
+          <p className="text-muted-foreground mb-6">
+            Les plans payants seront activés prochainement. Inscrivez-vous maintenant pour être notifié.
+          </p>
+          <Button variant="outline" size="lg" onClick={() => navigate("/auth")}>
+            Être notifié du lancement payant
+          </Button>
+        </div>
+      </section>
+
       {/* FAQ */}
-      <section className="py-16 px-4 sm:px-6 bg-card/30">
+      <section className="py-16 px-4 sm:px-6">
         <div className="container mx-auto max-w-3xl">
           <h2 className="text-3xl font-bold text-center mb-10">Questions Fréquentes</h2>
           <div className="space-y-4">
             {[
               {
-                q: "Puis-je changer de plan ?",
-                a: "Oui, vous pouvez upgrader ou rétrograder votre plan à tout moment depuis vos paramètres d'abonnement.",
+                q: "C'est vraiment gratuit ?",
+                a: "Oui ! Pendant le lancement, toutes les fonctionnalités sont gratuites. Aucune carte bancaire requise.",
               },
               {
-                q: "Comment annuler mon abonnement ?",
-                a: "Vous pouvez annuler à tout moment. Votre accès reste actif jusqu'à la fin de la période payée.",
+                q: "Que se passe-t-il quand le lancement se termine ?",
+                a: "Vous serez notifié avant la fin de la période gratuite. Vous pourrez alors choisir un plan adapté à vos besoins.",
               },
               {
-                q: "Quels moyens de paiement acceptez-vous ?",
-                a: "Mobile Money (MTN, Orange, Wave, Moov) et cartes bancaires via notre partenaire Moneroo. Tous les paiements sont en XOF.",
+                q: "Quels moyens de paiement accepterez-vous ?",
+                a: "Mobile Money (MTN, Orange, Wave, Moov) et cartes bancaires via notre partenaire Moneroo.",
               },
             ].map((faq, i) => (
               <Card key={i} className="p-6">

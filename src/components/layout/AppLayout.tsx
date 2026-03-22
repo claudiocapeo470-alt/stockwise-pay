@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { TrialBanner } from "@/components/subscription/TrialBanner";
 import { useSessionWarning } from "@/hooks/useSessionWarning";
+import { StockAlertBell } from "./StockAlertBell";
+import { PWAInstallBanner } from "./PWAInstallBanner";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -146,6 +148,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                     <Lock className="h-4 w-4" />
                   </Button>
                 )}
+                <StockAlertBell />
                 <ThemeToggle />
                 {user && <UserMenu />}
               </div>
@@ -160,6 +163,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       </div>
       
       {isMobile && <BottomNav />}
+      <PWAInstallBanner />
     </SidebarProvider>
   );
 }

@@ -8,12 +8,13 @@ import { useTeam } from "@/hooks/useTeam";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import { useSearchParams } from "react-router-dom";
+import { useAuth as useAuthForMember } from "@/contexts/AuthContext";
 
 export default function RapportEmployes() {
   const [searchParams] = useSearchParams();
   const initialMember = searchParams.get('member');
   const [selectedMemberId, setSelectedMemberId] = useState(initialMember || "");
-  const { isEmployee } = useAuth();
+  const { isEmployee, memberInfo } = useAuth();
   const { members } = useTeam();
   const { sales = [] } = useSales();
   const { payments = [] } = usePayments();
@@ -30,11 +31,14 @@ export default function RapportEmployes() {
     return { totalMembers, totalSales, totalRevenue, totalPaid };
   }, [activeMembers, sales, payments]);
 
+  const memberRole = memberInfo?.member_role_name?.toLowerCase() || '';
+  const isManager = memberRole.includes('manager');
+
   const formatPrice = (price: number) =>
     new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 })
       .format(price).replace('XOF', 'CFA');
 
-  if (isEmployee) {
+  if (isEmployee && !isManager) {
     return (
       <div className="flex items-center justify-center h-64 text-muted-foreground">
         Vous n'avez pas accès à cette page.

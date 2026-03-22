@@ -721,6 +721,44 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          id: string
+          message: string | null
+          read: boolean | null
+          title: string
+          type: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          read?: boolean | null
+          title: string
+          type?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          read?: boolean | null
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       online_store: {
         Row: {
           address: string | null
@@ -1083,6 +1121,9 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          referral_code: string | null
+          referral_count: number | null
+          referred_by: string | null
           updated_at: string
           user_id: string
         }
@@ -1095,6 +1136,9 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          referral_code?: string | null
+          referral_count?: number | null
+          referred_by?: string | null
           updated_at?: string
           user_id: string
         }
@@ -1107,6 +1151,9 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          referral_code?: string | null
+          referral_count?: number | null
+          referred_by?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -1175,6 +1222,7 @@ export type Database = {
       sales: {
         Row: {
           created_at: string
+          created_by_member_id: string | null
           customer_name: string | null
           customer_phone: string | null
           id: string
@@ -1189,6 +1237,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by_member_id?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           id?: string
@@ -1203,6 +1252,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by_member_id?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           id?: string
@@ -1216,6 +1266,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sales_created_by_member_id_fkey"
+            columns: ["created_by_member_id"]
+            isOneToOne: false
+            referencedRelation: "company_members"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sales_product_id_fkey"
             columns: ["product_id"]

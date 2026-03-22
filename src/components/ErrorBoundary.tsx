@@ -1,7 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { RefreshCw, Home } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
@@ -13,9 +13,7 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false
-  };
+  public state: State = { hasError: false };
 
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
@@ -23,42 +21,55 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
-    // En production, on pourrait envoyer l'erreur à un service de monitoring
-    if (process.env.NODE_ENV === 'production') {
-      // Ici on pourrait envoyer à Sentry, LogRocket, etc.
-    }
   }
 
   public render() {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
-          <Card className="w-full max-w-md">
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-destructive" />
+          <Card className="w-full max-w-md border-border">
+            <CardContent className="pt-8 pb-6 text-center space-y-5">
+              {/* Error illustration */}
+              <div className="mx-auto w-24 h-24">
+                <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <circle cx="48" cy="48" r="44" className="fill-destructive/10 stroke-destructive/30" strokeWidth="2" />
+                  <path d="M48 28v24" className="stroke-destructive" strokeWidth="4" strokeLinecap="round" />
+                  <circle cx="48" cy="64" r="3" className="fill-destructive" />
+                </svg>
               </div>
-              <CardTitle>Une erreur s'est produite</CardTitle>
-              <CardDescription>
-                L'application a rencontré une erreur inattendue. Veuillez recharger la page.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+
+              <div className="space-y-2">
+                <h2 className="text-xl font-bold text-foreground">Oups, quelque chose s'est mal passé</h2>
+                <p className="text-sm text-muted-foreground">
+                  Une erreur inattendue s'est produite. Réessayez ou contactez le support.
+                </p>
+              </div>
+
               {process.env.NODE_ENV === 'development' && this.state.error && (
-                <div className="p-3 bg-muted rounded-md">
-                  <p className="text-sm font-mono text-destructive">
+                <div className="p-3 bg-muted rounded-lg text-left">
+                  <p className="text-xs font-mono text-destructive break-all">
                     {this.state.error.message}
                   </p>
                 </div>
               )}
-              <Button 
-                onClick={() => window.location.reload()} 
-                className="w-full"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Recharger la page
-              </Button>
+
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => window.location.reload()}
+                  className="flex-1"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Recharger la page
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => window.location.href = '/app'}
+                  className="flex-1"
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Retour à l'accueil
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -124,14 +124,14 @@ export default function Settings() {
 // ─── Apparence & Thème ───
 function AppearanceSettings() {
   const { theme, setTheme } = useTheme();
-  const [currency, setCurrency] = useState(() => localStorage.getItem('app_currency') || 'XOF');
+  const [currency, setCurrency] = useState(() => localStorage.getItem('stocknix_currency') || localStorage.getItem('app_currency') || 'XOF');
   const [dateFormat, setDateFormat] = useState(() => localStorage.getItem('app_date_format') || 'DD/MM/YYYY');
-  const [language, setLanguage] = useState(() => localStorage.getItem('app_language') || 'fr');
 
   const handleSave = () => {
+    localStorage.setItem('stocknix_currency', currency);
     localStorage.setItem('app_currency', currency);
     localStorage.setItem('app_date_format', dateFormat);
-    localStorage.setItem('app_language', language);
+    window.dispatchEvent(new Event('currency-changed'));
     toast.success("Préférences d'apparence enregistrées");
   };
 
@@ -162,13 +162,14 @@ function AppearanceSettings() {
         <Separator />
         <div className="space-y-2">
           <Label>Langue</Label>
-          <Select value={language} onValueChange={setLanguage}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="fr">Français</SelectItem>
-              <SelectItem value="en">English</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-3">
+            <Badge variant="secondary">Français</Badge>
+            <div className="flex items-center gap-2 opacity-50">
+              <span className="text-sm text-muted-foreground">English</span>
+              <Badge variant="outline" className="text-[10px]">Bientôt</Badge>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">L'anglais sera disponible prochainement</p>
         </div>
         <Separator />
         <div className="space-y-2">
@@ -180,6 +181,7 @@ function AppearanceSettings() {
               <SelectItem value="EUR">Euro (€)</SelectItem>
               <SelectItem value="USD">Dollar ($)</SelectItem>
               <SelectItem value="GBP">Livre (£)</SelectItem>
+              <SelectItem value="MAD">Dirham (MAD)</SelectItem>
             </SelectContent>
           </Select>
         </div>

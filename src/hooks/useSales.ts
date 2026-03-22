@@ -51,11 +51,19 @@ export const useSales = () => {
   });
 
   const addSale = useMutation({
-    mutationFn: async (sale: Omit<Sale, 'id' | 'user_id' | 'created_at' | 'products'>) => {
+    mutationFn: async (sale: Omit<Sale, 'id' | 'user_id' | 'created_at' | 'products'> & { created_by_member_id?: string }) => {
       if (!effectiveUserId) throw new Error('Non authentifié');
+      const insertData: any = { ...sale, user_id: effectiveUserId };
+      // Add member_id if employee
+      if (isEmployee && memberInfo?.member_id) {
+        insertData.created_by_member_id = memberInfo.member_id;
+      }
+      if (sale.created_by_member_id) {
+        insertData.created_by_member_id = sale.created_by_member_id;
+      }
       const { data, error } = await supabase
         .from('sales')
-        .insert([{ ...sale, user_id: effectiveUserId }])
+        .insert([insertData])
         .select()
         .single();
       if (error) throw error;

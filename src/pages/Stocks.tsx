@@ -9,7 +9,9 @@ import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
 import { EditProductDialog } from "@/components/stocks/EditProductDialog";
+import { ImportProductsDialog } from "@/components/stocks/ImportProductsDialog";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
+import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -20,6 +22,7 @@ export default function Stocks() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const { products, isLoading, deleteProduct } = useProducts();
   const isMobile = useIsMobile();
+  const { formatCurrency } = useCurrency();
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -110,6 +113,7 @@ export default function Stocks() {
               <Button variant={viewMode === "grid" ? "default" : "outline"} size="icon" onClick={() => setViewMode("grid")}><Grid3x3 className="h-4 w-4" /></Button>
             </>
           )}
+          <ImportProductsDialog />
           <AddProductDialog />
         </div>
       </div>
@@ -157,7 +161,7 @@ export default function Stocks() {
                           </div>
                         </TableCell>
                         <TableCell>{product.category ? <Badge variant="outline">{product.category}</Badge> : <span className="text-muted-foreground">—</span>}</TableCell>
-                        <TableCell className="text-right font-medium">{product.price.toLocaleString()} FCFA</TableCell>
+                        <TableCell className="text-right font-medium">{formatCurrency(product.price)}</TableCell>
                         <TableCell className="text-center"><span className="font-medium">{product.quantity}</span><span className="text-muted-foreground text-sm"> / {product.min_quantity}</span></TableCell>
                         <TableCell className="text-center"><Badge variant={status.variant}>{status.label}</Badge></TableCell>
                         <TableCell>
@@ -212,7 +216,7 @@ export default function Stocks() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <p className="text-xs text-muted-foreground">Prix unitaire</p>
-                          <p className="text-lg font-bold">{product.price.toLocaleString()} <span className="text-xs font-normal">FCFA</span></p>
+                          <p className="text-lg font-bold">{formatCurrency(product.price)}</p>
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground">Stock</p>

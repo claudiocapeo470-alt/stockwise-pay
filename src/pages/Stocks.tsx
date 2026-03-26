@@ -258,6 +258,8 @@ export default function Stocks() {
           onOpenChange={(open) => { setShowEditDialog(open); if (!open) setEditingProduct(null); }}
         />
       )}
+
+      <StockMovementsDialog open={showMovements} onOpenChange={setShowMovements} />
     </div>
   );
 }

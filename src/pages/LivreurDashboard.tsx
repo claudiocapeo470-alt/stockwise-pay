@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeliveries, Delivery } from "@/hooks/useDeliveries";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAutoLock } from "@/hooks/useAutoLock";
+import { LockScreen } from "@/components/auth/LockScreen";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Truck, Package, CheckCircle, AlertTriangle, Clock, MapPin, Phone, User, Lock, LogOut } from "lucide-react";
 
@@ -31,6 +34,26 @@ export default function LivreurDashboard() {
   const [tab, setTab] = useState<'today' | 'history' | 'profile'>('today');
   const [problemDialog, setProblemDialog] = useState<string | null>(null);
   const [problemReason, setProblemReason] = useState("");
+  const [isLocked, setIsLocked] = useState(false);
+
+  const handleLock = useCallback(() => setIsLocked(true), []);
+  useAutoLock(handleLock);
+
+  const handleUnlock = async (pin: string): Promise<boolean> => {
+    if (!memberInfo) return false;
+    try {
+      const { data } = await supabase
+        .from('company_members')
+        .select('pin_code')
+        .eq('id', memberInfo.member_id)
+        .single();
+      if (data?.pin_code === pin) {
+        setIsLocked(false);
+        return true;
+      }
+    } catch {}
+    return false;
+  };
 
   const today = new Date().toDateString();
   const todayDeliveries = deliveries.filter(d => new Date(d.created_at).toDateString() === today && d.status !== 'delivered');
@@ -59,6 +82,18 @@ export default function LivreurDashboard() {
       setProblemReason("");
     } catch { toast.error("Erreur"); }
   };
+
+  // Lock screen overlay
+  if (isLocked && memberInfo) {
+    return (
+      <LockScreen
+        memberName={`${memberInfo.member_first_name} ${memberInfo.member_last_name || ''}`}
+        companyName={memberInfo.company_name}
+        companyLogo={memberInfo.company_logo_url || undefined}
+        onUnlock={handleUnlock}
+      />
+    );
+  }
 
   const renderDeliveryCard = (d: Delivery, showActions: boolean) => (
     <Card key={d.id} className="overflow-hidden">
@@ -109,7 +144,12 @@ export default function LivreurDashboard() {
           <Truck className="h-5 w-5 text-primary" />
           <span className="font-semibold text-sm">Mes livraisons</span>
         </div>
-        <span className="text-sm text-muted-foreground">{memberInfo?.member_first_name || 'Livreur'}</span>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground" title="Verrouiller">
+            <Lock className="h-4 w-4" />
+          </Button>
+          <span className="text-sm text-muted-foreground">{memberInfo?.member_first_name || 'Livreur'}</span>
+        </div>
       </header>
 
       {/* Content */}

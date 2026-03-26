@@ -55,6 +55,12 @@ const ALL_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: 'CLIENTS',
+    items: [
+      { name: 'Clients', href: '/app/clients', icon: Users, permission: 'sales' },
+    ],
+  },
+  {
     label: 'ÉQUIPE & COMPTE',
     items: [
       { name: 'Mon équipe', href: '/app/team', icon: Users, permission: 'settings' },

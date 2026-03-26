@@ -40,6 +40,8 @@ import StoreProducts from './pages/store/StoreProducts';
 import StoreOrders from './pages/store/StoreOrders';
 import StoreReviews from './pages/store/StoreReviews';
 import PublicStore from './pages/store/PublicStore';
+import OrderTracking from './pages/store/OrderTracking';
+import Clients from './pages/Clients';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminSubscriptions from './pages/admin/AdminSubscriptions';
@@ -94,6 +96,7 @@ const App = () => (
               <Route path="/legal" element={<MentionsLegales />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/boutique/:slug" element={<PublicStore />} />
+              <Route path="/boutique/:slug/commande/:orderId" element={<OrderTracking />} />
               <Route path="/auth" element={<AuthSimple />} />
               <Route path="/auth/confirm" element={<AuthConfirm />} />
               <Route path="/auth/reset-password" element={<ResetPassword />} />
@@ -144,6 +147,7 @@ const App = () => (
                           <Route path="/settings" element={<Settings />} />
                           <Route path="/team" element={<TeamManagement />} />
                           <Route path="/livraisons" element={<Livraisons />} />
+                          <Route path="/clients" element={<Clients />} />
                           <Route path="/boutique/config" element={<StoreConfig />} />
                           <Route path="/boutique/produits" element={<StoreProducts />} />
                           <Route path="/boutique/commandes" element={<StoreOrders />} />

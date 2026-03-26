@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List } from "lucide-react";
+import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List, History } from "lucide-react";
 import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
 import { EditProductDialog } from "@/components/stocks/EditProductDialog";
 import { ImportProductsDialog } from "@/components/stocks/ImportProductsDialog";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
+import { StockMovementsDialog } from "@/components/stocks/StockMovementsDialog";
 import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -20,6 +21,7 @@ export default function Stocks() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  const [showMovements, setShowMovements] = useState(false);
   const { products, isLoading, deleteProduct } = useProducts();
   const isMobile = useIsMobile();
   const { formatCurrency } = useCurrency();
@@ -113,6 +115,7 @@ export default function Stocks() {
               <Button variant={viewMode === "grid" ? "default" : "outline"} size="icon" onClick={() => setViewMode("grid")}><Grid3x3 className="h-4 w-4" /></Button>
             </>
           )}
+          <Button variant="outline" size="sm" onClick={() => setShowMovements(true)} className="gap-1"><History className="h-4 w-4" /> Mouvements</Button>
           <ImportProductsDialog />
           <AddProductDialog />
         </div>

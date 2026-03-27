@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
+import { useAuth } from "@/contexts/AuthContext";
 import { SalesChart } from "@/components/performance/SalesChart";
 import { TopProducts } from "@/components/performance/TopProducts";
 import { TopCustomers } from "@/components/performance/TopCustomers";
@@ -27,6 +28,10 @@ export default function Performance() {
   const { products, isLoading: productsLoading } = useProducts();
   const { sales, isLoading: salesLoading } = useSales();
   const { payments, isLoading: paymentsLoading } = usePayments();
+  const { isEmployee, memberInfo } = useAuth();
+
+  const isPersonalView = isEmployee && !(memberInfo?.member_permissions as any)?.all;
+  const currentMemberId = memberInfo?.member_id;
 
   const isLoading = productsLoading || salesLoading || paymentsLoading;
 
@@ -49,14 +54,17 @@ export default function Performance() {
     const { from, to } = getDateRange;
     const filteredSales = sales.filter(sale => {
       const saleDate = parseISO(sale.sale_date);
-      return isWithinInterval(saleDate, { start: from, end: to }) && (selectedProduct === "all" || sale.product_id === selectedProduct);
+      const inRange = isWithinInterval(saleDate, { start: from, end: to });
+      const matchProduct = selectedProduct === "all" || sale.product_id === selectedProduct;
+      const matchEmployee = !isPersonalView || sale.created_by_member_id === currentMemberId;
+      return inRange && matchProduct && matchEmployee;
     });
     const filteredPayments = payments.filter(payment => {
       const paymentDate = parseISO(payment.payment_date);
       return isWithinInterval(paymentDate, { start: from, end: to });
     });
     return { sales: filteredSales, products, payments: filteredPayments };
-  }, [sales, products, payments, getDateRange, selectedProduct]);
+  }, [sales, products, payments, getDateRange, selectedProduct, isPersonalView, currentMemberId]);
 
   const metrics = useMemo(() => {
     const { sales: filteredSales, payments: filteredPayments } = filteredData;
@@ -86,6 +94,12 @@ export default function Performance() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {isPersonalView && (
+        <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-sm text-primary">
+          📊 Vous consultez uniquement vos propres statistiques de vente.
+        </div>
+      )}
+
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
@@ -101,8 +115,8 @@ export default function Performance() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
-              <ShoppingCart className="h-5 w-5 text-success" />
+            <div className="h-10 w-10 bg-green-500/10 flex items-center justify-center rounded-xl">
+              <ShoppingCart className="h-5 w-5 text-green-600" />
             </div>
             <div>
               <p className="text-2xl font-bold">{metrics.totalSales}</p>
@@ -123,8 +137,8 @@ export default function Performance() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
-              <BarChart3 className="h-5 w-5 text-warning" />
+            <div className="h-10 w-10 bg-amber-500/10 flex items-center justify-center rounded-xl">
+              <BarChart3 className="h-5 w-5 text-amber-600" />
             </div>
             <div>
               <p className="text-2xl font-bold">{Math.round(metrics.grossMargin).toLocaleString()}</p>

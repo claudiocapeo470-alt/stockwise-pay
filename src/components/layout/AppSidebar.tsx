@@ -49,7 +49,7 @@ const ALL_GROUPS: NavGroup[] = [
   {
     label: 'ANALYTIQUE',
     items: [
-      { name: 'Performance', href: '/app/performance', icon: TrendingUp, permission: 'reports' },
+      { name: 'Performance', href: '/app/performance', icon: TrendingUp },
       { name: 'Rapports', href: '/app/rapports', icon: FileText, permission: 'reports' },
       { name: 'Rapport Employés', href: '/app/rapport-employes', icon: Users, permission: 'reports' },
     ],
@@ -88,8 +88,20 @@ export function AppSidebar() {
     // Livreur : aucune sidebar
     if (isEmployee && role.includes('livreur')) return false;
 
-    // Stock Manager : seulement stock + analytique + equipe
-    if (isEmployee && role.includes('stock') && !role.includes('manager general')) {
+    // Manager : voit tout ce qui est actif
+    if (isEmployee && role.includes('manager')) {
+      if (!group.modules) return true;
+      return group.modules.some(m => selectedModules.includes(m));
+    }
+
+    // Gestionnaire Fusionné : stock + boutique
+    if (isEmployee && (role.includes('fusionn') || role.includes('fusionne'))) {
+      if (!group.modules) return true;
+      return group.modules.includes('stock') || group.modules.includes('boutique');
+    }
+
+    // Gestionnaire Stock
+    if (isEmployee && role.includes('stock')) {
       if (!group.modules) return true;
       return group.modules.includes('stock');
     }
@@ -111,9 +123,22 @@ export function AppSidebar() {
   };
 
   const filterItems = (group: NavGroup): NavItem[] => {
+    const role = (memberInfo?.member_role_name || '').toLowerCase();
+
     return group.items.filter(item => {
       // ownerOnly items: never show to employees
       if (item.ownerOnly && isEmployee) return false;
+
+      // Rapport employés : seulement propriétaire et manager
+      if (item.href === '/app/rapport-employes') {
+        if (isEmployee && !role.includes('manager')) return false;
+      }
+
+      // Gestionnaire Commandes/Fusionné : voir Factures et Devis
+      if (isEmployee && (role.includes('commande') || role.includes('fusionn'))) {
+        if (item.href === '/app/factures' || item.href === '/app/devis') return true;
+      }
+
       // permission check
       if (!item.permission) return true;
       if (!isEmployee) return true;

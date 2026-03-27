@@ -44,7 +44,7 @@ const allDrawerNavigation = [
     { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries" },
   ]},
   { section: "ANALYTIQUE", items: [
-    { name: "Performance", href: "/app/performance", icon: TrendingUp, permission: "reports" },
+    { name: "Performance", href: "/app/performance", icon: TrendingUp },
     { name: "Rapports", href: "/app/rapports", icon: FileText, permission: "reports" },
     { name: "Rapport Employés", href: "/app/rapport-employes", icon: Users, permission: "reports" },
   ]},
@@ -69,6 +69,21 @@ const stockManagerNav: NavItem[] = [
 
 const commandesNav: NavItem[] = [
   { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Commandes", href: "/app/boutique/commandes", icon: ClipboardList, label: "Commandes" },
+  { name: "Produits", href: "/app/boutique/produits", icon: ShoppingBag, label: "Produits" },
+  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+];
+
+const managerNav: NavItem[] = [
+  { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes" },
+  { name: "Performance", href: "/app/performance", icon: TrendingUp, label: "Stats" },
+  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+];
+
+const fusionneNav: NavItem[] = [
+  { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks" },
   { name: "Boutique", href: "/app/boutique/commandes", icon: Store, label: "Boutique" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
 ];
@@ -96,11 +111,17 @@ export function BottomNav() {
   if (isEmployee && role.includes('livreur')) {
     navigation = livreurNav;
     showMenuButton = false;
-  } else if (isEmployee && role.includes('stock') && !role.includes('manager general')) {
-    navigation = stockManagerNav;
+  } else if (isEmployee && role.includes('manager')) {
+    navigation = managerNav;
+    showMenuButton = true;
+  } else if (isEmployee && (role.includes('fusionn') || role.includes('fusionne'))) {
+    navigation = fusionneNav;
     showMenuButton = false;
   } else if (isEmployee && role.includes('commande')) {
     navigation = commandesNav;
+    showMenuButton = false;
+  } else if (isEmployee && role.includes('stock') && !role.includes('manager general')) {
+    navigation = stockManagerNav;
     showMenuButton = false;
   } else {
     navigation = filterItems(allBottomNav).slice(0, 4);

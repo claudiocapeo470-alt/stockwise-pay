@@ -90,6 +90,8 @@ export default function Caisse() {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(false);
   const [lockPin, setLockPin] = useState("");
+  const [sessionPin, setSessionPin] = useState<string>('');
+  const [showPinSetup, setShowPinSetup] = useState(false);
   const [heldTickets, setHeldTickets] = useState<HeldTicket[]>([]);
   const [showHeldTickets, setShowHeldTickets] = useState(false);
   const [customerName, setCustomerName] = useState("");
@@ -155,7 +157,7 @@ export default function Caisse() {
   const { addSale } = useSales();
   const { toast } = useToast();
   const { settings } = useCompanySettings();
-  const { profile, user, isEmployee } = useAuth();
+  const { profile, user, isEmployee, memberInfo } = useAuth();
   const { company } = useCompany();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -492,7 +494,7 @@ export default function Caisse() {
     const { data: existing } = await supabase
       .from('cash_sessions')
       .select('id')
-      .eq('user_id', user.id)
+      .eq('user_id', effectiveUserId)
       .eq('status', 'open')
       .maybeSingle();
     if (existing) {
@@ -502,7 +504,7 @@ export default function Caisse() {
       return;
     }
     const amount = parseFloat(openingAmount) || 0;
-    const { data, error } = await supabase.from('cash_sessions').insert({ user_id: user.id, opening_amount: amount, status: 'open' }).select().single();
+    const { data, error } = await supabase.from('cash_sessions').insert({ user_id: effectiveUserId, opening_amount: amount, status: 'open' }).select().single();
     if (error) { toast({ title: "Erreur", description: "Impossible d'ouvrir la caisse", variant: "destructive" }); return; }
     setCurrentSessionId(data.id);
     setCashSessionOpen(true);
@@ -527,7 +529,7 @@ export default function Caisse() {
     }).eq('id', currentSessionId);
     if (error) { toast({ title: "Erreur", description: "Impossible de fermer la caisse", variant: "destructive" }); return; }
     setCloseReportData({
-      companyName, cashierName: profile?.first_name || "Manager",
+      companyName, cashierName: isEmployee ? (memberInfo?.member_first_name || 'Caissier') : (profile?.first_name || 'Patron'),
       openedAt: new Date().toLocaleString('fr-FR'), closedAt: new Date().toLocaleString('fr-FR'),
       openingAmount: opening, totalSales: sessionSales.total, totalCash: sessionSales.cash,
       totalMobileMoney: sessionSales.mobile, totalCard: sessionSales.card,
@@ -550,7 +552,7 @@ export default function Caisse() {
     const amount = parseFloat(movementAmount) || 0;
     if (amount <= 0) return;
     const { data, error } = await supabase.from('cash_movements').insert({
-      user_id: user.id, session_id: currentSessionId, type: movementType, amount,
+      user_id: effectiveUserId, session_id: currentSessionId, type: movementType, amount,
       category: movementCategory || (movementType === 'expense' ? 'Dépense' : 'Entrée'),
       description: movementDescription || null,
     }).select().single();
@@ -629,6 +631,73 @@ export default function Caisse() {
   }, []);
 
   // ═══════════════════════════════════════════════════════
+  // PIN SETUP MODAL
+  // ═══════════════════════════════════════════════════════
+  if (showPinSetup) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
+        <div className="text-center space-y-6 max-w-xs px-4 w-full">
+          <Lock className="h-16 w-16 mx-auto" style={{ color: '#6B7280' }} />
+          <h2 className="text-xl font-black text-white">Définir un PIN de verrouillage</h2>
+          <p className="text-sm" style={{ color: '#9CA3AF' }}>Créez un code PIN à 6 chiffres pour verrouiller la caisse</p>
+          <div className="flex justify-center gap-3">
+            {[0, 1, 2, 3, 4, 5].map(i => (
+              <div key={i} className="w-4 h-4 rounded-full border-2" style={{ background: lockPin.length > i ? '#4F46E5' : 'transparent', borderColor: lockPin.length > i ? '#4F46E5' : '#6B7280' }} />
+            ))}
+          </div>
+          <input type="password" value={lockPin} onChange={e => {
+            const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+            setLockPin(val);
+            if (val.length === 6) {
+              setSessionPin(val);
+              setShowPinSetup(false);
+              setIsLocked(true);
+              setLockPin('');
+              toast({ title: "🔒 Caisse verrouillée", description: "PIN défini avec succès" });
+            }
+          }} className="w-full text-center text-2xl tracking-widest h-14 rounded-xl border focus:outline-none focus:ring-2" style={{ background: '#F0F2F5', border: '1px solid #E8EAF0', color: '#1F2937' }} maxLength={6} inputMode="numeric" pattern="[0-9]*" autoFocus placeholder="• • • • • •" />
+          <div className="grid grid-cols-3 gap-3">
+            {['1','2','3','4','5','6','7','8','9','','0','⌫'].map((key, i) => (
+              <button key={i} disabled={!key} onClick={() => {
+                if (key === '⌫') { setLockPin(p => p.slice(0, -1)); }
+                else if (key && lockPin.length < 6) {
+                  const newPin = lockPin + key;
+                  setLockPin(newPin);
+                  if (newPin.length === 6) {
+                    setSessionPin(newPin);
+                    setShowPinSetup(false);
+                    setIsLocked(true);
+                    setLockPin('');
+                    toast({ title: "🔒 Caisse verrouillée", description: "PIN défini avec succès" });
+                  }
+                }
+              }} className="h-14 rounded-xl text-xl font-bold transition-all active:scale-95" style={{ background: key ? '#2A2F4A' : 'transparent', color: key === '⌫' ? '#EF4444' : '#FFFFFF', opacity: key ? 1 : 0 }}>{key}</button>
+            ))}
+          </div>
+          <button onClick={() => { setShowPinSetup(false); setLockPin(''); }} className="text-sm text-white/50 hover:text-white/80">Annuler</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // GUARD: No session open
+  // ═══════════════════════════════════════════════════════
+  if (!currentSessionId && !showOpenCashModal) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
+        <div className="text-center space-y-6 max-w-xs px-4 w-full">
+          <Package className="h-16 w-16 mx-auto" style={{ color: '#6B7280' }} />
+          <h2 className="text-xl font-black text-white">Caisse non ouverte</h2>
+          <p className="text-sm" style={{ color: '#9CA3AF' }}>Vous devez ouvrir la caisse avant de pouvoir effectuer des ventes</p>
+          <button onClick={() => setShowOpenCashModal(true)} className="w-full h-14 rounded-xl text-white font-bold text-lg" style={{ background: '#4F46E5' }}>Ouvrir la caisse</button>
+          <button onClick={() => navigate('/app')} className="text-sm text-white/50 hover:text-white/80">Retour au dashboard</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════
   // LOCK SCREEN
   // ═══════════════════════════════════════════════════════
   if (isLocked) {
@@ -639,11 +708,10 @@ export default function Caisse() {
           <Lock className="h-16 w-16 mx-auto" style={{ color: '#6B7280' }} />
           <h2 className="text-xl font-black text-white">Caisse verrouillée</h2>
           <p className="text-sm" style={{ color: '#9CA3AF' }}>
-            Entrez votre code à 4 chiffres
+            Entrez votre code PIN à 6 chiffres
           </p>
-          {/* 4-dot PIN indicator */}
-          <div className="flex justify-center gap-4">
-            {[0, 1, 2, 3].map(i => (
+          <div className="flex justify-center gap-3">
+            {[0, 1, 2, 3, 4, 5].map(i => (
               <div key={i} className="w-4 h-4 rounded-full border-2"
                 style={{
                   background: lockPin.length > i ? '#4F46E5' : 'transparent',
@@ -651,26 +719,29 @@ export default function Caisse() {
                 }} />
             ))}
           </div>
-          {/* Hidden input for keyboard entry */}
           <input
             type="password"
             value={lockPin}
             onChange={e => {
-              const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+              const val = e.target.value.replace(/\D/g, '').slice(0, 6);
               setLockPin(val);
-              if (val.length === 4) {
-                setTimeout(() => { setIsLocked(false); setLockPin(''); }, 200);
+              if (val.length === 6) {
+                if (val === sessionPin) {
+                  setTimeout(() => { setIsLocked(false); setLockPin(''); }, 200);
+                } else {
+                  setTimeout(() => { setLockPin(''); }, 500);
+                  toast({ title: "❌ PIN incorrect", description: "Veuillez réessayer", variant: "destructive" });
+                }
               }
             }}
             className="w-full text-center text-2xl tracking-widest h-14 rounded-xl border focus:outline-none focus:ring-2"
             style={{ background: '#F0F2F5', border: '1px solid #E8EAF0', color: '#1F2937' }}
-            maxLength={4}
+            maxLength={6}
             inputMode="numeric"
             pattern="[0-9]*"
             autoFocus
-            placeholder="• • • •"
+            placeholder="• • • • • •"
           />
-          {/* Numpad for mobile */}
           <div className="grid grid-cols-3 gap-3">
             {['1','2','3','4','5','6','7','8','9','','0','⌫'].map((key, i) => (
               <button
@@ -679,11 +750,16 @@ export default function Caisse() {
                 onClick={() => {
                   if (key === '⌫') {
                     setLockPin(p => p.slice(0, -1));
-                  } else if (key && lockPin.length < 4) {
+                  } else if (key && lockPin.length < 6) {
                     const newPin = lockPin + key;
                     setLockPin(newPin);
-                    if (newPin.length === 4) {
-                      setTimeout(() => { setIsLocked(false); setLockPin(''); }, 200);
+                    if (newPin.length === 6) {
+                      if (newPin === sessionPin) {
+                        setTimeout(() => { setIsLocked(false); setLockPin(''); }, 200);
+                      } else {
+                        setTimeout(() => { setLockPin(''); }, 500);
+                        toast({ title: "❌ PIN incorrect", description: "Veuillez réessayer", variant: "destructive" });
+                      }
                     }
                   }
                 }}
@@ -723,7 +799,7 @@ export default function Caisse() {
 
       {/* Center: Action buttons */}
       <div className="flex items-center gap-1">
-        <HeaderBtn icon={<Lock className="h-4 w-4" />} label="Verrouiller" onClick={() => setIsLocked(true)} />
+        <HeaderBtn icon={<Lock className="h-4 w-4" />} label="Verrouiller" onClick={() => { if (!sessionPin) { setShowPinSetup(true); } else { setIsLocked(true); setLockPin(''); } }} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-white/70 text-xs font-medium min-h-[44px]" style={{ background: 'rgba(255,255,255,0.06)' }}>

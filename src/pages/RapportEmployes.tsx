@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, TrendingUp, ShoppingCart, Award } from "lucide-react";
+import { Users, TrendingUp, ShoppingCart, Award, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,7 +8,8 @@ import { useTeam } from "@/hooks/useTeam";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import { useSearchParams } from "react-router-dom";
-import { useAuth as useAuthForMember } from "@/contexts/AuthContext";
+import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, parseISO, isWithinInterval } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export default function RapportEmployes() {
   const [searchParams] = useSearchParams();
@@ -30,6 +31,31 @@ export default function RapportEmployes() {
     const totalPaid = completedPayments.reduce((sum, p) => sum + Number(p.total_amount), 0);
     return { totalMembers, totalSales, totalRevenue, totalPaid };
   }, [activeMembers, sales, payments]);
+
+  const memberStats = useMemo(() => {
+    if (!selectedMember || !sales) return null;
+    const mid = selectedMember.id;
+    const now = new Date();
+    const ranges = {
+      today: { from: startOfDay(now), to: endOfDay(now) },
+      week: { from: startOfWeek(now, { locale: fr }), to: endOfWeek(now, { locale: fr }) },
+      month: { from: startOfMonth(now), to: endOfMonth(now) },
+      year: { from: startOfYear(now), to: endOfYear(now) },
+    };
+    const myS = sales.filter(s => s.created_by_member_id === mid);
+    const calc = (range: { from: Date; to: Date }) => {
+      const f = myS.filter(s => isWithinInterval(parseISO(s.sale_date), range));
+      return { count: f.length, revenue: f.reduce((s, v) => s + Number(v.total_amount), 0) };
+    };
+    return {
+      today: calc(ranges.today),
+      week: calc(ranges.week),
+      month: calc(ranges.month),
+      year: calc(ranges.year),
+      total: myS.length,
+      totalRevenue: myS.reduce((s, v) => s + Number(v.total_amount), 0),
+    };
+  }, [selectedMember, sales]);
 
   const memberRole = memberInfo?.member_role_name?.toLowerCase() || '';
   const isManager = memberRole.includes('manager');
@@ -63,8 +89,8 @@ export default function RapportEmployes() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
-              <ShoppingCart className="h-5 w-5 text-success" />
+            <div className="h-10 w-10 bg-green-500/10 flex items-center justify-center rounded-xl">
+              <ShoppingCart className="h-5 w-5 text-green-600" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.totalSales}</p>
@@ -74,8 +100,8 @@ export default function RapportEmployes() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
-              <TrendingUp className="h-5 w-5 text-warning" />
+            <div className="h-10 w-10 bg-amber-500/10 flex items-center justify-center rounded-xl">
+              <TrendingUp className="h-5 w-5 text-amber-600" />
             </div>
             <div>
               <p className="text-lg font-bold">{formatPrice(stats.totalRevenue)}</p>
@@ -111,20 +137,49 @@ export default function RapportEmployes() {
 
       {/* Fiche employé */}
       {selectedMember ? (
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                {selectedMember.first_name[0]}{(selectedMember.last_name || '')[0] || ''}
+        <div className="space-y-4">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
+                  {selectedMember.first_name[0]}{(selectedMember.last_name || '')[0] || ''}
+                </div>
+                <div>
+                  <p className="font-semibold text-lg">{selectedMember.first_name} {selectedMember.last_name || ''}</p>
+                  <Badge variant="secondary">{selectedMember.role?.name || 'Sans rôle'}</Badge>
+                </div>
               </div>
-              <div>
-                <p className="font-semibold text-lg">{selectedMember.first_name} {selectedMember.last_name || ''}</p>
-                <Badge variant="secondary">{selectedMember.role?.name || 'Sans rôle'}</Badge>
-              </div>
+              {memberStats && (
+                <div className="text-sm text-muted-foreground">
+                  <p>Total : <span className="font-semibold text-foreground">{memberStats.total} ventes</span> — {formatPrice(memberStats.totalRevenue)}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Stats par période */}
+          {memberStats && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { label: "Aujourd'hui", data: memberStats.today, icon: "📅" },
+                { label: "Cette semaine", data: memberStats.week, icon: "📆" },
+                { label: "Ce mois", data: memberStats.month, icon: "🗓️" },
+                { label: "Cette année", data: memberStats.year, icon: "📊" },
+              ].map(({ label, data, icon }) => (
+                <Card key={label}>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">{icon}</span>
+                      <p className="text-sm font-medium text-muted-foreground">{label}</p>
+                    </div>
+                    <p className="text-2xl font-bold">{data.count} <span className="text-sm font-normal text-muted-foreground">ventes</span></p>
+                    <p className="text-sm font-semibold text-primary">{formatPrice(data.revenue)}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-            <p className="text-muted-foreground text-sm">Les statistiques détaillées par employé seront disponibles prochainement.</p>
-          </CardContent>
-        </Card>
+          )}
+        </div>
       ) : (
         <Card>
           <CardContent className="p-8 text-center text-muted-foreground">

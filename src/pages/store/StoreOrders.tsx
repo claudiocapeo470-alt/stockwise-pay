@@ -32,7 +32,7 @@ export default function StoreOrders() {
   const handleCreateDelivery = async (order: any) => {
     if (!company?.id) return;
     try {
-      await createDelivery.mutateAsync({ store_order_id: order.id, company_id: company.id });
+      await createDelivery.mutateAsync({ store_order_id: order.id });
       toast.success(`Livraison créée pour la commande ${order.order_number}`);
     } catch (e: any) {
       toast.error(e.message || "Erreur lors de la création");

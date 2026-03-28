@@ -6,8 +6,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useOnlineStore, useStoreOrders } from "@/hooks/useOnlineStore";
+import { useDeliveries } from "@/hooks/useDeliveries";
+import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
-import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp } from "lucide-react";
+import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck } from "lucide-react";
 import { useOrderNotifications } from '@/hooks/useOrderNotifications';
 
 const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }> = {
@@ -22,8 +24,20 @@ const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }
 export default function StoreOrders() {
   const { store } = useOnlineStore();
   const { orders, updateOrderStatus } = useStoreOrders(store?.id);
+  const { company } = useCompany();
+  const { createDelivery } = useDeliveries();
   useOrderNotifications(store?.id);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+
+  const handleCreateDelivery = async (order: any) => {
+    if (!company?.id) return;
+    try {
+      await createDelivery.mutateAsync({ store_order_id: order.id, company_id: company.id });
+      toast.success(`Livraison créée pour la commande ${order.order_number}`);
+    } catch (e: any) {
+      toast.error(e.message || "Erreur lors de la création");
+    }
+  };
 
   const todayOrders = orders.filter(o => new Date(o.created_at).toDateString() === new Date().toDateString());
   const pendingOrders = orders.filter(o => o.status === 'pending');

@@ -299,6 +299,24 @@ function MembersTab() {
         <DialogContent>
           <DialogHeader><DialogTitle>{editMember ? "Modifier le membre" : "Nouveau membre"}</DialogTitle></DialogHeader>
           <div className="space-y-4">
+            {/* Photo upload */}
+            <div className="flex justify-center">
+              <div className="relative">
+                <Avatar className="h-20 w-20 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                  <AvatarImage src={photoUrl || ''} />
+                  <AvatarFallback className="bg-primary/10 text-primary text-lg">{firstName?.[0]?.toUpperCase() || '?'}{lastName?.[0]?.toUpperCase() || ''}</AvatarFallback>
+                </Avatar>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md"
+                  disabled={uploadingPhoto}
+                >
+                  <Camera className="h-3.5 w-3.5" />
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div><Label>Prénom *</Label><Input value={firstName} onChange={e => setFirstName(e.target.value)} /></div>
               <div><Label>Nom</Label><Input value={lastName} onChange={e => setLastName(e.target.value)} /></div>

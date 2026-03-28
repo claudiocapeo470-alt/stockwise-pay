@@ -188,10 +188,15 @@ export default function StoreOrders() {
                     <div className="flex justify-between font-bold text-base"><span>TOTAL</span><span>{(selectedOrder.total || 0).toLocaleString()} FCFA</span></div>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button variant="outline" size="sm" asChild className="flex-1 gap-1"><a href={`tel:${selectedOrder.customer_phone}`}><Phone className="h-4 w-4" />Appeler</a></Button>
                   <Button variant="outline" size="sm" asChild className="flex-1 gap-1"><a href={`https://wa.me/${selectedOrder.customer_phone?.replace(/\s/g, '')}?text=${encodeURIComponent(`Bonjour ${selectedOrder.customer_name}, votre commande ${selectedOrder.order_number} est ${STATUS_MAP[selectedOrder.status]?.label || selectedOrder.status}. Merci !`)}`} target="_blank"><MessageCircle className="h-4 w-4" />WhatsApp</a></Button>
                 </div>
+                {selectedOrder.status === 'confirmed' || selectedOrder.status === 'preparing' ? (
+                  <Button size="sm" className="w-full gap-2" onClick={() => { handleCreateDelivery(selectedOrder); setSelectedOrder(null); }}>
+                    <Truck className="h-4 w-4" /> Créer une livraison
+                  </Button>
+                ) : null}
               </div>
             </>
           )}

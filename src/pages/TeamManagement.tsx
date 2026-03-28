@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,8 @@ import { useCompany } from "@/hooks/useCompany";
 import { useTeam, CompanyMember } from "@/hooks/useTeam";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { Copy, Eye, EyeOff, Plus, RefreshCw, Users, Building2, MoreVertical, Pencil, Power, Trash2, BarChart3 } from "lucide-react";
+import { Copy, Eye, EyeOff, Plus, RefreshCw, Users, Building2, MoreVertical, Pencil, Power, Trash2, BarChart3, Camera } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -148,6 +149,9 @@ function MembersTab() {
   const [revealedPin, setRevealedPin] = useState(false);
   const [useCustomPin, setUseCustomPin] = useState(false);
   const [customPin, setCustomPin] = useState("");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const openCreate = () => {
     setEditMember(null);
@@ -157,6 +161,7 @@ function MembersTab() {
     setPinCode(generatePin());
     setUseCustomPin(false);
     setCustomPin("");
+    setPhotoUrl(null);
     setDialogOpen(true);
   };
 
@@ -166,7 +171,26 @@ function MembersTab() {
     setLastName(m.last_name || "");
     setSelectedRole(m.role?.name || "");
     setPinCode(m.pin_code);
+    setPhotoUrl(m.photo_url || null);
     setDialogOpen(true);
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const path = `members/${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+      setPhotoUrl(data.publicUrl);
+    } catch {
+      toast.error("Erreur lors de l'upload de la photo");
+    } finally {
+      setUploadingPhoto(false);
+    }
   };
 
   const handleSave = async () => {
@@ -181,6 +205,7 @@ function MembersTab() {
           last_name: lastName || null,
           role_id: matchingRole?.id || null,
           pin_code: pinCode || editMember.pin_code,
+          photo_url: photoUrl || null,
         });
         toast.success("Membre mis à jour");
       } else {
@@ -274,6 +299,24 @@ function MembersTab() {
         <DialogContent>
           <DialogHeader><DialogTitle>{editMember ? "Modifier le membre" : "Nouveau membre"}</DialogTitle></DialogHeader>
           <div className="space-y-4">
+            {/* Photo upload */}
+            <div className="flex justify-center">
+              <div className="relative">
+                <Avatar className="h-20 w-20 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                  <AvatarImage src={photoUrl || ''} />
+                  <AvatarFallback className="bg-primary/10 text-primary text-lg">{firstName?.[0]?.toUpperCase() || '?'}{lastName?.[0]?.toUpperCase() || ''}</AvatarFallback>
+                </Avatar>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md"
+                  disabled={uploadingPhoto}
+                >
+                  <Camera className="h-3.5 w-3.5" />
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div><Label>Prénom *</Label><Input value={firstName} onChange={e => setFirstName(e.target.value)} /></div>
               <div><Label>Nom</Label><Input value={lastName} onChange={e => setLastName(e.target.value)} /></div>

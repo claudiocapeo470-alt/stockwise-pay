@@ -62,7 +62,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     // Verify PIN locally against stored member info
     // We need to check from localStorage since memberInfo doesn't store pin
     try {
-      const { supabase } = await import('@/integrations/supabase/client');
+      const { supabase } = await import(/* @vite-ignore */ '@/integrations/supabase/client');
       const { data } = await supabase
         .from('company_members')
         .select('pin_code')

@@ -6,8 +6,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useOnlineStore, useStoreOrders } from "@/hooks/useOnlineStore";
+import { useDeliveries } from "@/hooks/useDeliveries";
+import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
-import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp } from "lucide-react";
+import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck } from "lucide-react";
 import { useOrderNotifications } from '@/hooks/useOrderNotifications';
 
 const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }> = {
@@ -22,8 +24,20 @@ const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }
 export default function StoreOrders() {
   const { store } = useOnlineStore();
   const { orders, updateOrderStatus } = useStoreOrders(store?.id);
+  const { company } = useCompany();
+  const { createDelivery } = useDeliveries();
   useOrderNotifications(store?.id);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+
+  const handleCreateDelivery = async (order: any) => {
+    if (!company?.id) return;
+    try {
+      await createDelivery.mutateAsync({ store_order_id: order.id });
+      toast.success(`Livraison créée pour la commande ${order.order_number}`);
+    } catch (e: any) {
+      toast.error(e.message || "Erreur lors de la création");
+    }
+  };
 
   const todayOrders = orders.filter(o => new Date(o.created_at).toDateString() === new Date().toDateString());
   const pendingOrders = orders.filter(o => o.status === 'pending');
@@ -174,10 +188,15 @@ export default function StoreOrders() {
                     <div className="flex justify-between font-bold text-base"><span>TOTAL</span><span>{(selectedOrder.total || 0).toLocaleString()} FCFA</span></div>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button variant="outline" size="sm" asChild className="flex-1 gap-1"><a href={`tel:${selectedOrder.customer_phone}`}><Phone className="h-4 w-4" />Appeler</a></Button>
                   <Button variant="outline" size="sm" asChild className="flex-1 gap-1"><a href={`https://wa.me/${selectedOrder.customer_phone?.replace(/\s/g, '')}?text=${encodeURIComponent(`Bonjour ${selectedOrder.customer_name}, votre commande ${selectedOrder.order_number} est ${STATUS_MAP[selectedOrder.status]?.label || selectedOrder.status}. Merci !`)}`} target="_blank"><MessageCircle className="h-4 w-4" />WhatsApp</a></Button>
                 </div>
+                {selectedOrder.status === 'confirmed' || selectedOrder.status === 'preparing' ? (
+                  <Button size="sm" className="w-full gap-2" onClick={() => { handleCreateDelivery(selectedOrder); setSelectedOrder(null); }}>
+                    <Truck className="h-4 w-4" /> Créer une livraison
+                  </Button>
+                ) : null}
               </div>
             </>
           )}

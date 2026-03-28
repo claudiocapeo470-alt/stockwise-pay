@@ -17,6 +17,7 @@ export interface Sale {
   sale_date: string;
   payment_method: string | null;
   created_at: string;
+  created_by_member_id?: string | null;
   products?: {
     name: string;
     price: number;

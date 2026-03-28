@@ -44,7 +44,7 @@ export default function RapportEmployes() {
     };
     const myS = sales.filter(s => s.created_by_member_id === mid);
     const calc = (range: { from: Date; to: Date }) => {
-      const f = myS.filter(s => isWithinInterval(parseISO(s.sale_date), range));
+      const f = myS.filter(s => isWithinInterval(parseISO(s.sale_date), { start: range.from, end: range.to }));
       return { count: f.length, revenue: f.reduce((s, v) => s + Number(v.total_amount), 0) };
     };
     return {

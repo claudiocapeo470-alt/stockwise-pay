@@ -15,7 +15,8 @@ import { useCompany } from "@/hooks/useCompany";
 import { useTeam, CompanyMember } from "@/hooks/useTeam";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { Copy, Eye, EyeOff, Plus, RefreshCw, Users, Building2, MoreVertical, Pencil, Power, Trash2, BarChart3 } from "lucide-react";
+import { Copy, Eye, EyeOff, Plus, RefreshCw, Users, Building2, MoreVertical, Pencil, Power, Trash2, BarChart3, Camera } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -148,6 +149,9 @@ function MembersTab() {
   const [revealedPin, setRevealedPin] = useState(false);
   const [useCustomPin, setUseCustomPin] = useState(false);
   const [customPin, setCustomPin] = useState("");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const openCreate = () => {
     setEditMember(null);

@@ -205,6 +205,7 @@ function MembersTab() {
           last_name: lastName || null,
           role_id: matchingRole?.id || null,
           pin_code: pinCode || editMember.pin_code,
+          photo_url: photoUrl || null,
         });
         toast.success("Membre mis à jour");
       } else {

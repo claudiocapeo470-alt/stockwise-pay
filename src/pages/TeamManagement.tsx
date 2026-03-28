@@ -161,6 +161,7 @@ function MembersTab() {
     setPinCode(generatePin());
     setUseCustomPin(false);
     setCustomPin("");
+    setPhotoUrl(null);
     setDialogOpen(true);
   };
 
@@ -170,7 +171,26 @@ function MembersTab() {
     setLastName(m.last_name || "");
     setSelectedRole(m.role?.name || "");
     setPinCode(m.pin_code);
+    setPhotoUrl(m.photo_url || null);
     setDialogOpen(true);
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const path = `members/${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+      setPhotoUrl(data.publicUrl);
+    } catch {
+      toast.error("Erreur lors de l'upload de la photo");
+    } finally {
+      setUploadingPhoto(false);
+    }
   };
 
   const handleSave = async () => {

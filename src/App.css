@@ -40,3 +40,18 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Thermal ticket print styles */
+@media print {
+  body * { visibility: hidden !important; }
+  #thermal-ticket, #thermal-ticket * { visibility: visible !important; }
+  #thermal-ticket {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 58mm;
+    font-size: 10px;
+    font-family: 'Courier New', monospace;
+  }
+  .no-print { display: none !important; }
+}

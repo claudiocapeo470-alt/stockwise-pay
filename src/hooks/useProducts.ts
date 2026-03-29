@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useCompany } from './useCompany';
+import { useRealtimeSync } from './useRealtimeSync';
 
 export interface Product {
   id: string;
@@ -43,11 +44,13 @@ export const useProducts = () => {
       return data as Product[];
     },
     enabled: !!effectiveUserId,
-    staleTime: 1000 * 60 * 2,
-    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
     refetchOnMount: true,
-    refetchInterval: 30000,
   });
+
+  // Realtime sync - replaces polling
+  useRealtimeSync('products', ['products', effectiveUserId || ''], effectiveUserId);
 
   const addProduct = useMutation({
     mutationFn: async (product: Omit<Product, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompany } from "./useCompany";
+import { useRealtimeSync } from "./useRealtimeSync";
 import { toast } from "sonner";
 
 export interface InvoiceItem {
@@ -79,11 +80,12 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
       return data as Invoice[];
     },
     enabled: !!effectiveUserId,
-    staleTime: 1000 * 60 * 2,
-    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
     refetchOnMount: true,
-    refetchInterval: 30000,
   });
+
+  useRealtimeSync('invoices', ['invoices', effectiveUserId || '', documentType || ''], effectiveUserId);
 
   const generateDocumentNumber = async (type: 'facture' | 'devis') => {
     if (!effectiveUserId) throw new Error("User not authenticated");

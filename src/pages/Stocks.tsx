@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List, History } from "lucide-react";
+import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List, History, Bell } from "lucide-react";
 import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
@@ -12,6 +12,7 @@ import { EditProductDialog } from "@/components/stocks/EditProductDialog";
 import { ImportProductsDialog } from "@/components/stocks/ImportProductsDialog";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import { StockMovementsDialog } from "@/components/stocks/StockMovementsDialog";
+import { StockAlertBell } from "@/components/layout/StockAlertBell";
 import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -65,6 +66,12 @@ export default function Stocks() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Header with StockAlertBell */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Gestion des stocks</h2>
+        <StockAlertBell />
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card>

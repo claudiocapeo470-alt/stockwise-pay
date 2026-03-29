@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useCompany } from './useCompany';
+import { useRealtimeSync } from './useRealtimeSync';
 
 export interface Sale {
   id: string;

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Building2, Palette, User, Shield, Globe, ChevronRight, ArrowLeft, Crown, Save, Download, LogOut, Moon, Sun, Monitor } from "lucide-react";
+import { Building2, Palette, User, Shield, Globe, ChevronRight, ArrowLeft, Crown, Save, Download, LogOut, Moon, Sun, Monitor, Check } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -122,16 +122,73 @@ export default function Settings() {
 }
 
 // ─── Apparence & Thème ───
+const ACCENT_COLORS = [
+  { name: "Bleu Indigo", value: "#4F46E5" },
+  { name: "Violet", value: "#7C3AED" },
+  { name: "Vert Émeraude", value: "#059669" },
+  { name: "Orange", value: "#EA580C" },
+  { name: "Rose", value: "#E11D48" },
+  { name: "Cyan", value: "#0891B2" },
+];
+
+function hexToHSL(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+    else if (max === g) h = ((b - r) / d + 2) / 6;
+    else h = ((r - g) / d + 4) / 6;
+  }
+  return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
 function AppearanceSettings() {
   const { theme, setTheme } = useTheme();
   const [currency, setCurrency] = useState(() => localStorage.getItem('stocknix_currency') || localStorage.getItem('app_currency') || 'XOF');
   const [dateFormat, setDateFormat] = useState(() => localStorage.getItem('app_date_format') || 'DD/MM/YYYY');
+  const [accentColor, setAccentColor] = useState(() => localStorage.getItem('accent_color') || '#4F46E5');
+  const [fontSize, setFontSize] = useState<string>(() => localStorage.getItem('app_font_size') || 'md');
+  const [compactMode, setCompactMode] = useState(() => localStorage.getItem('app_compact_mode') === 'true');
+
+  // Apply accent color on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('accent_color');
+    if (saved) {
+      document.documentElement.style.setProperty('--primary', hexToHSL(saved));
+    }
+  }, []);
+
+  const handleAccentChange = (color: string) => {
+    setAccentColor(color);
+    document.documentElement.style.setProperty('--primary', hexToHSL(color));
+  };
+
+  const handleFontSizeChange = (size: string) => {
+    setFontSize(size);
+    const sizes: Record<string, string> = { sm: '14px', md: '16px', lg: '18px' };
+    document.documentElement.style.fontSize = sizes[size] || '16px';
+  };
 
   const handleSave = () => {
     localStorage.setItem('stocknix_currency', currency);
     localStorage.setItem('app_currency', currency);
     localStorage.setItem('app_date_format', dateFormat);
+    localStorage.setItem('accent_color', accentColor);
+    localStorage.setItem('app_font_size', fontSize);
+    localStorage.setItem('app_compact_mode', compactMode.toString());
     window.dispatchEvent(new Event('currency-changed'));
+    // Apply compact mode
+    if (compactMode) {
+      document.documentElement.classList.add('compact-mode');
+    } else {
+      document.documentElement.classList.remove('compact-mode');
+    }
     toast.success("Préférences d'apparence enregistrées");
   };
 
@@ -160,6 +217,23 @@ function AppearanceSettings() {
           </div>
         </div>
         <Separator />
+        <div className="space-y-3">
+          <Label>Couleur d'accent</Label>
+          <div className="flex flex-wrap gap-3">
+            {ACCENT_COLORS.map(c => (
+              <button
+                key={c.value}
+                onClick={() => handleAccentChange(c.value)}
+                className={`h-10 w-10 rounded-full border-2 transition-all flex items-center justify-center ${accentColor === c.value ? 'border-foreground scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`}
+                style={{ background: c.value }}
+                title={c.name}
+              >
+                {accentColor === c.value && <Check className="h-4 w-4 text-white" />}
+              </button>
+            ))}
+          </div>
+        </div>
+        <Separator />
         <div className="space-y-2">
           <Label>Langue</Label>
           <div className="flex items-center gap-3">
@@ -169,7 +243,6 @@ function AppearanceSettings() {
               <Badge variant="outline" className="text-[10px]">Bientôt</Badge>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">L'anglais sera disponible prochainement</p>
         </div>
         <Separator />
         <div className="space-y-2">
@@ -182,6 +255,8 @@ function AppearanceSettings() {
               <SelectItem value="USD">Dollar ($)</SelectItem>
               <SelectItem value="GBP">Livre (£)</SelectItem>
               <SelectItem value="MAD">Dirham (MAD)</SelectItem>
+              <SelectItem value="GHS">Cedi (GHS)</SelectItem>
+              <SelectItem value="NGN">Naira (₦)</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -196,6 +271,34 @@ function AppearanceSettings() {
               <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        <Separator />
+        <div className="space-y-2">
+          <Label>Taille de police</Label>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { value: 'sm', label: 'Petit' },
+              { value: 'md', label: 'Normal' },
+              { value: 'lg', label: 'Grand' },
+            ].map(s => (
+              <Button
+                key={s.value}
+                variant={fontSize === s.value ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleFontSizeChange(s.value)}
+              >
+                {s.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+        <Separator />
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">Mode compact</p>
+            <p className="text-xs text-muted-foreground">Réduit les espaces pour afficher plus de contenu</p>
+          </div>
+          <Switch checked={compactMode} onCheckedChange={setCompactMode} />
         </div>
         <Button onClick={handleSave} className="w-full sm:w-auto">
           <Save className="h-4 w-4 mr-2" /> Enregistrer les préférences

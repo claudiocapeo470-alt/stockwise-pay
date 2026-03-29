@@ -46,11 +46,13 @@ export const useSales = () => {
       return data as Sale[];
     },
     enabled: !!effectiveUserId,
-    staleTime: 1000 * 60 * 2,
-    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
     refetchOnMount: true,
-    refetchInterval: 30000,
   });
+
+  // Realtime sync - replaces polling
+  useRealtimeSync('sales', ['sales', effectiveUserId || ''], effectiveUserId);
 
   const addSale = useMutation({
     mutationFn: async (sale: Omit<Sale, 'id' | 'user_id' | 'created_at' | 'products'> & { created_by_member_id?: string }) => {

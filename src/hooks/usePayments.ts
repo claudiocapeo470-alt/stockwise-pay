@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useCompany } from './useCompany';
+import { useRealtimeSync } from './useRealtimeSync';
 
 export interface Payment {
   id: string;
@@ -45,11 +46,12 @@ export const usePayments = () => {
       return data as Payment[];
     },
     enabled: !!effectiveUserId,
-    staleTime: 1000 * 60 * 2,
-    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
     refetchOnMount: true,
-    refetchInterval: 30000,
   });
+
+  useRealtimeSync('payments', ['payments', effectiveUserId || ''], effectiveUserId);
 
   const addPayment = useMutation({
     mutationFn: async (payment: Omit<Payment, 'id' | 'user_id' | 'created_at' | 'remaining_amount'>) => {

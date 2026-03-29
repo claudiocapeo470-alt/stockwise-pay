@@ -51,7 +51,6 @@ export const useProducts = () => {
 
   // Realtime sync - replaces polling
   useRealtimeSync('products', ['products', effectiveUserId || ''], effectiveUserId);
-  });
 
   const addProduct = useMutation({
     mutationFn: async (product: Omit<Product, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {

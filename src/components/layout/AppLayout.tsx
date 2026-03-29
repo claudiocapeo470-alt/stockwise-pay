@@ -145,14 +145,13 @@ export function AppLayout({ children }: AppLayoutProps) {
               </div>
               
               <div className="flex items-center gap-2">
-                <GlobalSearch />
-                {isEmployee && (
+                {!isMobile && <GlobalSearch />}
+                {isEmployee && !isMobile && (
                   <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground hover:text-foreground" title="Verrouiller">
                     <Lock className="h-4 w-4" />
                   </Button>
                 )}
                 <NotificationCenter />
-                <StockAlertBell />
                 <ThemeToggle />
                 {user && <UserMenu />}
               </div>

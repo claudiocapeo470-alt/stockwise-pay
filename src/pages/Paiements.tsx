@@ -95,7 +95,7 @@ export default function Paiements() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
             <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
@@ -150,7 +150,7 @@ export default function Paiements() {
         </div>
         <div className="flex gap-2 flex-wrap">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[140px]"><SelectValue placeholder="Statut" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-[140px]"><SelectValue placeholder="Statut" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tous</SelectItem>
               <SelectItem value="completed">Payés</SelectItem>
@@ -160,7 +160,7 @@ export default function Paiements() {
             </SelectContent>
           </Select>
           <Select value={methodFilter} onValueChange={setMethodFilter}>
-            <SelectTrigger className="w-[140px]"><SelectValue placeholder="Méthode" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-[140px]"><SelectValue placeholder="Méthode" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Toutes</SelectItem>
               <SelectItem value="especes">Espèces</SelectItem>

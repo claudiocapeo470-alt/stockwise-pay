@@ -27,7 +27,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-primary rounded-xl p-4 text-primary-foreground">
             <p className="text-xs opacity-80">C.A (Mois)</p>
-            <p className="text-lg font-bold mt-1">{formatAmount(monthlyCA)}</p>
+            <p className="text-lg font-bold mt-1">{formatCurrency(monthlyCA)}</p>
           </div>
           <div className="bg-card border border-border rounded-xl p-4">
             <p className="text-xs text-muted-foreground">Ventes (Mois)</p>

@@ -43,7 +43,7 @@ export function MobileHomeGrid() {
     // Module-based filtering for non-employees
     if (!isEmployee) {
       if (tile.id === 'boutique' || tile.id === 'commandes') return hasModule('boutique');
-      if (tile.id === 'livraisons') return hasModule('livraisons');
+      if (tile.id === 'livraisons') return true;
     }
     return true;
   });

@@ -89,7 +89,7 @@ const App = () => (
           <ScrollToTop />
           <AuthProvider>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<PWARedirect />} />
               <Route path="/tarifs" element={<Tarifs />} />
               <Route path="/fonctionnalites" element={<Fonctionnalites />} />
               <Route path="/faq" element={<FAQ />} />

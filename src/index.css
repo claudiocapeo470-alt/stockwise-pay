@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* === ANTI-OVERFLOW GLOBAL === */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  max-width: 100vw;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    STOCKNIX DESIGN SYSTEM 2027
    Minimaliste • Professionnel • Sans bordures arrondies

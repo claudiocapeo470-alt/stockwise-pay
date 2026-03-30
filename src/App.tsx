@@ -49,6 +49,7 @@ import AdminStocks from './pages/admin/AdminStocks';
 import AdminNotifications from './pages/admin/AdminNotifications';
 import AdminPerformance from './pages/admin/AdminPerformance';
 import HomePage from './pages/HomePage';
+import { PWARedirect } from './components/auth/PWARedirect';
 import MentionsLegales from './pages/MentionsLegales';
 import Tarifs from './pages/Tarifs';
 import Fonctionnalites from './pages/Fonctionnalites';

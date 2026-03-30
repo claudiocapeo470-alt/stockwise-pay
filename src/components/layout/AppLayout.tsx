@@ -97,6 +97,8 @@ export function AppLayout({ children }: AppLayoutProps) {
     return 'Tableau de bord';
   }, [location.pathname]);
 
+  const isHomePage = location.pathname === '/app' || location.pathname === '/app/';
+
   useEffect(() => {
     if (!loading && !user && location.pathname !== '/auth') {
       navigate('/auth');

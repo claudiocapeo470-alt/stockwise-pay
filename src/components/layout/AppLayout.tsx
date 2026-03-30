@@ -173,7 +173,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </main>
       </div>
       
-      {isMobile && <BottomNav />}
+      {isMobile && !isHomePage && <BottomNav />}
       <PWAInstallBanner />
     </SidebarProvider>
   );

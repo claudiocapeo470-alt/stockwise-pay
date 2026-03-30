@@ -167,7 +167,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           </header>
           
           <TrialBanner />
-          <div className={`flex-1 p-4 md:p-6 lg:px-12 ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
+          <div className={`flex-1 p-4 md:p-6 lg:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
             {children}
           </div>
         </main>

@@ -12,7 +12,7 @@ export default function Dashboard() {
   const { isEmployee } = useAuth();
   const isMobile = useIsMobile();
   const { sales } = useSales();
-  const { formatAmount } = useCurrency();
+  const { formatCurrency } = useCurrency();
 
   // Calculate monthly stats
   const now = new Date();

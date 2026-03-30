@@ -97,6 +97,8 @@ export function AppLayout({ children }: AppLayoutProps) {
     return 'Tableau de bord';
   }, [location.pathname]);
 
+  const isHomePage = location.pathname === '/app' || location.pathname === '/app/';
+
   useEffect(() => {
     if (!loading && !user && location.pathname !== '/auth') {
       navigate('/auth');
@@ -141,7 +143,13 @@ export function AppLayout({ children }: AppLayoutProps) {
               )}
               
               <div className="flex-1">
-                <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
+                {isMobile && isHomePage ? (
+                  <h1 className="text-xl font-bold text-foreground tracking-wide">
+                    {company?.name?.toUpperCase() || 'STOCKNIX'}
+                  </h1>
+                ) : (
+                  <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
+                )}
               </div>
               
               <div className="flex items-center gap-2">
@@ -159,13 +167,13 @@ export function AppLayout({ children }: AppLayoutProps) {
           </header>
           
           <TrialBanner />
-          <div className={`flex-1 p-4 md:p-6 lg:px-12 ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
+          <div className={`flex-1 p-4 md:p-6 lg:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
             {children}
           </div>
         </main>
       </div>
       
-      {isMobile && <BottomNav />}
+      {isMobile && !isHomePage && <BottomNav />}
       <PWAInstallBanner />
     </SidebarProvider>
   );

@@ -49,6 +49,7 @@ import AdminStocks from './pages/admin/AdminStocks';
 import AdminNotifications from './pages/admin/AdminNotifications';
 import AdminPerformance from './pages/admin/AdminPerformance';
 import HomePage from './pages/HomePage';
+import { PWARedirect } from './components/auth/PWARedirect';
 import MentionsLegales from './pages/MentionsLegales';
 import Tarifs from './pages/Tarifs';
 import Fonctionnalites from './pages/Fonctionnalites';
@@ -89,7 +90,7 @@ const App = () => (
           <ScrollToTop />
           <AuthProvider>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<PWARedirect />} />
               <Route path="/tarifs" element={<Tarifs />} />
               <Route path="/fonctionnalites" element={<Fonctionnalites />} />
               <Route path="/faq" element={<FAQ />} />

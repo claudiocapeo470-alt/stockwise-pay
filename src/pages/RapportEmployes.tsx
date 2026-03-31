@@ -64,6 +64,7 @@ export default function RapportEmployes() {
     new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 })
       .format(price).replace('XOF', 'CFA');
 
+  // Allow owner + manager access
   if (isEmployee && !isManager) {
     return (
       <div className="flex items-center justify-center h-64 text-muted-foreground">

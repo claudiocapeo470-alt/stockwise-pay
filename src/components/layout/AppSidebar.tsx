@@ -44,6 +44,8 @@ const ALL_GROUPS: NavGroup[] = [
       { name: 'Produits en ligne', href: '/app/boutique/produits', icon: ShoppingBag, permission: 'boutique' },
       { name: 'Commandes reçues', href: '/app/boutique/commandes', icon: ClipboardList, permission: 'boutique_orders' },
       { name: 'Avis clients', href: '/app/boutique/avis', icon: Star, permission: 'boutique' },
+      { name: 'Factures', href: '/app/factures', icon: FileText, permission: 'sales' },
+      { name: 'Devis', href: '/app/devis', icon: FileCheck, permission: 'sales' },
     ],
   },
   {

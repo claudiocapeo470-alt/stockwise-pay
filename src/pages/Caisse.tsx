@@ -219,6 +219,7 @@ export default function Caisse() {
         const { data: sessionSalesData } = await supabase
           .from('sales')
           .select('total_amount, payment_method')
+          .eq('user_id', effectiveUserId)
           .gte('created_at', data.opened_at);
 
         if (sessionSalesData) {
@@ -236,7 +237,7 @@ export default function Caisse() {
       }
     };
     fetchActiveSession();
-  }, [user]);
+  }, [effectiveUserId]);
 
   const categories = useMemo(() => {
     const cats = new Set<string>();
@@ -447,6 +448,7 @@ export default function Caisse() {
           total_amount: itemTotal, paid_amount: itemTotal,
           customer_name: customerName || null, customer_phone: null, sale_date: new Date().toISOString(),
           payment_method: paymentMethod,
+          created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : undefined,
         });
       }
       setSessionSales(prev => ({

@@ -448,6 +448,7 @@ export default function Caisse() {
           total_amount: itemTotal, paid_amount: itemTotal,
           customer_name: customerName || null, customer_phone: null, sale_date: new Date().toISOString(),
           payment_method: paymentMethod,
+          created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : undefined,
         });
       }
       setSessionSales(prev => ({

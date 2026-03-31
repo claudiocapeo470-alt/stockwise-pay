@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { TrialBanner } from "@/components/subscription/TrialBanner";
 import { useSessionWarning } from "@/hooks/useSessionWarning";
-// StockAlertBell removed from header - now only in Stocks page
+import { useStockAlerts } from "@/hooks/useStockAlerts";
 import { NotificationCenter } from "./NotificationCenter";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";

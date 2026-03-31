@@ -16,7 +16,7 @@ export function RoleDashboard() {
   if (role.includes('manager')) return <ManagerDashboard />;
   if (role.includes('caissier')) return <CaissierDashboard />;
   if (role.includes('livreur')) return <LivreurRoleDashboard />;
-  if (role.includes('fusionn')) return <FusionDashboard />;
+  if (role.includes('fusionn') || role.includes('fusionne')) return <FusionDashboard />;
   if (role.includes('commande')) return <CommandesDashboard />;
   if (role.includes('stock')) return <StockDashboard />;
   return <AdminOwnerDashboard />;

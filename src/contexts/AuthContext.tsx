@@ -94,8 +94,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (!isEmployee) return true;
     if (!memberInfo?.member_permissions) return false;
     const perms = memberInfo.member_permissions;
-    // Check for "all" permission (Admin role)
-    if (perms.all === true) return true;
+    // Check for "all" permission (Manager role) — but respect explicit false
+    if (perms.all === true) {
+      if (module === 'settings' && perms.settings === false) return false;
+      return true;
+    }
     // Check module-level boolean (legacy format: { pos: true })
     if (perms[module] === true) return true;
     // Check array format: { stock: ["read", "create"] }

@@ -22,12 +22,12 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
 const PREDEFINED_ROLES = [
-  { name: "Manager", permissions: { all: true, settings: false } },
-  { name: "Gestionnaire Stock", permissions: { stock: true, boutique: true, sales: true } },
-  { name: "Gestionnaire Commandes", permissions: { boutique_orders: true, sales: true } },
-  { name: "Gestionnaire Fusionné", permissions: { stock: true, boutique: true, boutique_orders: true, sales: true } },
-  { name: "Caissier", permissions: { pos: true, sales: ["read"] } },
-  { name: "Livreur", permissions: { deliveries: true } },
+  { name: "Manager", icon: "👔", description: "Accès total sauf paramètres — supervise l'activité", permissions: { all: true, settings: false } },
+  { name: "Gestionnaire Stock", icon: "📦", description: "Gère l'inventaire, les livraisons et les rapports stock", permissions: { stock: true, boutique: true, sales: true, deliveries: true, reports: true } },
+  { name: "Gestionnaire Commandes", icon: "🛒", description: "Traite les commandes boutique, factures et devis", permissions: { boutique_orders: true, sales: true } },
+  { name: "Gestionnaire Fusionné", icon: "🔗", description: "Stock + Boutique — gestion complète inventaire et commandes", permissions: { stock: true, boutique: true, boutique_orders: true, sales: true, deliveries: true, reports: true } },
+  { name: "Caissier", icon: "🖥️", description: "Point de vente uniquement — interface caisse dédiée", permissions: { pos: true, sales: ["read"] } },
+  { name: "Livreur", icon: "🚚", description: "Gère ses livraisons assignées sur mobile", permissions: { deliveries: true } },
 ];
 
 const ROLE_COLORS: Record<string, string> = {

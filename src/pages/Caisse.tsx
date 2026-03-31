@@ -236,7 +236,7 @@ export default function Caisse() {
       }
     };
     fetchActiveSession();
-  }, [user]);
+  }, [effectiveUserId]);
 
   const categories = useMemo(() => {
     const cats = new Set<string>();

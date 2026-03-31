@@ -448,32 +448,17 @@ export default function AuthSimple() {
             </p>
           </div>
 
-          {/* Auth mode toggle */}
-          <div className="flex rounded-xl border border-border overflow-hidden">
+          {/* Auth mode info - only show when in employee mode */}
+          {authMode === 'employee' && (
             <button
               type="button"
               onClick={() => { setAuthMode('classic'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                authMode === 'classic' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-muted/50 text-muted-foreground'
-              }`}
+              className="flex items-center gap-2 text-sm text-primary hover:underline mx-auto"
             >
-              Admin / Propriétaire
+              <ArrowLeft className="h-4 w-4" />
+              Retour à la connexion propriétaire
             </button>
-            <button
-              type="button"
-              onClick={() => { setAuthMode('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-              className={`flex-1 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
-                authMode === 'employee' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-muted/50 text-muted-foreground'
-              }`}
-            >
-              <Users className="h-4 w-4" />
-              Employé
-            </button>
-          </div>
+          )}
 
           {/* CLASSIC AUTH MODE */}
           {authMode === 'classic' && (
@@ -694,6 +679,19 @@ export default function AuthSimple() {
                   />
                 </div>
               )}
+            </div>
+          )}
+          {/* Employee login link - subtle, at bottom */}
+          {authMode === 'classic' && (
+            <div className="text-center pt-4 border-t border-border/40">
+              <button
+                type="button"
+                onClick={() => { setAuthMode('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
+                className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Users className="h-3.5 w-3.5" />
+                Connexion employé (PIN)
+              </button>
             </div>
           )}
         </div>

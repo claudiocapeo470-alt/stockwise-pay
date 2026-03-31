@@ -157,7 +157,7 @@ export default function Caisse() {
   const { addSale } = useSales();
   const { toast } = useToast();
   const { settings } = useCompanySettings();
-  const { profile, user, isEmployee, memberInfo } = useAuth();
+  const { profile, user, isEmployee, memberInfo, loading: authLoading } = useAuth();
   const { company } = useCompany();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -631,6 +631,30 @@ export default function Caisse() {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
+
+  // ═══════════════════════════════════════════════════════
+  // GUARD: effectiveUserId not yet resolved
+  // ═══════════════════════════════════════════════════════
+  if (!effectiveUserId && !authLoading) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
+        <div className="text-center space-y-6 max-w-xs px-4 w-full">
+          <Package className="h-16 w-16 mx-auto" style={{ color: '#6B7280' }} />
+          <h2 className="text-xl font-black text-white">Erreur de session</h2>
+          <p className="text-sm" style={{ color: '#9CA3AF' }}>Impossible de charger votre session. Veuillez vous reconnecter.</p>
+          <button onClick={() => navigate('/auth')} className="w-full h-14 rounded-xl text-white font-bold text-lg" style={{ background: '#4F46E5' }}>Se reconnecter</button>
+          <button onClick={() => navigate('/app')} className="text-sm text-white/50 hover:text-white/80">Retour au dashboard</button>
+        </div>
+      </div>
+    );
+  }
+  if (!effectiveUserId) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
+        <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   // ═══════════════════════════════════════════════════════
   // PIN SETUP MODAL

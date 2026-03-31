@@ -681,6 +681,19 @@ export default function AuthSimple() {
               )}
             </div>
           )}
+          {/* Employee login link - subtle, at bottom */}
+          {authMode === 'classic' && (
+            <div className="text-center pt-4 border-t border-border/40">
+              <button
+                type="button"
+                onClick={() => { setAuthMode('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
+                className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Users className="h-3.5 w-3.5" />
+                Connexion employé (PIN)
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

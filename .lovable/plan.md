@@ -1,142 +1,142 @@
 
 
-# Plan d'implémentation -- Modifications Stocknix
+# Plan: Stocknix Prompt Complet — 30 Corrections
 
-Ce plan couvre 6 axes majeurs : navigation mobile, refonte caisse, scan produits, responsive boutique, guide de bienvenue mis a jour, et correction URL boutique.
-
----
-
-## 1. Navigation mobile -- Bouton "Menu" avec drawer
-
-**Fichier:** `src/components/layout/BottomNav.tsx`
-
-- Remplacer le 6e bouton "Perfs" (TrendingUp) par "Menu" (Menu icon)
-- Au tap sur "Menu", ouvrir un Drawer (vaul) qui monte du bas
-- Le Drawer contient tous les elements du sidebar desktop : Navigation principale, Boutique en ligne, Compte (Profil, Parametres), Deconnexion
-- Chaque element navigue et ferme le drawer
-- Les 5 premiers boutons restent inchanges : Accueil, Stocks, Caisse, Ventes, Factures
+This document requests 30 corrections across roles, navigation, POS, reports, dashboards, profile, settings, and more. After auditing the codebase, many items are **partially done** but need refinement. Here is the complete plan.
 
 ---
 
-## 2. Refonte interface Caisse
+## Current State Assessment
 
-**Fichier:** `src/pages/Caisse.tsx`
-
-### 2.1 Header enrichi
-Ajouter dans la top bar les boutons :
-- Verrouiller (Lock icon) -- affiche un overlay PIN (fonctionnel basique)
-- Autres Actions (MoreHorizontal) -- dropdown avec options
-- Tickets en cours (ClipboardList) -- badge + liste
-- Ma Caisse (Home, actif)
-- Statistiques (BarChart3) -- lien vers /app/performance
-- Parametrages (Settings) -- lien vers /app/settings
-
-### 2.2 Grille produits
-- Grille 2 colonnes par defaut (au lieu de 2-4)
-- Quand categorie "Tout" est selectionnee : afficher des separateurs visuels entre chaque categorie (titre de section)
-- Produits en rupture : grises avec badge "Rupture"
-
-### 2.3 Support images produit
-- Ajouter colonne `image_url` a la table `products` (migration)
-- Dans les cards produit de la caisse : si `image_url` existe, afficher l'image au lieu de l'emoji
-- Sinon, afficher l'emoji avec fond colore comme actuellement
-
-### 2.4 Clavier numerique tactile
-- Ajouter un clavier numerique retractable en bas a droite (desktop)
-- Boutons 0-9, virgule, effacer, valider
-- Permet de saisir quantite pour l'article selectionne dans le ticket
-- Bouton toggle pour afficher/masquer
+| Area | Status |
+|------|--------|
+| PREDEFINED_ROLES (TeamManagement) | Partially done — missing descriptions, icons, colors, deliveries perm for Stock |
+| hasPermission (AuthContext) | Done but missing `settings: false` handling for Manager |
+| shouldShowGroup / filterItems (AppSidebar) | Mostly done, Factures/Devis missing from BOUTIQUE group |
+| BottomNav role navs | Done |
+| RoleDashboard order | Wrong — Fusionné tested AFTER Stock/Commandes |
+| PIN 6 digits (Caisse) | Done |
+| sessionPin verification | Done |
+| effectiveUserId in Caisse | Needs verification |
+| created_by_member_id migration | Needs SQL migration |
+| Performance employee filter | Partially done |
+| RapportEmployes Manager access | Needs fix |
+| ProtectedRoute — /app/performance | Still requires 'reports' permission — must remove |
+| CommandesDashboard | Needs real data |
+| FusionDashboard | Needs real data |
+| Profile employee view | Not implemented — employees see full owner profile |
+| Settings role filter | Done |
+| InvoiceEditor 4-step | Partially done |
+| LivreurDashboard lock | Already has LockScreen |
+| Stock alerts realtime | Hook exists but not wired in AppLayout |
+| Bouton livraison (StoreOrders) | Done |
+| Employee session timeout | Not in AuthContext |
 
 ---
 
-## 3. Scan de produits
+## Implementation Plan
 
-**Fichier:** `src/pages/Caisse.tsx`
+### Step 1 — Roles & Permissions (4 files)
 
-### 3.1 Scan mobile (camera)
-- Ajouter bouton "Scanner" dans le header mobile
-- Utiliser `html5-qrcode` (deja installe) pour ouvrir la camera
-- Scanner code-barres → chercher produit par SKU/barcode → ajouter au ticket
-- Toast si non trouve
+**TeamManagement.tsx**: Update `PREDEFINED_ROLES` to include full descriptions, icons, colors, and correct permissions (add `deliveries: true, reports: true` to Stock role).
 
-### 3.2 Scan PC (USB/HID)
-- Ajouter un `useEffect` avec ecouteur `keydown` global
-- Detecter saisie rapide (<50ms entre touches) terminee par Enter
-- Interpreter comme code-barres, chercher et ajouter au ticket
-- Aucun bouton visible, tout automatique
+**AuthContext.tsx**: Fix `hasPermission` to handle Manager's `settings: false` case:
+```
+if (perms.all === true) {
+  if (module === "settings") return perms.settings !== false;
+  return true;
+}
+```
+Add employee session timeout via `useEffect` using `company.lock_timeout_minutes`.
 
-### 3.3 Permissions camera
-- `useEffect` au montage demandant `getUserMedia` pour pre-autoriser
-- Ajouter `<meta name="permissions-policy" content="camera=*">` dans `index.html`
-- Toast informatif premiere fois
+**ProtectedRoute.tsx**: Remove `/app/performance': 'reports'` from `ROUTE_PERMISSIONS` so all employees can access Performance (the page itself handles filtering).
 
----
+### Step 2 — Navigation (2 files)
 
-## 4. Responsive Boutique en ligne
+**AppSidebar.tsx**: Add Factures and Devis items to the BOUTIQUE EN LIGNE group. Ensure `filterItems` shows them for Commandes and Fusionné roles.
 
-### 4.1 StoreConfig (`src/pages/store/StoreConfig.tsx`)
-- Changer URL affichee de `stocknix.lovable.app/boutique/` vers `stocknix.space/boutique/`
-- Layout deja responsive (grid lg:grid-cols-3), verifier pas de scroll horizontal
-
-### 4.2 StoreProducts (`src/pages/store/StoreProducts.tsx`)
-- Sur mobile : remplacer les tableaux par des cards empilees (responsive via `hidden md:table-cell` + cards mobiles)
-
-### 4.3 StoreOrders (`src/pages/store/StoreOrders.tsx`)
-- Sur mobile : afficher des cards au lieu du tableau
-- Filtres en haut, wrappés
-
-### 4.4 StoreReviews (`src/pages/store/StoreReviews.tsx`)
-- Grille responsive de cards au lieu du tableau sur mobile
-- Texte tronque avec "Voir plus"
-
----
-
-## 5. Guide de bienvenue mis a jour
-
-**Fichier:** `src/components/onboarding/WelcomeGuide.tsx`
-
-- Ajouter de nouvelles etapes pour les fonctionnalites ajoutees :
-  - Etape 5 : "Boutique en ligne" -- creez et publiez votre boutique
-  - Etape 6 : "Scanner vos produits" -- scannez les codes-barres depuis la caisse
-- Passer de 4 a 6 etapes dans le guide
-- Modifier le texte "4 etapes" en "6 etapes"
-
-**Logique d'affichage :**
-- Ajouter un systeme de versioning : `localStorage` stocke `welcome-guide-version-{userId}`
-- Si la version stockee est inferieure a la version actuelle (ex: "2"), re-afficher le guide
-- Le guide se ferme et stocke la nouvelle version
-
----
-
-## 6. Migration base de donnees
-
-**Nouvelle migration** pour ajouter `image_url` a products :
-```sql
-ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url text;
+**RoleDashboard.tsx**: Fix detection order — test `fusionn` BEFORE `stock` and `commande`:
+```
+if (role.includes('manager')) return <ManagerDashboard />;
+if (role.includes('caissier')) return <CaissierDashboard />;
+if (role.includes('livreur')) return <LivreurRoleDashboard />;
+if (role.includes('fusionn')) return <FusionDashboard />;
+if (role.includes('commande')) return <CommandesDashboard />;
+if (role.includes('stock')) return <StockDashboard />;
 ```
 
+### Step 3 — POS Caisse Corrections (1 file)
+
+**Caisse.tsx**: 
+- Ensure `effectiveUserId` is used consistently in all Supabase queries (session, movements, categories).
+- Fix cashier name in close report to use `memberInfo.member_first_name` for employees.
+- Add sale guard: block `handleSale` if `currentSession` is not open.
+
+### Step 4 — SQL Migration
+
+Create migration to add `created_by_member_id` column to `sales` table:
+```sql
+ALTER TABLE public.sales
+ADD COLUMN IF NOT EXISTS created_by_member_id UUID
+REFERENCES public.company_members(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_sales_member_id
+ON public.sales(created_by_member_id);
+```
+
+### Step 5 — useSales.ts — Insert created_by_member_id
+
+Update `addSale` / `createSale` to include `created_by_member_id: isEmployee ? memberInfo?.member_id : null` in sale data.
+
+### Step 6 — Reports & Performance (2 files)
+
+**Performance.tsx**: Add `isPersonalView` logic — employees without `all` permission only see their own sales filtered by `created_by_member_id`.
+
+**RapportEmployes.tsx**: 
+- Allow Manager access (don't block if `role.includes('manager')`).
+- Implement real stats calculation (today/week/month/year) using `isWithinInterval` from date-fns.
+
+### Step 7 — Dashboards (2 files)
+
+**CommandesDashboard.tsx**: Full rebuild with real data from `useStoreOrders` and `useInvoices`. Show pending orders count, today's orders, total invoices, quick action buttons.
+
+**FusionDashboard.tsx**: Full rebuild with real data from `useProducts`, `useStoreOrders`. Show product count, low stock alerts, pending orders, quick action buttons for stocks/boutique/factures/devis/livraisons.
+
+### Step 8 — Profile Employee View (1 file)
+
+**Profile.tsx**: Add early return for employees showing a simplified read-only profile card with their name, role, company name, and avatar — no password change, no email edit.
+
+### Step 9 — Stock Alerts in AppLayout (1 file)
+
+**AppLayout.tsx**: Wire `useStockAlerts(effectiveUserId)` to trigger toast notifications when product quantity drops below minimum.
+
+### Step 10 — LivreurDashboard Lock (already done)
+
+Already has `LockScreen` and `useAutoLock`. No changes needed.
+
 ---
 
-## 7. Fichiers modifies (resume)
+## Technical Details
 
-| Fichier | Modifications |
-|---------|--------------|
-| `src/components/layout/BottomNav.tsx` | 6e bouton Menu + Drawer complet |
-| `src/pages/Caisse.tsx` | Header enrichi, grille 2 cols, separateurs, clavier numerique, scan mobile/PC |
-| `src/pages/store/StoreConfig.tsx` | URL stocknix.space |
-| `src/pages/store/StoreProducts.tsx` | Cards responsive mobile |
-| `src/pages/store/StoreOrders.tsx` | Cards responsive mobile |
-| `src/pages/store/StoreReviews.tsx` | Cards responsive mobile |
-| `src/components/onboarding/WelcomeGuide.tsx` | 6 etapes + versioning |
-| `src/pages/Dashboard.tsx` | Versioning guide |
-| `index.html` | Meta permissions-policy camera |
-| `supabase/migrations/...` | Colonne image_url |
-| `src/integrations/supabase/types.ts` | Type image_url |
+### Files to Create
+- `supabase/migrations/XXXXXXXX_add_created_by_member_id.sql`
 
----
+### Files to Modify
+- `src/pages/TeamManagement.tsx` — PREDEFINED_ROLES
+- `src/contexts/AuthContext.tsx` — hasPermission + session timeout
+- `src/components/layout/AppSidebar.tsx` — BOUTIQUE group items
+- `src/components/layout/BottomNav.tsx` — minor (already mostly correct)
+- `src/components/dashboard/RoleDashboard.tsx` — detection order
+- `src/pages/Caisse.tsx` — effectiveUserId, cashier name, sale guard
+- `src/hooks/useSales.ts` — created_by_member_id
+- `src/pages/Performance.tsx` — employee filter
+- `src/pages/RapportEmployes.tsx` — Manager access + real stats
+- `src/components/dashboard/CommandesDashboard.tsx` — real data
+- `src/components/dashboard/FusionDashboard.tsx` — real data
+- `src/pages/Profile.tsx` — employee view
+- `src/components/auth/ProtectedRoute.tsx` — remove performance restriction
+- `src/components/layout/AppLayout.tsx` — stock alerts
 
-## Contraintes respectees
-- Ne pas casser stocks, ventes, facturation, dashboard existants
-- html5-qrcode deja installe
-- Coherence visuelle maintenue
+### No Breaking Changes
+All modifications are additive or corrective. No routes change, no DB schema breaks.
 

@@ -29,6 +29,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   const isMobile = useIsMobile();
   const { company } = useCompany();
   useSessionWarning();
+  // Stock alerts - triggers toast notifications on low stock
+  useStockAlerts();
   const [isLocked, setIsLocked] = useState(false);
   const lastActivityRef = useRef(Date.now());
 

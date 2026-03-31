@@ -171,7 +171,7 @@ export default function Caisse() {
   const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
 
   // Guard: wait for effectiveUserId to be resolved before rendering
-  if (!effectiveUserId && !loading) {
+  if (!effectiveUserId && !authLoading) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
         <div className="text-center space-y-6 max-w-xs px-4 w-full">

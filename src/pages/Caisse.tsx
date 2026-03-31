@@ -219,6 +219,7 @@ export default function Caisse() {
         const { data: sessionSalesData } = await supabase
           .from('sales')
           .select('total_amount, payment_method')
+          .eq('user_id', effectiveUserId)
           .gte('created_at', data.opened_at);
 
         if (sessionSalesData) {

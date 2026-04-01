@@ -71,9 +71,10 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
       retry: (failureCount, error: any) => {
         if (error?.status === 401 || error?.message?.includes('JWT')) return false;
-        return failureCount < 2;
+        return failureCount < 1;
       },
     },
     mutations: { retry: false },

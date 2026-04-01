@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const perms = memberInfo.member_permissions;
     // Check for "all" permission (Manager role) — but respect explicit false
     if (perms.all === true) {
-      if (module === 'settings') return perms.settings !== false ? false : false;
+      if (module === 'settings') return false;
       return true;
     }
     // CRM permission hierarchy: customers includes customers_basic and customers_minimal

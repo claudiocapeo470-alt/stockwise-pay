@@ -59,7 +59,7 @@ const ALL_GROUPS: NavGroup[] = [
   {
     label: 'CLIENTS',
     items: [
-      { name: 'Clients', href: '/app/clients', icon: Users, permission: 'sales' },
+      { name: 'Clients', href: '/app/clients', icon: Users, permission: 'customers' },
     ],
   },
   {
@@ -136,8 +136,8 @@ export function AppSidebar() {
         if (isEmployee && !role.includes('manager')) return false;
       }
 
-      // Gestionnaire Commandes/Fusionné : voir Factures et Devis
-      if (isEmployee && (role.includes('commande') || role.includes('fusionn'))) {
+      // Gestionnaire Stock/Commandes/Fusionné : voir Factures et Devis
+      if (isEmployee && (role.includes('stock') || role.includes('commande') || role.includes('fusionn'))) {
         if (item.href === '/app/factures' || item.href === '/app/devis') return true;
       }
 

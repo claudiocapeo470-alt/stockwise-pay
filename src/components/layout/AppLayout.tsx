@@ -134,7 +134,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         />
       )}
 
-      <div className="flex min-h-screen w-full bg-background">
+      <div className="flex min-h-screen w-full max-w-full bg-background overflow-x-hidden">
         {!isMobile && <AppSidebar />}
         
         <main className="flex-1 flex flex-col">

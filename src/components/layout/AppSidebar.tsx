@@ -136,8 +136,8 @@ export function AppSidebar() {
         if (isEmployee && !role.includes('manager')) return false;
       }
 
-      // Gestionnaire Commandes/Fusionné : voir Factures et Devis
-      if (isEmployee && (role.includes('commande') || role.includes('fusionn'))) {
+      // Gestionnaire Stock/Commandes/Fusionné : voir Factures et Devis
+      if (isEmployee && (role.includes('stock') || role.includes('commande') || role.includes('fusionn'))) {
         if (item.href === '/app/factures' || item.href === '/app/devis') return true;
       }
 

@@ -59,7 +59,7 @@ const ALL_GROUPS: NavGroup[] = [
   {
     label: 'CLIENTS',
     items: [
-      { name: 'Clients', href: '/app/clients', icon: Users, permission: 'sales' },
+      { name: 'Clients', href: '/app/clients', icon: Users, permission: 'customers' },
     ],
   },
   {

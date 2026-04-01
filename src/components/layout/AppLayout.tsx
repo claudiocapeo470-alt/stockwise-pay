@@ -134,10 +134,10 @@ export function AppLayout({ children }: AppLayoutProps) {
         />
       )}
 
-      <div className="flex min-h-screen w-full bg-background">
+      <div className="flex min-h-screen w-full max-w-full bg-background overflow-x-hidden">
         {!isMobile && <AppSidebar />}
         
-        <main className="flex-1 flex flex-col">
+        <main className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
           <header className="sticky top-0 z-40 h-16 border-b border-border bg-background px-4 flex items-center">
             <div className="flex items-center gap-4 w-full">
               {!isMobile && (

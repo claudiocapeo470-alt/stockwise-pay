@@ -149,7 +149,7 @@ export default function Performance() {
       </div>
 
       {/* Toolbar / Filters */}
-      <div className="flex flex-wrap gap-3 items-end">
+      <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-end">
         <div className="space-y-1">
           <label className="text-xs font-medium text-muted-foreground">Période</label>
           <Select value={period} onValueChange={(v: PeriodType) => setPeriod(v)}>

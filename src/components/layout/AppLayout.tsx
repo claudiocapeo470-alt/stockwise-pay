@@ -134,27 +134,27 @@ export function AppLayout({ children }: AppLayoutProps) {
         />
       )}
 
-      <div className="flex min-h-screen w-full max-w-full bg-background overflow-x-hidden">
+      <div className="flex min-h-screen w-full max-w-[100vw] bg-background overflow-x-hidden">
         {!isMobile && <AppSidebar />}
         
-        <main className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
-          <header className="sticky top-0 z-40 h-16 border-b border-border bg-background px-4 flex items-center">
-            <div className="flex items-center gap-4 w-full">
+        <main className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden">
+          <header className="sticky top-0 z-40 h-14 sm:h-16 border-b border-border bg-background px-3 sm:px-4 flex items-center">
+            <div className="flex items-center gap-2 sm:gap-4 w-full min-w-0">
               {!isMobile && (
-                <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 flex items-center justify-center transition-colors" />
+                <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 flex items-center justify-center transition-colors flex-shrink-0" />
               )}
               
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 {isMobile && isHomePage ? (
-                  <h1 className="text-xl font-bold text-foreground tracking-wide">
+                  <h1 className="text-lg font-bold text-foreground tracking-wide truncate">
                     {company?.name?.toUpperCase() || 'STOCKNIX'}
                   </h1>
                 ) : (
-                  <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
+                  <h1 className="text-base sm:text-lg font-semibold text-foreground truncate">{pageTitle}</h1>
                 )}
               </div>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                 {!isMobile && <GlobalSearch />}
                 {isEmployee && !isMobile && (
                   <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground hover:text-foreground" title="Verrouiller">
@@ -169,7 +169,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           </header>
           
           <TrialBanner />
-          <div className={`flex-1 p-4 md:p-6 lg:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
+          <div className={`flex-1 p-3 sm:p-4 md:p-6 lg:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
             {children}
           </div>
         </main>

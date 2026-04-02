@@ -101,7 +101,7 @@ export default function Performance() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
             <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
@@ -149,7 +149,7 @@ export default function Performance() {
       </div>
 
       {/* Toolbar / Filters */}
-      <div className="flex flex-wrap gap-3 items-end">
+      <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-end">
         <div className="space-y-1">
           <label className="text-xs font-medium text-muted-foreground">Période</label>
           <Select value={period} onValueChange={(v: PeriodType) => setPeriod(v)}>

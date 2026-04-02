@@ -118,7 +118,7 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
   const totalSales = chartData.reduce((sum, data) => sum + data.count, 0);
 
   return (
-    <div className="grid gap-5 sm:gap-6 grid-cols-1 md:grid-cols-2">
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
       {/* Évolution du chiffre d'affaires */}
       <Card className="relative overflow-hidden bg-card border-2 border-border/60 border-l-4 border-l-primary hover:shadow-xl transition-all duration-300">
         <CardHeader className="pb-3">
@@ -140,7 +140,7 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 pb-4">
-          <ChartContainer config={chartConfig} className="h-[280px] sm:h-[320px]">
+          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[280px] lg:h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
@@ -197,7 +197,7 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 pb-4">
-          <ChartContainer config={chartConfig} className="h-[280px] sm:h-[320px]">
+          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[280px] lg:h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} barCategoryGap="20%">
                 <defs>

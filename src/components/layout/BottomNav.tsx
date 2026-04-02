@@ -140,20 +140,20 @@ export function BottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border md:hidden">
-        <div className="flex items-center justify-around h-16 px-1">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border md:hidden pb-safe">
+        <div className="flex items-center justify-around h-14 px-1">
           {navigation.map((item) => {
             const active = isActive(item.href);
             return (
               <NavLink
                 key={item.name}
                 to={item.href}
-                className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors duration-200 min-w-0 ${
+                className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors duration-200 min-w-0 ${
                   active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
-                <item.icon className={`h-5 w-5 ${active ? "stroke-[2.5]" : "stroke-2"}`} />
-                <span className={`text-[10px] truncate ${active ? "font-semibold" : "font-normal"}`}>
+                <item.icon className={`h-5 w-5 flex-shrink-0 ${active ? "stroke-[2.5]" : "stroke-2"}`} />
+                <span className={`text-[10px] truncate max-w-[56px] ${active ? "font-semibold" : "font-normal"}`}>
                   {item.label || item.name}
                 </span>
               </NavLink>
@@ -162,9 +162,9 @@ export function BottomNav() {
           {showMenuButton && (
             <button
               onClick={() => setDrawerOpen(true)}
-              className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors duration-200 min-w-0 text-muted-foreground"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors duration-200 min-w-0 text-muted-foreground"
             >
-              <Menu className="h-5 w-5 stroke-2" />
+              <Menu className="h-5 w-5 flex-shrink-0 stroke-2" />
               <span className="text-[10px] font-normal">Menu</span>
             </button>
           )}

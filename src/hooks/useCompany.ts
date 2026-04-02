@@ -28,7 +28,6 @@ export function useCompany() {
       return;
     }
 
-    // If employee, get company from memberInfo instead of creating one
     if (isEmployee && memberInfo?.company_id) {
       supabase
         .from('companies')
@@ -42,7 +41,6 @@ export function useCompany() {
       return;
     }
 
-    // If employee but no company_id yet, wait
     if (isEmployee) {
       setLoading(false);
       return;
@@ -69,17 +67,18 @@ export function useCompany() {
           return;
         }
 
-        // Auto-create company for this user
-        const companyName = profile?.company_name || profile?.first_name 
+        const companyName = profile?.company_name || profile?.first_name
           ? `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim()
           : 'Mon entreprise';
+
+        const { data: generatedCode } = await supabase.rpc('generate_company_code');
 
         const { data: newCompany, error: createError } = await supabase
           .from('companies')
           .insert({
             owner_id: user.id,
             name: companyName,
-            company_code: '',
+            company_code: generatedCode || '',
           })
           .select()
           .single();

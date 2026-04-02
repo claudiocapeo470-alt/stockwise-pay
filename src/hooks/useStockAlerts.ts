@@ -19,16 +19,15 @@ export function useStockAlerts() {
   const [alerts, setAlerts] = useState<StockAlert[]>([]);
   const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
 
-  // Initial load of low stock products
   useEffect(() => {
     if (!effectiveUserId) return;
-    
+
     const loadAlerts = async () => {
       const { data } = await supabase
         .from('products')
         .select('id, name, quantity, min_quantity')
         .eq('user_id', effectiveUserId);
-      
+
       if (data) {
         const lowStock = data
           .filter(p => p.quantity <= p.min_quantity)
@@ -43,15 +42,15 @@ export function useStockAlerts() {
         setAlerts(lowStock);
       }
     };
+
     loadAlerts();
   }, [effectiveUserId]);
 
-  // Realtime subscription
   useEffect(() => {
     if (!effectiveUserId) return;
 
     const channel = supabase
-      .channel('stock-alerts')
+      .channel(`stock-alerts-${effectiveUserId}`)
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
@@ -59,12 +58,13 @@ export function useStockAlerts() {
         filter: `user_id=eq.${effectiveUserId}`,
       }, (payload) => {
         const p = payload.new as any;
+
         if (p.quantity <= p.min_quantity) {
-          const existing = alerts.find(a => a.id === p.id);
-          if (!existing) {
-            toast.warning(`⚠️ Stock bas : ${p.name} — Il reste ${p.quantity} unités`);
-          }
           setAlerts(prev => {
+            const existing = prev.find(a => a.id === p.id);
+            if (!existing) {
+              toast.warning(`⚠️ Stock bas : ${p.name} — Il reste ${p.quantity} unités`);
+            }
             const filtered = prev.filter(a => a.id !== p.id);
             return [...filtered, {
               id: p.id,

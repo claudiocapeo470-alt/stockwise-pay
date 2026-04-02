@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -8,6 +8,8 @@ export function useRealtimeSync(
   ownerId: string | undefined
 ) {
   const queryClient = useQueryClient();
+  const queryKeyRef = useRef(queryKey);
+  queryKeyRef.current = queryKey;
 
   useEffect(() => {
     if (!ownerId) return;
@@ -20,12 +22,12 @@ export function useRealtimeSync(
         table,
         filter: `user_id=eq.${ownerId}`,
       }, () => {
-        queryClient.invalidateQueries({ queryKey });
+        queryClient.invalidateQueries({ queryKey: queryKeyRef.current });
       })
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [table, ownerId, queryClient, JSON.stringify(queryKey)]);
+  }, [table, ownerId, queryClient]);
 }

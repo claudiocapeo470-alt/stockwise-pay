@@ -140,7 +140,7 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 pb-4">
-          <ChartContainer config={chartConfig} className="h-[280px] sm:h-[320px]">
+          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[280px] lg:h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>

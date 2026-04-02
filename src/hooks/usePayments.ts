@@ -58,7 +58,7 @@ export const usePayments = () => {
       if (!effectiveUserId) throw new Error('Non authentifié');
       const { data, error } = await supabase
         .from('payments')
-        .insert([{ ...payment, user_id: effectiveUserId }])
+        .insert([{ ...payment, user_id: effectiveUserId, amount: payment.paid_amount }])
         .select()
         .single();
       if (error) throw error;

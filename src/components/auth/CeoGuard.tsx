@@ -10,15 +10,49 @@ export function CeoGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const check = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session || session.user.email !== CEO_EMAIL) {
-        await supabase.auth.signOut();
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error || !session) {
+          navigate('/ceo', { replace: true });
+          return;
+        }
+
+        if (session.user.email !== CEO_EMAIL) {
+          await supabase.auth.signOut();
+          navigate('/ceo', { replace: true });
+          return;
+        }
+
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+
+        if (roleData?.role !== 'admin') {
+          await supabase.auth.signOut();
+          navigate('/ceo', { replace: true });
+          return;
+        }
+
+        setVerified(true);
+      } catch (err) {
+        console.error('CeoGuard check error:', err);
         navigate('/ceo', { replace: true });
-        return;
       }
-      setVerified(true);
     };
+
     check();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        setVerified(false);
+        navigate('/ceo', { replace: true });
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   if (!verified) {

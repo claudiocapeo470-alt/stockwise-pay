@@ -140,7 +140,7 @@ export function BottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border md:hidden pb-safe">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-primary/5 dark:bg-primary/10 border-t-2 border-primary/20 dark:border-primary/30 md:hidden pb-safe backdrop-blur-sm">
         <div className="flex items-center justify-around h-14 px-1">
           {navigation.map((item) => {
             const active = isActive(item.href);

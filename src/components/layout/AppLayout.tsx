@@ -17,6 +17,7 @@ import { useStockAlerts } from "@/hooks/useStockAlerts";
 import { NotificationCenter } from "./NotificationCenter";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";
+import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 
 interface AppLayoutProps {
   children: React.ReactNode;

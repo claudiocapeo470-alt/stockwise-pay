@@ -425,13 +425,16 @@ export default function AuthSimple() {
 
       {/* Right Side - Auth Forms */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
-        <Link 
-          to="/" 
-          className="absolute top-6 left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Retour
-        </Link>
+        {/* Back button hidden in PWA standalone mode */}
+        {!window.matchMedia('(display-mode: standalone)').matches && (
+          <Link 
+            to="/" 
+            className="absolute top-6 left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Retour
+          </Link>
+        )}
 
         <div className="w-full max-w-md space-y-6">
           {/* Mobile logo */}

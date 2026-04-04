@@ -17,6 +17,7 @@ import { useStockAlerts } from "@/hooks/useStockAlerts";
 import { NotificationCenter } from "./NotificationCenter";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";
+import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -146,9 +147,17 @@ export function AppLayout({ children }: AppLayoutProps) {
               
               <div className="flex-1 min-w-0">
                 {isMobile && isHomePage ? (
-                  <h1 className="text-lg font-bold text-foreground tracking-wide truncate">
-                    {company?.name?.toUpperCase() || 'STOCKNIX'}
-                  </h1>
+                  <div className="flex items-center gap-2">
+                    <img src={stocknixLogoIcon} alt="Stocknix" className="h-8 w-8 object-contain flex-shrink-0" />
+                    <h1 className="text-lg font-bold text-foreground tracking-wide truncate">
+                      {company?.name?.toUpperCase() || 'STOCKNIX'}
+                    </h1>
+                  </div>
+                ) : isMobile ? (
+                  <div className="flex items-center gap-2">
+                    <img src={stocknixLogoIcon} alt="Stocknix" className="h-7 w-7 object-contain flex-shrink-0" />
+                    <h1 className="text-base font-semibold text-foreground truncate">{pageTitle}</h1>
+                  </div>
                 ) : (
                   <h1 className="text-base sm:text-lg font-semibold text-foreground truncate">{pageTitle}</h1>
                 )}

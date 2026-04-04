@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { PinKeypad } from "@/components/auth/PinKeypad";
 import stocknixLogo from '@/assets/stocknix-logo.png';
+import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 import entrepreneursImage from "@/assets/african-entrepreneur-tablet.png";
 
 // Schémas de validation
@@ -424,18 +425,21 @@ export default function AuthSimple() {
 
       {/* Right Side - Auth Forms */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
-        <Link 
-          to="/" 
-          className="absolute top-6 left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Retour
-        </Link>
+        {/* Back button hidden in PWA standalone mode */}
+        {!window.matchMedia('(display-mode: standalone)').matches && (
+          <Link 
+            to="/" 
+            className="absolute top-6 left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Retour
+          </Link>
+        )}
 
         <div className="w-full max-w-md space-y-6">
-          {/* Mobile logo */}
+          {/* Mobile logo — icon version */}
           <div className="lg:hidden text-center">
-            <img src={stocknixLogo} alt="Stocknix" className="h-8 w-auto object-contain mx-auto mb-4" />
+            <img src={stocknixLogoIcon} alt="Stocknix" className="h-14 w-14 object-contain mx-auto mb-2" />
           </div>
 
           <div className="text-center space-y-2">

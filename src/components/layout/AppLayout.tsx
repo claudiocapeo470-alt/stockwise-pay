@@ -149,8 +149,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                 {isMobile && isHomePage ? (
                   <div className="flex items-center gap-2">
                     <img src={stocknixLogoIcon} alt="Stocknix" className="h-8 w-8 object-contain flex-shrink-0" />
-                    <h1 className="text-lg font-bold text-foreground tracking-wide truncate">
-                      {company?.name?.toUpperCase() || 'STOCKNIX'}
+                    <h1 className="text-lg font-bold text-foreground truncate" style={{ fontFamily: "'Futura', 'Trebuchet MS', Arial, sans-serif" }}>
+                      {(() => { const n = company?.name || 'Stocknix'; return n.charAt(0).toUpperCase() + n.slice(1).toLowerCase(); })()}
                     </h1>
                   </div>
                 ) : isMobile ? (

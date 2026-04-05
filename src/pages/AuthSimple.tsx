@@ -439,7 +439,7 @@ export default function AuthSimple() {
         <div className="w-full max-w-md space-y-6">
           {/* Mobile logo — icon version */}
           <div className="lg:hidden text-center">
-            <img src={stocknixLogoIcon} alt="Stocknix" className="h-14 w-14 object-contain mx-auto mb-2" />
+            <img src={stocknixLogoIcon} alt="Stocknix" className="h-20 w-20 object-contain mx-auto mb-3" />
           </div>
 
           <div className="text-center space-y-2">

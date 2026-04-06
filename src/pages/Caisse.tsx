@@ -634,8 +634,10 @@ export default function Caisse() {
 
   // ═══════════════════════════════════════════════════════
   // GUARD: effectiveUserId not yet resolved
-  // ═══════════════════════════════════════════════════════
-  if (!effectiveUserId && !authLoading && !companyLoading) {
+  // For employees: we need auth + company loaded + memberInfo available
+  const isStillLoading = authLoading || companyLoading || (isEmployee && !company);
+  
+  if (!effectiveUserId && !isStillLoading) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
         <div className="text-center space-y-6 max-w-xs px-4 w-full">

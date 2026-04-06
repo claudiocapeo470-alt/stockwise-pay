@@ -29,7 +29,7 @@ const allBottomNav: NavItem[] = [
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes", permission: "sales", module: "pos" },
 ];
 
-const allDrawerNavigation = [
+const allDrawerNavigation: NavSection[] = [
   { section: "PRINCIPAL", items: [
     { name: "Tableau de bord", href: "/app", icon: BarChart3 },
   ]},

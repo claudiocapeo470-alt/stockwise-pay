@@ -4,6 +4,7 @@ import { BarChart3, Package, Scan, ShoppingCart, Menu, Store, ShoppingBag, Clipb
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCompanyModules, type ModuleKey } from "@/hooks/useCompanyModules";
 
 interface NavItem {
   name: string;
@@ -11,13 +12,21 @@ interface NavItem {
   icon: any;
   label?: string;
   permission?: string;
+  module?: ModuleKey;
 }
+
+const getRouteModule = (href: string): ModuleKey | undefined => {
+  if (["/app/caisse", "/app/ventes", "/app/paiements"].some((route) => href.startsWith(route))) return "pos";
+  if (["/app/stocks", "/app/factures", "/app/devis", "/app/livraisons"].some((route) => href.startsWith(route))) return "stock";
+  if (href.startsWith("/app/boutique")) return "boutique";
+  return undefined;
+};
 
 const allBottomNav: NavItem[] = [
   { name: "Dashboard", href: "/app", icon: BarChart3, label: "Accueil" },
-  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock" },
-  { name: "Caisse", href: "/app/caisse", icon: Scan, label: "Caisse", permission: "pos" },
-  { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes", permission: "sales" },
+  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock", module: "stock" },
+  { name: "Caisse", href: "/app/caisse", icon: Scan, label: "Caisse", permission: "pos", module: "pos" },
+  { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes", permission: "sales", module: "pos" },
 ];
 
 const allDrawerNavigation = [
@@ -25,26 +34,29 @@ const allDrawerNavigation = [
     { name: "Tableau de bord", href: "/app", icon: BarChart3 },
   ]},
   { section: "MAGASIN", items: [
-    { name: "Gestion des stocks", href: "/app/stocks", icon: Package, permission: "stock" },
-    { name: "Caisse", href: "/app/caisse", icon: Scan, permission: "pos" },
-    { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart, permission: "sales" },
+    { name: "Gestion des stocks", href: "/app/stocks", icon: Package, permission: "stock", module: "stock" },
+    { name: "Caisse", href: "/app/caisse", icon: Scan, permission: "pos", module: "pos" },
+    { name: "Suivi des ventes", href: "/app/ventes", icon: ShoppingCart, permission: "sales", module: "pos" },
   ]},
   { section: "FACTURATION", items: [
-    { name: "Factures", href: "/app/factures", icon: FileText, permission: "sales" },
-    { name: "Devis", href: "/app/devis", icon: FileCheck, permission: "sales" },
-    { name: "Paiements", href: "/app/paiements", icon: CreditCard, permission: "sales" },
+    { name: "Factures", href: "/app/factures", icon: FileText, permission: "sales", module: "stock" },
+    { name: "Devis", href: "/app/devis", icon: FileCheck, permission: "sales", module: "stock" },
+    { name: "Paiements", href: "/app/paiements", icon: CreditCard, permission: "sales", module: "pos" },
   ]},
   { section: "BOUTIQUE EN LIGNE", items: [
-    { name: "Ma Boutique", href: "/app/boutique/config", icon: Store, permission: "boutique" },
-    { name: "Produits en ligne", href: "/app/boutique/produits", icon: ShoppingBag, permission: "boutique" },
-    { name: "Commandes reçues", href: "/app/boutique/commandes", icon: ClipboardList, permission: "boutique_orders" },
-    { name: "Avis clients", href: "/app/boutique/avis", icon: Star, permission: "boutique" },
+    { name: "Ma Boutique", href: "/app/boutique/config", icon: Store, permission: "boutique", module: "boutique" },
+    { name: "Produits en ligne", href: "/app/boutique/produits", icon: ShoppingBag, permission: "boutique", module: "boutique" },
+    { name: "Commandes reçues", href: "/app/boutique/commandes", icon: ClipboardList, permission: "boutique_orders", module: "boutique" },
+    { name: "Avis clients", href: "/app/boutique/avis", icon: Star, permission: "boutique", module: "boutique" },
+  ]},
+  { section: "CLIENTS", items: [
+    { name: "Clients", href: "/app/clients", icon: Users, permission: "customers" },
   ]},
   { section: "LIVRAISONS", items: [
-    { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries" },
+    { name: "Livraisons", href: "/app/livraisons", icon: Truck, permission: "deliveries", module: "stock" },
   ]},
   { section: "ANALYTIQUE", items: [
-    { name: "Performance", href: "/app/performance", icon: TrendingUp },
+    { name: "Performance", href: "/app/performance", icon: TrendingUp, permission: "reports" },
     { name: "Rapports", href: "/app/rapports", icon: FileText, permission: "reports" },
     { name: "Rapport Employés", href: "/app/rapport-employes", icon: Users, permission: "reports" },
   ]},
@@ -55,7 +67,6 @@ const allDrawerNavigation = [
   ]},
 ];
 
-// Role-specific simplified bottom navs
 const livreurNav: NavItem[] = [
   { name: "Livraisons", href: "/app/livreur", icon: Truck, label: "Livraisons" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
@@ -63,28 +74,29 @@ const livreurNav: NavItem[] = [
 
 const stockManagerNav: NavItem[] = [
   { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
-  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks" },
+  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock", module: "stock" },
+  { name: "Clients", href: "/app/clients", icon: Users, label: "Clients", permission: "customers" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
 ];
 
 const commandesNav: NavItem[] = [
   { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
-  { name: "Commandes", href: "/app/boutique/commandes", icon: ClipboardList, label: "Commandes" },
-  { name: "Produits", href: "/app/boutique/produits", icon: ShoppingBag, label: "Produits" },
+  { name: "Commandes", href: "/app/boutique/commandes", icon: ClipboardList, label: "Commandes", permission: "boutique_orders", module: "boutique" },
+  { name: "Clients", href: "/app/clients", icon: Users, label: "Clients", permission: "customers" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
 ];
 
 const managerNav: NavItem[] = [
   { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
-  { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes" },
-  { name: "Performance", href: "/app/performance", icon: TrendingUp, label: "Stats" },
+  { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes", permission: "sales", module: "pos" },
+  { name: "Stats", href: "/app/performance", icon: TrendingUp, label: "Stats", permission: "reports" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
 ];
 
 const fusionneNav: NavItem[] = [
   { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
-  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks" },
-  { name: "Boutique", href: "/app/boutique/commandes", icon: Store, label: "Boutique" },
+  { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock", module: "stock" },
+  { name: "Boutique", href: "/app/boutique/commandes", icon: Store, label: "Boutique", permission: "boutique_orders", module: "boutique" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
 ];
 
@@ -92,19 +104,23 @@ export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, isEmployee, hasPermission, memberInfo } = useAuth();
+  const { hasModule } = useCompanyModules();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const role = (memberInfo?.member_role_name || '').toLowerCase();
 
-  // Caissier : pas de BottomNav (stand-alone sur /app/caisse)
   if (isEmployee && role.includes('caissier')) return null;
 
-  const filterItems = (items: NavItem[]) => {
-    if (!isEmployee) return items;
-    return items.filter(item => !item.permission || hasPermission(item.permission));
+  const hasAccess = (item: NavItem) => {
+    const itemModule = item.module || getRouteModule(item.href);
+    if (itemModule && !hasModule(itemModule)) return false;
+    if (item.href === '/app/rapport-employes' && isEmployee && !role.includes('manager')) return false;
+    if (item.permission && isEmployee && !hasPermission(item.permission)) return false;
+    return true;
   };
 
-  // Determine which nav items to show based on role
+  const filterItems = (items: NavItem[]) => items.filter(hasAccess);
+
   let navigation: NavItem[];
   let showMenuButton = true;
 
@@ -112,17 +128,13 @@ export function BottomNav() {
     navigation = livreurNav;
     showMenuButton = false;
   } else if (isEmployee && role.includes('manager')) {
-    navigation = managerNav;
-    showMenuButton = true;
+    navigation = filterItems(managerNav);
   } else if (isEmployee && (role.includes('fusionn') || role.includes('fusionne'))) {
-    navigation = fusionneNav;
-    showMenuButton = false;
+    navigation = filterItems(fusionneNav);
   } else if (isEmployee && role.includes('commande')) {
-    navigation = commandesNav;
-    showMenuButton = false;
-  } else if (isEmployee && role.includes('stock') && !role.includes('manager general')) {
-    navigation = stockManagerNav;
-    showMenuButton = false;
+    navigation = filterItems(commandesNav);
+  } else if (isEmployee && role.includes('stock')) {
+    navigation = filterItems(stockManagerNav);
   } else {
     navigation = filterItems(allBottomNav).slice(0, 4);
   }

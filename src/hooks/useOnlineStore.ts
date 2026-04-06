@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCompany } from './useCompany';
 
 export interface OnlineStore {
   id: string;
@@ -28,48 +29,61 @@ export interface OnlineStore {
 }
 
 export function useOnlineStore() {
-  const { user } = useAuth();
+  const { user, isEmployee } = useAuth();
+  const { company } = useCompany();
   const queryClient = useQueryClient();
+  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
 
   const storeQuery = useQuery({
-    queryKey: ['online-store', user?.id],
+    queryKey: ['online-store', effectiveUserId],
     queryFn: async () => {
-      if (!user) return null;
+      if (!effectiveUserId) return null;
       const { data, error } = await supabase
         .from('online_store')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', effectiveUserId)
         .maybeSingle();
       if (error) throw error;
       return data as OnlineStore | null;
     },
-    enabled: !!user,
+    enabled: !!effectiveUserId,
   });
 
   const upsertStore = useMutation({
     mutationFn: async (store: Partial<OnlineStore> & { name: string; slug: string }) => {
-      if (!user) throw new Error('Not authenticated');
+      if (!effectiveUserId) throw new Error('Not authenticated');
       const existing = storeQuery.data;
       if (existing) {
-        const { data, error } = await supabase.from('online_store').update({ ...store, updated_at: new Date().toISOString() }).eq('id', existing.id).select().single();
-        if (error) throw error;
-        return data;
-      } else {
-        const { data, error } = await supabase.from('online_store').insert({ ...store, user_id: user.id }).select().single();
+        const { data, error } = await supabase
+          .from('online_store')
+          .update({ ...store, updated_at: new Date().toISOString() })
+          .eq('id', existing.id)
+          .select()
+          .single();
         if (error) throw error;
         return data;
       }
+      const { data, error } = await supabase
+        .from('online_store')
+        .insert({ ...store, user_id: effectiveUserId })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['online-store'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['online-store', effectiveUserId] }),
   });
 
   const togglePublish = useMutation({
     mutationFn: async () => {
       if (!storeQuery.data) throw new Error('No store');
-      const { error } = await supabase.from('online_store').update({ is_published: !storeQuery.data.is_published, updated_at: new Date().toISOString() }).eq('id', storeQuery.data.id);
+      const { error } = await supabase
+        .from('online_store')
+        .update({ is_published: !storeQuery.data.is_published, updated_at: new Date().toISOString() })
+        .eq('id', storeQuery.data.id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['online-store'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['online-store', effectiveUserId] }),
   });
 
   const checkSlugAvailability = async (slug: string): Promise<boolean> => {
@@ -102,7 +116,7 @@ export function useStoreProducts(storeId?: string) {
       const { error } = await supabase.from('store_products').upsert(rows, { onConflict: 'store_id,product_id' });
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-products'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-products', storeId] }),
   });
 
   const removeProduct = useMutation({
@@ -111,7 +125,7 @@ export function useStoreProducts(storeId?: string) {
       const { error } = await supabase.from('store_products').delete().eq('store_id', storeId).eq('product_id', productId);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-products'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-products', storeId] }),
   });
 
   return { storeProducts: query.data || [], isLoading: query.isLoading, publishProducts, removeProduct };
@@ -136,7 +150,7 @@ export function useStoreOrders(storeId?: string) {
       const { error } = await supabase.from('store_orders').update({ status, updated_at: new Date().toISOString() }).eq('id', orderId);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-orders'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-orders', storeId] }),
   });
 
   return { orders: query.data || [], isLoading: query.isLoading, updateOrderStatus };
@@ -161,7 +175,7 @@ export function useStoreReviews(storeId?: string) {
       const { error } = await supabase.from('store_reviews').update({ is_approved: approved }).eq('id', reviewId);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-reviews'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-reviews', storeId] }),
   });
 
   const deleteReview = useMutation({
@@ -169,7 +183,7 @@ export function useStoreReviews(storeId?: string) {
       const { error } = await supabase.from('store_reviews').delete().eq('id', reviewId);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-reviews'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-reviews', storeId] }),
   });
 
   return { reviews: query.data || [], isLoading: query.isLoading, toggleApproval, deleteReview };

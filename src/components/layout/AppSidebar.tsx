@@ -81,67 +81,41 @@ export function AppSidebar() {
   const location = useLocation();
   const isCollapsed = state === 'collapsed';
 
+  const isModuleActive = (module: 'boutique' | 'pos' | 'stock') => selectedModules.includes(module);
+  const getItemModule = (href: string): 'boutique' | 'pos' | 'stock' | undefined => {
+    if (["/app/caisse", "/app/ventes", "/app/paiements"].some(route => href.startsWith(route))) return 'pos';
+    if (["/app/stocks", "/app/factures", "/app/devis", "/app/livraisons"].some(route => href.startsWith(route))) return 'stock';
+    if (href.startsWith('/app/boutique')) return 'boutique';
+    return undefined;
+  };
+
   const shouldShowGroup = (group: NavGroup): boolean => {
     const role = (memberInfo?.member_role_name || '').toLowerCase();
 
-    // Caissier : ne passe jamais par ici (redirect vers /app/caisse)
     if (isEmployee && role.includes('caissier')) return false;
-
-    // Livreur : aucune sidebar
     if (isEmployee && role.includes('livreur')) return false;
+    if (group.modules && !group.modules.some(isModuleActive)) return false;
 
-    // Manager : voit tout ce qui est actif
-    if (isEmployee && role.includes('manager')) {
-      if (!group.modules) return true;
-      return group.modules.some(m => selectedModules.includes(m));
-    }
-
-    // Gestionnaire Fusionné : stock + boutique
-    if (isEmployee && (role.includes('fusionn') || role.includes('fusionne'))) {
-      if (!group.modules) return true;
-      return group.modules.includes('stock') || group.modules.includes('boutique');
-    }
-
-    // Gestionnaire Stock
-    if (isEmployee && role.includes('stock')) {
-      if (!group.modules) return true;
-      return group.modules.includes('stock');
-    }
-
-    // Gestionnaire Commandes : seulement boutique + principal
-    if (isEmployee && role.includes('commande')) {
-      if (!group.modules) return true;
-      return group.modules.includes('boutique');
-    }
-
-    // Sections sans module : toujours visibles
-    if (!group.modules) return true;
-
-    // Proprietaire : filtre par modules souscrits
-    if (!isEmployee) return group.modules.some(m => selectedModules.includes(m));
-
-    // Employe generique : filtre par permissions
-    return group.modules.some(m => hasPermission(m));
+    return true;
   };
 
   const filterItems = (group: NavGroup): NavItem[] => {
     const role = (memberInfo?.member_role_name || '').toLowerCase();
 
     return group.items.filter(item => {
-      // ownerOnly items: never show to employees
+      const itemModule = getItemModule(item.href);
+
       if (item.ownerOnly && isEmployee) return false;
+      if (itemModule && !isModuleActive(itemModule)) return false;
 
-      // Rapport employés : seulement propriétaire et manager
-      if (item.href === '/app/rapport-employes') {
-        if (isEmployee && !role.includes('manager')) return false;
+      if (item.href === '/app/rapport-employes' && isEmployee && !role.includes('manager')) {
+        return false;
       }
 
-      // Gestionnaire Stock/Commandes/Fusionné : voir Factures et Devis
-      if (isEmployee && (role.includes('stock') || role.includes('commande') || role.includes('fusionn'))) {
-        if (item.href === '/app/factures' || item.href === '/app/devis') return true;
+      if (item.href === '/app/performance' && isEmployee && !hasPermission('reports')) {
+        return false;
       }
 
-      // permission check
       if (!item.permission) return true;
       if (!isEmployee) return true;
       return hasPermission(item.permission);

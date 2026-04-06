@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 
 export interface CompanySettings {
@@ -18,59 +19,61 @@ export interface CompanySettings {
 }
 
 export const useCompanySettings = () => {
-  const { user } = useAuth();
+  const { user, isEmployee } = useAuth();
+  const { company } = useCompany();
   const queryClient = useQueryClient();
+  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
 
   const settingsQuery = useQuery({
-    queryKey: ["company-settings", user?.id],
+    queryKey: ["company-settings", effectiveUserId],
     queryFn: async () => {
-      if (!user?.id) throw new Error("User not authenticated");
+      if (!effectiveUserId) throw new Error("User not authenticated");
 
       const { data, error } = await supabase
         .from("company_settings")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", effectiveUserId)
         .maybeSingle();
 
       if (error) throw error;
       return data as CompanySettings | null;
     },
-    enabled: !!user?.id,
+    enabled: !!effectiveUserId,
   });
 
   const saveSettings = useMutation({
     mutationFn: async (settings: CompanySettings) => {
-      if (!user?.id) throw new Error("User not authenticated");
+      if (!effectiveUserId) throw new Error("User not authenticated");
 
       const { data: existing } = await supabase
         .from("company_settings")
         .select("id")
-        .eq("user_id", user.id)
+        .eq("user_id", effectiveUserId)
         .maybeSingle();
 
       if (existing) {
         const { data, error } = await supabase
           .from("company_settings")
           .update(settings)
-          .eq("user_id", user.id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      } else {
-        const { data, error } = await supabase
-          .from("company_settings")
-          .insert({ ...settings, user_id: user.id })
+          .eq("user_id", effectiveUserId)
           .select()
           .single();
 
         if (error) throw error;
         return data;
       }
+
+      const { data, error } = await supabase
+        .from("company_settings")
+        .insert({ ...settings, user_id: effectiveUserId })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["company-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["company-settings", effectiveUserId] });
       toast.success("Paramètres enregistrés avec succès");
     },
     onError: (error: Error) => {

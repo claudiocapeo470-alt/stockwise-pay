@@ -26,8 +26,10 @@ function getDefaultRoute(memberInfo: any): string {
   const role = memberInfo.member_role_name?.toLowerCase() || '';
   if (role.includes('caissier')) return '/app/caisse';
   if (role.includes('livreur')) return '/app/livreur';
-  if (role.includes('gestionnaire')) return '/app/stocks';
-  if (role.includes('vendeur')) return '/app/boutique/commandes';
+  if (role.includes('manager')) return '/app';
+  if (role.includes('gestionnaire') || role.includes('stock')) return '/app/stocks';
+  if (role.includes('vendeur') || role.includes('commande')) return '/app/boutique/commandes';
+  if (role.includes('fusionn')) return '/app';
   return '/app';
 }
 
@@ -50,9 +52,15 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   // Check route-level permissions for employees
   if (isEmployee) {
     const path = location.pathname;
+    const role = memberInfo?.member_role_name?.toLowerCase() || '';
+    const hasRoleRouteAccess =
+      (path.startsWith('/app/caisse') && role.includes('caissier')) ||
+      (path.startsWith('/app/livreur') && role.includes('livreur'));
+
     for (const [route, perm] of Object.entries(ROUTE_PERMISSIONS)) {
-      if (path.startsWith(route) && !hasPermission(perm)) {
-        return <Navigate to={getDefaultRoute(memberInfo)} replace />
+      if (path.startsWith(route) && !hasPermission(perm) && !hasRoleRouteAccess) {
+        const fallbackRoute = getDefaultRoute(memberInfo)
+        return <Navigate to={fallbackRoute === path ? '/app' : fallbackRoute} replace />
       }
     }
   }

@@ -14,7 +14,7 @@ import {
   Camera, X, User, LogOut,
   CreditCard, Smartphone, DollarSign,
   Menu as MenuIcon, Percent, Hash, StickyNote, DoorOpen, XCircle,
-  FileText, ArrowDownCircle, ArrowUpCircle, Package, ImageOff
+  FileText, ArrowDownCircle, ArrowUpCircle, Package, ImageOff, Loader2
 } from "lucide-react";
 import { Html5Qrcode } from "html5-qrcode";
 import {
@@ -491,7 +491,10 @@ export default function Caisse() {
 
   // ─── Cash Session ─────────────────────────────────────
   const openCashSession = async () => {
-    if (!user) return;
+    if (!user || !effectiveUserId) {
+      toast({ title: "Chargement en cours", description: "Patientez pendant la synchronisation de votre entreprise.", variant: "destructive" });
+      return;
+    }
     // Check for existing open session first
     const { data: existing } = await supabase
       .from('cash_sessions')
@@ -550,7 +553,7 @@ export default function Caisse() {
 
   // Cash movements
   const addMovement = async () => {
-    if (!currentSessionId || !user) return;
+    if (!currentSessionId || !user || !effectiveUserId) return;
     const amount = parseFloat(movementAmount) || 0;
     if (amount <= 0) return;
     const { data, error } = await supabase.from('cash_movements').insert({

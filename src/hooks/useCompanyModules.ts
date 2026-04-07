@@ -65,15 +65,31 @@ export function useCompanyModules() {
   const hasModule = (key: ModuleKey): boolean => selectedModules.includes(key);
 
   const saveModules = async (modules: ModuleKey[], companyName?: string) => {
+    if (!company) {
+      throw new Error("Votre entreprise est en cours d'initialisation. Réessayez dans quelques secondes.");
+    }
+
     const updates: Record<string, unknown> = {
       selected_modules: modules,
       onboarding_completed: true,
     };
+
     if (companyName) {
       updates.name = companyName;
       updates.company_name_set = true;
     }
-    return updateCompany(updates);
+
+    const result = await updateCompany(updates);
+
+    if (!result) {
+      throw new Error("Impossible d'enregistrer votre configuration pour le moment.");
+    }
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    return result;
   };
 
   const getActiveModuleConfigs = (): ModuleConfig[] =>

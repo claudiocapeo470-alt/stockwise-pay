@@ -15,6 +15,11 @@ interface NavItem {
   module?: ModuleKey;
 }
 
+interface NavSection {
+  section: string;
+  items: NavItem[];
+}
+
 const getRouteModule = (href: string): ModuleKey | undefined => {
   if (["/app/caisse", "/app/ventes", "/app/paiements"].some((route) => href.startsWith(route))) return "pos";
   if (["/app/stocks", "/app/factures", "/app/devis", "/app/livraisons"].some((route) => href.startsWith(route))) return "stock";

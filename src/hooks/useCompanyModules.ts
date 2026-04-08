@@ -57,7 +57,7 @@ export function getMatchingPlan(modules: ModuleKey[]) {
 }
 
 export function useCompanyModules() {
-  const { company, loading, updateCompany } = useCompany();
+  const { company, loading, updateCompany, ensureCompany } = useCompany();
 
   const selectedModules: ModuleKey[] = (company?.selected_modules as ModuleKey[]) || [];
   const onboardingCompleted = company?.onboarding_completed ?? false;
@@ -65,7 +65,9 @@ export function useCompanyModules() {
   const hasModule = (key: ModuleKey): boolean => selectedModules.includes(key);
 
   const saveModules = async (modules: ModuleKey[], companyName?: string) => {
-    if (!company) {
+    const activeCompany = company ?? await ensureCompany();
+
+    if (!activeCompany) {
       throw new Error("Votre entreprise est en cours d'initialisation. Réessayez dans quelques secondes.");
     }
 

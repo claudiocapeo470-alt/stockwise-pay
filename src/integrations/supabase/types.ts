@@ -1696,6 +1696,7 @@ export type Database = {
           member_permissions: Json
           member_photo_url: string
           member_role_name: string
+          owner_id: string
         }[]
       }
       verify_reset_code: {

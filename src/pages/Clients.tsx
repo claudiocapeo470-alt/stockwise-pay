@@ -40,7 +40,7 @@ export default function Clients() {
   const [editClient, setEditClient] = useState<Client | null>(null);
   const [form, setForm] = useState({ first_name: '', last_name: '', phone: '', email: '', address: '', notes: '' });
 
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   const fetchClients = async () => {
     if (!effectiveUserId) return;

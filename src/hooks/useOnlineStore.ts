@@ -29,10 +29,10 @@ export interface OnlineStore {
 }
 
 export function useOnlineStore() {
-  const { user, isEmployee } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const { company } = useCompany();
   const queryClient = useQueryClient();
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   const storeQuery = useQuery({
     queryKey: ['online-store', effectiveUserId],

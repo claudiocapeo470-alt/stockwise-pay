@@ -54,11 +54,11 @@ export interface Invoice {
 }
 
 export const useInvoices = (documentType?: 'facture' | 'devis') => {
-  const { user, isEmployee } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const { company } = useCompany();
   const queryClient = useQueryClient();
 
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   const invoicesQuery = useQuery({
     queryKey: ["invoices", effectiveUserId, documentType],
@@ -218,9 +218,9 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
 };
 
 export const useInvoiceDetails = (invoiceId: string | undefined) => {
-  const { user, isEmployee } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const { company } = useCompany();
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   return useQuery({
     queryKey: ["invoice", invoiceId],

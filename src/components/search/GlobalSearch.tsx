@@ -36,7 +36,7 @@ export function GlobalSearch() {
     return () => window.removeEventListener('keydown', down);
   }, []);
 
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   const search = useCallback(async (q: string) => {
     if (!q.trim() || !effectiveUserId) { setResults([]); return; }

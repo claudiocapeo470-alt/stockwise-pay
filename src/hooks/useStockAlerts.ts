@@ -14,10 +14,10 @@ export interface StockAlert {
 }
 
 export function useStockAlerts() {
-  const { user, isEmployee } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const { company } = useCompany();
   const [alerts, setAlerts] = useState<StockAlert[]>([]);
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   useEffect(() => {
     if (!effectiveUserId) return;

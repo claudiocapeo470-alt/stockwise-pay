@@ -29,7 +29,7 @@ interface Client {
 }
 
 export default function Clients() {
-  const { user, isEmployee } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const { company } = useCompany();
   const { formatCurrency } = useCurrency();
   const isMobile = useIsMobile();

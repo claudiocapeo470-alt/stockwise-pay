@@ -560,6 +560,7 @@ export default function Caisse() {
       user_id: effectiveUserId, session_id: currentSessionId, type: movementType, amount,
       category: movementCategory || (movementType === 'expense' ? 'Dépense' : 'Entrée'),
       description: movementDescription || null,
+      created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : null,
     }).select().single();
     if (error) { toast({ title: "Erreur", description: "Impossible d'enregistrer le mouvement", variant: "destructive" }); return; }
     setSessionMovements(prev => [...prev, { id: data.id, type: movementType, amount, category: movementCategory, description: movementDescription, created_at: data.created_at }]);

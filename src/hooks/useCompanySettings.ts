@@ -19,10 +19,10 @@ export interface CompanySettings {
 }
 
 export const useCompanySettings = () => {
-  const { user, isEmployee } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const { company } = useCompany();
   const queryClient = useQueryClient();
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   const settingsQuery = useQuery({
     queryKey: ["company-settings", effectiveUserId],

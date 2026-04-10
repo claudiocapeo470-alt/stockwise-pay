@@ -31,7 +31,7 @@ export const useSales = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   const salesQuery = useQuery({
     queryKey: ['sales', effectiveUserId],

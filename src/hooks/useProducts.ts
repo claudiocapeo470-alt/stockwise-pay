@@ -23,13 +23,14 @@ export interface Product {
 }
 
 export const useProducts = () => {
-  const { user, isEmployee } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const { company } = useCompany();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // CLE : l'ID effectif = owner_id si employe, user.id si proprietaire
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  // Priority: memberInfo.owner_id (instant) > company?.owner_id (async)
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   const productsQuery = useQuery({
     queryKey: ['products', effectiveUserId],

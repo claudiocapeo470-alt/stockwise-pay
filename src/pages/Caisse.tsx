@@ -168,7 +168,7 @@ export default function Caisse() {
   const lastScanCodeRef = useRef("");
 
   // Effective user ID for shared data
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   // ─── Search debounce (200ms) ─────────────────────────
   useEffect(() => {

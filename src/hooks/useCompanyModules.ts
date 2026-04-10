@@ -1,4 +1,5 @@
 import { useCompany } from './useCompany';
+import { supabase } from '@/integrations/supabase/client';
 
 export type ModuleKey = 'boutique' | 'pos' | 'stock';
 
@@ -65,12 +66,14 @@ export function useCompanyModules() {
   const hasModule = (key: ModuleKey): boolean => selectedModules.includes(key);
 
   const saveModules = async (modules: ModuleKey[], companyName?: string) => {
+    // Resolve the company — use current state or fetch/create it
     const activeCompany = company ?? await ensureCompany();
 
     if (!activeCompany) {
       throw new Error("Votre entreprise est en cours d'initialisation. Réessayez dans quelques secondes.");
     }
 
+    // Build updates
     const updates: Record<string, unknown> = {
       selected_modules: modules,
       onboarding_completed: true,
@@ -81,17 +84,27 @@ export function useCompanyModules() {
       updates.company_name_set = true;
     }
 
-    const result = await updateCompany(updates);
+    // Direct DB update using the resolved company ID — don't rely on updateCompany
+    // which depends on React state that may not be synchronized yet
+    const { data, error } = await supabase
+      .from('companies')
+      .update(updates)
+      .eq('id', activeCompany.id)
+      .select('*')
+      .single();
 
-    if (!result) {
-      throw new Error("Impossible d'enregistrer votre configuration pour le moment.");
+    if (error) {
+      throw error;
     }
 
-    if (result.error) {
-      throw result.error;
+    // Also try updateCompany to sync React state
+    try {
+      await updateCompany(updates as any);
+    } catch {
+      // State will sync on next render via useCompany effect
     }
 
-    return result;
+    return { data, error: null };
   };
 
   const getActiveModuleConfigs = (): ModuleConfig[] =>

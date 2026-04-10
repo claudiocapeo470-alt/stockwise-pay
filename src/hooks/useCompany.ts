@@ -23,9 +23,7 @@ const normalizeText = (value: string | null | undefined) => value?.trim() || '';
 
 const getFallbackCompanyName = (profile: { company_name: string | null; first_name: string | null; last_name: string | null } | null) => {
   const explicitCompanyName = normalizeText(profile?.company_name);
-
   if (explicitCompanyName) return explicitCompanyName;
-
   const fullName = `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim();
   return fullName || DEFAULT_COMPANY_NAME;
 };
@@ -36,26 +34,34 @@ const hasExplicitCompanyName = (
 ) => {
   const profileCompanyName = normalizeText(profile?.company_name);
   if (profileCompanyName) return true;
-
   if (company.company_name_set) return true;
-
   const currentName = normalizeText(company.name);
   const fallbackName = getFallbackCompanyName(profile);
-
   return !!currentName && currentName !== DEFAULT_COMPANY_NAME && currentName !== fallbackName;
 };
 
 async function detectLegacyUsage(ownerId: string, companyId: string) {
-  const [productsResult, salesResult, paymentsResult, storeResult, membersResult] = await Promise.all([
+  const [productsResult, salesResult, paymentsResult, storeResult, membersResult, settingsResult] = await Promise.all([
     supabase.from('products').select('id', { count: 'exact', head: true }).eq('user_id', ownerId),
     supabase.from('sales').select('id', { count: 'exact', head: true }).eq('user_id', ownerId),
     supabase.from('payments').select('id', { count: 'exact', head: true }).eq('user_id', ownerId),
     supabase.from('online_store').select('id', { count: 'exact', head: true }).eq('user_id', ownerId),
     supabase.from('company_members').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
+    supabase.from('company_settings').select('id', { count: 'exact', head: true }).eq('user_id', ownerId),
   ]);
 
-  const counts = [productsResult, salesResult, paymentsResult, storeResult, membersResult].map((result) => result.count || 0);
+  const counts = [productsResult, salesResult, paymentsResult, storeResult, membersResult, settingsResult].map((result) => result.count || 0);
   return counts.some((count) => count > 0);
+}
+
+// Also try to sync company name from company_settings if available
+async function syncCompanyNameFromSettings(ownerId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('company_settings')
+    .select('company_name')
+    .eq('user_id', ownerId)
+    .maybeSingle();
+  return data?.company_name?.trim() || null;
 }
 
 export function useCompany() {
@@ -84,12 +90,24 @@ export function useCompany() {
       if (existing) {
         const hasModules = Array.isArray(existing.selected_modules) && existing.selected_modules.length > 0;
         const explicitNameConfigured = hasExplicitCompanyName(existing, profile);
+        
+        // Extended legacy detection: also check company_settings
         const hasLegacyData = !existing.onboarding_completed && (!hasModules || !explicitNameConfigured)
           ? await detectLegacyUsage(user.id, existing.id)
           : false;
+        
         const shouldBypassOnboarding = existing.onboarding_completed || hasModules || explicitNameConfigured || hasLegacyData;
 
         const updates: Partial<Company> = {};
+
+        // Sync company name from company_settings if not yet set
+        if (!existing.company_name_set && !explicitNameConfigured && hasLegacyData) {
+          const settingsName = await syncCompanyNameFromSettings(user.id);
+          if (settingsName) {
+            updates.name = settingsName;
+            updates.company_name_set = true;
+          }
+        }
 
         if (!existing.company_name_set && explicitNameConfigured) {
           updates.company_name_set = true;
@@ -113,8 +131,9 @@ export function useCompany() {
 
           if (updateError) {
             console.error('Error normalizing company onboarding:', updateError);
-            setCompany({ ...existing, ...updates });
-            return { ...existing, ...updates } as Company;
+            const merged = { ...existing, ...updates } as Company;
+            setCompany(merged);
+            return merged;
           }
 
           setCompany(updatedCompany as Company);
@@ -193,7 +212,6 @@ export function useCompany() {
       setLoading(true);
       try {
         const resolvedCompany = await ensureCompany();
-
         if (!cancelled) {
           setCompany(resolvedCompany);
         }

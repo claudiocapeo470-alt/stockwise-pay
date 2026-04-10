@@ -31,6 +31,7 @@ export interface MemberInfo {
   company_id: string;
   company_name: string;
   company_logo_url: string | null;
+  owner_id?: string;
 }
 
 interface AuthContextType {
@@ -76,6 +77,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch { return null; }
   });
   const [loading, setLoading] = useState(true);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   const isAdmin = userRole?.role === 'admin';
   const isEmployee = !!memberInfo;
@@ -90,25 +92,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const hasPermission = (module: string, action: string = 'read'): boolean => {
-    // Admin owner has all permissions
     if (!isEmployee) return true;
     if (!memberInfo?.member_permissions) return false;
     const perms = memberInfo.member_permissions;
-    // Check for "all" permission (Manager role) — but respect explicit false
     if (perms.all === true) {
       if (module === 'settings') return false;
       return true;
     }
-    // CRM permission hierarchy: customers includes customers_basic and customers_minimal
     if (module === 'customers_basic' || module === 'customers_minimal') {
       if (perms.customers === true) return true;
     }
     if (module === 'customers_minimal') {
       if (perms.customers_basic === true) return true;
     }
-    // Check module-level boolean (legacy format: { pos: true })
     if (perms[module] === true) return true;
-    // Check array format: { stock: ["read", "create"] }
     if (Array.isArray(perms[module])) {
       return perms[module].includes(action);
     }
@@ -117,27 +114,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
+      const [{ data: profileData, error: profileError }, { data: roleData }] = await Promise.all([
+        supabase.from('profiles').select('*').eq('user_id', userId).maybeSingle(),
+        supabase.from('user_roles').select('*').eq('user_id', userId).maybeSingle(),
+      ]);
 
       if (profileError) {
         console.error('Error fetching profile:', profileError);
-        return;
       }
-
-      const { data: roleData } = await supabase
-        .from('user_roles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
 
       setProfile(profileData);
       setUserRole(roleData);
+      setProfileLoaded(true);
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setProfileLoaded(true);
     }
   };
 
@@ -148,6 +139,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
+    let initialSessionChecked = false;
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -159,25 +151,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setTimeout(() => {
             fetchProfile(session.user.id);
           }, 0);
-          
-          // Don't auto-redirect from onAuthStateChange — let the login/signup handlers do it
-          // This prevents race conditions and double navigations
         } else {
           setProfile(null);
           setUserRole(null);
           setMemberInfo(null);
+          setProfileLoaded(false);
         }
         
-        setLoading(false);
+        // Only set loading false from onAuthStateChange if initial session was already checked
+        if (initialSessionChecked) {
+          setLoading(false);
+        }
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      initialSessionChecked = true;
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        fetchProfile(session.user.id);
+        // Wait for profile before marking loading=false so downstream hooks have profile data
+        await fetchProfile(session.user.id);
       }
       
       setLoading(false);
@@ -199,7 +194,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     
     if (data?.user && !error) {
-      // Fetch role to determine redirect target
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
@@ -210,7 +204,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
       
-      // Return redirect target instead of navigating here
       const isAdminUser = roleData?.role === 'admin';
       return { error: null, isAdmin: isAdminUser };
     }
@@ -241,7 +234,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (data?.user) {
         const needsConfirmation = !data.user.email_confirmed_at;
-        console.log('✅ Inscription réussie pour:', email, needsConfirmation ? '(confirmation requise)' : '(compte actif)');
         return { error: null, needsConfirmation, user: data.user };
       }
       
@@ -271,6 +263,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  // For owners: don't consider loading done until profile is also loaded
+  const effectiveLoading = loading || (!isEmployee && !!user && !profileLoaded);
+
   const value = {
     user,
     session,
@@ -281,7 +276,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signIn,
     signUp,
     signOut,
-    loading,
+    loading: effectiveLoading,
     isAdmin,
     refreshProfile,
     setMemberInfo,

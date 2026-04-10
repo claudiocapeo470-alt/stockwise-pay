@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Validate PIN against DB
+    // Validate PIN against DB (now returns owner_id too)
     const { data: members, error: validateError } = await supabaseAdmin.rpc(
       "validate_pin_login",
       { _company_code: company_code, _pin_code: pin_code }
@@ -92,15 +92,8 @@ Deno.serve(async (req) => {
         .from("company_members")
         .update({ auth_user_id: authUserId })
         .eq("id", member.member_id);
-    } else {
-      // Get the email of the existing auth user
-      const { data: existingUser } = await supabaseAdmin.auth.admin.getUserById(authUserId);
-      if (existingUser?.user?.email) {
-        // Use existing email
-      }
     }
 
-    // Generate magic link for login
     // Get the email to use for the magic link
     let loginEmail = memberEmail;
     if (authUserId) {
@@ -123,7 +116,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Extract the hashed token from the generated link properties
     const hashedToken = linkData.properties?.hashed_token;
     
     if (!hashedToken) {
@@ -155,6 +147,7 @@ Deno.serve(async (req) => {
           company_id: member.company_id,
           company_name: member.company_name,
           company_logo_url: member.company_logo_url,
+          owner_id: member.owner_id,
         },
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }

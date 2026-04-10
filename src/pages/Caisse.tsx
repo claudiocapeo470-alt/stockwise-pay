@@ -168,7 +168,7 @@ export default function Caisse() {
   const lastScanCodeRef = useRef("");
 
   // Effective user ID for shared data
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   // ─── Search debounce (200ms) ─────────────────────────
   useEffect(() => {
@@ -509,7 +509,7 @@ export default function Caisse() {
       return;
     }
     const amount = parseFloat(openingAmount) || 0;
-    const { data, error } = await supabase.from('cash_sessions').insert({ user_id: effectiveUserId, opening_amount: amount, status: 'open' }).select().single();
+    const { data, error } = await supabase.from('cash_sessions').insert({ user_id: effectiveUserId, opening_amount: amount, status: 'open', created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : null }).select().single();
     if (error) { toast({ title: "Erreur", description: "Impossible d'ouvrir la caisse", variant: "destructive" }); return; }
     setCurrentSessionId(data.id);
     setCashSessionOpen(true);
@@ -560,6 +560,7 @@ export default function Caisse() {
       user_id: effectiveUserId, session_id: currentSessionId, type: movementType, amount,
       category: movementCategory || (movementType === 'expense' ? 'Dépense' : 'Entrée'),
       description: movementDescription || null,
+      created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : null,
     }).select().single();
     if (error) { toast({ title: "Erreur", description: "Impossible d'enregistrer le mouvement", variant: "destructive" }); return; }
     setSessionMovements(prev => [...prev, { id: data.id, type: movementType, amount, category: movementCategory, description: movementDescription, created_at: data.created_at }]);

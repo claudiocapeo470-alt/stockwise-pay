@@ -117,6 +117,7 @@ export default function AuthSimple() {
         company_id: data.member.company_id,
         company_name: data.member.company_name,
         company_logo_url: data.member.company_logo_url || null,
+        owner_id: data.member.owner_id || undefined,
       };
       setMemberInfo(mi);
 

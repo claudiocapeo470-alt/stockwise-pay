@@ -39,13 +39,13 @@ const TYPE_LABELS: Record<string, { label: string; color: string }> = {
 };
 
 export function StockMovementsDialog({ open, onOpenChange, productId, productName }: Props) {
-  const { user, isEmployee } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const { company } = useCompany();
   const [movements, setMovements] = useState<StockMovement[]>([]);
   const [loading, setLoading] = useState(true);
   const [typeFilter, setTypeFilter] = useState<string>('all');
 
-  const effectiveUserId = isEmployee ? company?.owner_id : user?.id;
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
   useEffect(() => {
     if (!open || !effectiveUserId) return;

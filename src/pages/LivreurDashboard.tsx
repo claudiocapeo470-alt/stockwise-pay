@@ -42,12 +42,11 @@ export default function LivreurDashboard() {
   const handleUnlock = async (pin: string): Promise<boolean> => {
     if (!memberInfo) return false;
     try {
-      const { data } = await supabase
-        .from('company_members')
-        .select('pin_code')
-        .eq('id', memberInfo.member_id)
-        .single();
-      if (data?.pin_code === pin) {
+      const { data } = await supabase.rpc('verify_member_pin', {
+        _member_id: memberInfo.member_id,
+        _pin: pin,
+      });
+      if (data === true) {
         setIsLocked(false);
         return true;
       }

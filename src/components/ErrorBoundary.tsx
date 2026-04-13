@@ -55,7 +55,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
               <div className="flex gap-3">
                 <Button
-                  onClick={() => window.location.reload()}
+                  onClick={() => {
+                    this.setState({ hasError: false, error: undefined });
+                    window.location.hash = '';
+                    window.location.reload();
+                  }}
                   className="flex-1"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
@@ -63,7 +67,11 @@ export class ErrorBoundary extends Component<Props, State> {
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => window.location.href = '/app'}
+                  onClick={() => {
+                    this.setState({ hasError: false, error: undefined });
+                    window.history.pushState({}, '', '/app');
+                    window.location.reload();
+                  }}
                   className="flex-1"
                 >
                   <Home className="w-4 h-4 mr-2" />

@@ -62,16 +62,13 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const handleUnlock = async (pin: string): Promise<boolean> => {
     if (!memberInfo) return false;
-    // Verify PIN locally against stored member info
-    // We need to check from localStorage since memberInfo doesn't store pin
     try {
       const { supabase } = await import(/* @vite-ignore */ '@/integrations/supabase/client');
-      const { data } = await supabase
-        .from('company_members')
-        .select('pin_code')
-        .eq('id', memberInfo.member_id)
-        .single();
-      if (data?.pin_code === pin) {
+      const { data } = await supabase.rpc('verify_member_pin', {
+        _member_id: memberInfo.member_id,
+        _pin: pin,
+      });
+      if (data === true) {
         setIsLocked(false);
         resetTimer();
         return true;

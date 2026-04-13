@@ -84,15 +84,11 @@ export function ImageUpload({ currentImageUrl, onImageUpload, disabled }: ImageU
 
       if (updateError) throw updateError;
 
-      onImageUpload(urlData.publicUrl);
+      const urlWithCacheBust = `${urlData.publicUrl}?t=${Date.now()}`;
+      onImageUpload(urlWithCacheBust);
       setPreviewUrl(null);
       setSelectedFile(null);
       toast.success("Photo de profil mise à jour avec succès");
-      
-      // Forcer le rafraîchissement de l'image en ajoutant un timestamp
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error) {
       console.error('Error uploading image:', error);
       toast.error("Erreur lors du téléchargement de l'image");

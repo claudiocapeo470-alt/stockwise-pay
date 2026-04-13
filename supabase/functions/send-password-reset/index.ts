@@ -8,51 +8,68 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-interface PasswordResetRequest {
-  email: string;
-}
-
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { email }: PasswordResetRequest = await req.json();
+    const body = await req.json();
+    const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+
+    // Input validation
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 255) {
+      return new Response(
+        JSON.stringify({ error: "Adresse email invalide", success: false }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
+
+    // Rate limiting: max 3 attempts per email per 15 minutes
+    const { count } = await supabase
+      .from('rate_limit_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('identifier', email)
+      .eq('action_type', 'send_reset')
+      .gte('attempted_at', new Date(Date.now() - 15 * 60 * 1000).toISOString());
+
+    if ((count || 0) >= 3) {
+      // Always return success to prevent email enumeration
+      return new Response(JSON.stringify({
+        success: true,
+        message: "Si un compte existe avec cet email, un code de réinitialisation a été envoyé."
+      }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    // Record attempt
+    await supabase.from('rate_limit_attempts').insert({
+      identifier: email, action_type: 'send_reset'
+    });
 
     // Generate a 6-digit reset code
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    console.log(`Generating password reset code for: ${email} - Code: ${resetCode}`);
-
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
-
-    // Store the reset code in the database
+    // Store the reset code
     const { error: dbError } = await supabase
       .from('password_reset_codes')
-      .insert({
-        email: email,
-        code: resetCode,
-      });
+      .insert({ email, code: resetCode });
 
     if (dbError) {
-      console.error("Error storing reset code:", dbError);
+      console.error("Error storing reset code");
       throw new Error("Erreur lors de la génération du code de réinitialisation");
     }
 
-    // Configuration Resend - plus fiable que SMTP
+    // Send email via Resend
     const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-
     if (!Deno.env.get("RESEND_API_KEY")) {
       throw new Error("RESEND_API_KEY non configurée");
     }
@@ -76,16 +93,12 @@ const handler = async (req: Request): Promise<Response> => {
       </head>
       <body>
         <div class="container">
-          <div class="header">
-            <h1>🔐 Réinitialisation de mot de passe</h1>
-          </div>
+          <div class="header"><h1>🔐 Réinitialisation de mot de passe</h1></div>
           <div class="content">
             <h2>Demande de réinitialisation</h2>
             <p>Nous avons reçu une demande de réinitialisation de mot de passe pour votre compte Stocknix.</p>
             <p>Utilisez le code ci-dessous pour créer un nouveau mot de passe :</p>
-            <div class="code-box">
-              <div class="code">${resetCode}</div>
-            </div>
+            <div class="code-box"><div class="code">${resetCode}</div></div>
             <div class="warning">
               <strong>⚠️ Important :</strong>
               <ul style="margin: 10px 0; padding-left: 20px;">
@@ -94,12 +107,9 @@ const handler = async (req: Request): Promise<Response> => {
                 <li>Gardez ce code confidentiel</li>
               </ul>
             </div>
-            <p>Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe restera inchangé.</p>
+            <p>Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.</p>
           </div>
-          <div class="footer">
-            <p>Cet email a été envoyé par Stocknix<br>
-            Pour votre sécurité, ne partagez jamais ce code avec quelqu'un d'autre.</p>
-          </div>
+          <div class="footer"><p>Cet email a été envoyé par Stocknix</p></div>
         </div>
       </body>
       </html>
@@ -113,32 +123,22 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     if (emailError) {
-      throw new Error(`Erreur Resend: ${emailError.message}`);
+      throw new Error("Erreur lors de l'envoi de l'email");
     }
 
-    console.log(`Email de réinitialisation envoyé avec succès à ${email}`);
-
-    return new Response(JSON.stringify({ 
+    // Uniform response to prevent email enumeration
+    return new Response(JSON.stringify({
       success: true,
-      message: "Code de réinitialisation envoyé par email avec succès."
+      message: "Si un compte existe avec cet email, un code de réinitialisation a été envoyé."
     }), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
-    console.error("Error in send-password-reset function:", error);
+    console.error("Error in send-password-reset function");
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        success: false 
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      JSON.stringify({ error: "Une erreur est survenue. Veuillez réessayer.", success: false }),
+      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
 };

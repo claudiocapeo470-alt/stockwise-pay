@@ -73,7 +73,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [memberInfo, setMemberInfoState] = useState<MemberInfo | null>(() => {
     try {
       const stored = localStorage.getItem('stocknix_member');
-      return stored ? JSON.parse(stored) : null;
+      if (!stored) return null;
+      const parsed = JSON.parse(stored);
+      // Invalidate sessions without owner_id (pre-migration)
+      if (!parsed.owner_id) {
+        localStorage.removeItem('stocknix_member');
+        return null;
+      }
+      return parsed;
     } catch { return null; }
   });
   const [loading, setLoading] = useState(true);
@@ -99,11 +106,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (module === 'settings') return false;
       return true;
     }
+    // Permission implications hierarchy
+    if (module === 'boutique_orders' && perms.boutique === true) return true;
+    if (module === 'deliveries' && perms.stock === true) return true;
+    if (module === 'performance' && (perms.reports === true || perms.all === true)) return true;
+    if (module === 'customers_basic' && perms.customers === true) return true;
+    if (module === 'customers_minimal' && (perms.customers === true || perms.customers_basic === true)) return true;
     if (module === 'customers_basic' || module === 'customers_minimal') {
       if (perms.customers === true) return true;
-    }
-    if (module === 'customers_minimal') {
-      if (perms.customers_basic === true) return true;
     }
     if (perms[module] === true) return true;
     if (Array.isArray(perms[module])) {

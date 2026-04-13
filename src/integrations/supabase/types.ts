@@ -1683,6 +1683,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_active_company_member: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_company_owner: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
       validate_pin_login: {
         Args: { _company_code: string; _pin_code: string }
         Returns: {

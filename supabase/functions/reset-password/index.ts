@@ -7,32 +7,63 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-interface ResetPasswordRequest {
-  email: string;
-  code: string;
-  newPassword: string;
-}
-
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { email, code, newPassword }: ResetPasswordRequest = await req.json();
+    const body = await req.json();
+    const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+    const code = typeof body?.code === "string" ? body.code.trim() : "";
+    const newPassword = typeof body?.newPassword === "string" ? body.newPassword : "";
 
-    console.log(`Processing password reset for email: ${email} with code: ${code}`);
+    // Input validation
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 255) {
+      return new Response(
+        JSON.stringify({ error: "Données invalides", success: false }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
-    // Initialize Supabase client with service role key for admin operations
+    if (!code || !/^\d{6}$/.test(code)) {
+      return new Response(
+        JSON.stringify({ error: "Code de réinitialisation invalide", success: false }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    if (!newPassword || newPassword.length < 6 || newPassword.length > 128) {
+      return new Response(
+        JSON.stringify({ error: "Le mot de passe doit contenir entre 6 et 128 caractères", success: false }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
+
+    // Rate limiting: max 5 verification attempts per email per 15 minutes
+    const { count } = await supabase
+      .from('rate_limit_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('identifier', email)
+      .eq('action_type', 'verify_reset')
+      .gte('attempted_at', new Date(Date.now() - 15 * 60 * 1000).toISOString());
+
+    if ((count || 0) >= 5) {
+      return new Response(
+        JSON.stringify({ error: "Trop de tentatives. Veuillez réessayer dans 15 minutes.", success: false }),
+        { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Record attempt
+    await supabase.from('rate_limit_attempts').insert({
+      identifier: email, action_type: 'verify_reset'
     });
 
     // Verify the reset code
@@ -46,105 +77,59 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     if (codeError || !resetCodeData) {
-      console.error('Invalid or expired reset code:', codeError);
       return new Response(
-        JSON.stringify({ 
-          error: "Code de réinitialisation invalide ou expiré",
-          success: false 
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
+        JSON.stringify({ error: "Code de réinitialisation invalide ou expiré", success: false }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // Find the user by email
+    // Find user by email
     const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
-    
     if (userError) {
-      console.error('Error fetching users:', userError);
       return new Response(
-        JSON.stringify({ 
-          error: "Erreur lors de la recherche de l'utilisateur",
-          success: false 
-        }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
+        JSON.stringify({ error: "Erreur interne", success: false }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
     const user = userData.users.find(u => u.email === email);
-    
     if (!user) {
       return new Response(
-        JSON.stringify({ 
-          error: "Utilisateur non trouvé",
-          success: false 
-        }),
-        {
-          status: 404,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
+        JSON.stringify({ error: "Code de réinitialisation invalide ou expiré", success: false }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // Update the user's password using admin API
+    // Update password
     const { error: updateError } = await supabase.auth.admin.updateUserById(
-      user.id,
-      { password: newPassword }
+      user.id, { password: newPassword }
     );
 
     if (updateError) {
-      console.error('Error updating password:', updateError);
       return new Response(
-        JSON.stringify({ 
-          error: "Erreur lors de la mise à jour du mot de passe",
-          success: false 
-        }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
+        JSON.stringify({ error: "Erreur lors de la mise à jour du mot de passe", success: false }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // Mark the reset code as used
-    const { error: markUsedError } = await supabase
+    // Mark code as used
+    await supabase
       .from('password_reset_codes')
       .update({ used: true })
       .eq('id', resetCodeData.id);
 
-    if (markUsedError) {
-      console.error('Error marking code as used:', markUsedError);
-      // This is not critical, continue
-    }
-
-    console.log(`Password successfully reset for user: ${email}`);
-
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: true,
-      message: "Mot de passe réinitialisé avec succès" 
+      message: "Mot de passe réinitialisé avec succès"
     }), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
-    console.error("Error in reset-password function:", error);
+    console.error("Error in reset-password function");
     return new Response(
-      JSON.stringify({ 
-        error: error.message || "Erreur interne du serveur",
-        success: false 
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      JSON.stringify({ error: "Erreur interne du serveur", success: false }),
+      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
 };

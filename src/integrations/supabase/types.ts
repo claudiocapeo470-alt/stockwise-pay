@@ -19,6 +19,7 @@ export type Database = {
           amount: number
           category: string | null
           created_at: string
+          created_by_member_id: string | null
           description: string | null
           id: string
           proof_url: string | null
@@ -30,6 +31,7 @@ export type Database = {
           amount: number
           category?: string | null
           created_at?: string
+          created_by_member_id?: string | null
           description?: string | null
           id?: string
           proof_url?: string | null
@@ -41,6 +43,7 @@ export type Database = {
           amount?: number
           category?: string | null
           created_at?: string
+          created_by_member_id?: string | null
           description?: string | null
           id?: string
           proof_url?: string | null
@@ -49,6 +52,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "cash_movements_created_by_member_id_fkey"
+            columns: ["created_by_member_id"]
+            isOneToOne: false
+            referencedRelation: "company_members"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "cash_movements_session_id_fkey"
             columns: ["session_id"]
@@ -64,6 +74,7 @@ export type Database = {
           closing_amount: number | null
           closing_notes: string | null
           created_at: string
+          created_by_member_id: string | null
           difference: number | null
           expected_amount: number | null
           id: string
@@ -83,6 +94,7 @@ export type Database = {
           closing_amount?: number | null
           closing_notes?: string | null
           created_at?: string
+          created_by_member_id?: string | null
           difference?: number | null
           expected_amount?: number | null
           id?: string
@@ -102,6 +114,7 @@ export type Database = {
           closing_amount?: number | null
           closing_notes?: string | null
           created_at?: string
+          created_by_member_id?: string | null
           difference?: number | null
           expected_amount?: number | null
           id?: string
@@ -116,7 +129,15 @@ export type Database = {
           total_sales?: number | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "cash_sessions_created_by_member_id_fkey"
+            columns: ["created_by_member_id"]
+            isOneToOne: false
+            referencedRelation: "company_members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       companies: {
         Row: {
@@ -1219,6 +1240,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limit_attempts: {
+        Row: {
+          action_type: string
+          attempted_at: string
+          id: string
+          identifier: string
+        }
+        Insert: {
+          action_type: string
+          attempted_at?: string
+          id?: string
+          identifier: string
+        }
+        Update: {
+          action_type?: string
+          attempted_at?: string
+          id?: string
+          identifier?: string
+        }
+        Relationships: []
+      }
       sales: {
         Row: {
           created_at: string
@@ -1667,6 +1709,7 @@ export type Database = {
     }
     Functions: {
       cleanup_expired_reset_codes: { Args: never; Returns: undefined }
+      cleanup_rate_limit_attempts: { Args: never; Returns: undefined }
       generate_company_code: { Args: never; Returns: string }
       generate_document_number: {
         Args: {
@@ -1706,6 +1749,10 @@ export type Database = {
           member_role_name: string
           owner_id: string
         }[]
+      }
+      verify_member_pin: {
+        Args: { _member_id: string; _pin: string }
+        Returns: boolean
       }
       verify_reset_code: {
         Args: { _code: string; _email: string }

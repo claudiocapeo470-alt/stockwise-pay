@@ -170,7 +170,7 @@ function MembersTab() {
     setFirstName(m.first_name);
     setLastName(m.last_name || "");
     setSelectedRole(m.role?.name || "");
-    setPinCode(m.pin_code);
+    setPinCode("");
     setPhotoUrl(m.photo_url || null);
     setDialogOpen(true);
   };
@@ -199,14 +199,17 @@ function MembersTab() {
     
     try {
       if (editMember) {
-        await updateMember.mutateAsync({
+        const updates: any = {
           id: editMember.id,
           first_name: firstName,
           last_name: lastName || null,
           role_id: matchingRole?.id || null,
-          pin_code: pinCode || editMember.pin_code,
           photo_url: photoUrl || null,
-        });
+        };
+        if (pinCode && pinCode.length === 6) {
+          updates.pin_code = pinCode;
+        }
+        await updateMember.mutateAsync(updates);
         toast.success("Membre mis à jour");
       } else {
         const pinToUse = useCustomPin && customPin.length === 6 ? customPin : undefined;
@@ -372,21 +375,35 @@ function MembersTab() {
         </DialogContent>
       </Dialog>
 
-      {/* View PIN Dialog */}
-      <Dialog open={!!showPinDialog} onOpenChange={() => setShowPinDialog(null)}>
+      {/* Reset PIN Dialog */}
+      <Dialog open={!!showPinDialog} onOpenChange={() => { setShowPinDialog(null); setRevealedPin(false); }}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Code PIN de {showPinDialog?.first_name}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Réinitialiser le PIN de {showPinDialog?.first_name}</DialogTitle></DialogHeader>
           <div className="text-center space-y-4">
-            <div className="text-4xl font-mono font-bold tracking-[0.3em] text-primary bg-muted px-4 py-3 rounded-xl">
-              {revealedPin ? showPinDialog?.pin_code : '••••••'}
-            </div>
+            <p className="text-sm text-muted-foreground">
+              {revealedPin 
+                ? "Nouveau PIN généré. Communiquez-le à l'employé, il ne sera plus visible ensuite."
+                : "Cliquez pour générer un nouveau PIN pour cet employé."}
+            </p>
+            {revealedPin && (
+              <div className="text-4xl font-mono font-bold tracking-[0.3em] text-primary bg-muted px-4 py-3 rounded-xl">
+                {pinCode}
+              </div>
+            )}
             <div className="flex justify-center gap-3">
-              <Button variant="outline" onClick={() => setRevealedPin(!revealedPin)} className="gap-2">
-                {revealedPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                {revealedPin ? 'Masquer' : 'Révéler'}
-              </Button>
-              {revealedPin && showPinDialog && (
-                <Button variant="outline" onClick={() => { navigator.clipboard.writeText(showPinDialog.pin_code); toast.success("PIN copié !"); }} className="gap-2">
+              {!revealedPin ? (
+                <Button onClick={async () => {
+                  if (!showPinDialog) return;
+                  const newPin = generatePin();
+                  await updateMember.mutateAsync({ id: showPinDialog.id, pin_code: newPin } as any);
+                  setPinCode(newPin);
+                  setRevealedPin(true);
+                  toast.success("Nouveau PIN généré !");
+                }} className="gap-2">
+                  <RefreshCw className="h-4 w-4" /> Générer un nouveau PIN
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={() => { navigator.clipboard.writeText(pinCode); toast.success("PIN copié !"); }} className="gap-2">
                   <Copy className="h-4 w-4" /> Copier
                 </Button>
               )}

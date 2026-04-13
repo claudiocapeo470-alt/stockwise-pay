@@ -30,7 +30,6 @@ export interface CompanyMember {
   first_name: string;
   last_name: string | null;
   photo_url: string | null;
-  pin_code: string;
   is_active: boolean;
   role_id: string | null;
   service_id: string | null;

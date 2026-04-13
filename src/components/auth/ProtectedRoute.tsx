@@ -19,6 +19,7 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   '/app/clients': 'customers_minimal',
   '/app/team': 'settings',
   '/app/settings': 'settings',
+  '/app/performance': 'performance',
 };
 
 function getDefaultRoute(memberInfo: any): string {

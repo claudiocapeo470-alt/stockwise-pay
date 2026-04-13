@@ -11,14 +11,15 @@ export function useRoleRedirect() {
     if (!isEmployee || !memberInfo) return;
     const role = (memberInfo.member_role_name || '').toLowerCase();
 
-    // Caissier -> espace caisse stand-alone
-    if (role.includes('caissier') && location.pathname === '/app') {
+    // Caissier -> espace caisse (any non-caisse route)
+    if (role.includes('caissier') && !location.pathname.startsWith('/app/caisse')) {
       navigate('/app/caisse', { replace: true });
       return;
     }
-    // Livreur -> espace livraisons
-    if (role.includes('livreur') && location.pathname === '/app') {
+    // Livreur -> espace livraisons (any non-livreur route)
+    if (role.includes('livreur') && !location.pathname.startsWith('/app/livreur')) {
       navigate('/app/livreur', { replace: true });
+      return;
     }
   }, [isEmployee, memberInfo, navigate, location.pathname]);
 }

@@ -7,6 +7,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { AppLayout } from './components/layout/AppLayout';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { AdminGuard } from './components/auth/AdminGuard';
 import { ModuleGuard } from './components/auth/ModuleGuard';
 import { SubscriptionGuard } from './components/auth/SubscriptionGuard';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -104,7 +105,7 @@ const App = () => (
               <Route path="/auth/reset-password" element={<ResetPassword />} />
               <Route path="/onboarding" element={<ProtectedRoute><ModuleSelection /></ProtectedRoute>} />
               <Route path="/admin/*" element={
-                <ProtectedRoute>
+                <AdminGuard>
                   <AdminLayout>
                     <Routes>
                       <Route path="/" element={<AdminDashboard />} />
@@ -116,13 +117,13 @@ const App = () => (
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </AdminLayout>
-                </ProtectedRoute>
+                </AdminGuard>
               } />
               <Route path="/app/subscription-callback" element={<ProtectedRoute><SubscriptionCallback /></ProtectedRoute>} />
               <Route path="/app/caisse" element={
                 <ProtectedRoute><ModuleGuard><SubscriptionGuard><Caisse /></SubscriptionGuard></ModuleGuard></ProtectedRoute>
               } />
-              <Route path="/app/livreur" element={<ProtectedRoute><LivreurDashboard /></ProtectedRoute>} />
+              <Route path="/app/livreur" element={<ProtectedRoute><SubscriptionGuard><LivreurDashboard /></SubscriptionGuard></ProtectedRoute>} />
               <Route path="/app/*" element={
                 <ProtectedRoute>
                   <ModuleGuard>

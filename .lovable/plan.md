@@ -1,115 +1,143 @@
-
+<final-text>
 Objectif
-- Supprimer définitivement le blocage onboarding pour les anciens comptes.
-- Faire fonctionner l’espace caisse des caissières de façon fiable.
-- Garantir que les actions POS restent synchronisées avec le propriétaire/admin pour le suivi.
+- Supprimer le blocage d’accès à l’espace.
+- Corriger la caisse à 100%.
+- Réduire les rechargements/plantages.
+- Fermer les vraies failles de sécurité encore actives.
 
-Constats trouvés dans le code
-1. Le bypass onboarding est trop limité dans `useCompany.ts`.
-   - Il ne considère surtout que `selected_modules`, `company_name_set` et quelques tables legacy (`products`, `sales`, `payments`, `online_store`, `company_members`).
-   - Un ancien compte qui a déjà configuré son entreprise via `company_settings`, mais sans assez de données transactionnelles, peut être renvoyé à tort vers `/onboarding`.
+Ce que j’ai identifié dans le code
+1. La caisse casse vraiment au moment d’ouvrir la session.
+- `src/pages/Caisse.tsx` insère `created_by_member_id` dans `cash_sessions` et `cash_movements`.
+- Mais le schéma actuel lu côté base ne contient pas encore cette colonne sur ces 2 tables.
+- C’est la cause la plus probable du message visible sur vos captures: “Impossible d’ouvrir la caisse”.
 
-2. `useCompanyModules.saveModules()` a une faiblesse réelle.
-   - Il fait `const activeCompany = company ?? await ensureCompany()`, mais appelle ensuite `updateCompany(updates)`.
-   - Or `updateCompany` dépend de l’état `company` courant, qui peut encore être `null` au moment de l’appel.
-   - Résultat possible: sauvegarde incomplète ou boucle onboarding.
+2. Les PIN employés sont encore stockés et lus en clair.
+- `company_members.pin_code` est lisible.
+- Le code UI lit encore ce PIN dans :
+  - `src/components/layout/AppLayout.tsx`
+  - `src/pages/LivreurDashboard.tsx`
+  - `src/hooks/useTeam.ts`
+  - `src/pages/TeamManagement.tsx`
+- Tant que ce fonctionnement existe, le finding sécurité “PIN exposé” restera vrai.
 
-3. L’accès caisse employé dépend encore trop de la résolution tardive de `company.owner_id`.
-   - Aujourd’hui l’ID effectif employé = `company?.owner_id`.
-   - Si la compagnie tarde à charger, l’espace caisse peut rester bloqué ou instable.
+3. Les fonctions de reset mot de passe sont encore incomplètes côté sécurité.
+- `supabase/functions/send-password-reset/index.ts` logue le code.
+- `supabase/functions/reset-password/index.ts` logue email + code.
+- Pas de vraie validation d’entrée.
+- Pas de rate limiting.
 
-4. La session employé PIN ne transporte pas encore `owner_id`.
-   - `validate_pin_login` renvoie `company_id`, `company_name`, etc., mais pas `owner_id`.
-   - Cela oblige plusieurs écrans à attendre une requête supplémentaire pour savoir sur quelles données travailler.
+4. Les membres ne peuvent toujours pas lire les notifications.
+- Le scan confirme que `notifications` n’autorise encore que le propriétaire.
+- Pourtant l’UI `NotificationCenter.tsx` charge les notifications par `company_id`.
 
-5. Le suivi POS n’est pas encore complet côté admin.
-   - `sales` enregistre déjà `created_by_member_id`.
-   - Mais `cash_sessions` et `cash_movements` ne portent pas visiblement l’attribution du membre, donc le suivi caisse par employée reste incomplet.
+5. Il reste des causes de rechargement/instabilité.
+- `window.location.reload()` dans `ImageUpload.tsx` et `ErrorBoundary.tsx`
+- `window.location.href` à plusieurs endroits
+- cela casse le flux SPA et peut donner l’impression que “la page recharge seule”.
+
+6. L’onboarding doit être finalisé une bonne fois.
+- Les corrections précédentes vont dans le bon sens, mais il faut sécuriser le dernier maillon:
+  - anciens comptes ne doivent plus jamais revenir sur onboarding
+  - nouveaux comptes ne doivent le voir qu’une seule fois
+  - la décision d’accès doit attendre un état auth/company totalement stabilisé
 
 Plan d’implémentation
-1. Fiabiliser l’initialisation auth + profil
-- Revoir `AuthContext.tsx` pour que l’application ne sorte pas trop tôt de l’état de chargement.
-- Attendre correctement la restauration de session + chargement profil avant de laisser la navigation protégée décider.
-- Garder le comportement “pas de await bloquant dans `onAuthStateChange`”, mais éviter les états intermédiaires qui déclenchent de mauvaises redirections.
-
-2. Corriger définitivement le bypass onboarding pour anciens comptes
-- Étendre la logique de normalisation dans `useCompany.ts`.
-- Considérer comme “déjà configuré” un compte qui possède au moins un de ces signaux:
-  - `selected_modules` déjà remplis
-  - `onboarding_completed = true`
-  - nom d’entreprise explicite sur `companies`
-  - configuration présente dans `company_settings`
-  - données métier existantes (legacy)
-- Synchroniser `companies.name` / `company_name_set` depuis `company_settings` si l’ancien compte avait déjà renseigné ses infos ailleurs.
-- Marquer automatiquement `onboarding_completed = true` et activer les modules par défaut pour les anciens comptes reconnus.
-- Faire en sorte qu’un utilisateur ayant déjà rempli ses infos ne repasse plus jamais par l’onboarding à la connexion.
-
-3. Corriger la sauvegarde de l’onboarding pour les nouveaux comptes
-- Refaire `useCompanyModules.saveModules()` pour qu’il mette à jour la société résolue réellement, même si l’état React `company` n’est pas encore synchronisé.
-- Éviter toute dépendance fragile à `company === null` juste après `ensureCompany()`.
-- Ajuster `ModuleSelection.tsx` pour que:
-  - les anciens comptes sortent directement vers `/app`
-  - les nouveaux comptes ne voient l’onboarding qu’une seule fois
-  - aucun retour automatique à l’étape 2 ne puisse se reproduire après sauvegarde.
-
-4. Stabiliser l’accès caisse des caissières
-- Étendre `MemberInfo` avec `owner_id`.
-- Modifier la fonction SQL `validate_pin_login` pour renvoyer `companies.owner_id`.
-- Mettre à jour l’edge function `supabase/functions/pin-login/index.ts` pour inclure `owner_id` dans la réponse.
-- Stocker `owner_id` dans `AuthContext` / localStorage membre.
-- Ensuite, faire passer tous les écrans employés critiques sur:
-  - `memberInfo.owner_id` en priorité
-  - `company?.owner_id` en fallback
-- Appliquer cela au minimum dans:
-  - `src/pages/Caisse.tsx`
-  - `src/hooks/useProducts.ts`
-  - `src/hooks/useSales.ts`
-  - `src/hooks/useCompanySettings.ts`
-- Résultat attendu: la caissière ouvre son espace sans attendre une résolution tardive de la compagnie.
-
-5. Compléter la synchronisation admin/manager pour la caisse
-- Créer une migration pour ajouter `created_by_member_id` sur:
+1. Corriger définitivement la caisse
+- Créer une migration pour ajouter `created_by_member_id` à :
   - `cash_sessions`
   - `cash_movements`
-- À l’ouverture de caisse et lors des mouvements, enregistrer l’employée qui agit.
-- Conserver `user_id = owner_id` pour l’unification entreprise, mais ajouter la traçabilité membre pour le suivi.
-- Mettre à jour l’UI caisse pour afficher le bon nom caissière depuis `memberInfo`, pas depuis le profil propriétaire.
-- Vérifier que les politiques RLS existantes restent compatibles avec ces nouvelles colonnes et le modèle multi-tenant.
+- Ajouter les clés étrangères vers `company_members(id)`.
+- Vérifier que les policies RLS actuelles restent compatibles.
+- Garder `user_id = owner_id` pour la synchronisation admin, et `created_by_member_id` pour la traçabilité employée.
+- Revalider dans `Caisse.tsx` :
+  - ouverture
+  - mouvements entrée/dépense
+  - fermeture
+  - vente pendant session ouverte
 
-6. Validation complète
-- Tester ancien propriétaire:
-  - connexion
-  - arrivée directe sur `/app`
-  - aucun retour onboarding
-- Tester nouveau propriétaire:
-  - inscription
-  - onboarding 1 seule fois
-  - accès normal ensuite
-- Tester caissière:
-  - login PIN
-  - redirection vers `/app/caisse`
-  - ouverture de caisse
-  - vente
-  - mouvement entrée/dépense
-  - données visibles côté admin/manager
-- Vérifier mobile sur le parcours auth → app → caisse.
+2. Fermer la faille PIN employés
+- Migrer de `pin_code` en clair vers un PIN hashé.
+- Ajouter une fonction SQL sécurisée de vérification PIN (`SECURITY DEFINER`) au lieu de lire le PIN brut.
+- Adapter `validate_pin_login` pour vérifier le hash et continuer à renvoyer `owner_id`.
+- Refactorer :
+  - `AppLayout.tsx`
+  - `LivreurDashboard.tsx`
+  - `useTeam.ts`
+  - `TeamManagement.tsx`
+- Nouveau comportement:
+  - le PIN n’est plus lisible depuis l’UI
+  - l’owner peut générer/réinitialiser un PIN
+  - le PIN n’est affiché qu’au moment de la création/réinitialisation, pas relisible ensuite
 
-Détails techniques
-- Fichiers front principaux:
-  - `src/contexts/AuthContext.tsx`
-  - `src/hooks/useCompany.ts`
-  - `src/hooks/useCompanyModules.ts`
-  - `src/pages/ModuleSelection.tsx`
-  - `src/pages/Caisse.tsx`
-  - `src/hooks/useProducts.ts`
-  - `src/hooks/useSales.ts`
-  - `src/hooks/useCompanySettings.ts`
-- Backend / Supabase:
-  - migration SQL pour `validate_pin_login`
-  - migration SQL pour `cash_sessions` / `cash_movements`
-  - `supabase/functions/pin-login/index.ts`
+3. Finaliser l’accès sans boucle onboarding
+- Renforcer `useCompany.ts` pour reconnaître comme “déjà configuré” :
+  - société existante
+  - `company_settings`
+  - nom d’entreprise déjà défini
+  - modules existants
+  - données legacy
+- Sécuriser `ModuleSelection.tsx` pour expulser immédiatement tout compte déjà configuré vers `/app`.
+- Stabiliser `AuthContext.tsx` / `AuthSimple.tsx` pour ne jamais décider trop tôt entre `/onboarding` et `/app`.
+- Vérifier spécialement :
+  - ancien propriétaire
+  - nouveau propriétaire
+  - employé PIN
 
-Résultat visé
-- Ancien utilisateur: connexion directe à son espace sans ressaisir entreprise ni formule.
-- Nouveau utilisateur: onboarding propre, une seule fois.
-- Caissière: accès caisse fiable, actions synchronisées à l’entreprise, suivi complet côté admin/manager.
+4. Supprimer les rechargements inutiles
+- Remplacer les `window.location.href` par la navigation React.
+- Supprimer les `window.location.reload()` évitables.
+- Remplacer le refresh de photo profil par mise à jour d’état/query.
+- Garder `ErrorBoundary` utile, mais sans provoquer un flux brutal qui masque les vraies erreurs.
+
+5. Corriger les notifications membres
+- Ajouter une policy SELECT pour les membres actifs sur `notifications`.
+- Ajouter si besoin une policy UPDATE limitée au marquage en lu pour leur entreprise.
+- Laisser la gestion complète au propriétaire, mais autoriser la lecture côté équipe.
+- Vérifier `NotificationCenter.tsx` sur owner + employé.
+
+6. Corriger les Edge Functions de reset mot de passe
+- Ajouter validation stricte avec `zod` dans :
+  - `send-password-reset`
+  - `reset-password`
+- Retirer tous les logs sensibles.
+- Ajouter un système de rate limiting en base:
+  - table dédiée des tentatives
+  - limite envoi email
+  - limite vérification code
+- Uniformiser les réponses pour éviter l’énumération d’emails.
+
+7. Nettoyage sécurité final
+- Relancer les scans/linter après correctifs.
+- Corriger les findings encore réellement actifs.
+- Pour les warnings non corrigeables par code app uniquement, appliquer les actions dashboard:
+  - activer “Leaked Password Protection”
+  - mettre à jour Postgres
+  - traiter l’extension dans `public` si le linter confirme laquelle est concernée
+
+Fichiers principaux à modifier
+- `src/pages/Caisse.tsx`
+- `src/hooks/useCompany.ts`
+- `src/hooks/useCompanyModules.ts`
+- `src/contexts/AuthContext.tsx`
+- `src/pages/AuthSimple.tsx`
+- `src/components/layout/AppLayout.tsx`
+- `src/pages/LivreurDashboard.tsx`
+- `src/hooks/useTeam.ts`
+- `src/pages/TeamManagement.tsx`
+- `src/components/layout/NotificationCenter.tsx`
+- `src/components/profile/ImageUpload.tsx`
+- `src/components/ErrorBoundary.tsx`
+- `supabase/functions/pin-login/index.ts`
+- `supabase/functions/send-password-reset/index.ts`
+- `supabase/functions/reset-password/index.ts`
+- nouvelles migrations SQL pour PIN hash, caisse, notifications, rate limit
+
+Validation finale attendue
+- Ancien compte propriétaire → connexion directe sur `/app`, jamais onboarding.
+- Nouveau compte → onboarding une seule fois.
+- Caissière → login PIN → `/app/caisse` → ouverture caisse sans erreur → vente → mouvement → fermeture.
+- Admin/propriétaire → voit le suivi caisse par employée.
+- Notifications lisibles par membres.
+- Plus de rechargement brutal dans le flux normal.
+- Scans sécurité réduits au minimum, avec le reste traité côté dashboard Supabase.
+</final-text>

@@ -1,8 +1,10 @@
 User-agent: *
 Allow: /
+Allow: /boutique/
 Disallow: /app/
 Disallow: /admin/
 Disallow: /ceo/
+Disallow: /auth
 
 Sitemap: https://www.stocknix.com/sitemap.xml
 Host: www.stocknix.com

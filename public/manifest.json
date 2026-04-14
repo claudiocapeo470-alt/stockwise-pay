@@ -1,8 +1,8 @@
 {
-  "name": "Stocknix - Gestion de stock et caisse",
+  "name": "Stocknix - Gestion de stock, caisse & boutique en ligne",
   "short_name": "Stocknix",
-  "description": "Logiciel complet de gestion de stock, caisse, facturation et analytics pour PME/TPE",
-  "start_url": "/auth",
+  "description": "Logiciel complet de gestion de stock, caisse POS, facturation, boutique en ligne et analytics pour PME/TPE",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0A1A3B",
@@ -13,13 +13,25 @@
       "src": "/stocknix-logo-official.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/stocknix-logo-official.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/stocknix-logo-official.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/stocknix-logo-official.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["business", "finance", "productivity"],

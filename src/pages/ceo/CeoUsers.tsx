@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Search, Edit2, Trash2, Shield, Clock, Loader2 } from 'lucide-react';
+import { Search, Edit2, Trash2, Shield, Clock, Loader2, Download } from 'lucide-react';
 
 interface UserRow {
   user_id: string;

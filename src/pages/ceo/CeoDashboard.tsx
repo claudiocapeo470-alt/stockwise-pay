@@ -107,7 +107,7 @@ export default function CeoDashboard() {
       </div>
 
       {/* Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {METRIC_CARDS.map(m => (
           <div key={m.label} className="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-4 space-y-2">
             <div className="flex items-center justify-between">

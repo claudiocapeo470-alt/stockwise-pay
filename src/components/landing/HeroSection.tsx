@@ -59,10 +59,19 @@ const HeroSection = () => {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto mb-8">
-              Stocks, ventes, factures et analytics réunis dans une plateforme 
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto mb-6">
+              Stocks, ventes, factures, boutique en ligne et analytics réunis dans une plateforme 
               intuitive et puissante. Conçu pour les entrepreneurs africains.
             </p>
+
+            {/* Feature Tags */}
+            <div className="flex flex-wrap gap-2 justify-center mb-8">
+              {['Gestion de stock', 'Caisse POS', 'Facturation', 'Boutique en ligne', 'Analytics', 'Mobile Money'].map((feature) => (
+                <span key={feature} className="px-3 py-1 rounded-full bg-muted/60 text-xs font-medium text-muted-foreground border border-border/40">
+                  {feature}
+                </span>
+              ))}
+            </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

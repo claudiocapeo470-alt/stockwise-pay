@@ -139,6 +139,24 @@ export type Database = {
           },
         ]
       }
+      ceo_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json | null
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json | null
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json | null
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           company_code: string

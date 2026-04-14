@@ -175,7 +175,7 @@ export default function Fonctionnalites() {
       {/* Footer */}
       <footer className="py-8 px-4 sm:px-6 border-t border-border">
         <div className="container mx-auto text-center text-sm text-muted-foreground">
-          <p>© 2025 Stocknix par DESCHNIX. Tous droits réservés.</p>
+          <p>© 2026 Stocknix par DESCHNIX. Tous droits réservés.</p>
         </div>
       </footer>
     </div>

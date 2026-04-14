@@ -126,9 +126,23 @@ export default function CeoUsers() {
           <h2 className="text-xl font-bold text-white">Utilisateurs</h2>
           <p className="text-sm text-slate-400">{users.length} utilisateurs inscrits</p>
         </div>
-        <div className="relative max-w-xs w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-          <Input className="pl-9 bg-slate-800/60 border-slate-700/40 text-white placeholder:text-slate-600" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)} />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => {
+            const headers = ['Email', 'Prénom', 'Nom', 'Entreprise', 'Rôle', 'Plan', 'Date inscription'];
+            const rows = filtered.map(u => [u.email || '', u.first_name || '', u.last_name || '', u.company_name || '', u.role || 'user', u.plan_name || 'Aucun', new Date(u.created_at).toLocaleDateString('fr')]);
+            const csv = [headers, ...rows].map(r => r.map(c => `"${(c || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `stocknix-users-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+            URL.revokeObjectURL(url);
+          }} className="gap-2 bg-slate-800/60 border-slate-700/40 text-slate-300 hover:text-white">
+            <Download className="h-4 w-4" /> Exporter CSV
+          </Button>
+          <div className="relative max-w-xs w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+            <Input className="pl-9 bg-slate-800/60 border-slate-700/40 text-white placeholder:text-slate-600" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
         </div>
       </div>
 

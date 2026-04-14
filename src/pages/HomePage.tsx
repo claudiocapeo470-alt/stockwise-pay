@@ -1,7 +1,7 @@
 import HeaderSection from "@/components/landing/HeaderSection";
 import HeroSection from "@/components/landing/HeroSection";
 import BusinessTypesSection from "@/components/landing/BusinessTypesSection";
-import { StocksSection, POSSection, InvoicingSection, AnalyticsSection } from "@/components/landing/FeatureSections";
+import { StocksSection, POSSection, InvoicingSection, AnalyticsSection, BoutiqueSection } from "@/components/landing/FeatureSections";
 import { SyncSection, SecuritySection } from "@/components/landing/SyncSecuritySection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import CTASection from "@/components/landing/CTASection";
@@ -19,6 +19,7 @@ const HomePage = () => {
         <POSSection />
         <InvoicingSection />
         <AnalyticsSection />
+        <BoutiqueSection />
         <SyncSection />
         <SecuritySection />
         <HowItWorksSection />

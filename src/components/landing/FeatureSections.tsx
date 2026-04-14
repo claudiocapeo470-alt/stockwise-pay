@@ -480,3 +480,74 @@ export const AnalyticsSection = () => {
     </section>
   );
 };
+
+// Section 5: Boutique En Ligne
+export const BoutiqueSection = () => {
+  const features = [
+    { icon: Package, title: "Boutique personnalisée", description: "URL unique, logo, couleurs, thèmes" },
+    { icon: CreditCard, title: "Produits en ligne", description: "Prix spéciaux, photos, mise en avant" },
+    { icon: Receipt, title: "Commandes reçues", description: "Alertes temps réel, suivi livraison" },
+    { icon: Smartphone, title: "Avis clients", description: "Ratings et commentaires vérifiés" },
+  ];
+
+  return (
+    <section className="relative py-12 sm:py-16 overflow-hidden">
+      <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
+        <GridPattern className="opacity-30" />
+        <GlowOrb color="secondary" size="xl" className="absolute -left-40 top-1/4" />
+      </ParallaxContainer>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <AnimatedEntry type="fade-zoom">
+            <div>
+              <span className="inline-block px-4 py-2 rounded-full bg-secondary/10 text-sm font-medium text-secondary mb-4">
+                🛍️ Boutique En Ligne
+              </span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+                <span className="text-foreground">Vendez </span>
+                <span className="text-gradient">en ligne</span>
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Créez votre boutique en ligne en quelques clics. Recevez des commandes,
+                gérez les livraisons et les avis clients depuis un seul tableau de bord.
+              </p>
+              
+              <StaggerContainer className="grid sm:grid-cols-2 gap-4" staggerDelay={0.1}>
+                {features.map((feature, index) => (
+                  <StaggerItem key={index}>
+                    <FeatureCard {...feature} delay={index * 0.2} />
+                  </StaggerItem>
+                ))}
+              </StaggerContainer>
+            </div>
+          </AnimatedEntry>
+
+          <DisplacementMotion direction="up" distance={30}>
+            <AnimatedEntry type="fade-zoom" delay={0.2}>
+              <div className="relative">
+                <DeviceMockup type="mobile">
+                  <div className="p-4 min-h-[300px]">
+                    <div className="text-center mb-4">
+                      <div className="text-xs text-muted-foreground">Ma Boutique</div>
+                      <div className="text-lg font-bold text-foreground">boutique.stocknix.app</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {["Riz 5kg", "Huile 1L", "Sucre", "Lait"].map((p, i) => (
+                        <div key={i} className="p-2 rounded-lg bg-muted/30 text-center">
+                          <div className="w-full h-12 bg-muted/50 rounded-lg mb-1" />
+                          <div className="text-[10px] font-medium text-foreground">{p}</div>
+                          <div className="text-[9px] text-primary font-semibold">En stock</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </DeviceMockup>
+              </div>
+            </AnimatedEntry>
+          </DisplacementMotion>
+        </div>
+      </div>
+    </section>
+  );
+};

@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { 
   ChevronLeft, Package, ShoppingCart, FileText, DollarSign, 
   BarChart3, Bell, Download, Upload, Barcode, Smartphone,
-  TrendingUp, Users, CheckCircle2, AlertTriangle
+  TrendingUp, Users, CheckCircle2, AlertTriangle,
+  Store, ShoppingBag, ClipboardList, Star, Truck, Link2
 } from "lucide-react";
 
 export default function Fonctionnalites() {
@@ -70,6 +71,18 @@ export default function Fonctionnalites() {
         { icon: <Download />, text: "Export rapports personnalisés" },
         { icon: <Users />, text: "Analyse par client et produit" },
         { icon: <DollarSign />, text: "Suivi de rentabilité" }
+      ]
+    },
+    {
+      category: "Boutique En Ligne",
+      icon: <Store className="h-10 w-10" />,
+      items: [
+        { icon: <CheckCircle2 />, text: "Boutique en ligne personnalisée avec URL unique" },
+        { icon: <ShoppingBag />, text: "Publication de produits avec photos et prix" },
+        { icon: <ClipboardList />, text: "Réception et gestion des commandes en ligne" },
+        { icon: <Star />, text: "Système d'avis et évaluations clients" },
+        { icon: <Truck />, text: "Gestion des frais de livraison et suivi" },
+        { icon: <Link2 />, text: "Partage par lien, WhatsApp, réseaux sociaux" }
       ]
     },
     {

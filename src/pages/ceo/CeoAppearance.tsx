@@ -27,9 +27,9 @@ export default function CeoAppearance() {
 
   const loadFromDB = async () => {
     try {
-      const { data } = await supabase.from('ceo_settings' as any).select('value').eq('key', 'appearance').single();
-      if (data?.value) {
-        setAppearance({ ...DEFAULT_APPEARANCE, ...(data.value as any) });
+      const { data } = await supabase.from('ceo_settings' as any).select('*').eq('key', 'appearance').single();
+      if (data && (data as any).value) {
+        setAppearance({ ...DEFAULT_APPEARANCE, ...((data as any).value) });
       }
     } catch { /* defaults */ }
     setLoading(false);

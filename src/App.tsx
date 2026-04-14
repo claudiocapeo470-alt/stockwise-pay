@@ -64,6 +64,7 @@ import CeoLanding from './pages/ceo/CeoLanding';
 import CeoAnalytics from './pages/ceo/CeoAnalytics';
 import CeoNotifications from './pages/ceo/CeoNotifications';
 import CeoSettings from './pages/ceo/CeoSettings';
+import CeoAppearance from './pages/ceo/CeoAppearance';
 import { CeoGuard } from './components/auth/CeoGuard';
 import { CeoLayout } from './components/layout/CeoLayout';
 
@@ -173,7 +174,7 @@ const App = () => (
               <Route path="/ceo/analytics" element={<CeoGuard><CeoLayout><CeoAnalytics /></CeoLayout></CeoGuard>} />
               <Route path="/ceo/notifications" element={<CeoGuard><CeoLayout><CeoNotifications /></CeoLayout></CeoGuard>} />
               <Route path="/ceo/settings" element={<CeoGuard><CeoLayout><CeoSettings /></CeoLayout></CeoGuard>} />
-              <Route path="/ceo/appearance" element={<CeoGuard><CeoLayout><CeoSettings /></CeoLayout></CeoGuard>} />
+              <Route path="/ceo/appearance" element={<CeoGuard><CeoLayout><CeoAppearance /></CeoLayout></CeoGuard>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

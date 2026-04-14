@@ -59,6 +59,15 @@ export default function AuthSimple() {
   const [resetEmail, setResetEmail] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // noindex for auth pages - prevent SEO indexing
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    return () => { document.head.removeChild(meta); };
+  }, []);
+
   // Redirection si déjà connecté
   useEffect(() => {
     if (user && !loading) {

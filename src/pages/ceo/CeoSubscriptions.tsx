@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Search, Plus, Ban, Loader2 } from 'lucide-react';
+import { Search, Plus, Ban, Loader2, Download } from 'lucide-react';
 
 type Sub = {
   id: string; email: string; user_id: string | null; plan_name: string | null; subscribed: boolean;
@@ -107,8 +107,21 @@ export default function CeoSubscriptions() {
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <h2 className="text-xl font-bold text-white">Abonnements</h2>
-
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <h2 className="text-xl font-bold text-white">Abonnements</h2>
+        <Button variant="outline" size="sm" onClick={() => {
+          const headers = ['Email', 'Plan', 'Statut', 'Prix', 'Fin abonnement', 'Date création'];
+          const rows = filtered.map(s => [s.email, s.plan_name || '—', getStatus(s), s.plan_price?.toString() || '0', s.subscription_end ? new Date(s.subscription_end).toLocaleDateString('fr') : '—', new Date(s.created_at).toLocaleDateString('fr')]);
+          const csv = [headers, ...rows].map(r => r.map(c => `"${(c || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+          const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = `stocknix-subscriptions-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+          URL.revokeObjectURL(url);
+        }} className="gap-2 bg-slate-800/60 border-slate-700/40 text-slate-300 hover:text-white">
+          <Download className="h-4 w-4" /> Exporter CSV
+        </Button>
+      </div>
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[

@@ -41,9 +41,13 @@ export default function PublicStore() {
       const { data: storeData } = await supabase.from('online_store').select('*').eq('slug', slug).eq('is_published', true).maybeSingle();
       if (!storeData) { setLoading(false); return; }
       setStore(storeData as any);
-      const { data: sp } = await supabase.from('store_products').select('*, products(*)').eq('store_id', storeData.id);
+      const from = 0;
+      const to = PAGE_SIZE - 1;
+      const { data: sp, count } = await supabase.from('store_products').select('*, products(*)', { count: 'exact' }).eq('store_id', storeData.id).order('is_featured', { ascending: false }).range(from, to);
       const mapped = (sp || []).map((s: any) => ({ id: s.products.id, name: s.products.name, price: s.online_price || s.products.price, quantity: s.products.quantity, icon_emoji: s.products.icon_emoji || '📦', icon_bg_color: s.products.icon_bg_color || 'bg-blue', category: s.products.category, description: s.products.description, online_price: s.online_price, is_featured: s.is_featured, image_url: s.products.image_url || null }));
       setProducts(mapped);
+      setHasMore((count || 0) > PAGE_SIZE);
+      setPage(0);
       setLoading(false);
     };
     load();

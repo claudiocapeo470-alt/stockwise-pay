@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Area, AreaChart } from "recharts";
 import { format, parseISO, startOfDay, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from "date-fns";
@@ -34,7 +34,7 @@ const chartConfig = {
   },
 };
 
-export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
+export const SalesChart = React.memo(function SalesChart({ sales, period, dateRange }: SalesChartProps) {
   const chartData = useMemo(() => {
     if (!sales || sales.length === 0) return [];
 
@@ -233,4 +233,4 @@ export function SalesChart({ sales, period, dateRange }: SalesChartProps) {
       </Card>
     </div>
   );
-}
+});

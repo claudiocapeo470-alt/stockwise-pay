@@ -6,62 +6,64 @@ const CEO_EMAIL = 'support@stocknix.com';
 
 export function CeoGuard({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
-  const [verified, setVerified] = useState(false);
+  const [status, setStatus] = useState<'checking' | 'ok' | 'denied'>('checking');
+
+  const verify = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session || session.user.email !== CEO_EMAIL) {
+        setStatus('denied');
+        navigate('/ceo', { replace: true });
+        return;
+      }
+
+      const { data: role } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (role?.role !== 'admin') {
+        await supabase.auth.signOut();
+        setStatus('denied');
+        navigate('/ceo', { replace: true });
+        return;
+      }
+
+      setStatus('ok');
+    } catch {
+      setStatus('denied');
+      navigate('/ceo', { replace: true });
+    }
+  };
 
   useEffect(() => {
-    const check = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+    verify();
 
-        if (error || !session) {
-          navigate('/ceo', { replace: true });
-          return;
-        }
-
-        if (session.user.email !== CEO_EMAIL) {
-          await supabase.auth.signOut();
-          navigate('/ceo', { replace: true });
-          return;
-        }
-
-        const { data: roleData } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-
-        if (roleData?.role !== 'admin') {
-          await supabase.auth.signOut();
-          navigate('/ceo', { replace: true });
-          return;
-        }
-
-        setVerified(true);
-      } catch (err) {
-        console.error('CeoGuard check error:', err);
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        setStatus('denied');
         navigate('/ceo', { replace: true });
-      }
-    };
-
-    check();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') {
-        setVerified(false);
-        navigate('/ceo', { replace: true });
+      } else if (event === 'TOKEN_REFRESHED') {
+        verify();
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
-  if (!verified) {
+  if (status === 'checking') {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
+        <div className="text-center space-y-4">
+          <div className="w-10 h-10 border-2 border-teal-400 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-slate-400 text-sm">Vérification sécurité...</p>
+        </div>
       </div>
     );
   }
+
+  if (status === 'denied') return null;
 
   return <>{children}</>;
 }

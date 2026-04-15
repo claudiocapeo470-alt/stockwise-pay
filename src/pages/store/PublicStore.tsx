@@ -18,6 +18,9 @@ export default function PublicStore() {
   const [store, setStore] = useState<StoreData | null>(null);
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 20;
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activePage, setActivePage] = useState<StorePage>("home");
@@ -38,13 +41,29 @@ export default function PublicStore() {
       const { data: storeData } = await supabase.from('online_store').select('*').eq('slug', slug).eq('is_published', true).maybeSingle();
       if (!storeData) { setLoading(false); return; }
       setStore(storeData as any);
-      const { data: sp } = await supabase.from('store_products').select('*, products(*)').eq('store_id', storeData.id);
+      const from = 0;
+      const to = PAGE_SIZE - 1;
+      const { data: sp, count } = await supabase.from('store_products').select('*, products(*)', { count: 'exact' }).eq('store_id', storeData.id).order('is_featured', { ascending: false }).range(from, to);
       const mapped = (sp || []).map((s: any) => ({ id: s.products.id, name: s.products.name, price: s.online_price || s.products.price, quantity: s.products.quantity, icon_emoji: s.products.icon_emoji || '📦', icon_bg_color: s.products.icon_bg_color || 'bg-blue', category: s.products.category, description: s.products.description, online_price: s.online_price, is_featured: s.is_featured, image_url: s.products.image_url || null }));
       setProducts(mapped);
+      setHasMore((count || 0) > PAGE_SIZE);
+      setPage(0);
       setLoading(false);
     };
     load();
   }, [slug]);
+
+  const loadMore = async () => {
+    if (!store || !hasMore) return;
+    const nextPage = page + 1;
+    const from = nextPage * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    const { data: sp, count } = await supabase.from('store_products').select('*, products(*)', { count: 'exact' }).eq('store_id', store.id).order('is_featured', { ascending: false }).range(from, to);
+    const mapped = (sp || []).map((s: any) => ({ id: s.products.id, name: s.products.name, price: s.online_price || s.products.price, quantity: s.products.quantity, icon_emoji: s.products.icon_emoji || '📦', icon_bg_color: s.products.icon_bg_color || 'bg-blue', category: s.products.category, description: s.products.description, online_price: s.online_price, is_featured: s.is_featured, image_url: s.products.image_url || null }));
+    setProducts(prev => [...prev, ...mapped]);
+    setHasMore((count || 0) > to + 1);
+    setPage(nextPage);
+  };
 
   const categories = useMemo(() => [...new Set(products.map(p => p.category).filter(Boolean))].sort() as string[], [products]);
   const filtered = useMemo(() => { let f = products; if (activeCategory) f = f.filter(p => p.category === activeCategory); if (search) { const q = search.toLowerCase(); f = f.filter(p => p.name.toLowerCase().includes(q)); } return f; }, [products, activeCategory, search]);
@@ -146,7 +165,7 @@ export default function PublicStore() {
         <button onClick={() => setActiveCategory(null)} className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${!activeCategory ? 'text-white' : 'bg-muted text-muted-foreground'}`} style={!activeCategory ? { background: color } : {}}>Tous</button>
         {categories.map(cat => (<button key={cat} onClick={() => setActiveCategory(cat)} className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${activeCategory === cat ? 'text-white' : 'bg-muted text-muted-foreground'}`} style={activeCategory === cat ? { background: color } : {}}>{cat}</button>))}
       </div></div>
-      <div className="px-4 py-4"><div className={`grid ${gridCols} gap-3`}>{filtered.map(p => <ProductCard key={p.id} product={p} />)}</div>{filtered.length === 0 && <p className="text-center text-muted-foreground py-16">Aucun produit trouvé</p>}</div>
+      <div className="px-4 py-4"><div className={`grid ${gridCols} gap-3`}>{filtered.map(p => <ProductCard key={p.id} product={p} />)}</div>{filtered.length === 0 && <p className="text-center text-muted-foreground py-16">Aucun produit trouvé</p>}{hasMore && !activeCategory && !search && <div className="text-center mt-6"><Button variant="outline" onClick={loadMore} className="rounded-full px-8">Charger plus</Button></div>}</div>
     </div>
   );
 

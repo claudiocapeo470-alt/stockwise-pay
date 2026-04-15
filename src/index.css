@@ -244,3 +244,38 @@ input, select, textarea {
   .touch-target { min-height: 44px; min-width: 44px; }
   button, a, [role="button"] { min-height: 44px; }
 }
+
+/* ═══════════════════════════════════════════════════
+   PRINT STYLES — REÇU THERMIQUE POS 80mm
+   ═══════════════════════════════════════════════════ */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 2mm;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #receipt-print,
+  #receipt-print * {
+    visibility: visible;
+  }
+
+  #receipt-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #000;
+    background: #fff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

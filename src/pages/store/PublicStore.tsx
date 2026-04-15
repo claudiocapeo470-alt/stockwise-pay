@@ -165,7 +165,7 @@ export default function PublicStore() {
         <button onClick={() => setActiveCategory(null)} className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${!activeCategory ? 'text-white' : 'bg-muted text-muted-foreground'}`} style={!activeCategory ? { background: color } : {}}>Tous</button>
         {categories.map(cat => (<button key={cat} onClick={() => setActiveCategory(cat)} className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${activeCategory === cat ? 'text-white' : 'bg-muted text-muted-foreground'}`} style={activeCategory === cat ? { background: color } : {}}>{cat}</button>))}
       </div></div>
-      <div className="px-4 py-4"><div className={`grid ${gridCols} gap-3`}>{filtered.map(p => <ProductCard key={p.id} product={p} />)}</div>{filtered.length === 0 && <p className="text-center text-muted-foreground py-16">Aucun produit trouvé</p>}</div>
+      <div className="px-4 py-4"><div className={`grid ${gridCols} gap-3`}>{filtered.map(p => <ProductCard key={p.id} product={p} />)}</div>{filtered.length === 0 && <p className="text-center text-muted-foreground py-16">Aucun produit trouvé</p>}{hasMore && !activeCategory && !search && <div className="text-center mt-6"><Button variant="outline" onClick={loadMore} className="rounded-full px-8">Charger plus</Button></div>}</div>
     </div>
   );
 

@@ -1645,7 +1645,9 @@ export default function Caisse() {
         </div>
       </header>
 
-      {mobileView === 'products' ? (
+      {renderClosedBanner()}
+
+
         <>
           {/* Mobile categories horizontal scroll */}
           <div className="px-3 pt-2 pb-1 shrink-0" style={{ background: '#F0F2F5' }}>

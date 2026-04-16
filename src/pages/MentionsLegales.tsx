@@ -64,7 +64,7 @@ export default function MentionsLegales() {
           <Card className="p-6 sm:p-8">
             <h2 className="text-2xl font-bold mb-4">2. Hébergement</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Le site est hébergé par <strong className="text-foreground">Lovable</strong>, plateforme cloud spécialisée dans l'hébergement d'applications web modernes.
+              Le site est hébergé sur une infrastructure cloud sécurisée gérée par <strong className="text-foreground">DESCHNIX</strong>, garantissant haute disponibilité et protection des données.
             </p>
           </Card>
 

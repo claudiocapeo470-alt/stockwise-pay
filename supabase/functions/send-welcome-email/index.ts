@@ -81,7 +81,7 @@ const handler = async (req: Request): Promise<Response> => {
             </ul>
             
             <p><strong>Prêt à commencer ?</strong> Connectez-vous dès maintenant à votre dashboard :</p>
-            <a href="${Deno.env.get("SITE_URL") || "https://gestionpro.lovable.app"}/auth" class="button">Se connecter à Stocknix</a>
+            <a href="${Deno.env.get("SITE_URL") || "https://stocknix.com"}/auth" class="button">Se connecter à Stocknix</a>
             
             <div class="success-box">
               <strong>💡 Conseil :</strong>

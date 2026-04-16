@@ -102,7 +102,7 @@ export default function StoreConfig() {
     } catch (e: any) { toast.error(e.message); }
   };
 
-  const storeUrl = `${window.location.origin}/boutique/${form.slug}`;
+  const storeUrl = `https://stocknix.com/boutique/${form.slug}`;
   const copyUrl = () => { navigator.clipboard.writeText(storeUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   if (isLoading) return <div className="flex items-center justify-center h-64"><div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin rounded-full" /></div>;

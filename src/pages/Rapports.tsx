@@ -395,10 +395,6 @@ export default function Rapports() {
         open={showReportDialog}
         onOpenChange={setShowReportDialog}
         reportType={selectedReportType}
-        sales={sales}
-        products={products}
-        payments={payments}
-        metrics={metrics}
       />
     </div>
   );

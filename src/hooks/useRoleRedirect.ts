@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
+let hasPerformedInitialRoleRedirect = false;
+
 /**
  * Redirige UNE SEULE FOIS à l'arrivée initiale d'un employé sur l'app vers son espace dédié.
  * - Caissier  → /app/caisse
@@ -14,26 +16,30 @@ export function useRoleRedirect() {
   const { isEmployee, memberInfo } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const hasRedirectedRef = useRef(false);
+  const initialPathRef = useRef(location.pathname);
 
   useEffect(() => {
-    if (!isEmployee || !memberInfo) return;
-    if (hasRedirectedRef.current) return;
+    if (!isEmployee || !memberInfo) {
+      hasPerformedInitialRoleRedirect = false;
+      return;
+    }
+    if (hasPerformedInitialRoleRedirect) return;
 
-    // On ne redirige que depuis la racine /app (pas depuis une sous-page volontaire)
-    if (location.pathname !== '/app') return;
+    // On ne redirige qu'à l'arrivée initiale sur /app.
+    // Si le composant se remonte sur une autre page (settings, auth, etc.), on ne force rien.
+    if (initialPathRef.current !== '/app') return;
 
     const role = (memberInfo.member_role_name || '').toLowerCase();
 
     if (role.includes('caissier')) {
-      hasRedirectedRef.current = true;
+      hasPerformedInitialRoleRedirect = true;
       navigate('/app/caisse', { replace: true });
       return;
     }
     if (role.includes('livreur')) {
-      hasRedirectedRef.current = true;
+      hasPerformedInitialRoleRedirect = true;
       navigate('/app/livreur', { replace: true });
       return;
     }
-  }, [isEmployee, memberInfo, navigate, location.pathname]);
+  }, [isEmployee, memberInfo, navigate]);
 }

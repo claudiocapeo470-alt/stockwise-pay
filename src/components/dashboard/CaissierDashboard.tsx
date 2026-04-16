@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Scan, ShoppingCart, TrendingUp, TrendingDown, Clock, ArrowUp, ArrowDown, User, History } from 'lucide-react';
+import { Scan, ShoppingCart, TrendingUp, Clock, ArrowUp, ArrowDown, User, History, LogOut } from 'lucide-react';
 import { useSales } from '@/hooks/useSales';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -14,7 +14,7 @@ import { useCompany } from '@/hooks/useCompany';
 
 export function CaissierDashboard() {
   const { sales } = useSales();
-  const { memberInfo, user, isEmployee } = useAuth();
+  const { memberInfo, user, isEmployee, signOut } = useAuth();
   const { company } = useCompany();
   const { formatCurrency } = useCurrency();
   const navigate = useNavigate();
@@ -24,20 +24,21 @@ export function CaissierDashboard() {
 
   // Check open session
   const { data: openSession } = useQuery({
-    queryKey: ['cash-session-open', effectiveUserId],
+    queryKey: ['cash-session-open', effectiveUserId, user?.id],
     queryFn: async () => {
-      if (!effectiveUserId) return null;
+      if (!effectiveUserId || !user?.id) return null;
       const { data } = await supabase
         .from('cash_sessions')
         .select('*')
         .eq('user_id', effectiveUserId)
+        .eq('opened_by_user_id', user.id)
         .eq('status', 'open')
         .order('opened_at', { ascending: false })
         .limit(1)
         .maybeSingle();
       return data;
     },
-    enabled: !!effectiveUserId,
+    enabled: !!effectiveUserId && !!user?.id,
   });
 
   const metrics = useMemo(() => {
@@ -119,9 +120,22 @@ export function CaissierDashboard() {
       </div>
 
       {/* Actions */}
-      <Button size="lg" className="w-full h-14 text-lg gap-3" onClick={() => navigate('/app/caisse')}>
-        <Scan className="h-6 w-6" /> Ouvrir la Caisse
-      </Button>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Button size="lg" className="w-full h-14 text-lg gap-3" onClick={() => navigate('/app/caisse')}>
+          <Scan className="h-6 w-6" /> Ouvrir la Caisse
+        </Button>
+        <Button
+          size="lg"
+          variant="outline"
+          className="w-full h-14 text-lg gap-3"
+          onClick={async () => {
+            await signOut();
+            navigate('/auth', { replace: true });
+          }}
+        >
+          <LogOut className="h-6 w-6" /> Déconnexion
+        </Button>
+      </div>
 
       <div className="grid grid-cols-2 gap-3">
         <Sheet>

@@ -178,16 +178,30 @@ function MembersTab() {
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Photo trop volumineuse (max 5MB)");
+      return;
+    }
+    if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+      toast.error("Format non supporté (JPG, PNG, WebP uniquement)");
+      return;
+    }
     setUploadingPhoto(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Non authentifié");
       const ext = file.name.split('.').pop();
-      const path = `members/${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      // Path doit commencer par auth.uid() pour respecter la RLS du bucket avatars
+      const path = `${user.id}/members/${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
       if (upErr) throw upErr;
       const { data } = supabase.storage.from('avatars').getPublicUrl(path);
-      setPhotoUrl(data.publicUrl);
-    } catch {
-      toast.error("Erreur lors de l'upload de la photo");
+      const cacheBustedUrl = `${data.publicUrl}?t=${Date.now()}`;
+      setPhotoUrl(cacheBustedUrl);
+      toast.success("Photo téléchargée");
+    } catch (err: any) {
+      console.error('Upload error:', err);
+      toast.error(err?.message || "Erreur lors de l'upload de la photo");
     } finally {
       setUploadingPhoto(false);
     }

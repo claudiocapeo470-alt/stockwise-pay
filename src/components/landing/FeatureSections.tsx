@@ -135,7 +135,7 @@ export const StocksSection = () => {
                 </DeviceMockup>
 
                 {/* Floating Alert */}
-                <Floating3D amplitude={10} duration={5} className="absolute -right-8 top-1/3">
+                <Floating3D amplitude={10} duration={5} className="hidden sm:block absolute -right-8 top-1/3">
                   <div className="bg-card/80 backdrop-blur-xl rounded-2xl p-3 shadow-xl">
                     <div className="flex items-center gap-2">
                       <div className="p-1.5 rounded-lg bg-warning/20">
@@ -352,13 +352,13 @@ export const InvoicingSection = () => {
                 </motion.div>
 
                 {/* Floating Elements */}
-                <Floating3D amplitude={12} duration={6} delay={0.3} className="absolute -left-8 top-1/4">
+                <Floating3D amplitude={12} duration={6} delay={0.3} className="hidden sm:block absolute -left-8 top-1/4">
                   <div className="bg-card/80 backdrop-blur-xl rounded-xl p-3 shadow-lg">
                     <FileText size={24} className="text-accent" />
                   </div>
                 </Floating3D>
 
-                <Floating3D amplitude={10} duration={5} delay={0.6} className="absolute -right-4 bottom-1/4">
+                <Floating3D amplitude={10} duration={5} delay={0.6} className="hidden sm:block absolute -right-4 bottom-1/4">
                   <div className="bg-card/80 backdrop-blur-xl rounded-xl p-3 shadow-lg">
                     <FileCheck size={24} className="text-success" />
                   </div>
@@ -467,7 +467,7 @@ export const AnalyticsSection = () => {
                   </div>
                 </DeviceMockup>
 
-                <Floating3D amplitude={15} duration={5} delay={0.8} className="absolute -right-6 top-1/4">
+                <Floating3D amplitude={15} duration={5} delay={0.8} className="hidden sm:block absolute -right-6 top-1/4">
                   <div className="bg-card/80 backdrop-blur-xl rounded-2xl p-4 shadow-lg">
                     <TrendingUp size={32} className="text-primary" />
                   </div>

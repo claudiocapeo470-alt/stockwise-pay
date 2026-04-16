@@ -1539,11 +1539,34 @@ export default function Caisse() {
   // ═══════════════════════════════════════════════════════
   // DESKTOP / TABLET LAYOUT
   // ═══════════════════════════════════════════════════════
+  // Bannière "Caisse fermée" non bloquante
+  const renderClosedBanner = () => {
+    if (cashSessionOpen) return null;
+    return (
+      <div className="flex items-center justify-between gap-3 px-4 py-2.5 shrink-0" style={{ background: '#FEF3C7', borderBottom: '1px solid #FDE68A' }}>
+        <div className="flex items-center gap-2 min-w-0">
+          <DoorOpen className="h-4 w-4 shrink-0" style={{ color: '#92400E' }} />
+          <span className="text-xs sm:text-sm font-semibold truncate" style={{ color: '#92400E' }}>
+            La caisse n'est pas ouverte. Aucune vente ne pourra être encaissée.
+          </span>
+        </div>
+        <button
+          onClick={() => setShowOpenCashModal(true)}
+          className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold text-white whitespace-nowrap"
+          style={{ background: '#F59E0B' }}
+        >
+          Ouvrir la caisse
+        </button>
+      </div>
+    );
+  };
+
   if (!isMobile) {
     const isTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
     return (
       <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#F0F2F5' }}>
         {renderHeader()}
+        {renderClosedBanner()}
         <div className="flex-1 flex overflow-hidden">
           {renderSidebar(isTablet)}
           {renderProductGrid()}
@@ -1562,11 +1585,21 @@ export default function Caisse() {
       {/* Mobile Header */}
       <header className="h-14 flex items-center justify-between px-3 shrink-0" style={{ background: '#1A1F36' }}>
         <div className="flex items-center gap-2">
-          <button onClick={() => navigate('/app')} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70">
-            <Home className="h-5 w-5" />
-          </button>
+          {!isEmployee ? (
+            <button onClick={() => navigate('/app')} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Dashboard">
+              <Home className="h-5 w-5" />
+            </button>
+          ) : (
+            <button onClick={async () => { await signOut(); navigate('/auth', { replace: true }); }} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Déconnexion">
+              <LogOut className="h-5 w-5" />
+            </button>
+          )}
           <span className="text-white font-black text-sm" style={{ fontFamily: 'Nunito, sans-serif' }}>POS</span>
-          {cashSessionOpen && <span className="h-2 w-2 rounded-full bg-[#10B981] animate-pulse" />}
+          {cashSessionOpen ? (
+            <span className="h-2 w-2 rounded-full bg-[#10B981] animate-pulse" />
+          ) : (
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: 'rgba(245,158,11,0.2)', color: '#F59E0B' }}>FERMÉE</span>
+          )}
         </div>
         <div className="flex items-center gap-0.5">
           <button onClick={startScanner} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70">
@@ -1593,6 +1626,10 @@ export default function Caisse() {
               <DropdownMenuItem onClick={() => { setMovementType('expense'); setShowMovementModal(true); }}>💸 Dépense</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setShowCloseCashModal(true)} className="text-amber-500">🔒 Clôturer</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={async () => { await signOut(); navigate('/auth', { replace: true }); }} className="text-destructive">
+                <LogOut className="h-4 w-4 mr-2" /> Déconnexion
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <button className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white" onClick={() => setMobileView(mobileView === 'products' ? 'ticket' : 'products')}>

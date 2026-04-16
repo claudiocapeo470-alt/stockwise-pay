@@ -104,7 +104,7 @@ export default function Caisse() {
 
   // Cash session
   const [cashSessionOpen, setCashSessionOpen] = useState(false);
-  const [showOpenCashModal, setShowOpenCashModal] = useState(true);
+  const [showOpenCashModal, setShowOpenCashModal] = useState(false);
   const [openingAmount, setOpeningAmount] = useState("");
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [showCloseCashModal, setShowCloseCashModal] = useState(false);

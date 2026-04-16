@@ -157,7 +157,7 @@ export default function Caisse() {
   const { addSale } = useSales();
   const { toast } = useToast();
   const { settings } = useCompanySettings();
-  const { profile, user, isEmployee, memberInfo, loading: authLoading } = useAuth();
+  const { profile, user, isEmployee, memberInfo, loading: authLoading, signOut } = useAuth();
   const { company, loading: companyLoading } = useCompany();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -867,10 +867,13 @@ export default function Caisse() {
 
       {/* Right: Navigation */}
       <div className="flex items-center gap-1">
-        <HeaderBtn icon={<Home className="h-4 w-4" />} label="Dashboard" onClick={() => navigate('/app')} />
+        {!isEmployee && (
+          <HeaderBtn icon={<Home className="h-4 w-4" />} label="Dashboard" onClick={() => navigate('/app')} />
+        )}
         <HeaderBtn icon={<BarChart3 className="h-4 w-4" />} label="Stats" onClick={() => navigate('/app/performance')} />
         <HeaderBtn icon={<Settings className="h-4 w-4" />} label="Paramètres" onClick={() => navigate('/app/settings')} />
         <HeaderBtn icon={<Camera className="h-4 w-4" />} label="Scanner" onClick={startScanner} />
+        <HeaderBtn icon={<LogOut className="h-4 w-4" />} label="Déconnexion" onClick={async () => { await signOut(); navigate('/auth', { replace: true }); }} />
       </div>
     </header>
   );

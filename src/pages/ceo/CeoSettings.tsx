@@ -11,7 +11,7 @@ const TABS = ['Plateforme', 'Sécurité', 'Notifications', 'Base de données'] a
 const DB_TABLES = ['profiles', 'subscribers', 'products', 'sales', 'user_roles', 'payment_history', 'company_members', 'companies', 'invoices'];
 
 const DEFAULT_PLATFORM = {
-  site_name: 'Stocknix', site_url: 'https://stocknix.lovable.app', support_email: 'support@stocknix.com',
+  site_name: 'Stocknix', site_url: 'https://stocknix.com', support_email: 'support@stocknix.com',
   whatsapp: '+228 70 00 00 00', trial_days: '14', max_products: '500',
   maintenance_mode: false, allow_new_registrations: true, email_confirmation_required: true,
 };

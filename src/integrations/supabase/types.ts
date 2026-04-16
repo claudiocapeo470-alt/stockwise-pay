@@ -79,6 +79,7 @@ export type Database = {
           expected_amount: number | null
           id: string
           opened_at: string
+          opened_by_user_id: string | null
           opening_amount: number
           status: string
           total_card: number | null
@@ -99,6 +100,7 @@ export type Database = {
           expected_amount?: number | null
           id?: string
           opened_at?: string
+          opened_by_user_id?: string | null
           opening_amount?: number
           status?: string
           total_card?: number | null
@@ -119,6 +121,7 @@ export type Database = {
           expected_amount?: number | null
           id?: string
           opened_at?: string
+          opened_by_user_id?: string | null
           opening_amount?: number
           status?: string
           total_card?: number | null

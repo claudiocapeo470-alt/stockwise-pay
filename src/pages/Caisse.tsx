@@ -104,7 +104,7 @@ export default function Caisse() {
 
   // Cash session
   const [cashSessionOpen, setCashSessionOpen] = useState(false);
-  const [showOpenCashModal, setShowOpenCashModal] = useState(true);
+  const [showOpenCashModal, setShowOpenCashModal] = useState(false);
   const [openingAmount, setOpeningAmount] = useState("");
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [showCloseCashModal, setShowCloseCashModal] = useState(false);
@@ -157,7 +157,7 @@ export default function Caisse() {
   const { addSale } = useSales();
   const { toast } = useToast();
   const { settings } = useCompanySettings();
-  const { profile, user, isEmployee, memberInfo, loading: authLoading } = useAuth();
+  const { profile, user, isEmployee, memberInfo, loading: authLoading, signOut } = useAuth();
   const { company, loading: companyLoading } = useCompany();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -190,12 +190,14 @@ export default function Caisse() {
 
   // Check for existing open session on mount and restore state
   useEffect(() => {
-    if (!effectiveUserId) return;
+    if (!effectiveUserId || !user) return;
     const fetchActiveSession = async () => {
+      // Scope by current logged-in user (one session per station/employee)
       const { data } = await supabase
         .from('cash_sessions')
         .select('*')
         .eq('user_id', effectiveUserId)
+        .eq('opened_by_user_id', user.id)
         .eq('status', 'open')
         .order('opened_at', { ascending: false })
         .limit(1)
@@ -233,11 +235,11 @@ export default function Caisse() {
         }
       } else {
         setCashSessionOpen(false);
-        setShowOpenCashModal(true);
+        setShowOpenCashModal(false);
       }
     };
     fetchActiveSession();
-  }, [effectiveUserId]);
+  }, [effectiveUserId, user]);
 
   const categories = useMemo(() => {
     const cats = new Set<string>();
@@ -495,11 +497,12 @@ export default function Caisse() {
       toast({ title: "Chargement en cours", description: "Patientez pendant la synchronisation de votre entreprise.", variant: "destructive" });
       return;
     }
-    // Check for existing open session first
+    // Check for existing open session for THIS user (one per station/employee)
     const { data: existing } = await supabase
       .from('cash_sessions')
       .select('id')
       .eq('user_id', effectiveUserId)
+      .eq('opened_by_user_id', user.id)
       .eq('status', 'open')
       .maybeSingle();
     if (existing) {
@@ -509,8 +512,18 @@ export default function Caisse() {
       return;
     }
     const amount = parseFloat(openingAmount) || 0;
-    const { data, error } = await supabase.from('cash_sessions').insert({ user_id: effectiveUserId, opening_amount: amount, status: 'open', created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : null }).select().single();
-    if (error) { toast({ title: "Erreur", description: "Impossible d'ouvrir la caisse", variant: "destructive" }); return; }
+    const { data, error } = await supabase.from('cash_sessions').insert({
+      user_id: effectiveUserId,
+      opened_by_user_id: user.id,
+      opening_amount: amount,
+      status: 'open',
+      created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : null,
+    }).select().single();
+    if (error) {
+      console.error('[Caisse] open session error', error);
+      toast({ title: "Erreur", description: error.message || "Impossible d'ouvrir la caisse", variant: "destructive" });
+      return;
+    }
     setCurrentSessionId(data.id);
     setCashSessionOpen(true);
     setShowOpenCashModal(false);
@@ -548,7 +561,7 @@ export default function Caisse() {
 
   const finalizeClose = () => {
     setCashSessionOpen(false); setCurrentSessionId(null); setShowCloseReport(false);
-    setClosingAmount(""); setClosingNotes(""); setCloseReportData(null); setShowOpenCashModal(true);
+    setClosingAmount(""); setClosingNotes(""); setCloseReportData(null); setShowOpenCashModal(false);
   };
 
   // Cash movements
@@ -713,21 +726,8 @@ export default function Caisse() {
   }
 
   // ═══════════════════════════════════════════════════════
-  // GUARD: No session open
+  // (Plus de blocage plein-écran : la bannière en haut du POS gère l'invitation à ouvrir la caisse)
   // ═══════════════════════════════════════════════════════
-  if (!currentSessionId && !showOpenCashModal) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
-        <div className="text-center space-y-6 max-w-xs px-4 w-full">
-          <Package className="h-16 w-16 mx-auto" style={{ color: '#6B7280' }} />
-          <h2 className="text-xl font-black text-white">Caisse non ouverte</h2>
-          <p className="text-sm" style={{ color: '#9CA3AF' }}>Vous devez ouvrir la caisse avant de pouvoir effectuer des ventes</p>
-          <button onClick={() => setShowOpenCashModal(true)} className="w-full h-14 rounded-xl text-white font-bold text-lg" style={{ background: '#4F46E5' }}>Ouvrir la caisse</button>
-          <button onClick={() => navigate('/app')} className="text-sm text-white/50 hover:text-white/80">Retour au dashboard</button>
-        </div>
-      </div>
-    );
-  }
 
   // ═══════════════════════════════════════════════════════
   // LOCK SCREEN
@@ -867,10 +867,13 @@ export default function Caisse() {
 
       {/* Right: Navigation */}
       <div className="flex items-center gap-1">
-        <HeaderBtn icon={<Home className="h-4 w-4" />} label="Dashboard" onClick={() => navigate('/app')} />
+        {!isEmployee && (
+          <HeaderBtn icon={<Home className="h-4 w-4" />} label="Dashboard" onClick={() => navigate('/app')} />
+        )}
         <HeaderBtn icon={<BarChart3 className="h-4 w-4" />} label="Stats" onClick={() => navigate('/app/performance')} />
         <HeaderBtn icon={<Settings className="h-4 w-4" />} label="Paramètres" onClick={() => navigate('/app/settings')} />
         <HeaderBtn icon={<Camera className="h-4 w-4" />} label="Scanner" onClick={startScanner} />
+        <HeaderBtn icon={<LogOut className="h-4 w-4" />} label="Déconnexion" onClick={async () => { await signOut(); navigate('/auth', { replace: true }); }} />
       </div>
     </header>
   );
@@ -1536,11 +1539,34 @@ export default function Caisse() {
   // ═══════════════════════════════════════════════════════
   // DESKTOP / TABLET LAYOUT
   // ═══════════════════════════════════════════════════════
+  // Bannière "Caisse fermée" non bloquante
+  const renderClosedBanner = () => {
+    if (cashSessionOpen) return null;
+    return (
+      <div className="flex items-center justify-between gap-3 px-4 py-2.5 shrink-0" style={{ background: '#FEF3C7', borderBottom: '1px solid #FDE68A' }}>
+        <div className="flex items-center gap-2 min-w-0">
+          <DoorOpen className="h-4 w-4 shrink-0" style={{ color: '#92400E' }} />
+          <span className="text-xs sm:text-sm font-semibold truncate" style={{ color: '#92400E' }}>
+            La caisse n'est pas ouverte. Aucune vente ne pourra être encaissée.
+          </span>
+        </div>
+        <button
+          onClick={() => setShowOpenCashModal(true)}
+          className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold text-white whitespace-nowrap"
+          style={{ background: '#F59E0B' }}
+        >
+          Ouvrir la caisse
+        </button>
+      </div>
+    );
+  };
+
   if (!isMobile) {
     const isTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
     return (
       <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#F0F2F5' }}>
         {renderHeader()}
+        {renderClosedBanner()}
         <div className="flex-1 flex overflow-hidden">
           {renderSidebar(isTablet)}
           {renderProductGrid()}
@@ -1559,11 +1585,21 @@ export default function Caisse() {
       {/* Mobile Header */}
       <header className="h-14 flex items-center justify-between px-3 shrink-0" style={{ background: '#1A1F36' }}>
         <div className="flex items-center gap-2">
-          <button onClick={() => navigate('/app')} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70">
-            <Home className="h-5 w-5" />
-          </button>
+          {!isEmployee ? (
+            <button onClick={() => navigate('/app')} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Dashboard">
+              <Home className="h-5 w-5" />
+            </button>
+          ) : (
+            <button onClick={async () => { await signOut(); navigate('/auth', { replace: true }); }} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Déconnexion">
+              <LogOut className="h-5 w-5" />
+            </button>
+          )}
           <span className="text-white font-black text-sm" style={{ fontFamily: 'Nunito, sans-serif' }}>POS</span>
-          {cashSessionOpen && <span className="h-2 w-2 rounded-full bg-[#10B981] animate-pulse" />}
+          {cashSessionOpen ? (
+            <span className="h-2 w-2 rounded-full bg-[#10B981] animate-pulse" />
+          ) : (
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: 'rgba(245,158,11,0.2)', color: '#F59E0B' }}>FERMÉE</span>
+          )}
         </div>
         <div className="flex items-center gap-0.5">
           <button onClick={startScanner} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70">
@@ -1590,6 +1626,10 @@ export default function Caisse() {
               <DropdownMenuItem onClick={() => { setMovementType('expense'); setShowMovementModal(true); }}>💸 Dépense</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setShowCloseCashModal(true)} className="text-amber-500">🔒 Clôturer</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={async () => { await signOut(); navigate('/auth', { replace: true }); }} className="text-destructive">
+                <LogOut className="h-4 w-4 mr-2" /> Déconnexion
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <button className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white" onClick={() => setMobileView(mobileView === 'products' ? 'ticket' : 'products')}>
@@ -1604,6 +1644,8 @@ export default function Caisse() {
           </button>
         </div>
       </header>
+
+      {renderClosedBanner()}
 
       {mobileView === 'products' ? (
         <>

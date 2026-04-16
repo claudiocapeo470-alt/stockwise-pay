@@ -12,6 +12,8 @@ const CURRENCIES: Record<string, CurrencyConfig> = {
   USD: { code: 'USD', symbol: '$', position: 'before' },
   GBP: { code: 'GBP', symbol: '£', position: 'before' },
   MAD: { code: 'MAD', symbol: 'MAD', position: 'after' },
+  GHS: { code: 'GHS', symbol: 'GH₵', position: 'before' },
+  NGN: { code: 'NGN', symbol: '₦', position: 'before' },
 };
 
 const STORAGE_KEY = 'stocknix_currency';

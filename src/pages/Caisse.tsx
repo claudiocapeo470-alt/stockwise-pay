@@ -190,12 +190,14 @@ export default function Caisse() {
 
   // Check for existing open session on mount and restore state
   useEffect(() => {
-    if (!effectiveUserId) return;
+    if (!effectiveUserId || !user) return;
     const fetchActiveSession = async () => {
+      // Scope by current logged-in user (one session per station/employee)
       const { data } = await supabase
         .from('cash_sessions')
         .select('*')
         .eq('user_id', effectiveUserId)
+        .eq('opened_by_user_id', user.id)
         .eq('status', 'open')
         .order('opened_at', { ascending: false })
         .limit(1)
@@ -233,11 +235,11 @@ export default function Caisse() {
         }
       } else {
         setCashSessionOpen(false);
-        setShowOpenCashModal(true);
+        setShowOpenCashModal(false);
       }
     };
     fetchActiveSession();
-  }, [effectiveUserId]);
+  }, [effectiveUserId, user]);
 
   const categories = useMemo(() => {
     const cats = new Set<string>();
@@ -495,11 +497,12 @@ export default function Caisse() {
       toast({ title: "Chargement en cours", description: "Patientez pendant la synchronisation de votre entreprise.", variant: "destructive" });
       return;
     }
-    // Check for existing open session first
+    // Check for existing open session for THIS user (one per station/employee)
     const { data: existing } = await supabase
       .from('cash_sessions')
       .select('id')
       .eq('user_id', effectiveUserId)
+      .eq('opened_by_user_id', user.id)
       .eq('status', 'open')
       .maybeSingle();
     if (existing) {
@@ -509,8 +512,18 @@ export default function Caisse() {
       return;
     }
     const amount = parseFloat(openingAmount) || 0;
-    const { data, error } = await supabase.from('cash_sessions').insert({ user_id: effectiveUserId, opening_amount: amount, status: 'open', created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : null }).select().single();
-    if (error) { toast({ title: "Erreur", description: "Impossible d'ouvrir la caisse", variant: "destructive" }); return; }
+    const { data, error } = await supabase.from('cash_sessions').insert({
+      user_id: effectiveUserId,
+      opened_by_user_id: user.id,
+      opening_amount: amount,
+      status: 'open',
+      created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : null,
+    }).select().single();
+    if (error) {
+      console.error('[Caisse] open session error', error);
+      toast({ title: "Erreur", description: error.message || "Impossible d'ouvrir la caisse", variant: "destructive" });
+      return;
+    }
     setCurrentSessionId(data.id);
     setCashSessionOpen(true);
     setShowOpenCashModal(false);
@@ -548,7 +561,7 @@ export default function Caisse() {
 
   const finalizeClose = () => {
     setCashSessionOpen(false); setCurrentSessionId(null); setShowCloseReport(false);
-    setClosingAmount(""); setClosingNotes(""); setCloseReportData(null); setShowOpenCashModal(true);
+    setClosingAmount(""); setClosingNotes(""); setCloseReportData(null); setShowOpenCashModal(false);
   };
 
   // Cash movements
@@ -713,21 +726,8 @@ export default function Caisse() {
   }
 
   // ═══════════════════════════════════════════════════════
-  // GUARD: No session open
+  // (Plus de blocage plein-écran : la bannière en haut du POS gère l'invitation à ouvrir la caisse)
   // ═══════════════════════════════════════════════════════
-  if (!currentSessionId && !showOpenCashModal) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
-        <div className="text-center space-y-6 max-w-xs px-4 w-full">
-          <Package className="h-16 w-16 mx-auto" style={{ color: '#6B7280' }} />
-          <h2 className="text-xl font-black text-white">Caisse non ouverte</h2>
-          <p className="text-sm" style={{ color: '#9CA3AF' }}>Vous devez ouvrir la caisse avant de pouvoir effectuer des ventes</p>
-          <button onClick={() => setShowOpenCashModal(true)} className="w-full h-14 rounded-xl text-white font-bold text-lg" style={{ background: '#4F46E5' }}>Ouvrir la caisse</button>
-          <button onClick={() => navigate('/app')} className="text-sm text-white/50 hover:text-white/80">Retour au dashboard</button>
-        </div>
-      </div>
-    );
-  }
 
   // ═══════════════════════════════════════════════════════
   // LOCK SCREEN

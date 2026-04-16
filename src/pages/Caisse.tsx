@@ -649,6 +649,35 @@ export default function Caisse() {
     return () => clearInterval(timer);
   }, []);
 
+  const handleLockAction = () => {
+    if (!sessionPin) {
+      setShowPinSetup(true);
+      return;
+    }
+
+    setIsLocked(true);
+    setLockPin('');
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth', { replace: true });
+  };
+
+  const requireOpenCashSession = (onAllowed: () => void, description: string) => {
+    if (cashSessionOpen) {
+      onAllowed();
+      return;
+    }
+
+    toast({
+      title: 'Caisse fermée',
+      description,
+      variant: 'destructive',
+    });
+    setShowOpenCashModal(true);
+  };
+
   // ═══════════════════════════════════════════════════════
   // GUARD: effectiveUserId not yet resolved
   // For employees: we need auth + company loaded + memberInfo available
@@ -831,7 +860,7 @@ export default function Caisse() {
 
       {/* Center: Action buttons */}
       <div className="flex items-center gap-1">
-        <HeaderBtn icon={<Lock className="h-4 w-4" />} label="Verrouiller" onClick={() => { if (!sessionPin) { setShowPinSetup(true); } else { setIsLocked(true); setLockPin(''); } }} />
+        <HeaderBtn icon={<Lock className="h-4 w-4" />} label="Verrouiller" onClick={handleLockAction} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-white/70 text-xs font-medium min-h-[44px]" style={{ background: 'rgba(255,255,255,0.06)' }}>
@@ -845,11 +874,11 @@ export default function Caisse() {
             <DropdownMenuItem onClick={removeLastItem}><XCircle className="h-4 w-4 mr-2" /> Annuler dernier article</DropdownMenuItem>
             <DropdownMenuItem onClick={() => { setItemNote(""); setShowNoteModal(true); }}><StickyNote className="h-4 w-4 mr-2" /> Note interne</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => { setMovementType('entry'); setShowMovementModal(true); }}><ArrowDownCircle className="h-4 w-4 mr-2 text-[#10B981]" /> Entrée d'argent</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { setMovementType('expense'); setShowMovementModal(true); }}><ArrowUpCircle className="h-4 w-4 mr-2 text-[#EF4444]" /> Dépense de caisse</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => requireOpenCashSession(() => { setMovementType('entry'); setShowMovementModal(true); }, "Ouvrez la caisse avant d'enregistrer une entrée d'argent.")}><ArrowDownCircle className="h-4 w-4 mr-2 text-[#10B981]" /> Entrée d'argent</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => requireOpenCashSession(() => { setMovementType('expense'); setShowMovementModal(true); }, "Ouvrez la caisse avant d'enregistrer une dépense de caisse.")}><ArrowUpCircle className="h-4 w-4 mr-2 text-[#EF4444]" /> Dépense de caisse</DropdownMenuItem>
             <DropdownMenuItem onClick={() => setShowMovementsList(true)}><FileText className="h-4 w-4 mr-2" /> Voir mouvements</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setShowCloseCashModal(true)} className="text-amber-500"><DoorOpen className="h-4 w-4 mr-2" /> Clôturer la caisse</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => requireOpenCashSession(() => setShowCloseCashModal(true), 'Aucune session ouverte à clôturer pour ce poste.')} className="text-amber-500"><DoorOpen className="h-4 w-4 mr-2" /> Clôturer la caisse</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <button onClick={() => setShowHeldTickets(true)}
@@ -873,7 +902,7 @@ export default function Caisse() {
         <HeaderBtn icon={<BarChart3 className="h-4 w-4" />} label="Stats" onClick={() => navigate('/app/performance')} />
         <HeaderBtn icon={<Settings className="h-4 w-4" />} label="Paramètres" onClick={() => navigate('/app/settings')} />
         <HeaderBtn icon={<Camera className="h-4 w-4" />} label="Scanner" onClick={startScanner} />
-        <HeaderBtn icon={<LogOut className="h-4 w-4" />} label="Déconnexion" onClick={async () => { await signOut(); navigate('/auth', { replace: true }); }} />
+        <HeaderBtn icon={<LogOut className="h-4 w-4" />} label="Déconnexion" onClick={handleSignOut} />
       </div>
     </header>
   );
@@ -1328,15 +1357,17 @@ export default function Caisse() {
         </ModalOverlay>
       )}
 
-      {/* Open Cash Session — MANDATORY */}
+      {/* Open Cash Session */}
       {showOpenCashModal && !cashSessionOpen && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.85)' }}>
-          <div className="w-full max-w-sm p-6 space-y-4 rounded-[20px]" style={{ background: '#FFFFFF' }}>
+        <ModalOverlay onClose={() => setShowOpenCashModal(false)}>
+          <div className="space-y-4">
             <h3 className="text-lg font-bold text-center" style={{ color: '#1F2937' }}>Ouverture de caisse</h3>
-            <p className="text-xs text-center" style={{ color: '#6B7280' }}>Vous devez ouvrir la caisse pour commencer à vendre</p>
+            <p className="text-xs text-center" style={{ color: '#6B7280' }}>
+              Ouvrez la caisse pour encaisser des ventes. Les autres modules restent accessibles sans blocage.
+            </p>
             <div className="text-center text-[10px]" style={{ color: '#6B7280' }}>
               {currentTime.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-              <br />Caissier: {profile?.first_name || "Manager"}
+              <br />Utilisateur: {isEmployee ? (memberInfo?.member_first_name || 'Caissier') : (profile?.first_name || 'Manager')}
             </div>
             <div>
               <label className="text-sm font-medium" style={{ color: '#1F2937' }}>Fond de caisse (FCFA)</label>
@@ -1346,11 +1377,11 @@ export default function Caisse() {
                 autoFocus />
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <ModalBtn label="← Retour" onClick={() => navigate('/app')} />
+              <ModalBtn label="Plus tard" onClick={() => setShowOpenCashModal(false)} />
               <ModalBtn label="Ouvrir la caisse" primary onClick={openCashSession} color="#10B981" />
             </div>
           </div>
-        </div>
+        </ModalOverlay>
       )}
 
       {/* Close Cash Session */}
@@ -1590,7 +1621,7 @@ export default function Caisse() {
               <Home className="h-5 w-5" />
             </button>
           ) : (
-            <button onClick={async () => { await signOut(); navigate('/auth', { replace: true }); }} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Déconnexion">
+            <button onClick={handleSignOut} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Déconnexion">
               <LogOut className="h-5 w-5" />
             </button>
           )}
@@ -1605,7 +1636,7 @@ export default function Caisse() {
           <button onClick={startScanner} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70">
             <Camera className="h-5 w-5" />
           </button>
-          <button onClick={() => setIsLocked(true)} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70">
+          <button onClick={handleLockAction} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70">
             <Lock className="h-5 w-5" />
           </button>
           <DropdownMenu>
@@ -1622,12 +1653,12 @@ export default function Caisse() {
               <DropdownMenuItem onClick={() => navigate('/app/settings')}>⚙️ Paramètres</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => { setDiscountValue(""); setShowDiscountPercent(true); }}>Remise %</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { setMovementType('entry'); setShowMovementModal(true); }}>💰 Entrée d'argent</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { setMovementType('expense'); setShowMovementModal(true); }}>💸 Dépense</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => requireOpenCashSession(() => { setMovementType('entry'); setShowMovementModal(true); }, "Ouvrez la caisse avant d'enregistrer une entrée d'argent.")}>💰 Entrée d'argent</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => requireOpenCashSession(() => { setMovementType('expense'); setShowMovementModal(true); }, "Ouvrez la caisse avant d'enregistrer une dépense de caisse.")}>💸 Dépense</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setShowCloseCashModal(true)} className="text-amber-500">🔒 Clôturer</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => requireOpenCashSession(() => setShowCloseCashModal(true), 'Aucune session ouverte à clôturer pour ce poste.')} className="text-amber-500">🔒 Clôturer</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={async () => { await signOut(); navigate('/auth', { replace: true }); }} className="text-destructive">
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                 <LogOut className="h-4 w-4 mr-2" /> Déconnexion
               </DropdownMenuItem>
             </DropdownMenuContent>

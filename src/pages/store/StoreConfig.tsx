@@ -11,14 +11,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { Save, Eye, Rocket, Copy, Check, Link2, Store, Palette, Phone, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 
-const THEMES = [
-  { id: "classic", name: "Classique", desc: "Bannière + grille 3 colonnes" },
-  { id: "modern", name: "Moderne", desc: "Hero plein écran + 4 colonnes" },
-  { id: "minimal", name: "Minimaliste", desc: "Épuré, 2 colonnes" },
-  { id: "boutique", name: "Boutique locale", desc: "Couleurs vives" },
-  { id: "magazine", name: "Magazine", desc: "Carrousel vedettes" },
-];
-
 const COLOR_PALETTE = [
   { name: "Indigo", value: "#4f46e5" }, { name: "Violet", value: "#7c3aed" },
   { name: "Rose", value: "#e11d48" }, { name: "Orange", value: "#ea580c" },

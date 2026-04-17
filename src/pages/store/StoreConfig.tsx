@@ -206,19 +206,15 @@ export default function StoreConfig() {
           {/* Step 2: Design */}
           {currentStep === 2 && (
             <Card>
-              <CardHeader className="pb-3"><CardTitle className="text-base sm:text-lg">🎨 Thème & Couleurs</CardTitle></CardHeader>
+              <CardHeader className="pb-3"><CardTitle className="text-base sm:text-lg">🎨 Couleur de la boutique</CardTitle></CardHeader>
               <CardContent className="space-y-5">
-                <div>
-                  <Label className="mb-3 block text-sm">Choisir un thème</Label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
-                    {THEMES.map(t => (
-                      <button key={t.id} onClick={() => setForm(p => ({ ...p, theme_id: t.id }))}
-                        className={`p-2.5 sm:p-3 rounded-xl border-2 text-left transition-all ${form.theme_id === t.id ? 'border-primary bg-primary/5 shadow-md' : 'border-border hover:border-primary/30'}`}>
-                        <div className="h-10 sm:h-12 rounded-lg bg-muted mb-2 flex items-center justify-center text-[10px] sm:text-xs font-mono text-muted-foreground">{t.id}</div>
-                        <p className="text-xs font-semibold truncate">{t.name}</p>
-                        <p className="text-[10px] text-muted-foreground truncate">{t.desc}</p>
-                      </button>
-                    ))}
+                <div className="p-4 rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-xl">✨</div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm">Design "La Zone" — Premium</p>
+                      <p className="text-xs text-muted-foreground mt-1">Hero immersif, dark mode, animations fluides, panier latéral, checkout intégré. Un seul thème, parfaitement optimisé.</p>
+                    </div>
                   </div>
                 </div>
                 <div>

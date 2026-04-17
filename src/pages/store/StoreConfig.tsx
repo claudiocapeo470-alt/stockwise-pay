@@ -310,22 +310,20 @@ export default function StoreConfig() {
         {!isMobile && (
           <div className="space-y-4">
             <Card className="sticky top-4">
-              <CardHeader className="pb-2"><CardTitle className="text-sm">Aperçu — {THEMES.find(t => t.id === form.theme_id)?.name}</CardTitle></CardHeader>
+              <CardHeader className="pb-2"><CardTitle className="text-sm">Aperçu — Design La Zone</CardTitle></CardHeader>
               <CardContent>
                 <div className="rounded-xl border border-border overflow-hidden bg-muted/30">
-                  {form.theme_id !== 'minimal' && (
-                    <div className="h-20 flex items-center justify-center" style={{ background: form.primary_color }}>
-                      <span className="text-white font-bold text-lg">{form.name || "Votre Boutique"}</span>
-                    </div>
-                  )}
-                  {form.theme_id === 'minimal' && <div className="p-3"><p className="text-lg font-light">{form.name || "Boutique"}</p></div>}
+                  <div className="h-24 flex items-center justify-center relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${form.primary_color}, ${form.primary_color}dd)` }}>
+                    <span className="text-white font-bold text-lg tracking-tight">{form.name || "Votre Boutique"}</span>
+                  </div>
                   <div className="p-3 space-y-2">
-                    <div className={`grid ${form.theme_id === 'minimal' ? 'grid-cols-1' : form.theme_id === 'modern' ? 'grid-cols-3' : 'grid-cols-2'} gap-2`}>
-                      {[1,2,3,4].slice(0, form.theme_id === 'minimal' ? 2 : 4).map(i => (
-                        <div key={i} className={`bg-card ${form.theme_id === 'boutique' ? 'rounded-2xl' : form.theme_id === 'minimal' ? 'rounded-none' : 'rounded-lg'} p-3 border border-border text-center`}>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[1,2,3,4].map(i => (
+                        <div key={i} className="bg-card p-3 border border-border text-center">
                           <div className="text-2xl mb-1">📦</div>
-                          <div className="h-2 bg-muted rounded w-3/4 mx-auto" />
-                          <div className="h-2 rounded w-1/2 mx-auto mt-1" style={{ background: `${form.primary_color}40` }} />
+                          <div className="h-2 bg-muted w-3/4 mx-auto" />
+                          <div className="h-2 w-1/2 mx-auto mt-1" style={{ background: `${form.primary_color}40` }} />
+                          <div className="h-5 mt-2 text-[9px] flex items-center justify-center text-white font-bold" style={{ background: form.primary_color }}>AJOUTER</div>
                         </div>
                       ))}
                     </div>

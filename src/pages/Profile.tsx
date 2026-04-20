@@ -122,42 +122,39 @@ export default function Profile() {
   const initials = profileData.first_name ? `${profileData.first_name[0]}${profileData.last_name?.[0] || ''}`.toUpperCase() : (user?.email?.[0] || 'U').toUpperCase();
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto pb-8">
+    <div className="space-y-6 max-w-3xl mx-auto pb-8 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Mon Profil</h1>
+        <h2 className="text-xl font-bold">Mon Profil</h2>
         <p className="text-sm text-muted-foreground">Gérez vos informations personnelles</p>
       </div>
 
-      {/* Identity Card */}
-      <Card className="border-border/60 overflow-hidden">
-        <div className="h-20 bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/20" />
-        <CardContent className="p-6 -mt-12">
-          <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4">
-            <Avatar className="h-24 w-24 ring-4 ring-background">
-              <AvatarImage src={profileData.avatar_url} />
-              <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">{initials}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 text-center sm:text-left pb-1">
-              <h2 className="text-xl font-bold text-foreground">{profileData.company_name || displayName}</h2>
-              <p className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-1.5 mt-1">
-                <Mail className="h-3.5 w-3.5" /> {user?.email}
-              </p>
-              {isAdmin && <Badge variant="secondary" className="mt-2"><Shield className="mr-1 h-3 w-3" /> Administrateur</Badge>}
-            </div>
-            {!isEditingProfile && !isChangingPassword && (
-              <Button variant="outline" size="sm" onClick={() => setIsEditingProfile(true)}>
-                <Edit2 className="h-4 w-4 mr-2" /> Modifier
-              </Button>
-            )}
+      {/* Identity Card — épuré */}
+      <Card>
+        <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4">
+          <Avatar className="h-16 w-16 shrink-0">
+            <AvatarImage src={profileData.avatar_url} />
+            <AvatarFallback className="bg-primary text-primary-foreground text-xl font-semibold">{initials}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 text-center sm:text-left min-w-0">
+            <h3 className="text-lg font-bold truncate">{profileData.company_name || displayName}</h3>
+            <p className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-1.5 mt-0.5 truncate">
+              <Mail className="h-3.5 w-3.5 shrink-0" /> <span className="truncate">{user?.email}</span>
+            </p>
+            {isAdmin && <Badge variant="secondary" className="mt-2"><Shield className="mr-1 h-3 w-3" /> Administrateur</Badge>}
           </div>
+          {!isEditingProfile && !isChangingPassword && (
+            <Button variant="outline" size="sm" onClick={() => setIsEditingProfile(true)} className="h-10">
+              <Edit2 className="h-4 w-4 mr-2" /> Modifier
+            </Button>
+          )}
         </CardContent>
       </Card>
 
       {/* Profile Form */}
-      <Card className="border-border/60">
-        <CardContent className="p-6 space-y-5">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-foreground flex items-center gap-2"><User className="h-4 w-4" /> Informations</h3>
+      <Card>
+        <CardContent className="p-4 sm:p-6 space-y-4">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <User className="h-4 w-4 text-muted-foreground" /> Informations
           </div>
 
           <form onSubmit={handleProfileUpdate} className="space-y-4">
@@ -199,10 +196,12 @@ export default function Profile() {
       </Card>
 
       {/* Security */}
-      <Card className="border-border/60">
-        <CardContent className="p-6 space-y-4">
+      <Card>
+        <CardContent className="p-4 sm:p-6 space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-foreground flex items-center gap-2"><Key className="h-4 w-4" /> Sécurité</h3>
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Key className="h-4 w-4 text-muted-foreground" /> Sécurité
+            </div>
             {!isChangingPassword && (
               <Button variant="outline" size="sm" onClick={() => setIsChangingPassword(true)}>Modifier mot de passe</Button>
             )}
@@ -229,25 +228,25 @@ export default function Profile() {
               </div>
             </form>
           ) : (
-            <div className="text-sm text-muted-foreground">
-              <p>Mot de passe sécurisé · Email vérifié</p>
-            </div>
+            <p className="text-sm text-muted-foreground">Mot de passe sécurisé · Email vérifié</p>
           )}
         </CardContent>
       </Card>
 
       {/* Account Info */}
-      <Card className="border-border/60">
-        <CardContent className="p-6 space-y-3">
-          <h3 className="font-semibold text-foreground flex items-center gap-2"><Calendar className="h-4 w-4" /> Compte</h3>
+      <Card>
+        <CardContent className="p-4 sm:p-6 space-y-3">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <Calendar className="h-4 w-4 text-muted-foreground" /> Compte
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div>
               <p className="text-xs text-muted-foreground">Créé le</p>
-              <p className="font-medium text-foreground">{user?.created_at ? format(new Date(user.created_at), "dd MMM yyyy", { locale: fr }) : "—"}</p>
+              <p className="font-medium">{user?.created_at ? format(new Date(user.created_at), "dd MMM yyyy", { locale: fr }) : "—"}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Dernière connexion</p>
-              <p className="font-medium text-foreground">{user?.last_sign_in_at ? format(new Date(user.last_sign_in_at), "dd MMM yyyy", { locale: fr }) : "—"}</p>
+              <p className="font-medium">{user?.last_sign_in_at ? format(new Date(user.last_sign_in_at), "dd MMM yyyy", { locale: fr }) : "—"}</p>
             </div>
           </div>
         </CardContent>

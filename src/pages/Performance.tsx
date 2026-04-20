@@ -94,66 +94,72 @@ export default function Performance() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold">Performance</h2>
+          <p className="text-sm text-muted-foreground">Suivez l'évolution de votre activité</p>
+        </div>
+      </div>
+
       {isPersonalView && (
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-sm text-primary">
-          📊 Vous consultez uniquement vos propres statistiques de vente.
+        <div className="bg-primary/5 border border-primary/20 rounded-lg px-3 py-2 text-xs text-primary">
+          📊 Vous consultez uniquement vos propres statistiques.
         </div>
       )}
 
-      {/* Stats */}
+      {/* Stats — style Stocknix */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
             <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
               <TrendingUp className="h-5 w-5 text-primary" />
             </div>
-            <div>
-              <p className="text-2xl font-bold">{metrics.totalRevenue.toLocaleString()}</p>
-              <p className="text-sm text-muted-foreground">Chiffre d'affaires (FCFA)</p>
+            <div className="min-w-0">
+              <p className="text-2xl font-bold truncate">{metrics.totalRevenue.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">Chiffre d'affaires (FCFA)</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-green-500/10 flex items-center justify-center rounded-xl">
-              <ShoppingCart className="h-5 w-5 text-green-600" />
+            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
+              <ShoppingCart className="h-5 w-5 text-success" />
             </div>
             <div>
               <p className="text-2xl font-bold">{metrics.totalSales}</p>
-              <p className="text-sm text-muted-foreground">Transactions</p>
+              <p className="text-xs text-muted-foreground">Transactions</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-secondary/10 flex items-center justify-center rounded-xl">
-              <Receipt className="h-5 w-5 text-secondary-foreground" />
+            <div className="h-10 w-10 bg-secondary/30 flex items-center justify-center rounded-xl">
+              <Receipt className="h-5 w-5 text-foreground" />
             </div>
-            <div>
-              <p className="text-2xl font-bold">{metrics.totalSales > 0 ? Math.round(metrics.totalRevenue / metrics.totalSales).toLocaleString() : 0}</p>
-              <p className="text-sm text-muted-foreground">Panier moyen (FCFA)</p>
+            <div className="min-w-0">
+              <p className="text-2xl font-bold truncate">{metrics.totalSales > 0 ? Math.round(metrics.totalRevenue / metrics.totalSales).toLocaleString() : 0}</p>
+              <p className="text-xs text-muted-foreground">Panier moyen (FCFA)</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-amber-500/10 flex items-center justify-center rounded-xl">
-              <BarChart3 className="h-5 w-5 text-amber-600" />
+            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
+              <BarChart3 className="h-5 w-5 text-warning" />
             </div>
-            <div>
-              <p className="text-2xl font-bold">{Math.round(metrics.grossMargin).toLocaleString()}</p>
-              <p className="text-sm text-muted-foreground">Marge estimée (FCFA)</p>
+            <div className="min-w-0">
+              <p className="text-2xl font-bold truncate">{Math.round(metrics.grossMargin).toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">Marge estimée (FCFA)</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Toolbar / Filters */}
-      <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-end">
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-muted-foreground">Période</label>
+      <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
+        <div className="flex flex-wrap gap-2">
           <Select value={period} onValueChange={(v: PeriodType) => setPeriod(v)}>
-            <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-[150px] h-11"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="today">Aujourd'hui</SelectItem>
               <SelectItem value="week">Cette semaine</SelectItem>
@@ -161,31 +167,28 @@ export default function Performance() {
               <SelectItem value="custom">Personnalisée</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-        {period === "custom" && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <CalendarIcon className="h-4 w-4" />
-                {dateRange?.from && dateRange?.to ? `${format(dateRange.from, "dd/MM")} - ${format(dateRange.to, "dd/MM")}` : "Dates"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0"><Calendar mode="range" selected={dateRange} onSelect={setDateRange} locale={fr} /></PopoverContent>
-          </Popover>
-        )}
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-muted-foreground">Produit</label>
+          {period === "custom" && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="h-11 gap-2">
+                  <CalendarIcon className="h-4 w-4" />
+                  {dateRange?.from && dateRange?.to ? `${format(dateRange.from, "dd/MM")} - ${format(dateRange.to, "dd/MM")}` : "Dates"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0"><Calendar mode="range" selected={dateRange} onSelect={setDateRange} locale={fr} /></PopoverContent>
+            </Popover>
+          )}
           <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-            <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-[170px] h-11"><SelectValue placeholder="Produit" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous</SelectItem>
+              <SelectItem value="all">Tous les produits</SelectItem>
               {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
-        <div className="flex gap-2 ml-auto">
-          <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}><Download className="h-4 w-4 mr-1" />PDF</Button>
-          <Button variant="outline" size="sm" onClick={() => handleExport('excel')}><Download className="h-4 w-4 mr-1" />Excel</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => handleExport('pdf')} className="h-11"><Download className="h-4 w-4 mr-2" />PDF</Button>
+          <Button variant="outline" onClick={() => handleExport('excel')} className="h-11"><Download className="h-4 w-4 mr-2" />Excel</Button>
         </div>
       </div>
 

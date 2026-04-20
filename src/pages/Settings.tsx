@@ -75,11 +75,20 @@ export default function Settings() {
   });
 
   if (activePage !== "main") {
+    const currentCard = settingsCards.find(c => c.id === activePage);
     return (
-      <div className="space-y-6 max-w-4xl mx-auto animate-fade-in">
-        <Button variant="ghost" onClick={() => setActivePage("main")} className="gap-2 text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" /> Retour aux paramètres
-        </Button>
+      <div className="space-y-6 max-w-3xl mx-auto animate-fade-in">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={() => setActivePage("main")} className="gap-2 text-muted-foreground hover:text-foreground -ml-2">
+            <ArrowLeft className="h-4 w-4" /> Retour
+          </Button>
+          {currentCard && (
+            <>
+              <span className="text-muted-foreground">/</span>
+              <span className="text-sm font-medium">{currentCard.title}</span>
+            </>
+          )}
+        </div>
         {activePage === "company" && <CompanySettings />}
         {activePage === "appearance" && <AppearanceSettings />}
         {activePage === "profile" && <ProfileSettingsPage navigate={navigate} />}
@@ -93,23 +102,23 @@ export default function Settings() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Paramètres</h1>
-        <p className="text-sm text-muted-foreground">Configuration et préférences de votre application</p>
+        <h2 className="text-xl font-bold">Paramètres</h2>
+        <p className="text-sm text-muted-foreground">Configuration et préférences</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {visibleCards.map((card) => (
           <Card
             key={card.id}
-            className="cursor-pointer hover:shadow-md transition-all duration-200 group border-border"
+            className="cursor-pointer hover:shadow-md hover:border-primary/30 transition-all duration-200 group"
             onClick={() => card.id === "profile" ? navigate('/app/profile') : card.id === "subscription" ? navigate('/app/subscription') : setActivePage(card.id)}
           >
             <CardContent className="p-4 flex items-center gap-4">
-              <div className={`h-12 w-12 rounded-xl ${card.iconBg} flex items-center justify-center flex-shrink-0`}>
-                <card.icon className={`h-6 w-6 ${card.iconColor}`} />
+              <div className={`h-11 w-11 rounded-xl ${card.iconBg} flex items-center justify-center flex-shrink-0`}>
+                <card.icon className={`h-5 w-5 ${card.iconColor}`} />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground text-sm">{card.title}</h3>
+                <h3 className="font-semibold text-sm">{card.title}</h3>
                 <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{card.description}</p>
               </div>
               <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all flex-shrink-0" />
@@ -194,8 +203,11 @@ function AppearanceSettings() {
 
   return (
     <Card>
-      <CardHeader><CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5" /> Apparence & Thème</CardTitle></CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-4 sm:p-6 space-y-6">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <Palette className="h-4 w-4 text-muted-foreground" /> Apparence & Thème
+        </div>
+
         <div className="space-y-3">
           <Label>Thème de l'interface</Label>
           <div className="grid grid-cols-3 gap-3">
@@ -207,24 +219,24 @@ function AppearanceSettings() {
               <Button
                 key={t.value}
                 variant={theme === t.value ? "default" : "outline"}
-                className="flex flex-col items-center gap-2 h-auto py-4"
+                className="flex flex-col items-center gap-2 h-auto py-3"
                 onClick={() => setTheme(t.value)}
               >
-                <t.icon className="h-5 w-5" />
+                <t.icon className="h-4 w-4" />
                 <span className="text-xs">{t.label}</span>
               </Button>
             ))}
           </div>
         </div>
-        <Separator />
+
         <div className="space-y-3">
           <Label>Couleur d'accent</Label>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {ACCENT_COLORS.map(c => (
               <button
                 key={c.value}
                 onClick={() => handleAccentChange(c.value)}
-                className={`h-10 w-10 rounded-full border-2 transition-all flex items-center justify-center ${accentColor === c.value ? 'border-foreground scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`}
+                className={`h-9 w-9 rounded-full border-2 transition-all flex items-center justify-center ${accentColor === c.value ? 'border-foreground scale-110' : 'border-transparent hover:scale-105'}`}
                 style={{ background: c.value }}
                 title={c.name}
               >
@@ -233,46 +245,36 @@ function AppearanceSettings() {
             ))}
           </div>
         </div>
-        <Separator />
-        <div className="space-y-2">
-          <Label>Langue</Label>
-          <div className="flex items-center gap-3">
-            <Badge variant="secondary">Français</Badge>
-            <div className="flex items-center gap-2 opacity-50">
-              <span className="text-sm text-muted-foreground">English</span>
-              <Badge variant="outline" className="text-[10px]">Bientôt</Badge>
-            </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Devise</Label>
+            <Select value={currency} onValueChange={setCurrency}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="XOF">CFA (FCFA)</SelectItem>
+                <SelectItem value="EUR">Euro (€)</SelectItem>
+                <SelectItem value="USD">Dollar ($)</SelectItem>
+                <SelectItem value="GBP">Livre (£)</SelectItem>
+                <SelectItem value="MAD">Dirham (MAD)</SelectItem>
+                <SelectItem value="GHS">Cedi (GHS)</SelectItem>
+                <SelectItem value="NGN">Naira (₦)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>Format de date</Label>
+            <Select value={dateFormat} onValueChange={setDateFormat}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
+                <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
+                <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-        <Separator />
-        <div className="space-y-2">
-          <Label>Devise</Label>
-          <Select value={currency} onValueChange={setCurrency}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="XOF">CFA (FCFA)</SelectItem>
-              <SelectItem value="EUR">Euro (€)</SelectItem>
-              <SelectItem value="USD">Dollar ($)</SelectItem>
-              <SelectItem value="GBP">Livre (£)</SelectItem>
-              <SelectItem value="MAD">Dirham (MAD)</SelectItem>
-              <SelectItem value="GHS">Cedi (GHS)</SelectItem>
-              <SelectItem value="NGN">Naira (₦)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Separator />
-        <div className="space-y-2">
-          <Label>Format de date</Label>
-          <Select value={dateFormat} onValueChange={setDateFormat}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
-              <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
-              <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Separator />
+
         <div className="space-y-2">
           <Label>Taille de police</Label>
           <div className="grid grid-cols-3 gap-3">
@@ -292,16 +294,17 @@ function AppearanceSettings() {
             ))}
           </div>
         </div>
-        <Separator />
-        <div className="flex items-center justify-between">
+
+        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40">
           <div>
             <p className="text-sm font-medium">Mode compact</p>
-            <p className="text-xs text-muted-foreground">Réduit les espaces pour afficher plus de contenu</p>
+            <p className="text-xs text-muted-foreground">Réduit les espaces</p>
           </div>
           <Switch checked={compactMode} onCheckedChange={setCompactMode} />
         </div>
-        <Button onClick={handleSave} className="w-full sm:w-auto">
-          <Save className="h-4 w-4 mr-2" /> Enregistrer les préférences
+
+        <Button onClick={handleSave} className="w-full sm:w-auto h-11">
+          <Save className="h-4 w-4 mr-2" /> Enregistrer
         </Button>
       </CardContent>
     </Card>
@@ -355,20 +358,23 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
 
   return (
     <Card>
-      <CardHeader><CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5" /> Sécurité & Données</CardTitle></CardHeader>
-      <CardContent className="space-y-5">
-        <div className="flex items-center justify-between">
+      <CardContent className="p-4 sm:p-6 space-y-4">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <Shield className="h-4 w-4 text-muted-foreground" /> Sécurité & Données
+        </div>
+
+        <div className="flex items-center justify-between py-2">
           <div><p className="font-medium text-sm">Authentification</p><p className="text-xs text-muted-foreground">Connexion sécurisée</p></div>
           <Badge variant="outline">Email + Mot de passe</Badge>
         </div>
-        <Separator />
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
+
+        <div className="space-y-3 py-2 border-t border-border">
+          <div className="flex items-center justify-between pt-3">
             <div><p className="font-medium text-sm">Mot de passe</p><p className="text-xs text-muted-foreground">Modifier votre mot de passe</p></div>
             {!isChangingPassword && <Button variant="outline" size="sm" onClick={() => setIsChangingPassword(true)}>Modifier</Button>}
           </div>
           {isChangingPassword && (
-            <form onSubmit={handlePasswordChange} className="space-y-3 p-4 rounded-lg bg-muted/50">
+            <form onSubmit={handlePasswordChange} className="space-y-3 p-4 rounded-lg bg-muted/40">
               <div><Label htmlFor="new_password">Nouveau mot de passe</Label><Input id="new_password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 6 caractères" required /></div>
               <div><Label htmlFor="confirm_password">Confirmer</Label><Input id="confirm_password" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required /></div>
               <div className="flex gap-2">
@@ -378,27 +384,24 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
             </form>
           )}
         </div>
-        <Separator />
-        <div className="flex items-center justify-between">
-          <div><p className="font-medium text-sm">Sessions actives</p></div>
-          <Badge variant="outline">1 session</Badge>
-        </div>
-        <Separator />
-        <div className="flex items-center justify-between">
+
+        <div className="flex items-center justify-between py-3 border-t border-border">
           <div><p className="font-medium text-sm">Sauvegarde & Chiffrement</p><p className="text-xs text-muted-foreground">Temps réel · SSL/TLS</p></div>
           <Badge variant="secondary" className="bg-success/10 text-success">Activé</Badge>
         </div>
-        <Separator />
-        <div className="space-y-3">
+
+        <div className="space-y-3 py-3 border-t border-border">
           <div><p className="font-medium text-sm">Export des données</p><p className="text-xs text-muted-foreground">{products.length} produits · {sales.length} ventes · {payments.length} paiements</p></div>
-          <Button onClick={handleExport} disabled={isExporting} variant="outline" size="sm">
+          <Button onClick={handleExport} disabled={isExporting} variant="outline" size="sm" className="h-10">
             <Download className="h-4 w-4 mr-2" /> {isExporting ? "Export..." : "Exporter (Excel)"}
           </Button>
         </div>
-        <Separator />
-        <Button variant="outline" size="sm" className="text-destructive border-destructive/30" onClick={signOut}>
-          <LogOut className="h-4 w-4 mr-2" /> Déconnecter toutes les sessions
-        </Button>
+
+        <div className="pt-3 border-t border-border">
+          <Button variant="outline" size="sm" className="text-destructive border-destructive/30 hover:bg-destructive/5" onClick={signOut}>
+            <LogOut className="h-4 w-4 mr-2" /> Déconnecter toutes les sessions
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
@@ -416,11 +419,13 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
 
   return (
     <Card>
-      <CardHeader><CardTitle className="flex items-center gap-2"><Globe className="h-5 w-5" /> Informations système</CardTitle></CardHeader>
-      <CardContent>
+      <CardContent className="p-4 sm:p-6 space-y-5">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <Globe className="h-4 w-4 text-muted-foreground" /> Informations système
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <h3 className="font-medium">Version & Statut</h3>
+          <div className="space-y-2.5">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Version & Statut</h3>
             {[
               { label: "Version", value: "v1.0.0" },
               { label: "Statut", value: "Opérationnel", success: true },
@@ -428,25 +433,25 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
               { label: "Utilisateur", value: displayName },
               { label: "Rôle", value: isAdmin ? "Administrateur" : "Propriétaire" },
             ].map(item => (
-              <div key={item.label} className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">{item.label}</span>
+              <div key={item.label} className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{item.label}</span>
                 <Badge variant={item.success ? "secondary" : "outline"} className={item.success ? "bg-success/10 text-success" : ""}>
                   {item.value}
                 </Badge>
               </div>
             ))}
           </div>
-          <div className="space-y-3">
-            <h3 className="font-medium">Performance & Support</h3>
+          <div className="space-y-2.5">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Performance & Support</h3>
             {[
               { label: "Temps de réponse", value: "< 100ms", success: true },
               { label: "Disponibilité", value: "99.9%", success: true },
-              { label: "Support technique", value: "24h/7j" },
+              { label: "Support", value: "24h/7j" },
               { label: "Mises à jour", value: "Automatiques", success: true },
               { label: "Hébergement", value: "Supabase Cloud", success: true },
             ].map(item => (
-              <div key={item.label} className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">{item.label}</span>
+              <div key={item.label} className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{item.label}</span>
                 <Badge variant={item.success ? "secondary" : "outline"} className={item.success ? "bg-success/10 text-success" : ""}>
                   {item.value}
                 </Badge>

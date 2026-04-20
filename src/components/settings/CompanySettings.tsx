@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useCompanySettings, CompanySettings as CompanySettingsType } from "@/hooks/useCompanySettings";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,13 +30,11 @@ export function CompanySettings() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Building2 className="h-5 w-5" />
-          Informations de l'entreprise
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 sm:p-6 space-y-5">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <Building2 className="h-4 w-4 text-muted-foreground" /> Informations de l'entreprise
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
@@ -106,9 +104,9 @@ export function CompanySettings() {
               />
             </div>
           </div>
-          <Button type="submit" className="w-full md:w-auto">
+          <Button type="submit" className="w-full sm:w-auto h-11">
             <Save className="h-4 w-4 mr-2" />
-            Enregistrer les paramètres
+            Enregistrer
           </Button>
         </form>
       </CardContent>

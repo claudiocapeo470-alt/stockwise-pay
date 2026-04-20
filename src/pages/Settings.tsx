@@ -358,20 +358,23 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
 
   return (
     <Card>
-      <CardHeader><CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5" /> Sécurité & Données</CardTitle></CardHeader>
-      <CardContent className="space-y-5">
-        <div className="flex items-center justify-between">
+      <CardContent className="p-4 sm:p-6 space-y-4">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <Shield className="h-4 w-4 text-muted-foreground" /> Sécurité & Données
+        </div>
+
+        <div className="flex items-center justify-between py-2">
           <div><p className="font-medium text-sm">Authentification</p><p className="text-xs text-muted-foreground">Connexion sécurisée</p></div>
           <Badge variant="outline">Email + Mot de passe</Badge>
         </div>
-        <Separator />
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
+
+        <div className="space-y-3 py-2 border-t border-border">
+          <div className="flex items-center justify-between pt-3">
             <div><p className="font-medium text-sm">Mot de passe</p><p className="text-xs text-muted-foreground">Modifier votre mot de passe</p></div>
             {!isChangingPassword && <Button variant="outline" size="sm" onClick={() => setIsChangingPassword(true)}>Modifier</Button>}
           </div>
           {isChangingPassword && (
-            <form onSubmit={handlePasswordChange} className="space-y-3 p-4 rounded-lg bg-muted/50">
+            <form onSubmit={handlePasswordChange} className="space-y-3 p-4 rounded-lg bg-muted/40">
               <div><Label htmlFor="new_password">Nouveau mot de passe</Label><Input id="new_password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 6 caractères" required /></div>
               <div><Label htmlFor="confirm_password">Confirmer</Label><Input id="confirm_password" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required /></div>
               <div className="flex gap-2">
@@ -381,27 +384,24 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
             </form>
           )}
         </div>
-        <Separator />
-        <div className="flex items-center justify-between">
-          <div><p className="font-medium text-sm">Sessions actives</p></div>
-          <Badge variant="outline">1 session</Badge>
-        </div>
-        <Separator />
-        <div className="flex items-center justify-between">
+
+        <div className="flex items-center justify-between py-3 border-t border-border">
           <div><p className="font-medium text-sm">Sauvegarde & Chiffrement</p><p className="text-xs text-muted-foreground">Temps réel · SSL/TLS</p></div>
           <Badge variant="secondary" className="bg-success/10 text-success">Activé</Badge>
         </div>
-        <Separator />
-        <div className="space-y-3">
+
+        <div className="space-y-3 py-3 border-t border-border">
           <div><p className="font-medium text-sm">Export des données</p><p className="text-xs text-muted-foreground">{products.length} produits · {sales.length} ventes · {payments.length} paiements</p></div>
-          <Button onClick={handleExport} disabled={isExporting} variant="outline" size="sm">
+          <Button onClick={handleExport} disabled={isExporting} variant="outline" size="sm" className="h-10">
             <Download className="h-4 w-4 mr-2" /> {isExporting ? "Export..." : "Exporter (Excel)"}
           </Button>
         </div>
-        <Separator />
-        <Button variant="outline" size="sm" className="text-destructive border-destructive/30" onClick={signOut}>
-          <LogOut className="h-4 w-4 mr-2" /> Déconnecter toutes les sessions
-        </Button>
+
+        <div className="pt-3 border-t border-border">
+          <Button variant="outline" size="sm" className="text-destructive border-destructive/30 hover:bg-destructive/5" onClick={signOut}>
+            <LogOut className="h-4 w-4 mr-2" /> Déconnecter toutes les sessions
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
@@ -419,11 +419,13 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
 
   return (
     <Card>
-      <CardHeader><CardTitle className="flex items-center gap-2"><Globe className="h-5 w-5" /> Informations système</CardTitle></CardHeader>
-      <CardContent>
+      <CardContent className="p-4 sm:p-6 space-y-5">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <Globe className="h-4 w-4 text-muted-foreground" /> Informations système
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <h3 className="font-medium">Version & Statut</h3>
+          <div className="space-y-2.5">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Version & Statut</h3>
             {[
               { label: "Version", value: "v1.0.0" },
               { label: "Statut", value: "Opérationnel", success: true },
@@ -431,25 +433,25 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
               { label: "Utilisateur", value: displayName },
               { label: "Rôle", value: isAdmin ? "Administrateur" : "Propriétaire" },
             ].map(item => (
-              <div key={item.label} className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">{item.label}</span>
+              <div key={item.label} className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{item.label}</span>
                 <Badge variant={item.success ? "secondary" : "outline"} className={item.success ? "bg-success/10 text-success" : ""}>
                   {item.value}
                 </Badge>
               </div>
             ))}
           </div>
-          <div className="space-y-3">
-            <h3 className="font-medium">Performance & Support</h3>
+          <div className="space-y-2.5">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Performance & Support</h3>
             {[
               { label: "Temps de réponse", value: "< 100ms", success: true },
               { label: "Disponibilité", value: "99.9%", success: true },
-              { label: "Support technique", value: "24h/7j" },
+              { label: "Support", value: "24h/7j" },
               { label: "Mises à jour", value: "Automatiques", success: true },
               { label: "Hébergement", value: "Supabase Cloud", success: true },
             ].map(item => (
-              <div key={item.label} className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">{item.label}</span>
+              <div key={item.label} className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{item.label}</span>
                 <Badge variant={item.success ? "secondary" : "outline"} className={item.success ? "bg-success/10 text-success" : ""}>
                   {item.value}
                 </Badge>

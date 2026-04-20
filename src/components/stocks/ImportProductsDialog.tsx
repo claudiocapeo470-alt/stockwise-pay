@@ -137,8 +137,8 @@ export function ImportProductsDialog() {
 
   return (
     <>
-      <Button variant="outline" onClick={() => setOpen(true)}>
-        <Upload className="h-4 w-4 mr-2" /> Importer
+      <Button variant="outline" onClick={() => setOpen(true)} className="h-11 gap-2">
+        <Upload className="h-4 w-4" /> Importer
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>

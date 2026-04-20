@@ -49,22 +49,26 @@ export default function Livraisons() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold flex items-center gap-2"><Truck className="h-6 w-6" /> Livraisons</h1>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold flex items-center gap-2"><Truck className="h-5 w-5" /> Livraisons</h2>
+      </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* Stats — style Stocknix */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
-          { label: "Assignées", value: stats.assigned, color: "text-blue-600", icon: UserPlus },
-          { label: "En cours", value: stats.in_progress, color: "text-orange-600", icon: Truck },
-          { label: "Livrées", value: stats.delivered, color: "text-green-600", icon: CheckCircle },
-          { label: "Problèmes", value: stats.problem, color: "text-red-600", icon: AlertTriangle },
+          { label: "Assignées", value: stats.assigned, bg: "bg-primary/10", color: "text-primary", icon: UserPlus },
+          { label: "En cours", value: stats.in_progress, bg: "bg-warning/10", color: "text-warning", icon: Truck },
+          { label: "Livrées", value: stats.delivered, bg: "bg-success/10", color: "text-success", icon: CheckCircle },
+          { label: "Problèmes", value: stats.problem, bg: "bg-destructive/10", color: "text-destructive", icon: AlertTriangle },
         ].map((s, i) => (
           <Card key={i}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <s.icon className={`h-6 w-6 ${s.color}`} />
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className={`h-10 w-10 ${s.bg} flex items-center justify-center rounded-xl`}>
+                <s.icon className={`h-5 w-5 ${s.color}`} />
+              </div>
               <div>
-                <p className="text-xl font-bold">{s.value}</p>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
+                <p className="text-2xl font-bold">{s.value}</p>
+                <p className="text-sm text-muted-foreground">{s.label}</p>
               </div>
             </CardContent>
           </Card>
@@ -74,7 +78,7 @@ export default function Livraisons() {
       {/* Filter */}
       <div className="flex items-center gap-3">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-48"><SelectValue placeholder="Filtrer par statut" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-48 h-11"><SelectValue placeholder="Filtrer par statut" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tous les statuts</SelectItem>
             {Object.entries(STATUS_MAP).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}

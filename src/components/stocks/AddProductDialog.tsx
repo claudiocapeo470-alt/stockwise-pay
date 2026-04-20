@@ -69,7 +69,7 @@ export function AddProductDialog() {
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setStep(1); setShowPicker(false); } }}>
       <DialogTrigger asChild>
-        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-medium hover:shadow-glow transition-all duration-300 rounded-xl h-auto py-3 px-4 flex items-center justify-center gap-2 group">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-medium hover:shadow-glow transition-all duration-300 rounded-xl h-11 px-5 flex items-center justify-center gap-2 group">
           <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
           <span className="font-semibold text-sm">Ajouter produit</span>
         </Button>

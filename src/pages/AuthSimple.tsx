@@ -434,7 +434,7 @@ export default function AuthSimple() {
       </div>
 
       {/* Right Side - Auth Forms */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
+      <div className="flex-1 flex items-start lg:items-center justify-center p-6 lg:p-8 bg-background relative overflow-y-auto h-screen">
         {/* Back button hidden in PWA standalone mode */}
         {!window.matchMedia('(display-mode: standalone)').matches && (
           <Link 

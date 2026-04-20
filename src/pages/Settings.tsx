@@ -203,8 +203,11 @@ function AppearanceSettings() {
 
   return (
     <Card>
-      <CardHeader><CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5" /> Apparence & Thème</CardTitle></CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-4 sm:p-6 space-y-6">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <Palette className="h-4 w-4 text-muted-foreground" /> Apparence & Thème
+        </div>
+
         <div className="space-y-3">
           <Label>Thème de l'interface</Label>
           <div className="grid grid-cols-3 gap-3">
@@ -216,24 +219,24 @@ function AppearanceSettings() {
               <Button
                 key={t.value}
                 variant={theme === t.value ? "default" : "outline"}
-                className="flex flex-col items-center gap-2 h-auto py-4"
+                className="flex flex-col items-center gap-2 h-auto py-3"
                 onClick={() => setTheme(t.value)}
               >
-                <t.icon className="h-5 w-5" />
+                <t.icon className="h-4 w-4" />
                 <span className="text-xs">{t.label}</span>
               </Button>
             ))}
           </div>
         </div>
-        <Separator />
+
         <div className="space-y-3">
           <Label>Couleur d'accent</Label>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {ACCENT_COLORS.map(c => (
               <button
                 key={c.value}
                 onClick={() => handleAccentChange(c.value)}
-                className={`h-10 w-10 rounded-full border-2 transition-all flex items-center justify-center ${accentColor === c.value ? 'border-foreground scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`}
+                className={`h-9 w-9 rounded-full border-2 transition-all flex items-center justify-center ${accentColor === c.value ? 'border-foreground scale-110' : 'border-transparent hover:scale-105'}`}
                 style={{ background: c.value }}
                 title={c.name}
               >
@@ -242,46 +245,36 @@ function AppearanceSettings() {
             ))}
           </div>
         </div>
-        <Separator />
-        <div className="space-y-2">
-          <Label>Langue</Label>
-          <div className="flex items-center gap-3">
-            <Badge variant="secondary">Français</Badge>
-            <div className="flex items-center gap-2 opacity-50">
-              <span className="text-sm text-muted-foreground">English</span>
-              <Badge variant="outline" className="text-[10px]">Bientôt</Badge>
-            </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Devise</Label>
+            <Select value={currency} onValueChange={setCurrency}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="XOF">CFA (FCFA)</SelectItem>
+                <SelectItem value="EUR">Euro (€)</SelectItem>
+                <SelectItem value="USD">Dollar ($)</SelectItem>
+                <SelectItem value="GBP">Livre (£)</SelectItem>
+                <SelectItem value="MAD">Dirham (MAD)</SelectItem>
+                <SelectItem value="GHS">Cedi (GHS)</SelectItem>
+                <SelectItem value="NGN">Naira (₦)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>Format de date</Label>
+            <Select value={dateFormat} onValueChange={setDateFormat}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
+                <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
+                <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-        <Separator />
-        <div className="space-y-2">
-          <Label>Devise</Label>
-          <Select value={currency} onValueChange={setCurrency}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="XOF">CFA (FCFA)</SelectItem>
-              <SelectItem value="EUR">Euro (€)</SelectItem>
-              <SelectItem value="USD">Dollar ($)</SelectItem>
-              <SelectItem value="GBP">Livre (£)</SelectItem>
-              <SelectItem value="MAD">Dirham (MAD)</SelectItem>
-              <SelectItem value="GHS">Cedi (GHS)</SelectItem>
-              <SelectItem value="NGN">Naira (₦)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Separator />
-        <div className="space-y-2">
-          <Label>Format de date</Label>
-          <Select value={dateFormat} onValueChange={setDateFormat}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
-              <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
-              <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Separator />
+
         <div className="space-y-2">
           <Label>Taille de police</Label>
           <div className="grid grid-cols-3 gap-3">
@@ -301,16 +294,17 @@ function AppearanceSettings() {
             ))}
           </div>
         </div>
-        <Separator />
-        <div className="flex items-center justify-between">
+
+        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40">
           <div>
             <p className="text-sm font-medium">Mode compact</p>
-            <p className="text-xs text-muted-foreground">Réduit les espaces pour afficher plus de contenu</p>
+            <p className="text-xs text-muted-foreground">Réduit les espaces</p>
           </div>
           <Switch checked={compactMode} onCheckedChange={setCompactMode} />
         </div>
-        <Button onClick={handleSave} className="w-full sm:w-auto">
-          <Save className="h-4 w-4 mr-2" /> Enregistrer les préférences
+
+        <Button onClick={handleSave} className="w-full sm:w-auto h-11">
+          <Save className="h-4 w-4 mr-2" /> Enregistrer
         </Button>
       </CardContent>
     </Card>

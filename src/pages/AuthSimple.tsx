@@ -384,9 +384,9 @@ export default function AuthSimple() {
 
   // Interface principale d'authentification
   return (
-    <div className="min-h-screen flex overflow-hidden">
-      {/* Left Side - Branding & Illustration */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-primary via-blue-600 to-slate-900 p-12 flex-col justify-between overflow-hidden">
+    <div className="h-screen flex overflow-hidden">
+      {/* Left Side - Branding & Illustration (FIXED, no scroll) */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-primary via-blue-600 to-slate-900 p-12 flex-col justify-between overflow-hidden sticky top-0 h-screen">
         <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-transparent to-white/10 animate-pulse"></div>
         
         <div className="absolute inset-0 opacity-10">

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FileText, Eye, Edit, Trash2, Copy, Download, Search, MoreVertical, Grid3x3, List } from "lucide-react";
+import { Plus, FileText, Eye, Edit, Trash2, Copy, Download, Search, MoreVertical, Grid3x3, List, CheckCircle2, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
@@ -42,12 +42,16 @@ export default function Factures() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const isMobile = useIsMobile();
 
-  const filteredInvoices = invoices.filter((invoice) =>
-    invoice.client_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    invoice.document_number.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredInvoices = invoices.filter((invoice) => {
+    const matchSearch =
+      invoice.client_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      invoice.document_number.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchStatus = statusFilter === "all" || invoice.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
 
   const handleDelete = async () => {
     if (invoiceToDelete) {
@@ -79,10 +83,15 @@ export default function Factures() {
     annule: "Annulé",
   };
 
-  // Stats
-  const totalAmount = invoices.reduce((sum, inv) => sum + inv.total_amount, 0);
   const paidCount = invoices.filter(i => i.status === 'paye').length;
   const pendingCount = invoices.filter(i => i.status === 'envoye' || i.status === 'brouillon').length;
+
+  const filters = [
+    { key: "all", label: "Tous" },
+    { key: "brouillon", label: "Brouillons" },
+    { key: "envoye", label: "Envoyés" },
+    { key: "paye", label: "Payés" },
+  ];
 
   if (isLoading) {
     return (
@@ -93,10 +102,26 @@ export default function Factures() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-8 animate-fade-in">
+      {/* Header large */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="space-y-1.5">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">Factures</h1>
+          <p className="text-sm text-muted-foreground">
+            {invoices.length} facture{invoices.length > 1 ? 's' : ''} émise{invoices.length > 1 ? 's' : ''} · {paidCount} payée{paidCount > 1 ? 's' : ''}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => navigate('/app/factures/new')} className="h-10 px-5 rounded-lg shadow-sm">
+            <Plus className="mr-2 h-4 w-4" />
+            Nouvelle Facture
+          </Button>
+        </div>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-        <Card>
+        <Card className="border-border/60">
           <CardContent className="p-4 flex items-center gap-4">
             <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
               <FileText className="h-5 w-5 text-primary" />
@@ -107,10 +132,10 @@ export default function Factures() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-border/60">
           <CardContent className="p-4 flex items-center gap-4">
             <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
-              <FileText className="h-5 w-5 text-success" />
+              <CheckCircle2 className="h-5 w-5 text-success" />
             </div>
             <div>
               <p className="text-2xl font-bold">{paidCount}</p>
@@ -118,10 +143,10 @@ export default function Factures() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-border/60">
           <CardContent className="p-4 flex items-center gap-4">
             <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
-              <FileText className="h-5 w-5 text-warning" />
+              <Clock className="h-5 w-5 text-warning" />
             </div>
             <div>
               <p className="text-2xl font-bold">{pendingCount}</p>
@@ -131,30 +156,45 @@ export default function Factures() {
         </Card>
       </div>
 
-      {/* Toolbar */}
-      <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
-        <div className="relative flex-1 lg:max-w-md w-full">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input placeholder="Rechercher par client ou numéro..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 h-11" />
+      {/* Toolbar pills + search */}
+      <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between border-b border-border/60 pb-4">
+        <div className="flex items-center gap-1 overflow-x-auto -mx-1 px-1">
+          {filters.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setStatusFilter(f.key)}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-colors ${
+                statusFilter === f.key
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted/40 text-muted-foreground hover:bg-muted"
+              }`}
+            >
+              {f.label.toUpperCase()}
+            </button>
+          ))}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1 lg:w-72">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Rechercher facture..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-10 bg-muted/40 border-border/60"
+            />
+          </div>
           {!isMobile && (
-            <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
-              <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0"><List className="h-4 w-4" /></Button>
-              <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0"><Grid3x3 className="h-4 w-4" /></Button>
+            <div className="inline-flex rounded-lg border border-border/60 bg-card p-0.5">
+              <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-8 w-8 p-0"><List className="h-4 w-4" /></Button>
+              <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-8 w-8 p-0"><Grid3x3 className="h-4 w-4" /></Button>
             </div>
           )}
-          <div className="hidden sm:block h-8 w-px bg-border mx-1" />
-          <Button onClick={() => navigate('/app/factures/new')} className="h-11 px-5 rounded-xl shadow-medium hover:shadow-glow transition-all">
-            <Plus className="mr-2 h-4 w-4" />
-            Nouvelle Facture
-          </Button>
         </div>
       </div>
 
       {/* Content */}
       {filteredInvoices.length === 0 ? (
-        <Card>
+        <Card className="border-border/60">
           <CardContent className="py-16 text-center">
             <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">{invoices.length === 0 ? "Aucune facture" : "Aucun résultat"}</h3>
@@ -170,37 +210,37 @@ export default function Factures() {
         <>
           {/* Table view */}
           {!isMobile && viewMode === "list" && (
-            <Card>
+            <Card className="border-border/60 overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Numéro</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Montant</TableHead>
-                    <TableHead className="text-center">Statut</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/60">
+                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Numéro</TableHead>
+                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Client</TableHead>
+                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Date</TableHead>
+                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase text-right">Montant</TableHead>
+                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase text-center">Statut</TableHead>
+                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredInvoices.map((invoice) => (
-                    <TableRow key={invoice.id}>
-                      <TableCell>
+                    <TableRow key={invoice.id} className="border-border/40 hover:bg-muted/20">
+                      <TableCell className="py-4">
                         <div className="flex items-center gap-3">
                           <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 bg-primary/10">
                             <FileText className="h-4 w-4 text-primary" />
                           </div>
-                          <p className="font-medium">{invoice.document_number}</p>
+                          <p className="font-semibold text-foreground">{invoice.document_number}</p>
                         </div>
                       </TableCell>
-                      <TableCell>{invoice.client_name}</TableCell>
-                      <TableCell>{format(new Date(invoice.issue_date), 'dd/MM/yyyy', { locale: fr })}</TableCell>
-                      <TableCell className="text-right font-medium">{invoice.total_amount.toLocaleString()} FCFA</TableCell>
+                      <TableCell className="text-foreground">{invoice.client_name}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}</TableCell>
+                      <TableCell className="text-right font-bold text-foreground">{invoice.total_amount.toLocaleString()} FCFA</TableCell>
                       <TableCell className="text-center">
-                        <Badge className={statusColors[invoice.status]}>{statusLabels[invoice.status]}</Badge>
+                        <Badge className={`${statusColors[invoice.status]} font-medium`}>{statusLabels[invoice.status]}</Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-1 justify-end">
+                        <div className="flex gap-0.5 justify-end">
                           <Button variant="ghost" size="icon" onClick={() => navigate(`/app/factures/${invoice.id}/preview`)}><Eye className="h-4 w-4" /></Button>
                           <Button variant="ghost" size="icon" onClick={() => navigate(`/app/factures/${invoice.id}`)}><Edit className="h-4 w-4" /></Button>
                           <Button variant="ghost" size="icon" onClick={() => handleDuplicate(invoice.id!)}><Copy className="h-4 w-4" /></Button>
@@ -218,7 +258,7 @@ export default function Factures() {
           {(isMobile || viewMode === "grid") && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredInvoices.map((invoice) => (
-                <Card key={invoice.id} className="hover:shadow-md transition-all">
+                <Card key={invoice.id} className="border-border/60 hover:shadow-md transition-all">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-3 min-w-0">
@@ -244,7 +284,7 @@ export default function Factures() {
                         <p className="text-lg font-bold">{invoice.total_amount.toLocaleString()} <span className="text-xs font-normal">FCFA</span></p>
                       </div>
                     </div>
-                    <div className="flex gap-2 pt-2 border-t border-border">
+                    <div className="flex gap-2 pt-2 border-t border-border/60">
                       <Button variant="outline" size="sm" onClick={() => navigate(`/app/factures/${invoice.id}/preview`)} className="flex-1"><Eye className="h-3.5 w-3.5 mr-1.5" />Voir</Button>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

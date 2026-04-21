@@ -236,71 +236,82 @@ export default function Ventes() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Stats */}
+    <div className="space-y-8 animate-fade-in">
+      {/* Header large inspiré */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+            Suivi des ventes
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {sales.length} {sales.length > 1 ? "transactions enregistrées" : "transaction enregistrée"} • {totalSales.toLocaleString()} FCFA de chiffre d'affaires
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <AddSaleDialog />
+        </div>
+      </div>
+
+      {/* Stats compactes */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-lg">
+            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
               <ShoppingCart className="h-5 w-5 text-primary" />
             </div>
-            <div>
-              <p className="text-2xl font-bold">{sales.length}</p>
-              <p className="text-sm text-muted-foreground">Ventes totales</p>
+            <div className="min-w-0">
+              <p className="text-2xl font-bold truncate">{sales.length}</p>
+              <p className="text-xs text-muted-foreground">Ventes totales</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-green-500/10 flex items-center justify-center rounded-lg">
-              <ShoppingCart className="h-5 w-5 text-green-500" />
+            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
+              <ShoppingCart className="h-5 w-5 text-success" />
             </div>
-            <div>
-              <p className="text-2xl font-bold">{todaySales.length}</p>
-              <p className="text-sm text-muted-foreground">Aujourd'hui • {todayTotal.toLocaleString()} FCFA</p>
+            <div className="min-w-0">
+              <p className="text-2xl font-bold truncate">{todaySales.length}</p>
+              <p className="text-xs text-muted-foreground">Aujourd'hui • {todayTotal.toLocaleString()} FCFA</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-secondary/10 flex items-center justify-center rounded-lg">
+            <div className="h-10 w-10 bg-secondary/10 flex items-center justify-center rounded-xl">
               <TrendingUp className="h-5 w-5 text-secondary" />
             </div>
-            <div>
-              <p className="text-2xl font-bold">{totalSales.toLocaleString()}</p>
-              <p className="text-sm text-muted-foreground">Chiffre d'affaires (FCFA)</p>
+            <div className="min-w-0">
+              <p className="text-2xl font-bold truncate">{totalSales.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">Chiffre d'affaires (FCFA)</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Toolbar */}
-      <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
+      {/* Toolbar — barre filtres style pills */}
+      <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between border-b border-border/60 pb-4">
         <div className="relative flex-1 lg:max-w-md w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder="Rechercher par client ou produit..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-11"
+            className="pl-10 h-10 bg-muted/40 border-border/60"
           />
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {!isMobile && (
-            <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
-              <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0">
-                <List className="h-4 w-4" />
-              </Button>
-              <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0">
-                <Grid3x3 className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-          <div className="hidden sm:block h-8 w-px bg-border mx-1" />
-          <AddSaleDialog />
-        </div>
+        {!isMobile && (
+          <div className="inline-flex rounded-xl border border-border bg-card p-0.5">
+            <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0 rounded-lg">
+              <List className="h-4 w-4" />
+            </Button>
+            <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0 rounded-lg">
+              <Grid3x3 className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Sales list */}

@@ -68,19 +68,19 @@ export function PinKeypad({ length = 6, onComplete, label = "Code PIN", isLoadin
             disabled={isLoading}
             onClick={() => handleKey(key)}
             className={`
-              h-14 rounded-xl font-semibold text-lg transition-all duration-100 
+              h-16 rounded-2xl font-semibold text-xl transition-all duration-150
               active:scale-95 select-none
               disabled:opacity-50 disabled:cursor-not-allowed
               ${key === "clear"
-                ? "text-sm text-destructive bg-destructive/10"
+                ? "text-base text-destructive bg-destructive/10 hover:bg-destructive/15 border border-destructive/20"
                 : key === "delete"
-                ? "bg-muted flex items-center justify-center"
-                : "bg-card border border-border text-foreground shadow-sm"
+                ? "bg-muted hover:bg-muted/80 flex items-center justify-center text-foreground border border-border/60"
+                : "bg-card text-foreground border border-border/60 shadow-sm hover:shadow-md hover:border-primary/40 hover:bg-primary/5"
               }
             `}
           >
             {key === "delete" ? (
-              <Delete className="h-5 w-5 mx-auto" />
+              <Delete className="h-6 w-6 mx-auto" />
             ) : key === "clear" ? (
               "C"
             ) : (

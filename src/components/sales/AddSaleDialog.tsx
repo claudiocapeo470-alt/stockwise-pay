@@ -49,12 +49,13 @@ export function AddSaleDialog() {
     e.preventDefault();
     if (!isValid) return;
 
+    const createdIds: string[] = [];
     try {
       for (const line of lines) {
         const product = products.find(p => p.id === line.product_id);
         if (!product) continue;
 
-        await addSale.mutateAsync({
+        const result: any = await addSale.mutateAsync({
           product_id: line.product_id,
           quantity: line.quantity,
           unit_price: product.price,
@@ -65,6 +66,7 @@ export function AddSaleDialog() {
           payment_method: paymentMethod,
           sale_date: new Date().toISOString(),
         });
+        if (result?.id) createdIds.push(result.id);
       }
 
       setLines([{ product_id: "", quantity: 1 }]);
@@ -73,7 +75,15 @@ export function AddSaleDialog() {
       setPaymentMethod("");
       setOpen(false);
     } catch (error) {
-      // Error handled by mutation
+      // Rollback partially-created sales to avoid inconsistent state
+      if (createdIds.length > 0) {
+        try {
+          const { supabase } = await import('@/integrations/supabase/client');
+          await supabase.from('sales').delete().in('id', createdIds);
+        } catch {
+          // best-effort rollback
+        }
+      }
     }
   };
 

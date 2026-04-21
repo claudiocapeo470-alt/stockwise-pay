@@ -18,6 +18,8 @@ const PLAN_LABELS: Record<string, string> = {
   pro: 'Pro',
 };
 
+const PAID_PLANS: PaiementProPlan[] = ['starter', 'business', 'pro'];
+
 export default function MySubscription() {
   const { status, isLoading: subLoading, refetch: refetchSub } = useSubscription();
   const { initPayment, loadingPlan } = usePaiementPro();
@@ -119,9 +121,9 @@ export default function MySubscription() {
               <h3 className="font-bold">Choisissez votre plan</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {(Object.keys(PLAN_LABELS) as PaiementProPlan[]).map((key) => {
+              {PAID_PLANS.map((key) => {
                 const label = PLAN_LABELS[key];
-                const amount = prices[key];
+                const amount = prices?.[key] ?? 0;
                 return (
                   <div key={key} className="p-4 rounded-xl border border-border bg-card flex flex-col gap-3">
                     <div>
@@ -133,7 +135,7 @@ export default function MySubscription() {
                     </div>
                     <Button
                       size="sm"
-                      disabled={loadingPlan !== null || subLoading || pricesLoading}
+                      disabled={loadingPlan !== null || subLoading || pricesLoading || amount <= 0}
                       onClick={() => initPayment({ plan: key, amount, billing_cycle: 'monthly' })}
                       className="w-full"
                     >

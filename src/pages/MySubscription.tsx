@@ -7,18 +7,20 @@ import { Check, Crown, Layers, RefreshCw, Loader2, Zap, Shield, Sparkles } from 
 import { useCompanyModules, MODULE_CONFIGS, MODULE_PLANS, ModuleKey, getMatchingPlan } from '@/hooks/useCompanyModules';
 import { useSubscription } from '@/hooks/useSubscription';
 import { usePaiementPro, type PaiementProPlan } from '@/hooks/usePaiementPro';
+import { useSubscriptionPricing } from '@/hooks/useSubscriptionPricing';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-const PLAN_PRICES: Record<PaiementProPlan, { label: string; amount: number }> = {
-  starter: { label: 'Starter', amount: 9900 },
-  business: { label: 'Business', amount: 24900 },
-  pro: { label: 'Pro', amount: 49900 },
+const PLAN_LABELS: Record<PaiementProPlan, string> = {
+  starter: 'Starter',
+  business: 'Business',
+  pro: 'Pro',
 };
 
 export default function MySubscription() {
   const { status, isLoading: subLoading, refetch: refetchSub } = useSubscription();
   const { initPayment, loadingPlan } = usePaiementPro();
+  const { prices, isLoading: pricesLoading } = useSubscriptionPricing();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // After Paiement Pro returns, refetch and notify
@@ -83,7 +85,7 @@ export default function MySubscription() {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-lg font-bold">
-                {status.isActive ? `Plan ${PLAN_PRICES[status.planName as PaiementProPlan]?.label ?? status.planName}` : 'Aucun abonnement actif'}
+                {status.isActive ? `Plan ${PLAN_LABELS[status.planName as PaiementProPlan] ?? status.planName}` : 'Aucun abonnement actif'}
               </h3>
               <Badge variant="secondary" className={status.isActive ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}>
                 {status.isActive ? 'Actif' : 'Inactif'}
@@ -112,18 +114,22 @@ export default function MySubscription() {
               <h3 className="font-bold">Choisissez votre plan</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {(Object.keys(PLAN_PRICES) as PaiementProPlan[]).map((key) => {
-                const p = PLAN_PRICES[key];
+              {(Object.keys(PLAN_LABELS) as PaiementProPlan[]).map((key) => {
+                const label = PLAN_LABELS[key];
+                const amount = prices[key];
                 return (
                   <div key={key} className="p-4 rounded-xl border border-border bg-card flex flex-col gap-3">
                     <div>
-                      <p className="font-bold">{p.label}</p>
-                      <p className="text-2xl font-bold mt-1">{p.amount.toLocaleString()} <span className="text-xs font-normal text-muted-foreground">XOF/mois</span></p>
+                      <p className="font-bold">{label}</p>
+                      <p className="text-2xl font-bold mt-1">
+                        {pricesLoading ? '…' : amount.toLocaleString('fr-FR').replace(/,/g, ' ')}{' '}
+                        <span className="text-xs font-normal text-muted-foreground">XOF/mois</span>
+                      </p>
                     </div>
                     <Button
                       size="sm"
-                      disabled={loadingPlan !== null || subLoading}
-                      onClick={() => initPayment({ plan: key, amount: p.amount, billing_cycle: 'monthly' })}
+                      disabled={loadingPlan !== null || subLoading || pricesLoading}
+                      onClick={() => initPayment({ plan: key, amount, billing_cycle: 'monthly' })}
                       className="w-full"
                     >
                       {loadingPlan === key ? <Loader2 className="h-4 w-4 animate-spin" /> : "S'abonner"}

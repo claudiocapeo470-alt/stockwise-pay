@@ -6,7 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { Save, Loader2, ExternalLink } from 'lucide-react';
 
-const TABS = ['Plateforme', 'Sécurité', 'Notifications', 'Base de données'] as const;
+const TABS = ['Plateforme', 'Tarifs', 'Sécurité', 'Notifications', 'Base de données'] as const;
 
 const DB_TABLES = ['profiles', 'subscribers', 'products', 'sales', 'user_roles', 'payment_history', 'company_members', 'companies', 'invoices'];
 
@@ -21,6 +21,14 @@ const DEFAULT_NOTIF = {
   expiry_warning_days: '7',
 };
 
+const DEFAULT_PRICING = { starter: 9900, business: 24900, pro: 49900 };
+const PRICING_FIELDS: { key: 'starter' | 'business' | 'pro'; label: string; description: string }[] = [
+  { key: 'starter', label: 'Starter', description: 'Petits commerçants solo' },
+  { key: 'business', label: 'Business', description: 'PME en croissance' },
+  { key: 'pro', label: 'Pro', description: 'Grandes structures' },
+];
+const formatXof = (n: number) => Number.isFinite(n) ? n.toLocaleString('fr-FR').replace(/,/g, ' ') : '0';
+
 export default function CeoSettings() {
   const [tab, setTab] = useState<typeof TABS[number]>('Plateforme');
   const [platform, setPlatform] = useState(DEFAULT_PLATFORM);
@@ -29,6 +37,8 @@ export default function CeoSettings() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [changingPw, setChangingPw] = useState(false);
   const [notifSettings, setNotifSettings] = useState(DEFAULT_NOTIF);
+  const [pricing, setPricing] = useState(DEFAULT_PRICING);
+  const [savingPricing, setSavingPricing] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,6 +53,14 @@ export default function CeoSettings() {
         data.forEach((r: any) => { map[r.key] = r.value; });
         if (map.platform) setPlatform({ ...DEFAULT_PLATFORM, ...map.platform });
         if (map.notifications) setNotifSettings({ ...DEFAULT_NOTIF, ...map.notifications });
+        if (map.subscription_pricing) {
+          const p = map.subscription_pricing;
+          setPricing({
+            starter: Number(p.starter) || DEFAULT_PRICING.starter,
+            business: Number(p.business) || DEFAULT_PRICING.business,
+            pro: Number(p.pro) || DEFAULT_PRICING.pro,
+          });
+        }
       }
     } catch {
       // fallback to defaults
@@ -93,6 +111,30 @@ export default function CeoSettings() {
     toast.success('Préférences sauvegardées');
   };
 
+  const savePricing = async () => {
+    for (const f of PRICING_FIELDS) {
+      const v = pricing[f.key];
+      if (!Number.isInteger(v) || v < 100) {
+        toast.error(`Le prix du plan ${f.label} doit être un entier ≥ 100 FCFA`);
+        return;
+      }
+    }
+    setSavingPricing(true);
+    try {
+      await saveToDB('subscription_pricing', pricing);
+      toast.success('Tarifs mis à jour avec succès');
+    } catch {
+      toast.error('Erreur lors de la sauvegarde');
+    } finally {
+      setSavingPricing(false);
+    }
+  };
+
+  const resetPricing = () => {
+    setPricing({ ...DEFAULT_PRICING });
+    toast.info('Valeurs par défaut restaurées (non sauvegardées)');
+  };
+
   if (loading) return <div className="flex items-center justify-center p-12"><Loader2 className="h-6 w-6 animate-spin text-teal-400" /></div>;
 
   return (
@@ -139,6 +181,43 @@ export default function CeoSettings() {
               ))}
             </div>
             <Button onClick={savePlatform} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0"><Save className="h-4 w-4" /> Sauvegarder</Button>
+          </>}
+
+          {tab === 'Tarifs' && <>
+            <div>
+              <p className="text-sm text-slate-300 font-medium">Tarifs des abonnements (XOF / mois)</p>
+              <p className="text-xs text-slate-500 mt-1">Minimum 100 FCFA. Les nouveaux prix sont appliqués immédiatement à la page Tarifs et à Mon Abonnement.</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {PRICING_FIELDS.map(f => (
+                <div key={f.key} className="space-y-2 p-4 rounded-xl bg-slate-800/40 border border-slate-700/40">
+                  <div>
+                    <p className="text-sm font-semibold text-white">{f.label}</p>
+                    <p className="text-[11px] text-slate-500">{f.description}</p>
+                  </div>
+                  <Input
+                    type="number"
+                    min={100}
+                    step={100}
+                    value={pricing[f.key]}
+                    onChange={e => setPricing(p => ({ ...p, [f.key]: parseInt(e.target.value, 10) || 0 }))}
+                    className="bg-slate-800/60 border-slate-700/40 text-white"
+                  />
+                  <p className="text-xs text-teal-400 font-mono">{formatXof(pricing[f.key])} XOF</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button onClick={savePricing} disabled={savingPricing} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0">
+                {savingPricing ? <><Loader2 className="h-4 w-4 animate-spin" /> Sauvegarde...</> : <><Save className="h-4 w-4" /> Sauvegarder</>}
+              </Button>
+              <Button variant="outline" onClick={resetPricing} className="bg-slate-800/60 border-slate-700/40 text-slate-300 hover:text-white">
+                Réinitialiser par défaut
+              </Button>
+            </div>
+            <div className="mt-2 p-3 rounded-xl border border-amber-500/20 bg-amber-500/5">
+              <p className="text-xs text-amber-300">💡 Les valeurs par défaut sont 9 900 / 24 900 / 49 900 XOF.</p>
+            </div>
           </>}
 
           {tab === 'Sécurité' && <>

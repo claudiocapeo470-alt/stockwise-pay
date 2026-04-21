@@ -1788,6 +1788,7 @@ export type Database = {
         }
         Returns: string
       }
+      get_subscription_pricing: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

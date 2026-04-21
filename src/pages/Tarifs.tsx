@@ -5,12 +5,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Check, ChevronLeft, Star, AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePaiementPro, type PaiementProPlan } from "@/hooks/usePaiementPro";
+import { useSubscriptionPricing } from "@/hooks/useSubscriptionPricing";
 
-const plans = [
+const plansBase = [
   {
-    id: "starter",
+    id: "starter" as const,
     name: "Starter",
-    monthlyPrice: 9900,
     description: "Parfait pour les petits commerçants solo",
     color: "from-emerald-500 to-emerald-600",
     features: [
@@ -27,9 +27,8 @@ const plans = [
     popular: false,
   },
   {
-    id: "business",
+    id: "business" as const,
     name: "Business",
-    monthlyPrice: 24900,
     description: "Pour les PME en croissance",
     color: "from-primary to-blue-600",
     features: [
@@ -48,9 +47,8 @@ const plans = [
     popular: true,
   },
   {
-    id: "pro",
+    id: "pro" as const,
     name: "Pro",
-    monthlyPrice: 49900,
     description: "Pour les grandes structures et franchises",
     color: "from-purple-600 to-purple-700",
     features: [
@@ -74,7 +72,10 @@ export default function Tarifs() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { initPayment, loadingPlan } = usePaiementPro();
+  const { prices, isLoading: pricesLoading } = useSubscriptionPricing();
   const isExpired = searchParams.get("expired") === "true";
+
+  const plans = plansBase.map((p) => ({ ...p, monthlyPrice: prices[p.id] }));
 
   const handleSubscribe = (planId: string, amount: number) => {
     if (!user) {
@@ -155,7 +156,7 @@ export default function Tarifs() {
                   <div className="space-y-1">
                     <div className="flex items-baseline gap-2">
                       <span className="text-4xl font-bold">
-                        {plan.monthlyPrice.toLocaleString()}
+                        {pricesLoading ? "…" : plan.monthlyPrice.toLocaleString("fr-FR").replace(/,/g, " ")}
                       </span>
                       <span className="text-sm text-muted-foreground">XOF / mois</span>
                     </div>

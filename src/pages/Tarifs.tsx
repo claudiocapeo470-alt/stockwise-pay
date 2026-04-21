@@ -73,7 +73,7 @@ export default function Tarifs() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const { initPayment, loading } = usePaiementPro();
+  const { initPayment, loadingPlan } = usePaiementPro();
   const isExpired = searchParams.get("expired") === "true";
 
   const handleSubscribe = (planId: string, amount: number) => {
@@ -177,10 +177,10 @@ export default function Tarifs() {
                     className={`w-full ${plan.popular ? "bg-gradient-to-r from-primary to-accent" : ""}`}
                     variant={plan.popular ? "default" : "outline"}
                     size="lg"
-                    disabled={loading}
+                    disabled={loadingPlan !== null}
                     onClick={() => handleSubscribe(plan.id, plan.monthlyPrice)}
                   >
-                    {loading ? (
+                    {loadingPlan === plan.id ? (
                       <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Redirection...</>
                     ) : user ? (
                       "S'abonner maintenant"

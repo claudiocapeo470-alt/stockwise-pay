@@ -18,7 +18,7 @@ const PLAN_PRICES: Record<PaiementProPlan, { label: string; amount: number }> = 
 
 export default function MySubscription() {
   const { status, isLoading: subLoading, refetch: refetchSub } = useSubscription();
-  const { initPayment, loading: payLoading } = usePaiementPro();
+  const { initPayment, loadingPlan } = usePaiementPro();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // After Paiement Pro returns, refetch and notify
@@ -122,11 +122,11 @@ export default function MySubscription() {
                     </div>
                     <Button
                       size="sm"
-                      disabled={payLoading || subLoading}
+                      disabled={loadingPlan !== null || subLoading}
                       onClick={() => initPayment({ plan: key, amount: p.amount, billing_cycle: 'monthly' })}
                       className="w-full"
                     >
-                      {payLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "S'abonner"}
+                      {loadingPlan === key ? <Loader2 className="h-4 w-4 animate-spin" /> : "S'abonner"}
                     </Button>
                   </div>
                 );

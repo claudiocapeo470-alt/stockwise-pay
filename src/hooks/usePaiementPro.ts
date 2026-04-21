@@ -14,14 +14,15 @@ interface InitArgs {
 
 export function usePaiementPro() {
   const { user, profile } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const [loadingPlan, setLoadingPlan] = useState<PaiementProPlan | null>(null);
 
   const initPayment = async ({ plan, amount, billing_cycle = 'monthly' }: InitArgs) => {
     if (!user) {
       toast.error('Vous devez être connecté pour vous abonner');
       return;
     }
-    setLoading(true);
+    if (loadingPlan) return; // prevent concurrent clicks
+    setLoadingPlan(plan);
     try {
       const { data, error } = await supabase.functions.invoke('paiementpro-init', {
         body: {
@@ -37,9 +38,10 @@ export function usePaiementPro() {
 
       if (error || !data?.payment_url) {
         console.error('paiementpro-init error:', error, data);
-        toast.error('Impossible d\'initier le paiement', {
+        toast.error("Impossible d'initier le paiement", {
           description: (data as any)?.error || error?.message,
         });
+        setLoadingPlan(null);
         return;
       }
 
@@ -47,10 +49,9 @@ export function usePaiementPro() {
       window.location.href = data.payment_url;
     } catch (err: any) {
       toast.error('Erreur réseau', { description: err.message });
-    } finally {
-      setLoading(false);
+      setLoadingPlan(null);
     }
   };
 
-  return { initPayment, loading };
+  return { initPayment, loadingPlan, loading: loadingPlan !== null };
 }

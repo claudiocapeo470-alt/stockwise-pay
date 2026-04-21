@@ -35,10 +35,11 @@ serve(async (req) => {
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const merchantId = Deno.env.get("PAIEMENTPRO_MERCHANT_ID");
+    const merchantSecret = Deno.env.get("PAIEMENTPRO_SECRET_KEY");
 
-    if (!merchantId) {
+    if (!merchantId || !merchantSecret) {
       return new Response(
-        JSON.stringify({ error: "PAIEMENTPRO_MERCHANT_ID non configuré" }),
+        JSON.stringify({ error: "PAIEMENTPRO_MERCHANT_ID ou PAIEMENTPRO_SECRET_KEY non configuré" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -102,6 +103,16 @@ serve(async (req) => {
     const notifyUrl = `${supabaseUrl}/functions/v1/paiementpro-notify`;
     const returnUrl = `${origin}/app/subscription?ref=${reference}`;
 
+    // Generate SHA-256 hashcode (REQUIRED by Paiement Pro)
+    const hashString = `${merchantId}${body.amount}${reference}${merchantSecret}`;
+    const hashBuffer = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(hashString)
+    );
+    const hashcode = Array.from(new Uint8Array(hashBuffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+
     const ppForm = new URLSearchParams();
     ppForm.append("merchantId", merchantId);
     ppForm.append("amount", String(body.amount));
@@ -109,15 +120,17 @@ serve(async (req) => {
     ppForm.append("customerEmail", body.email);
     ppForm.append("customerFirstName", body.firstName);
     ppForm.append("customerLastName", body.lastName || "");
-    ppForm.append("customerPhoneNumber", body.phone || "00000000");
+    ppForm.append("customerPhoneNumber", body.phone || "0700000000");
     ppForm.append("notificationURL", notifyUrl);
     ppForm.append("returnURL", returnUrl);
     ppForm.append("currency", "XOF");
     ppForm.append("countryCurrencyCode", "952");
     ppForm.append("description", `Abonnement Stocknix ${body.plan}`);
-    ppForm.append("channel", "WEB");
+    ppForm.append("hashcode", hashcode);
+    ppForm.append("channel", "");
 
-    console.log("Calling Paiement Pro with form data:", ppForm.toString());
+    console.log("Calling Paiement Pro with hashcode:", hashcode);
+    console.log("Form data:", ppForm.toString());
 
     const ppRes = await fetch(
       "https://www.paiementpro.net/webservice/onlinepayment/init.php",
@@ -134,40 +147,48 @@ serve(async (req) => {
     const ppText = await ppRes.text();
     console.log("Paiement Pro raw response:", ppText, "status:", ppRes.status);
 
+    // Try multiple parsing strategies
+    let sessionId: string | null = null;
     let ppData: any = null;
+
+    // Strategy 1: JSON
     try {
       ppData = JSON.parse(ppText);
+      if (ppData?.sessionid) sessionId = ppData.sessionid;
     } catch {
-      // Some Paiement Pro endpoints return plain text "sessionid" or query-string
-      if (ppText && ppText.length < 200 && !ppText.includes("<")) {
-        // Try to interpret as raw sessionId
-        ppData = { responsecode: "0", sessionid: ppText.trim() };
-      }
+      // not JSON
     }
 
-    const code = ppData?.responsecode;
-    const isSuccess = code === "0" || code === 0 || (ppData?.sessionid && !code);
+    // Strategy 2: regex match sessionid=XXX (URL or query-string format)
+    if (!sessionId) {
+      const m = ppText.match(/sessionid[=:"\s]+([a-zA-Z0-9_-]+)/i);
+      if (m) sessionId = m[1];
+    }
 
-    if (!ppData || !isSuccess || !ppData.sessionid) {
+    // Strategy 3: raw sessionId text
+    if (!sessionId && ppText && ppText.length < 200 && !ppText.includes("<") && !ppText.includes("{") && /^[a-zA-Z0-9_-]+$/.test(ppText.trim())) {
+      sessionId = ppText.trim();
+    }
+
+    if (!sessionId) {
       await supabase
         .from("subscriptions")
         .update({ status: "failed" })
         .eq("reference", reference);
       return new Response(
         JSON.stringify({
-          error: ppData?.responsemsg || ppData?.message || "Échec initialisation paiement Paiement Pro. Vérifiez votre MERCHANT_ID.",
+          error: ppData?.responsemsg || ppData?.message || ppData?.decription || `Échec Paiement Pro: ${ppText.slice(0, 200)}`,
           details: ppData ?? ppText,
         }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    const sessionId = ppData.sessionid;
     await supabase
       .from("subscriptions")
       .update({ session_id: sessionId })
       .eq("reference", reference);
 
+    console.log("Success! sessionId:", sessionId);
     const paymentUrl = `https://www.paiementpro.net/webservice/onlinepayment/processing_v2.php?sessionid=${sessionId}`;
 
     return new Response(

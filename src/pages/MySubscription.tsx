@@ -11,7 +11,8 @@ import { useSubscriptionPricing } from '@/hooks/useSubscriptionPricing';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-const PLAN_LABELS: Record<PaiementProPlan, string> = {
+const PLAN_LABELS: Record<string, string> = {
+  trial: 'Essai gratuit (30 jours)',
   starter: 'Starter',
   business: 'Business',
   pro: 'Pro',
@@ -85,16 +86,20 @@ export default function MySubscription() {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-lg font-bold">
-                {status.isActive ? `Plan ${PLAN_LABELS[status.planName as PaiementProPlan] ?? status.planName}` : 'Aucun abonnement actif'}
+                {status.isActive
+                  ? (PLAN_LABELS[status.planName ?? ''] ?? `Plan ${status.planName}`)
+                  : 'Essai terminé'}
               </h3>
-              <Badge variant="secondary" className={status.isActive ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}>
-                {status.isActive ? 'Actif' : 'Inactif'}
+              <Badge variant="secondary" className={status.isActive ? (status.isTrial ? 'bg-primary/10 text-primary' : 'bg-success/10 text-success') : 'bg-warning/10 text-warning'}>
+                {status.isTrial ? `Essai · ${status.trialDaysLeft}j` : status.isActive ? 'Actif' : 'Expiré'}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {status.isActive && status.subscriptionEnd
+              {status.isTrial && status.subscriptionEnd
+                ? `Essai gratuit jusqu'au ${status.subscriptionEnd.toLocaleDateString('fr-FR')} — choisissez un plan ci-dessous pour continuer après.`
+                : status.isActive && status.subscriptionEnd
                 ? `Expire le ${status.subscriptionEnd.toLocaleDateString('fr-FR')}`
-                : 'Choisissez un plan ci-dessous pour activer votre compte'}
+                : 'Choisissez un plan ci-dessous pour réactiver votre compte'}
             </p>
           </div>
           {!editing && (
@@ -105,8 +110,8 @@ export default function MySubscription() {
         </CardContent>
       </Card>
 
-      {/* Plans Paiement Pro */}
-      {!status.isActive && (
+      {/* Plans Paiement Pro — visibles pendant l'essai et à l'expiration */}
+      {(status.isTrial || !status.isActive) && (
         <Card className="border-primary/30">
           <CardContent className="p-4 sm:p-6 space-y-4">
             <div className="flex items-center gap-2">

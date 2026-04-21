@@ -30,7 +30,7 @@ export function useStockAlerts() {
 
       if (data) {
         const lowStock = data
-          .filter(p => p.quantity <= p.min_quantity)
+          .filter(p => p.min_quantity > 0 && p.quantity <= p.min_quantity)
           .map(p => ({
             id: p.id,
             productName: p.name,
@@ -59,7 +59,7 @@ export function useStockAlerts() {
       }, (payload) => {
         const p = payload.new as any;
 
-        if (p.quantity <= p.min_quantity) {
+        if (p.min_quantity > 0 && p.quantity <= p.min_quantity) {
           setAlerts(prev => {
             const existing = prev.find(a => a.id === p.id);
             if (!existing) {

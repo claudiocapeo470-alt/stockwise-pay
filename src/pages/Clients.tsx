@@ -97,9 +97,15 @@ export default function Clients() {
   };
 
   const handleDelete = async (id: string) => {
-    await supabase.from('customers').delete().eq('id', id);
-    toast.success('Client supprimé');
-    fetchClients();
+    try {
+      const { error } = await supabase.from('customers').delete().eq('id', id);
+      if (error) throw error;
+      toast.success('Client supprimé');
+    } catch (err: any) {
+      toast.error(err?.message || 'Impossible de supprimer le client');
+    } finally {
+      fetchClients();
+    }
   };
 
   return (

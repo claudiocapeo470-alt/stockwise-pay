@@ -19,17 +19,43 @@ export default function ResetPassword() {
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    const checkSession = async () => {
-      await new Promise(res => setTimeout(res, 1000));
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setStatus('form');
-      } else {
-        setStatus('error');
-        setErrorMsg('Lien de réinitialisation invalide ou expiré. Veuillez faire une nouvelle demande.');
-      }
+    let resolved = false;
+
+    const showForm = () => {
+      if (resolved) return;
+      resolved = true;
+      setStatus('form');
     };
-    checkSession();
+    const showError = () => {
+      if (resolved) return;
+      resolved = true;
+      setStatus('error');
+      setErrorMsg('Lien de réinitialisation invalide ou expiré. Veuillez faire une nouvelle demande.');
+    };
+
+    // Prefer the PASSWORD_RECOVERY event over an arbitrary timeout
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
+        showForm();
+      }
+    });
+
+    // Fallback: check existing session immediately and after a brief grace period
+    const check = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) showForm();
+    };
+    check();
+    const timer = setTimeout(async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) showForm();
+      else showError();
+    }, 2500);
+
+    return () => {
+      sub.subscription.unsubscribe();
+      clearTimeout(timer);
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -4,14 +4,14 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Invoice, InvoiceItem } from '@/hooks/useInvoices';
 
-const formatAmount = (amount: number): string => {
+const formatAmount = (amount: number, currencySymbol: string = 'FCFA'): string => {
   const formatted = new Intl.NumberFormat('fr-FR', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
     useGrouping: true
   }).format(amount);
-  
-  return `${formatted} FCFA`;
+
+  return `${formatted} ${currencySymbol}`;
 };
 
 export const calculateItemTotals = (item: Partial<InvoiceItem>): InvoiceItem => {
@@ -58,7 +58,8 @@ export const calculateInvoiceTotals = (items: InvoiceItem[]) => {
 
 export const exportInvoiceToPDF = async (
   invoice: Invoice,
-  items: InvoiceItem[]
+  items: InvoiceItem[],
+  currencySymbol: string = 'FCFA'
 ) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;

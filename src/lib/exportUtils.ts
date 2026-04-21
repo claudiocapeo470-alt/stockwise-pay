@@ -18,17 +18,17 @@ interface ExportData {
   dateRange: { from: Date; to: Date };
 }
 
-const formatAmount = (amount: number): string => {
+const formatAmount = (amount: number, currencySymbol: string = 'FCFA'): string => {
   const formatted = amount.toLocaleString('fr-FR', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
     useGrouping: true
   }).replace(/\s/g, '.').replace(',', '.');
-  
-  return `${formatted} FCFA`;
+
+  return `${formatted} ${currencySymbol}`;
 };
 
-export const exportToPDF = async (data: ExportData, filename: string) => {
+export const exportToPDF = async (data: ExportData, filename: string, currencySymbol: string = 'FCFA') => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   

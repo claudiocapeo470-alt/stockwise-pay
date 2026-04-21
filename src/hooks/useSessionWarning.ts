@@ -10,6 +10,12 @@ export function useSessionWarning() {
           return;
         }
         if (event === 'SIGNED_OUT') {
+          // Don't show "expired" toast on manual signout
+          const manual = sessionStorage.getItem('manual_signout');
+          if (manual) {
+            sessionStorage.removeItem('manual_signout');
+            return;
+          }
           toast.error('Session expirée', {
             description: 'Votre session a expiré. Veuillez vous reconnecter.',
             duration: 8000,

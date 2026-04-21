@@ -105,6 +105,17 @@ export function AppLayout({ children }: AppLayoutProps) {
     }
   }, [user, loading, navigate, location]);
 
+  // SPA navigation listener: lets non-component code (toasts, hooks) navigate
+  // without using window.location.href (which would reload the app).
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (typeof detail === 'string') navigate(detail);
+    };
+    window.addEventListener('app-navigate', handler as EventListener);
+    return () => window.removeEventListener('app-navigate', handler as EventListener);
+  }, [navigate]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">

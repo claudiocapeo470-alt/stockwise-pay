@@ -43,6 +43,12 @@ export interface CompanyMember {
 }
 
 function generatePin(): string {
+  // Cryptographically secure 6-digit PIN
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const arr = new Uint32Array(1);
+    crypto.getRandomValues(arr);
+    return ((arr[0] % 900000) + 100000).toString();
+  }
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 

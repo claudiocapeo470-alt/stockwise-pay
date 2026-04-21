@@ -210,10 +210,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         .eq('user_id', data.user.id)
         .maybeSingle();
       
-      localStorage.setItem('theme', 'light');
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-      
+      // Theme is managed by ThemeToggle and persists via user preference.
       const isAdminUser = roleData?.role === 'admin';
       return { error: null, isAdmin: isAdminUser };
     }
@@ -256,15 +253,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signOut = async () => {
     try {
+      // Mark this as a manual signout so useSessionWarning doesn't show "Session expirée"
+      sessionStorage.setItem('manual_signout', '1');
+      sessionStorage.removeItem('role_redirect_done');
+
       setUser(null);
       setSession(null);
       setProfile(null);
       setUserRole(null);
+      // Use the wrapper so localStorage is cleaned up too
       setMemberInfo(null);
-      
+
       const { error } = await supabase.auth.signOut();
       if (error) console.error('Erreur lors de la déconnexion:', error);
-      
+
       window.location.href = '/auth';
     } catch (error) {
       console.error('Erreur inattendue lors de la déconnexion:', error);

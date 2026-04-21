@@ -111,6 +111,30 @@ export default function CeoSettings() {
     toast.success('Préférences sauvegardées');
   };
 
+  const savePricing = async () => {
+    for (const f of PRICING_FIELDS) {
+      const v = pricing[f.key];
+      if (!Number.isInteger(v) || v < 100) {
+        toast.error(`Le prix du plan ${f.label} doit être un entier ≥ 100 FCFA`);
+        return;
+      }
+    }
+    setSavingPricing(true);
+    try {
+      await saveToDB('subscription_pricing', pricing);
+      toast.success('Tarifs mis à jour avec succès');
+    } catch {
+      toast.error('Erreur lors de la sauvegarde');
+    } finally {
+      setSavingPricing(false);
+    }
+  };
+
+  const resetPricing = () => {
+    setPricing({ ...DEFAULT_PRICING });
+    toast.info('Valeurs par défaut restaurées (non sauvegardées)');
+  };
+
   if (loading) return <div className="flex items-center justify-center p-12"><Loader2 className="h-6 w-6 animate-spin text-teal-400" /></div>;
 
   return (

@@ -18,6 +18,8 @@ const PLAN_LABELS: Record<string, string> = {
   pro: 'Pro',
 };
 
+const PAID_PLANS: PaiementProPlan[] = ['starter', 'business', 'pro'];
+
 export default function MySubscription() {
   const { status, isLoading: subLoading, refetch: refetchSub } = useSubscription();
   const { initPayment, loadingPlan } = usePaiementPro();

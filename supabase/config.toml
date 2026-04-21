@@ -76,3 +76,9 @@ verify_jwt = false
 
 [functions.moneroo-verify-payment]
 verify_jwt = true
+
+[functions.paiementpro-init]
+verify_jwt = true
+
+[functions.paiementpro-notify]
+verify_jwt = false

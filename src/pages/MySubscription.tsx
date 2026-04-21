@@ -1,13 +1,41 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Check, Crown, Layers, RefreshCw, Loader2, Zap, Shield } from 'lucide-react';
+import { Check, Crown, Layers, RefreshCw, Loader2, Zap, Shield, Sparkles } from 'lucide-react';
 import { useCompanyModules, MODULE_CONFIGS, MODULE_PLANS, ModuleKey, getMatchingPlan } from '@/hooks/useCompanyModules';
+import { useSubscription } from '@/hooks/useSubscription';
+import { usePaiementPro, type PaiementProPlan } from '@/hooks/usePaiementPro';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
+const PLAN_PRICES: Record<PaiementProPlan, { label: string; amount: number }> = {
+  starter: { label: 'Starter', amount: 9900 },
+  business: { label: 'Business', amount: 24900 },
+  pro: { label: 'Pro', amount: 49900 },
+};
+
 export default function MySubscription() {
+  const { status, isLoading: subLoading, refetch: refetchSub } = useSubscription();
+  const { initPayment, loading: payLoading } = usePaiementPro();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // After Paiement Pro returns, refetch and notify
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      toast.info('Vérification du paiement…');
+      const t = setTimeout(() => {
+        refetchSub();
+        toast.success('Statut mis à jour');
+        searchParams.delete('ref');
+        setSearchParams(searchParams, { replace: true });
+      }, 2000);
+      return () => clearTimeout(t);
+    }
+  }, [searchParams, setSearchParams, refetchSub]);
+
   const { selectedModules, saveModules, currentPlan, loading } = useCompanyModules();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<ModuleKey[]>(selectedModules);
@@ -46,26 +74,70 @@ export default function MySubscription() {
         <p className="text-sm text-muted-foreground">Plan actuel et modules activés</p>
       </div>
 
-      {/* Plan résumé — épuré */}
-      <Card>
+      {/* Statut abonnement Paiement Pro */}
+      <Card className={status.isActive ? 'border-success/40' : 'border-warning/40'}>
         <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="h-12 w-12 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">
-            <Crown className="h-6 w-6 text-primary" />
+          <div className={`h-12 w-12 ${status.isActive ? 'bg-success/10' : 'bg-warning/10'} flex items-center justify-center rounded-xl shrink-0`}>
+            <Crown className={`h-6 w-6 ${status.isActive ? 'text-success' : 'text-warning'}`} />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-lg font-bold">{currentPlan?.label || 'Plan personnalisé'}</h3>
-              <Badge variant="secondary" className="bg-success/10 text-success">Gratuit</Badge>
+              <h3 className="text-lg font-bold">
+                {status.isActive ? `Plan ${PLAN_PRICES[status.planName as PaiementProPlan]?.label ?? status.planName}` : 'Aucun abonnement actif'}
+              </h3>
+              <Badge variant="secondary" className={status.isActive ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}>
+                {status.isActive ? 'Actif' : 'Inactif'}
+              </Badge>
             </div>
-            <p className="text-sm text-muted-foreground mt-0.5">{currentPlan?.description || 'Configurez vos modules'}</p>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              {status.isActive && status.subscriptionEnd
+                ? `Expire le ${status.subscriptionEnd.toLocaleDateString('fr-FR')}`
+                : 'Choisissez un plan ci-dessous pour activer votre compte'}
+            </p>
           </div>
           {!editing && (
             <Button variant="outline" onClick={() => { setDraft(selectedModules); setEditing(true); }} className="h-10 gap-2 w-full sm:w-auto">
-              <RefreshCw className="h-4 w-4" /> Modifier
+              <RefreshCw className="h-4 w-4" /> Modules
             </Button>
           )}
         </CardContent>
       </Card>
+
+      {/* Plans Paiement Pro */}
+      {!status.isActive && (
+        <Card className="border-primary/30">
+          <CardContent className="p-4 sm:p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <h3 className="font-bold">Choisissez votre plan</h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {(Object.keys(PLAN_PRICES) as PaiementProPlan[]).map((key) => {
+                const p = PLAN_PRICES[key];
+                return (
+                  <div key={key} className="p-4 rounded-xl border border-border bg-card flex flex-col gap-3">
+                    <div>
+                      <p className="font-bold">{p.label}</p>
+                      <p className="text-2xl font-bold mt-1">{p.amount.toLocaleString()} <span className="text-xs font-normal text-muted-foreground">XOF/mois</span></p>
+                    </div>
+                    <Button
+                      size="sm"
+                      disabled={payLoading || subLoading}
+                      onClick={() => initPayment({ plan: key, amount: p.amount, billing_cycle: 'monthly' })}
+                      className="w-full"
+                    >
+                      {payLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "S'abonner"}
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              Paiement sécurisé via Paiement Pro · Mobile Money & Carte bancaire
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats compactes */}
       <div className="grid grid-cols-3 gap-3">

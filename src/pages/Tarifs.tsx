@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Check, ChevronLeft, Star, Rocket, AlertCircle } from "lucide-react";
+import { Check, ChevronLeft, Star, AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePaiementPro, type PaiementProPlan } from "@/hooks/usePaiementPro";
 
 const plans = [
   {
@@ -19,7 +19,7 @@ const plans = [
       "Caisse POS simple",
       "Suivi des ventes",
       "20 factures/mois + 10 devis/mois",
-      "1 boutique en ligne (.stocknix.app)",
+      "1 boutique en ligne",
       "2 membres d'équipe",
       "Rapports basiques",
       "Support email",
@@ -73,7 +73,16 @@ export default function Tarifs() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  const { initPayment, loading } = usePaiementPro();
   const isExpired = searchParams.get("expired") === "true";
+
+  const handleSubscribe = (planId: string, amount: number) => {
+    if (!user) {
+      navigate("/auth?redirect=/tarifs");
+      return;
+    }
+    initPayment({ plan: planId as PaiementProPlan, amount, billing_cycle: "monthly" });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -97,42 +106,23 @@ export default function Tarifs() {
           <div className="container mx-auto flex items-center gap-3 text-destructive">
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
             <p className="text-sm font-medium">
-              ⏰ Votre période d'essai est terminée. Choisissez un plan pour continuer à utiliser Stocknix.
+              ⏰ Votre abonnement est terminé. Choisissez un plan pour continuer à utiliser Stocknix.
             </p>
           </div>
         </div>
       )}
 
-      {/* Launch banner */}
-      <section className={`${isExpired ? "pt-40" : "pt-32"} pb-4 px-4 sm:px-6`}>
-        <div className="container mx-auto">
-          <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-2xl p-6 text-center max-w-3xl mx-auto">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Rocket className="h-5 w-5 text-emerald-500" />
-              <Badge className="bg-emerald-500 text-white text-sm px-3 py-1">GRATUIT PENDANT LE LANCEMENT</Badge>
-              <Rocket className="h-5 w-5 text-emerald-500" />
-            </div>
-            <p className="text-foreground font-medium">
-              Stocknix est gratuit pendant sa période de lancement.
-            </p>
-            <p className="text-muted-foreground text-sm mt-1">
-              Profitez de toutes les fonctionnalités Premium sans frais, sans carte bancaire.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Hero */}
-      <section className="pb-8 px-4 sm:px-6">
+      <section className={`${isExpired ? "pt-40" : "pt-32"} pb-8 px-4 sm:px-6`}>
         <div className="container mx-auto text-center space-y-4">
           <h1 className="text-4xl sm:text-5xl font-bold">
-            Nos futurs{" "}
+            Choisissez votre{" "}
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Tarifs
+              plan
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Toutes les fonctionnalités incluses gratuitement pendant le lancement. Voici les prix qui s'appliqueront ensuite.
+            Paiement sécurisé via Paiement Pro (Mobile Money & Carte bancaire). Sans engagement, annulez à tout moment.
           </p>
         </div>
       </section>
@@ -163,14 +153,14 @@ export default function Tarifs() {
                   </div>
 
                   <div className="space-y-1">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl text-muted-foreground line-through">
-                        {plan.monthlyPrice.toLocaleString()} XOF
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold">
+                        {plan.monthlyPrice.toLocaleString()}
                       </span>
-                      <Badge className="bg-emerald-500 text-white">GRATUIT</Badge>
+                      <span className="text-sm text-muted-foreground">XOF / mois</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      Pendant la période de lancement
+                    <p className="text-xs text-muted-foreground">
+                      Facturé mensuellement, sans engagement
                     </p>
                   </div>
 
@@ -187,27 +177,21 @@ export default function Tarifs() {
                     className={`w-full ${plan.popular ? "bg-gradient-to-r from-primary to-accent" : ""}`}
                     variant={plan.popular ? "default" : "outline"}
                     size="lg"
-                    onClick={() => navigate(user ? "/app" : "/auth")}
+                    disabled={loading}
+                    onClick={() => handleSubscribe(plan.id, plan.monthlyPrice)}
                   >
-                    {user ? "Accéder au dashboard" : "Commencer gratuitement"}
+                    {loading ? (
+                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Redirection...</>
+                    ) : user ? (
+                      "S'abonner maintenant"
+                    ) : (
+                      "Créer un compte & s'abonner"
+                    )}
                   </Button>
                 </div>
               </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Bientôt disponible */}
-      <section className="py-12 px-4 sm:px-6 bg-card/30">
-        <div className="container mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-bold mb-3">🔜 Bientôt disponible</h2>
-          <p className="text-muted-foreground mb-6">
-            Les plans payants seront activés prochainement. Inscrivez-vous maintenant pour être notifié.
-          </p>
-          <Button variant="outline" size="lg" onClick={() => navigate("/auth")}>
-            Être notifié du lancement payant
-          </Button>
         </div>
       </section>
 
@@ -218,16 +202,16 @@ export default function Tarifs() {
           <div className="space-y-4">
             {[
               {
-                q: "C'est vraiment gratuit ?",
-                a: "Oui ! Pendant le lancement, toutes les fonctionnalités sont gratuites. Aucune carte bancaire requise.",
+                q: "Quels moyens de paiement sont acceptés ?",
+                a: "Mobile Money (MTN, Orange, Wave, Moov) et cartes bancaires Visa / Mastercard via Paiement Pro.",
               },
               {
-                q: "Que se passe-t-il quand le lancement se termine ?",
-                a: "Vous serez notifié avant la fin de la période gratuite. Vous pourrez alors choisir un plan adapté à vos besoins.",
+                q: "Puis-je changer de plan plus tard ?",
+                a: "Oui, vous pouvez upgrader ou downgrader à tout moment depuis votre espace abonnement.",
               },
               {
-                q: "Quels moyens de paiement accepterez-vous ?",
-                a: "Mobile Money (MTN, Orange, Wave, Moov) et cartes bancaires via notre partenaire Moneroo.",
+                q: "Que se passe-t-il à la fin de mon abonnement ?",
+                a: "Vous recevez une notification 7 jours avant l'expiration. Renouvelez en un clic depuis votre tableau de bord.",
               },
             ].map((faq, i) => (
               <Card key={i} className="p-6">

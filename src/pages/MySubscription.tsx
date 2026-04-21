@@ -72,12 +72,30 @@ export default function MySubscription() {
     </div>
   );
 
+  const trialExpired = status.isExpired && !status.isActive;
+
   return (
     <div className="space-y-6 max-w-3xl mx-auto pb-8 animate-fade-in">
       <div>
         <h2 className="text-xl font-bold">Mon abonnement</h2>
         <p className="text-sm text-muted-foreground">Plan actuel et modules activés</p>
       </div>
+
+      {/* Bande rouge — essai terminé */}
+      {trialExpired && (
+        <div className="bg-destructive text-destructive-foreground rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 shadow-lg">
+          <div className="flex-1">
+            <p className="font-bold text-base">⏰ Votre essai gratuit est terminé.</p>
+            <p className="text-sm opacity-90">Choisissez un plan ci-dessous pour continuer à utiliser Stocknix.</p>
+          </div>
+          <a
+            href="#plans"
+            className="bg-background text-destructive font-semibold px-5 py-2.5 rounded-lg hover:bg-background/90 transition-colors w-full sm:w-auto text-center"
+          >
+            S'abonner
+          </a>
+        </div>
+      )}
 
       {/* Statut abonnement Paiement Pro */}
       <Card className={status.isActive ? 'border-success/40' : 'border-warning/40'}>
@@ -114,7 +132,7 @@ export default function MySubscription() {
 
       {/* Plans Paiement Pro — visibles pendant l'essai et à l'expiration */}
       {(status.isTrial || !status.isActive) && (
-        <Card className="border-primary/30">
+        <Card id="plans" className="border-primary/30 scroll-mt-24">
           <CardContent className="p-4 sm:p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />

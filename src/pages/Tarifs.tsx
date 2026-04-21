@@ -27,9 +27,8 @@ const plansBase = [
     popular: false,
   },
   {
-    id: "business",
+    id: "business" as const,
     name: "Business",
-    monthlyPrice: 24900,
     description: "Pour les PME en croissance",
     color: "from-primary to-blue-600",
     features: [
@@ -48,9 +47,8 @@ const plansBase = [
     popular: true,
   },
   {
-    id: "pro",
+    id: "pro" as const,
     name: "Pro",
-    monthlyPrice: 49900,
     description: "Pour les grandes structures et franchises",
     color: "from-purple-600 to-purple-700",
     features: [
@@ -74,7 +72,10 @@ export default function Tarifs() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { initPayment, loadingPlan } = usePaiementPro();
+  const { prices, isLoading: pricesLoading } = useSubscriptionPricing();
   const isExpired = searchParams.get("expired") === "true";
+
+  const plans = plansBase.map((p) => ({ ...p, monthlyPrice: prices[p.id] }));
 
   const handleSubscribe = (planId: string, amount: number) => {
     if (!user) {

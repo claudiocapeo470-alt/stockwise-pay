@@ -156,7 +156,7 @@ export default function Tarifs() {
                   <div className="space-y-1">
                     <div className="flex items-baseline gap-2">
                       <span className="text-4xl font-bold">
-                        {plan.monthlyPrice.toLocaleString()}
+                        {pricesLoading ? "…" : plan.monthlyPrice.toLocaleString("fr-FR").replace(/,/g, " ")}
                       </span>
                       <span className="text-sm text-muted-foreground">XOF / mois</span>
                     </div>

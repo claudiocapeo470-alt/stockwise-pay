@@ -1673,6 +1673,54 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          amount: number
+          billing_cycle: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          paid_at: string | null
+          payment_method: string | null
+          plan: string
+          reference: string
+          session_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          billing_cycle?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          plan: string
+          reference: string
+          session_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          billing_cycle?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          plan?: string
+          reference?: string
+          session_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_login_history: {
         Row: {
           email: string

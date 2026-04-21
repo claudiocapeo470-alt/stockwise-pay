@@ -1,13 +1,41 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Check, Crown, Layers, RefreshCw, Loader2, Zap, Shield } from 'lucide-react';
+import { Check, Crown, Layers, RefreshCw, Loader2, Zap, Shield, Sparkles } from 'lucide-react';
 import { useCompanyModules, MODULE_CONFIGS, MODULE_PLANS, ModuleKey, getMatchingPlan } from '@/hooks/useCompanyModules';
+import { useSubscription } from '@/hooks/useSubscription';
+import { usePaiementPro, type PaiementProPlan } from '@/hooks/usePaiementPro';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
+const PLAN_PRICES: Record<PaiementProPlan, { label: string; amount: number }> = {
+  starter: { label: 'Starter', amount: 9900 },
+  business: { label: 'Business', amount: 24900 },
+  pro: { label: 'Pro', amount: 49900 },
+};
+
 export default function MySubscription() {
+  const { status, isLoading: subLoading, refetch: refetchSub } = useSubscription();
+  const { initPayment, loading: payLoading } = usePaiementPro();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // After Paiement Pro returns, refetch and notify
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      toast.info('Vérification du paiement…');
+      const t = setTimeout(() => {
+        refetchSub();
+        toast.success('Statut mis à jour');
+        searchParams.delete('ref');
+        setSearchParams(searchParams, { replace: true });
+      }, 2000);
+      return () => clearTimeout(t);
+    }
+  }, [searchParams, setSearchParams, refetchSub]);
+
   const { selectedModules, saveModules, currentPlan, loading } = useCompanyModules();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<ModuleKey[]>(selectedModules);

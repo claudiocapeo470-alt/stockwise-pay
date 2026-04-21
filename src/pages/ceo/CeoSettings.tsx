@@ -6,7 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { Save, Loader2, ExternalLink } from 'lucide-react';
 
-const TABS = ['Plateforme', 'Sécurité', 'Notifications', 'Base de données'] as const;
+const TABS = ['Plateforme', 'Tarifs', 'Sécurité', 'Notifications', 'Base de données'] as const;
 
 const DB_TABLES = ['profiles', 'subscribers', 'products', 'sales', 'user_roles', 'payment_history', 'company_members', 'companies', 'invoices'];
 
@@ -21,6 +21,14 @@ const DEFAULT_NOTIF = {
   expiry_warning_days: '7',
 };
 
+const DEFAULT_PRICING = { starter: 9900, business: 24900, pro: 49900 };
+const PRICING_FIELDS: { key: 'starter' | 'business' | 'pro'; label: string; description: string }[] = [
+  { key: 'starter', label: 'Starter', description: 'Petits commerçants solo' },
+  { key: 'business', label: 'Business', description: 'PME en croissance' },
+  { key: 'pro', label: 'Pro', description: 'Grandes structures' },
+];
+const formatXof = (n: number) => Number.isFinite(n) ? n.toLocaleString('fr-FR').replace(/,/g, ' ') : '0';
+
 export default function CeoSettings() {
   const [tab, setTab] = useState<typeof TABS[number]>('Plateforme');
   const [platform, setPlatform] = useState(DEFAULT_PLATFORM);
@@ -29,6 +37,8 @@ export default function CeoSettings() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [changingPw, setChangingPw] = useState(false);
   const [notifSettings, setNotifSettings] = useState(DEFAULT_NOTIF);
+  const [pricing, setPricing] = useState(DEFAULT_PRICING);
+  const [savingPricing, setSavingPricing] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,6 +53,14 @@ export default function CeoSettings() {
         data.forEach((r: any) => { map[r.key] = r.value; });
         if (map.platform) setPlatform({ ...DEFAULT_PLATFORM, ...map.platform });
         if (map.notifications) setNotifSettings({ ...DEFAULT_NOTIF, ...map.notifications });
+        if (map.subscription_pricing) {
+          const p = map.subscription_pricing;
+          setPricing({
+            starter: Number(p.starter) || DEFAULT_PRICING.starter,
+            business: Number(p.business) || DEFAULT_PRICING.business,
+            pro: Number(p.pro) || DEFAULT_PRICING.pro,
+          });
+        }
       }
     } catch {
       // fallback to defaults

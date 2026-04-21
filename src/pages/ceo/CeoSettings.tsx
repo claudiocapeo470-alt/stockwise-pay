@@ -183,6 +183,43 @@ export default function CeoSettings() {
             <Button onClick={savePlatform} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0"><Save className="h-4 w-4" /> Sauvegarder</Button>
           </>}
 
+          {tab === 'Tarifs' && <>
+            <div>
+              <p className="text-sm text-slate-300 font-medium">Tarifs des abonnements (XOF / mois)</p>
+              <p className="text-xs text-slate-500 mt-1">Minimum 100 FCFA. Les nouveaux prix sont appliqués immédiatement à la page Tarifs et à Mon Abonnement.</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {PRICING_FIELDS.map(f => (
+                <div key={f.key} className="space-y-2 p-4 rounded-xl bg-slate-800/40 border border-slate-700/40">
+                  <div>
+                    <p className="text-sm font-semibold text-white">{f.label}</p>
+                    <p className="text-[11px] text-slate-500">{f.description}</p>
+                  </div>
+                  <Input
+                    type="number"
+                    min={100}
+                    step={100}
+                    value={pricing[f.key]}
+                    onChange={e => setPricing(p => ({ ...p, [f.key]: parseInt(e.target.value, 10) || 0 }))}
+                    className="bg-slate-800/60 border-slate-700/40 text-white"
+                  />
+                  <p className="text-xs text-teal-400 font-mono">{formatXof(pricing[f.key])} XOF</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button onClick={savePricing} disabled={savingPricing} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0">
+                {savingPricing ? <><Loader2 className="h-4 w-4 animate-spin" /> Sauvegarde...</> : <><Save className="h-4 w-4" /> Sauvegarder</>}
+              </Button>
+              <Button variant="outline" onClick={resetPricing} className="bg-slate-800/60 border-slate-700/40 text-slate-300 hover:text-white">
+                Réinitialiser par défaut
+              </Button>
+            </div>
+            <div className="mt-2 p-3 rounded-xl border border-amber-500/20 bg-amber-500/5">
+              <p className="text-xs text-amber-300">💡 Les valeurs par défaut sont 9 900 / 24 900 / 49 900 XOF.</p>
+            </div>
+          </>}
+
           {tab === 'Sécurité' && <>
             <p className="text-sm text-slate-400">Changer le mot de passe du compte CEO</p>
             <div className="space-y-3 max-w-sm">

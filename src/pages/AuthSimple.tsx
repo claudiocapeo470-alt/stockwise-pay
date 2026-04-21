@@ -462,17 +462,6 @@ export default function AuthSimple() {
             </p>
           </div>
 
-          {/* Auth mode info - only show when in employee mode */}
-          {authMode === 'employee' && (
-            <button
-              type="button"
-              onClick={() => { setAuthMode('classic'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-              className="flex items-center gap-2 text-sm text-primary hover:underline mx-auto"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Retour à la connexion propriétaire
-            </button>
-          )}
 
           {/* CLASSIC AUTH MODE */}
           {authMode === 'classic' && (
@@ -649,15 +638,10 @@ export default function AuthSimple() {
           {authMode === 'employee' && (
             <div className="space-y-6 py-4">
               {pinStep === 'company' && (
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <div className="mx-auto w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                      <span className="text-2xl">🏢</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-6">
-                      Saisissez le code de votre entreprise (6 chiffres)
-                    </p>
-                  </div>
+                <div className="space-y-5">
+                  <p className="text-center text-sm text-muted-foreground">
+                    Saisissez le code de votre entreprise (6 chiffres)
+                  </p>
                   <PinKeypad
                     length={6}
                     onComplete={handleCompanyCodeComplete}
@@ -668,18 +652,15 @@ export default function AuthSimple() {
               )}
 
               {pinStep === 'pin' && (
-                <div className="space-y-4">
+                <div className="space-y-5">
                   <div className="text-center">
-                    <div className="mx-auto w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
-                      <span className="text-2xl">🔑</span>
-                    </div>
                     <p className="text-xs text-muted-foreground mb-1">
                       Entreprise : <span className="font-mono font-bold text-foreground">{companyCode}</span>
                     </p>
                     <button 
                       type="button"
                       onClick={() => { setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-                      className="text-xs text-primary underline"
+                      className="text-xs text-primary hover:underline font-medium"
                     >
                       Changer
                     </button>

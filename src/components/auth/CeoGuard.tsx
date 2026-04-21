@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
-const CEO_EMAIL = 'support@stocknix.com';
+const CEO_EMAIL = (import.meta.env.VITE_CEO_EMAIL as string | undefined) || 'support@stocknix.com';
 
 export function CeoGuard({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();

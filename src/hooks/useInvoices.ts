@@ -139,11 +139,36 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
       if (invoiceError) throw invoiceError;
 
       if (items) {
-        await supabase.from("invoice_items").delete().eq("invoice_id", id);
+        // Safer strategy: only delete removed items, upsert the rest.
+        // Avoids losing all line items if the re-insert fails.
+        const { data: existing, error: fetchExistingError } = await supabase
+          .from("invoice_items")
+          .select("id")
+          .eq("invoice_id", id);
+        if (fetchExistingError) throw fetchExistingError;
+
+        const existingIds = (existing || []).map((i: any) => i.id);
+        const newIds = items.filter(i => i.id).map(i => i.id as string);
+        const toDelete = existingIds.filter(eid => !newIds.includes(eid));
+
+        if (toDelete.length > 0) {
+          const { error: delError } = await supabase
+            .from("invoice_items")
+            .delete()
+            .in("id", toDelete);
+          if (delError) throw delError;
+        }
+
         if (items.length > 0) {
-          const itemsToInsert = items.map((item, index) => ({ ...item, invoice_id: id, position: index }));
-          const { error: itemsError } = await supabase.from("invoice_items").insert(itemsToInsert);
-          if (itemsError) throw itemsError;
+          const itemsToUpsert = items.map((item, index) => ({
+            ...item,
+            invoice_id: id,
+            position: index,
+          }));
+          const { error: upsertError } = await supabase
+            .from("invoice_items")
+            .upsert(itemsToUpsert);
+          if (upsertError) throw upsertError;
         }
       }
       return { id, ...invoice };

@@ -17,6 +17,7 @@ export function useAutoLock(onLock: () => void) {
   }, []);
 
   useEffect(() => {
+    // Early bail-out before attaching listeners or interval
     if (!isEmployee || timeoutMinutes <= 0) return;
 
     const events = ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'];

@@ -56,9 +56,10 @@ export const usePayments = () => {
   const addPayment = useMutation({
     mutationFn: async (payment: Omit<Payment, 'id' | 'user_id' | 'created_at' | 'remaining_amount'>) => {
       if (!effectiveUserId) throw new Error('Non authentifié');
+      const remaining_amount = Number(payment.total_amount || 0) - Number(payment.paid_amount || 0);
       const { data, error } = await supabase
         .from('payments')
-        .insert([{ ...payment, user_id: effectiveUserId, amount: payment.paid_amount }])
+        .insert([{ ...payment, user_id: effectiveUserId, amount: payment.paid_amount, remaining_amount }])
         .select()
         .single();
       if (error) throw error;

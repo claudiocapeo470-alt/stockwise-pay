@@ -30,7 +30,10 @@ export function useOrderNotifications(storeId: string | undefined) {
             duration: 6000,
             action: {
               label: 'Voir',
-              onClick: () => window.location.href = '/app/boutique/commandes',
+              // Use SPA navigation via custom event (handled in AppLayout)
+              onClick: () => window.dispatchEvent(
+                new CustomEvent('app-navigate', { detail: '/app/boutique/commandes' })
+              ),
             },
           });
         }

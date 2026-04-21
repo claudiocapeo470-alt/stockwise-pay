@@ -58,7 +58,7 @@ export function useDeliveries(driverMemberId?: string) {
       });
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['deliveries'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['deliveries', companyId, driverMemberId] }),
   });
 
   const assignDriver = useMutation({
@@ -70,7 +70,7 @@ export function useDeliveries(driverMemberId?: string) {
       }).eq('id', deliveryId);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['deliveries'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['deliveries', companyId, driverMemberId] }),
   });
 
   const updateStatus = useMutation({
@@ -82,7 +82,7 @@ export function useDeliveries(driverMemberId?: string) {
       const { error } = await supabase.from('deliveries').update(updates).eq('id', deliveryId);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['deliveries'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['deliveries', companyId, driverMemberId] }),
   });
 
   return {

@@ -102,41 +102,61 @@ serve(async (req) => {
     const notifyUrl = `${supabaseUrl}/functions/v1/paiementpro-notify`;
     const returnUrl = `${origin}/app/subscription?ref=${reference}`;
 
-    const ppPayload = {
-      merchantId,
-      amount: body.amount,
-      referenceNumber: reference,
-      customerEmail: body.email,
-      customerFirstName: body.firstName,
-      customerLastName: body.lastName || "",
-      customerPhoneNumber: body.phone || "",
-      notificationURL: notifyUrl,
-      returnURL: returnUrl,
-      currency: "XOF",
-      countryCurrencyCode: "952",
-    };
+    const ppForm = new URLSearchParams();
+    ppForm.append("merchantId", merchantId);
+    ppForm.append("amount", String(body.amount));
+    ppForm.append("referenceNumber", reference);
+    ppForm.append("customerEmail", body.email);
+    ppForm.append("customerFirstName", body.firstName);
+    ppForm.append("customerLastName", body.lastName || "");
+    ppForm.append("customerPhoneNumber", body.phone || "00000000");
+    ppForm.append("notificationURL", notifyUrl);
+    ppForm.append("returnURL", returnUrl);
+    ppForm.append("currency", "XOF");
+    ppForm.append("countryCurrencyCode", "952");
+    ppForm.append("description", `Abonnement Stocknix ${body.plan}`);
+    ppForm.append("channel", "WEB");
+
+    console.log("Calling Paiement Pro with form data:", ppForm.toString());
 
     const ppRes = await fetch(
       "https://www.paiementpro.net/webservice/onlinepayment/init.php",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(ppPayload),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/json, text/plain, */*",
+        },
+        body: ppForm.toString(),
       }
     );
 
-    const ppData = await ppRes.json().catch(() => null);
-    console.log("Paiement Pro response:", ppData);
+    const ppText = await ppRes.text();
+    console.log("Paiement Pro raw response:", ppText, "status:", ppRes.status);
 
-    if (!ppData || (ppData.responsecode !== "0" && ppData.responsecode !== 0)) {
+    let ppData: any = null;
+    try {
+      ppData = JSON.parse(ppText);
+    } catch {
+      // Some Paiement Pro endpoints return plain text "sessionid" or query-string
+      if (ppText && ppText.length < 200 && !ppText.includes("<")) {
+        // Try to interpret as raw sessionId
+        ppData = { responsecode: "0", sessionid: ppText.trim() };
+      }
+    }
+
+    const code = ppData?.responsecode;
+    const isSuccess = code === "0" || code === 0 || (ppData?.sessionid && !code);
+
+    if (!ppData || !isSuccess || !ppData.sessionid) {
       await supabase
         .from("subscriptions")
         .update({ status: "failed" })
         .eq("reference", reference);
       return new Response(
         JSON.stringify({
-          error: ppData?.responsemsg || "Échec initialisation paiement",
-          details: ppData,
+          error: ppData?.responsemsg || ppData?.message || "Échec initialisation paiement Paiement Pro. Vérifiez votre MERCHANT_ID.",
+          details: ppData ?? ppText,
         }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );

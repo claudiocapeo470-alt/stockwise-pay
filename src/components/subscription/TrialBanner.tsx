@@ -7,22 +7,36 @@ export function TrialBanner() {
   const { isEmployee } = useAuth();
   const { status } = useSubscription();
 
-  if (isEmployee || status.isActive || !status.subscriptionEnd) return null;
+  if (isEmployee || !status.subscriptionEnd) return null;
 
-  const daysLeft = Math.ceil(
-    (status.subscriptionEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
+  // Expired → critical banner
+  if (status.isExpired) {
+    return (
+      <div className="bg-destructive/10 border-b border-destructive/20 px-4 py-2 text-sm flex items-center gap-2">
+        <AlertCircle className="h-4 w-4 text-destructive" />
+        <span>Votre essai gratuit est terminé. Choisissez un plan pour continuer.</span>
+        <Link to="/app/subscription" className="ml-auto font-semibold text-primary underline">
+          S'abonner
+        </Link>
+      </div>
+    );
+  }
 
-  if (daysLeft > 7) return null;
+  // Active paid plan → no banner
+  if (!status.isTrial) return null;
 
+  const daysLeft = status.trialDaysLeft;
+
+  // Show trial banner during the whole trial; emphasize last 7 days
+  const isUrgent = daysLeft <= 7;
   return (
-    <div className="bg-warning/10 border-b border-warning/20 px-4 py-2 text-sm flex items-center gap-2">
-      <AlertCircle className="h-4 w-4 text-warning" />
+    <div className={`${isUrgent ? 'bg-warning/10 border-warning/20' : 'bg-primary/10 border-primary/20'} border-b px-4 py-2 text-sm flex items-center gap-2`}>
+      <AlertCircle className={`h-4 w-4 ${isUrgent ? 'text-warning' : 'text-primary'}`} />
       <span>
-        Votre abonnement expire dans <strong>{daysLeft} jour{daysLeft > 1 ? 's' : ''}</strong>.
+        🎁 Essai gratuit — il vous reste <strong>{daysLeft} jour{daysLeft > 1 ? 's' : ''}</strong>.
       </span>
       <Link to="/app/subscription" className="ml-auto font-semibold text-primary underline">
-        Renouveler
+        Voir les plans
       </Link>
     </div>
   );

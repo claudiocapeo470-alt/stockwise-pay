@@ -97,13 +97,11 @@ serve(async (req) => {
       );
     }
 
-    // Call Paiement Pro REST endpoint (SOAP wrapper)
-    // Paiement Pro provides REST init endpoint which is friendlier than SOAP in Deno.
     const origin = req.headers.get("origin") ?? "https://www.stocknix.com";
     const notifyUrl = `${supabaseUrl}/functions/v1/paiementpro-notify`;
     const returnUrl = `${origin}/app/subscription?ref=${reference}`;
 
-    // Generate SHA-256 hashcode (REQUIRED by Paiement Pro)
+    // Generate SHA-256 hashcode (required by Paiement Pro merchant security)
     const hashString = `${merchantId}${body.amount}${reference}${merchantSecret}`;
     const hashBuffer = await crypto.subtle.digest(
       "SHA-256",
@@ -113,83 +111,86 @@ serve(async (req) => {
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
 
-    const ppForm = new URLSearchParams();
-    ppForm.append("merchantId", merchantId);
-    ppForm.append("amount", String(body.amount));
-    ppForm.append("referenceNumber", reference);
-    ppForm.append("customerEmail", body.email);
-    ppForm.append("customerFirstName", body.firstName);
-    ppForm.append("customerLastName", body.lastName || "");
-    ppForm.append("customerPhoneNumber", body.phone || "0700000000");
-    ppForm.append("notificationURL", notifyUrl);
-    ppForm.append("returnURL", returnUrl);
-    ppForm.append("currency", "XOF");
-    ppForm.append("countryCurrencyCode", "952");
-    ppForm.append("description", `Abonnement Stocknix ${body.plan}`);
-    ppForm.append("hashcode", hashcode);
-    ppForm.append("channel", "");
+    const paiementProPayload = {
+      merchantId,
+      amount: body.amount,
+      description: `Abonnement Stocknix ${body.plan}`,
+      channel: "",
+      countryCurrencyCode: "952",
+      referenceNumber: reference,
+      customerEmail: body.email,
+      customerFirstName: body.firstName,
+      customerLastname: body.lastName || "",
+      customerPhoneNumber: body.phone || "0700000000",
+      notificationURL: notifyUrl,
+      returnURL: returnUrl,
+      returnContext: reference,
+      hashcode,
+    };
 
-    console.log("Calling Paiement Pro with hashcode:", hashcode);
-    console.log("Form data:", ppForm.toString());
+    console.log("Calling Paiement Pro curl-init endpoint for reference:", reference);
 
     const ppRes = await fetch(
-      "https://www.paiementpro.net/webservice/onlinepayment/init.php",
+      "https://www.paiementpro.net/webservice/onlinepayment/init/curl-init.php",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
           "Accept": "application/json, text/plain, */*",
         },
-        body: ppForm.toString(),
+        body: JSON.stringify(paiementProPayload),
       }
     );
 
     const ppText = await ppRes.text();
-    console.log("Paiement Pro raw response:", ppText, "status:", ppRes.status);
+    console.log("PaiementPro response:", ppText);
 
-    // Try multiple parsing strategies
+    let paymentUrl: string | null = null;
     let sessionId: string | null = null;
     let ppData: any = null;
 
-    // Strategy 1: JSON
     try {
       ppData = JSON.parse(ppText);
-      if (ppData?.sessionid) sessionId = ppData.sessionid;
+      paymentUrl = ppData?.url || ppData?.payment_url || null;
+      sessionId = ppData?.sessionid || null;
     } catch {
-      // not JSON
+      // Some Paiement Pro deployments return plain text or query-string content.
     }
 
-    // Strategy 2: regex match sessionid=XXX (URL or query-string format)
-    if (!sessionId) {
-      const m = ppText.match(/sessionid[=:"\s]+([a-zA-Z0-9_-]+)/i);
-      if (m) sessionId = m[1];
-    }
-
-    // Strategy 3: raw sessionId text
-    if (!sessionId && ppText && ppText.length < 200 && !ppText.includes("<") && !ppText.includes("{") && /^[a-zA-Z0-9_-]+$/.test(ppText.trim())) {
-      sessionId = ppText.trim();
+    if (!paymentUrl) {
+      const urlMatch = ppText.match(/https?:\/\/[^\s'"}]+/i);
+      if (urlMatch) paymentUrl = urlMatch[0].replace(/\\\//g, "/");
     }
 
     if (!sessionId) {
+      const sessionMatch = (paymentUrl || ppText).match(/sessionid=([a-zA-Z0-9_-]+)/i);
+      if (sessionMatch) sessionId = sessionMatch[1];
+    }
+
+    if (!paymentUrl && sessionId) {
+      paymentUrl = `https://www.paiementpro.net/webservice/onlinepayment/processing_v2.php?sessionid=${sessionId}`;
+    }
+
+    if (!paymentUrl) {
       await supabase
         .from("subscriptions")
         .update({ status: "failed" })
         .eq("reference", reference);
       return new Response(
         JSON.stringify({
-          error: ppData?.responsemsg || ppData?.message || ppData?.decription || `Échec Paiement Pro: ${ppText.slice(0, 200)}`,
+          error: ppData?.message || ppData?.responsemsg || ppData?.decription || `Échec Paiement Pro: ${ppText.slice(0, 200)}`,
           details: ppData ?? ppText,
         }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
     await supabase
       .from("subscriptions")
       .update({ session_id: sessionId })
       .eq("reference", reference);
 
-    console.log("Success! sessionId:", sessionId);
-    const paymentUrl = `https://www.paiementpro.net/webservice/onlinepayment/processing_v2.php?sessionid=${sessionId}`;
+    console.log("Success! Paiement Pro URL generated for reference:", reference);
 
     return new Response(
       JSON.stringify({ payment_url: paymentUrl, reference, sessionId }),

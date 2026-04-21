@@ -5,12 +5,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Check, ChevronLeft, Star, AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePaiementPro, type PaiementProPlan } from "@/hooks/usePaiementPro";
+import { useSubscriptionPricing } from "@/hooks/useSubscriptionPricing";
 
-const plans = [
+const plansBase = [
   {
-    id: "starter",
+    id: "starter" as const,
     name: "Starter",
-    monthlyPrice: 9900,
     description: "Parfait pour les petits commerçants solo",
     color: "from-emerald-500 to-emerald-600",
     features: [

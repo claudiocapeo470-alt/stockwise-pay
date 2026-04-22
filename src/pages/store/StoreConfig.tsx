@@ -94,7 +94,19 @@ export default function StoreConfig() {
     } catch (e: any) { toast.error(e.message); }
   };
 
-  const storeUrl = `https://stocknix.com/boutique/${form.slug}`;
+  // URL canonique publique (toujours stocknix.com une fois DNS propagé).
+  // Fallback intelligent : si on est sur le domaine officiel ou son sous-domaine www, on garde stocknix.com,
+  // sinon (preview / lovable.app) on utilise l'origine actuelle pour que le lien marche immédiatement.
+  const PUBLIC_DOMAIN = 'https://stocknix.com';
+  const getBaseUrl = () => {
+    if (typeof window === 'undefined') return PUBLIC_DOMAIN;
+    const host = window.location.hostname;
+    // Sur le domaine officiel ou en production lovable, on privilégie le domaine canonique
+    if (host === 'stocknix.com' || host === 'www.stocknix.com') return PUBLIC_DOMAIN;
+    // Sinon (preview, lovable.app, localhost) on utilise l'origine pour garantir un lien cliquable
+    return window.location.origin;
+  };
+  const storeUrl = `${getBaseUrl()}/boutique/${form.slug}`;
   const copyUrl = () => { navigator.clipboard.writeText(storeUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   if (isLoading) return <div className="flex items-center justify-center h-64"><div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin rounded-full" /></div>;

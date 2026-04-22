@@ -1,41 +1,78 @@
 
-## Gestion des prix d'abonnement depuis l'espace CEO
 
-Permettre au CEO de modifier dynamiquement les prix mensuels des plans Starter, Business et Pro (minimum 100 FCFA) depuis l'espace CEO. Les nouveaux prix seront utilisés partout : page Tarifs publique, page Mon Abonnement, et lors de l'initialisation du paiement.
+## Objectif
 
-### 1. Stockage persistant
-- Sauvegarder les prix dans la table existante `ceo_settings` sous la clé `subscription_pricing`.
-- Format JSON : `{ starter: 9900, business: 24900, pro: 49900 }`.
-- Aucune migration nécessaire — la table et ses politiques RLS (admin uniquement) existent déjà.
+Forcer l'affichage et le partage du lien boutique au format **`https://www.stocknix.com/boutique/<slug>`** uniquement, partout dans l'application — jamais d'URL `lovableproject.com` ou `lovable.app`. Et s'assurer que ce lien fonctionne réellement en production.
 
-### 2. Nouveau hook `useSubscriptionPricing`
-- Fichier : `src/hooks/useSubscriptionPricing.ts`
-- Charge les prix depuis `ceo_settings` (clé `subscription_pricing`).
-- Retourne les prix actuels avec valeurs par défaut (9 900 / 24 900 / 49 900 XOF) si la clé n'existe pas encore.
-- Expose `prices`, `isLoading` et `refetch`.
-- Utilisé en lecture publique (la lecture sur ceo_settings est restreinte aux admins, donc on créera une politique SELECT publique uniquement pour la clé `subscription_pricing` via une fonction RPC `get_subscription_pricing` SECURITY DEFINER, OU on duplique les valeurs dans le client. Approche retenue : fonction RPC publique pour ne pas bloquer les pages publiques de Tarifs).
+## Le problème actuel
 
-### 3. Nouvel onglet "Tarifs" dans `CeoSettings.tsx`
-- Ajouter un 4ème onglet "Tarifs" (avant "Base de données").
-- Trois champs numériques : Starter, Business, Pro (XOF / mois).
-- Validation : minimum 100 FCFA, nombres entiers uniquement.
-- Aperçu en direct des prix saisis (formatage avec espaces).
-- Bouton "Sauvegarder" → upsert dans `ceo_settings` puis toast de confirmation.
-- Bouton "Réinitialiser aux valeurs par défaut" (9 900 / 24 900 / 49 900).
+Dans `src/pages/store/StoreConfig.tsx`, la fonction `getBaseUrl()` n'utilise `https://stocknix.com` **que** si l'utilisateur consulte déjà depuis ce domaine. Sinon, elle retourne `window.location.origin` — ce qui produit des URLs `https://f5fa4211-...lovableproject.com/boutique/...` quand on est dans l'éditeur ou la preview. C'est ce que vous voyez.
 
-### 4. Intégration côté utilisateur
-- **`src/pages/Tarifs.tsx`** : remplacer les `monthlyPrice` codés en dur par les valeurs du hook. Afficher un loader léger pendant le fetch.
-- **`src/pages/MySubscription.tsx`** : remplacer la constante `PLAN_PRICES` par les valeurs dynamiques du hook.
-- Le hook `usePaiementPro` reste inchangé — il reçoit déjà le `amount` en paramètre depuis ces pages.
+Le lien `https://www.stocknix.com/boutique/...` ne fonctionnera réellement que si le domaine `www.stocknix.com` est correctement connecté à ce projet Lovable via DNS.
 
-### 5. Détails techniques
-- Fonction RPC Postgres `get_subscription_pricing()` (SECURITY DEFINER, lecture publique) qui retourne le JSON depuis `ceo_settings` avec fallback sur les valeurs par défaut.
-- Validation côté client : refuser sauvegarde si un prix < 100, message d'erreur explicite.
-- Aucun changement aux Edge Functions Paiement Pro — elles reçoivent toujours le montant depuis le client.
+## Plan d'action
 
-### Fichiers modifiés / créés
-- ➕ `src/hooks/useSubscriptionPricing.ts` (nouveau)
-- ➕ Migration SQL : créer la fonction RPC `get_subscription_pricing`
-- ✏️ `src/pages/ceo/CeoSettings.tsx` (ajout onglet Tarifs)
-- ✏️ `src/pages/Tarifs.tsx` (prix dynamiques)
-- ✏️ `src/pages/MySubscription.tsx` (prix dynamiques)
+### 1. Forcer l'URL canonique partout (code)
+
+Dans `src/pages/store/StoreConfig.tsx` :
+- Remplacer la logique conditionnelle de `getBaseUrl()` par une **constante figée** `https://www.stocknix.com`.
+- Tous les affichages (étape 1 du formulaire, badge "En ligne", bouton "Voir", bouton "Copier") afficheront et copieront systématiquement :  
+  `https://www.stocknix.com/boutique/<slug>`
+- Le bouton **"Voir"** ouvrira ce lien canonique dans un nouvel onglet (et fonctionnera dès que le domaine sera actif).
+
+Aucune autre page n'expose d'URL boutique au public — ce changement suffit côté code.
+
+### 2. Vérifier la connexion du domaine personnalisé (action côté Lovable)
+
+Après mes modifications, j'ouvrirai pour vous l'écran **Project Settings → Domains** pour vérifier l'état de `stocknix.com` et `www.stocknix.com` :
+
+| Statut affiché | Signification | Action |
+|---|---|---|
+| ✅ **Active** | Domaine connecté, le lien marche | Rien à faire |
+| ⚠️ **Verifying** / **Setting up** | DNS en cours de propagation | Attendre (jusqu'à 72 h) |
+| ❌ **Action required** / **Offline** / absent | Domaine pas (ou plus) connecté | Suivre l'étape 3 ci-dessous |
+
+### 3. Configuration DNS (à faire chez Hostinger si nécessaire)
+
+Pour que `https://www.stocknix.com/boutique/...` fonctionne, deux **enregistrements A** doivent pointer vers Lovable :
+
+```text
+Type    Nom    Valeur            TTL
+A       @      185.158.133.1     3600
+A       www    185.158.133.1     3600
+```
+
+Et un enregistrement de vérification (généré par Lovable lors de la connexion) :
+
+```text
+Type    Nom         Valeur
+TXT     _lovable    lovable_verify=XXXX  (fourni par Lovable)
+```
+
+S'il existe d'anciens enregistrements A pointant vers Hostinger (page de parking) → **les supprimer**.
+
+### 4. Publier
+
+Après la modification du code, publier une nouvelle version pour que le changement prenne effet sur `stocknix.lovable.app` et le domaine personnalisé.
+
+## Détail technique du changement de code
+
+```ts
+// src/pages/store/StoreConfig.tsx
+const PUBLIC_DOMAIN = 'https://www.stocknix.com';
+const storeUrl = `${PUBLIC_DOMAIN}/boutique/${form.slug}`;
+```
+
+Suppression complète de `getBaseUrl()` et de la branche `window.location.origin`.
+
+## Fichiers modifiés
+
+- `src/pages/store/StoreConfig.tsx`
+
+## Ordre d'exécution une fois ce plan approuvé
+
+1. Modifier `StoreConfig.tsx` (URL canonique forcée).
+2. Ouvrir **Project Settings → Domains** pour vérifier l'état du domaine et m'assurer qu'il est bien connecté à ce projet.
+3. Publier la nouvelle version.
+4. Si le domaine n'est pas Active : vous guider précisément dans Hostinger pour corriger les enregistrements DNS.
+

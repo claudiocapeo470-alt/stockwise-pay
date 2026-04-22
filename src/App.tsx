@@ -41,6 +41,7 @@ import StoreProducts from './pages/store/StoreProducts';
 import StoreOrders from './pages/store/StoreOrders';
 import StoreReviews from './pages/store/StoreReviews';
 import PublicStore from './pages/store/PublicStore';
+import Checkout from './pages/store/Checkout';
 import OrderTracking from './pages/store/OrderTracking';
 import Clients from './pages/Clients';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -101,6 +102,7 @@ const App = () => (
               <Route path="/legal" element={<MentionsLegales />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/boutique/:slug" element={<PublicStore />} />
+              <Route path="/boutique/:slug/checkout" element={<Checkout />} />
               <Route path="/boutique/:slug/commande/:orderId" element={<OrderTracking />} />
               <Route path="/auth" element={<AuthSimple />} />
               <Route path="/auth/confirm" element={<AuthConfirm />} />

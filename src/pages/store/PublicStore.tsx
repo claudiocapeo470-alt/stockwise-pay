@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import {
@@ -141,7 +141,7 @@ const fmt = (n: number) => `${n.toLocaleString("fr-FR")} CFA`;
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PublicStore() {
   const { slug } = useParams<{ slug: string }>();
-
+  const navigate = useNavigate();
   const [store, setStore]           = useState<StoreData | null>(null);
   const [products, setProducts]     = useState<ProductData[]>([]);
   const [productImages, setProductImages] = useState<Record<string, string[]>>({});
@@ -713,7 +713,14 @@ export default function PublicStore() {
 
     const handleBuyNow = () => {
       addToCart(p, qty);
-      setShowCheckout(true);
+      // Sauvegarder immédiatement le panier mis à jour avant la navigation
+      const updatedCart = (() => {
+        const ex = cart.find(i => i.id === p.id);
+        if (ex) return cart.map(i => i.id === p.id ? { ...i, quantity: i.quantity + qty } : i);
+        return [...cart, { id: p.id, name: p.name, price: p.price, quantity: qty, icon_emoji: p.icon_emoji, image_url: p.image_url }];
+      })();
+      localStorage.setItem(`cart-${slug}`, JSON.stringify(updatedCart));
+      navigate(`/boutique/${slug}/checkout`);
     };
 
     return (
@@ -1079,7 +1086,7 @@ export default function PublicStore() {
                 <span>Total</span><span style={{ color }}>{fmt(cartTotal)}</span>
               </div>
               <button
-                onClick={() => { setShowCart(false); setShowCheckout(true); }}
+                onClick={() => { setShowCart(false); navigate(`/boutique/${slug}/checkout`); }}
                 className="lz-btn-cta w-full py-4 text-sm font-semibold text-white rounded-full flex items-center justify-center gap-2"
                 style={{ background: color }}
               >
@@ -1246,10 +1253,18 @@ export default function PublicStore() {
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+            <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
+              {/* Bouton recherche - visible sur tablet/desktop */}
+              <button
+                onClick={() => setActivePage("search")}
+                className="hidden sm:inline-flex h-10 w-10 border border-gray-200 dark:border-gray-700 items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
+                aria-label="Rechercher"
+              >
+                <Search className="h-4 w-4" />
+              </button>
               <button
                 onClick={() => setDarkMode(!darkMode)}
-                className="h-10 w-10 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="h-10 w-10 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
                 aria-label="Mode sombre"
               >
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -1326,8 +1341,7 @@ export default function PublicStore() {
       </nav>
 
       {/* DRAWERS */}
-      {showCart     && <CartDrawer />}
-      {showCheckout && <CheckoutModal />}
+      {showCart && <CartDrawer />}
 
       {/* FOOTER desktop */}
       <footer className="hidden md:block bg-gray-900 text-white mt-20">

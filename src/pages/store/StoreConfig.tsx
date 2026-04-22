@@ -150,14 +150,9 @@ export default function StoreConfig() {
   };
 
   // ─── URL CANONIQUE ────────────────────────────────────────────────
-  const PUBLIC_DOMAIN = 'https://stocknix.com';
-  const getBaseUrl = () => {
-    if (typeof window === 'undefined') return PUBLIC_DOMAIN;
-    const host = window.location.hostname;
-    if (host === 'stocknix.com' || host === 'www.stocknix.com') return PUBLIC_DOMAIN;
-    return window.location.origin;
-  };
-  const storeUrl = `${getBaseUrl()}/boutique/${form.slug}`;
+  // Toujours afficher/copier le domaine officiel, jamais lovable.app/lovableproject.com
+  const PUBLIC_DOMAIN = 'https://www.stocknix.com';
+  const storeUrl = `${PUBLIC_DOMAIN}/boutique/${form.slug}`;
   const copyUrl = () => { navigator.clipboard.writeText(storeUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   if (isLoading) return (

@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import {
@@ -141,7 +141,7 @@ const fmt = (n: number) => `${n.toLocaleString("fr-FR")} CFA`;
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PublicStore() {
   const { slug } = useParams<{ slug: string }>();
-
+  const navigate = useNavigate();
   const [store, setStore]           = useState<StoreData | null>(null);
   const [products, setProducts]     = useState<ProductData[]>([]);
   const [productImages, setProductImages] = useState<Record<string, string[]>>({});

@@ -1253,10 +1253,18 @@ export default function PublicStore() {
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+            <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
+              {/* Bouton recherche - visible sur tablet/desktop */}
+              <button
+                onClick={() => setActivePage("search")}
+                className="hidden sm:inline-flex h-10 w-10 border border-gray-200 dark:border-gray-700 items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
+                aria-label="Rechercher"
+              >
+                <Search className="h-4 w-4" />
+              </button>
               <button
                 onClick={() => setDarkMode(!darkMode)}
-                className="h-10 w-10 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="h-10 w-10 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
                 aria-label="Mode sombre"
               >
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -1333,8 +1341,7 @@ export default function PublicStore() {
       </nav>
 
       {/* DRAWERS */}
-      {showCart     && <CartDrawer />}
-      {showCheckout && <CheckoutModal />}
+      {showCart && <CartDrawer />}
 
       {/* FOOTER desktop */}
       <footer className="hidden md:block bg-gray-900 text-white mt-20">

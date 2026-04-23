@@ -433,6 +433,11 @@ export default function StoreConfig() {
                   Choisissez une image de qualité qui représente bien vos produits.
                 </p>
               </div>
+
+              {/* GESTION DES CATÉGORIES */}
+              <div className="border-t border-border pt-6">
+                <CategoryManager />
+              </div>
             </>
           )}
 

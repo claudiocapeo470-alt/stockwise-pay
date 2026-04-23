@@ -22,10 +22,13 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  console.log("paiementpro-init invoked", { method: req.method, origin: req.headers.get("origin") });
+
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      console.warn("Missing Authorization header");
+      return new Response(JSON.stringify({ error: "Authentification requise" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -38,8 +41,12 @@ serve(async (req) => {
     const merchantSecret = Deno.env.get("PAIEMENTPRO_SECRET_KEY");
 
     if (!merchantId || !merchantSecret) {
+      console.error("Missing PaiementPro credentials", {
+        hasMerchantId: !!merchantId,
+        hasSecret: !!merchantSecret,
+      });
       return new Response(
-        JSON.stringify({ error: "PAIEMENTPRO_MERCHANT_ID ou PAIEMENTPRO_SECRET_KEY non configuré" }),
+        JSON.stringify({ error: "Configuration du marchand manquante (contactez le support)" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -52,14 +59,24 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabaseAuth.auth.getUser(token);
     if (userError || !userData?.user) {
       console.error("Auth error:", userError);
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ error: "Session invalide — reconnectez-vous" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     const userId = userData.user.id;
+    console.log("Authenticated user:", userId);
 
-    const body = (await req.json()) as InitPayload;
+    let body: InitPayload;
+    try {
+      body = (await req.json()) as InitPayload;
+    } catch (e) {
+      console.error("Invalid JSON body:", e);
+      return new Response(
+        JSON.stringify({ error: "Corps de requête invalide" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Basic validation
     if (
@@ -70,8 +87,9 @@ serve(async (req) => {
       !body.email ||
       !body.firstName
     ) {
+      console.warn("Invalid params:", body);
       return new Response(
-        JSON.stringify({ error: "Paramètres invalides" }),
+        JSON.stringify({ error: "Paramètres invalides", details: { plan: body.plan, amount: body.amount, hasEmail: !!body.email, hasFirstName: !!body.firstName } }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -92,7 +110,7 @@ serve(async (req) => {
     if (insertError) {
       console.error("Insert subscription error:", insertError);
       return new Response(
-        JSON.stringify({ error: "Erreur enregistrement abonnement" }),
+        JSON.stringify({ error: "Erreur enregistrement abonnement", details: insertError.message }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

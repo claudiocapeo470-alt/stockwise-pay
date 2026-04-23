@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { generateCashReportPDF, CashReportPreview } from "@/components/caisse/CashReport";
+import { PosReceipt, type ReceiptData } from "@/components/caisse/PosReceipt";
 
 // ─── Types ──────────────────────────────────────────────
 interface CartItem {

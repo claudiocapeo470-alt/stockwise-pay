@@ -649,15 +649,7 @@ export default function Caisse() {
 
   const removeLastItem = () => { if (cart.length === 0) return; setCart(prev => prev.slice(0, -1)); toast({ title: "Dernier article annulé" }); };
 
-  const printReceipt = () => {
-    const printWindow = window.open('', '', 'width=320,height=600');
-    if (!printWindow) return;
-    const receiptContent = `<!DOCTYPE html><html><head><title>Ticket</title><style>@page{size:80mm auto;margin:0}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Courier New',monospace;font-size:12px;width:80mm;padding:8px;background:#fff}.header{text-align:center;margin-bottom:8px}.company-name{font-size:16px;font-weight:bold;text-transform:uppercase}.divider{border-bottom:1px dashed #000;margin:6px 0}.date-row{display:flex;justify-content:space-between;font-size:10px}.item{margin:4px 0}.item-detail{display:flex;justify-content:space-between;font-size:11px;padding-left:8px}.total-section{margin-top:8px;padding-top:8px;border-top:2px solid #000}.total-row{display:flex;justify-content:space-between;font-size:14px;font-weight:bold}.footer{text-align:center;margin-top:12px;font-size:11px}</style></head><body><div class="header"><div class="company-name">${companyName}</div></div><div class="divider"></div><div class="date-row"><span>Date: ${new Date().toLocaleDateString('fr-FR')}</span><span>${new Date().toLocaleTimeString('fr-FR')}</span></div>${customerName ? `<div class="date-row"><span>Client: ${customerName}</span></div>` : ''}<div class="divider"></div>${cart.map(item => `<div class="item"><div>${item.name}</div><div class="item-detail"><span>${item.quantity} x ${item.price.toLocaleString('fr-FR')} FCFA</span><span>${(item.price * item.quantity).toLocaleString('fr-FR')} FCFA</span></div>${item.discount ? `<div class="item-detail" style="color:#e74c3c"><span>Remise</span><span>-${item.discount.toLocaleString('fr-FR')} FCFA</span></div>` : ''}</div>`).join('')}<div class="total-section">${totalDiscount > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px;color:#e74c3c"><span>Total remise</span><span>-${totalDiscount.toLocaleString('fr-FR')} FCFA</span></div>` : ''}<div class="total-row"><span>TOTAL</span><span>${total.toLocaleString('fr-FR')} FCFA</span></div></div><div class="footer"><div>Merci et à bientôt !</div><div style="font-size:9px;color:#666;margin-top:4px">Powered by Stocknix</div></div></body></html>`;
-    printWindow.document.write(receiptContent);
-    printWindow.document.close();
-    printWindow.onload = () => { printWindow.print(); printWindow.onafterprint = () => printWindow.close(); };
-    setTimeout(() => { setCart([]); setShowReceipt(false); setShowCashModal(false); setCustomerName(""); }, 1000);
-  };
+  // (Old printReceipt removed — printing is now handled by <PosReceipt /> with full company info, QR code and PDF export)
 
   const cashChange = cashInput ? parseFloat(cashInput) - total : 0;
 
@@ -1339,34 +1331,7 @@ export default function Caisse() {
         />
       )}
 
-      {/* Receipt */}
-      {showReceipt && (
-        <ModalOverlay onClose={() => { setCart([]); setShowReceipt(false); setShowCashModal(false); setCustomerName(""); }}>
-          <h3 className="text-lg font-bold text-center" style={{ color: '#1F2937' }}>Ticket de caisse</h3>
-          <div className="border rounded-xl p-4 space-y-2 font-mono text-sm" style={{ background: '#F8F9FB', borderColor: '#E8EAF0', color: '#1F2937' }}>
-            <p className="text-center font-bold">{companyName}</p>
-            <p className="text-center text-xs" style={{ color: '#6B7280' }}>{new Date().toLocaleDateString('fr-FR')} — {new Date().toLocaleTimeString('fr-FR')}</p>
-            {customerName && <p className="text-center text-xs">Client: {customerName}</p>}
-            <div className="border-t border-dashed my-2" style={{ borderColor: '#E8EAF0' }} />
-            {cart.map(item => (
-              <div key={item.id}>
-                <div className="flex justify-between text-xs">
-                  <span>{item.name} ×{item.quantity}</span>
-                  <span>{(item.price * item.quantity).toLocaleString()} F</span>
-                </div>
-                {item.discount && <div className="flex justify-between text-[10px]" style={{ color: '#EF4444' }}><span>Remise</span><span>-{item.discount.toLocaleString()} F</span></div>}
-              </div>
-            ))}
-            <div className="border-t border-dashed my-2" style={{ borderColor: '#E8EAF0' }} />
-            {totalDiscount > 0 && <div className="flex justify-between text-xs" style={{ color: '#EF4444' }}><span>Remise totale</span><span>-{totalDiscount.toLocaleString()} F</span></div>}
-            <div className="flex justify-between font-bold"><span>TOTAL</span><span>{total.toLocaleString()} FCFA</span></div>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <ModalBtn label="Imprimer" primary icon={<Printer className="h-4 w-4" />} onClick={printReceipt} />
-            <ModalBtn label="Nouveau ticket" onClick={() => { setCart([]); setShowReceipt(false); setShowCashModal(false); setCustomerName(""); }} />
-          </div>
-        </ModalOverlay>
-      )}
+      {/* (Old simple receipt removed — replaced by PosReceipt above) */}
 
       {/* Customer */}
       {showCustomerModal && (

@@ -11,7 +11,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
-import { TrialBanner } from "@/components/subscription/TrialBanner";
+import { SubscriptionAlert } from "@/components/subscription/SubscriptionAlert";
 import { useSessionWarning } from "@/hooks/useSessionWarning";
 import { useStockAlerts } from "@/hooks/useStockAlerts";
 import { NotificationCenter } from "./NotificationCenter";
@@ -178,14 +178,13 @@ export function AppLayout({ children }: AppLayoutProps) {
                     <Lock className="h-4 w-4" />
                   </Button>
                 )}
+                <SubscriptionAlert />
                 <NotificationCenter />
                 <ThemeToggle />
                 {user && <UserMenu />}
               </div>
             </div>
           </header>
-          
-          <TrialBanner />
           <div className={`flex-1 p-3 sm:p-4 md:p-6 lg:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
             {children}
           </div>

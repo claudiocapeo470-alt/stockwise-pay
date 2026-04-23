@@ -290,7 +290,7 @@ function MembersTab() {
                   {/* Pastille statut */}
                   <span
                     className={`absolute top-2 left-2 h-2.5 w-2.5 rounded-full ring-2 ring-white/90 ${
-                      m.is_active ? 'bg-emerald-500' : 'bg-gray-400'
+                      m.is_active ? 'bg-emerald-500' : 'bg-muted-foreground/60'
                     }`}
                     title={m.is_active ? 'Actif' : 'Inactif'}
                   />

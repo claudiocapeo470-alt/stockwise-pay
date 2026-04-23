@@ -985,16 +985,44 @@ export default function PublicStore() {
             )}
           </div>
 
-          {/* Vous pourriez aussi aimer */}
+          {/* Vous pourriez aussi aimer — carrousel horizontal */}
           {similar.length > 0 && (
             <div className="mt-12 lg:mt-16">
               <h3 className="lz-heading text-xl text-gray-900 dark:text-white mb-6">Vous pourriez aussi aimer</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                {similar.map(s => <ProductCard key={s.id} product={s} />)}
+              <div className="lz-hscroll -mx-4 px-4 md:mx-0 md:px-0">
+                {similar.map(s => (
+                  <div key={s.id} className="lz-hscroll-item">
+                    <ProductCard product={s} />
+                  </div>
+                ))}
               </div>
             </div>
           )}
         </div>
+
+        {/* STICKY BOTTOM CTA — mobile & tablet uniquement */}
+        {p.quantity > 0 && store.allow_orders && (
+          <div className="lz-sticky-cta lg:hidden fixed bottom-16 md:bottom-0 left-0 right-0 z-30 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-950/95 backdrop-blur px-4 py-3">
+            <div className="container mx-auto flex items-center gap-2">
+              <button
+                onClick={() => addToCart(p, qty)}
+                className="flex-1 py-3 px-3 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white text-xs sm:text-sm font-semibold hover:bg-gray-900 hover:text-white transition-colors flex items-center justify-center gap-1.5 rounded-full"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                <span className="hidden sm:inline">Ajouter au panier</span>
+                <span className="sm:hidden">Panier</span>
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="lz-btn-cta flex-1 py-3 px-3 text-white text-xs sm:text-sm font-semibold rounded-full flex items-center justify-center gap-1.5"
+                style={{ background: color }}
+              >
+                <span>Acheter maintenant</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   };

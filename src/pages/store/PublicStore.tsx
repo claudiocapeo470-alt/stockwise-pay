@@ -134,16 +134,19 @@ const ZONE_STYLES = `
 /* Horizontal scroll snap */
 .lz-hscroll {
   display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; padding-bottom: 8px;
+  scrollbar-width: none;
 }
-.lz-hscroll > * { flex: 0 0 70%; max-width: 240px; scroll-snap-align: start; }
-@media (min-width: 640px) { .lz-hscroll > * { flex: 0 0 240px; } }
+.lz-hscroll::-webkit-scrollbar { display: none; }
+.lz-hscroll-item { flex: 0 0 65%; max-width: 280px; scroll-snap-align: start; }
+@media (min-width: 640px) { .lz-hscroll-item { flex: 0 0 240px; } }
+@media (min-width: 1024px) { .lz-hscroll-item { flex: 0 0 260px; } }
 
 /* Sticky bottom CTAs (product detail) */
 .lz-sticky-cta {
-  position: sticky; bottom: 0; z-index: 30;
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(10px);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
   border-top: 1px solid rgba(0,0,0,0.06);
   padding: 12px 16px;
   padding-bottom: max(env(safe-area-inset-bottom), 12px);

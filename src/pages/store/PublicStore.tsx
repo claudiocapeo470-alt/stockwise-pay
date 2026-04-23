@@ -225,6 +225,15 @@ export default function PublicStore() {
         setProductImages(grouped);
       }
 
+      // Load category images uploaded by the owner
+      const { data: cats } = await supabase
+        .from("product_categories")
+        .select("name, image_url")
+        .eq("user_id", storeData.user_id);
+      const catMap: Record<string, string> = {};
+      (cats || []).forEach((c: any) => { if (c.image_url) catMap[c.name] = c.image_url; });
+      setDbCategoryImages(catMap);
+
       setLoading(false);
     };
     load();

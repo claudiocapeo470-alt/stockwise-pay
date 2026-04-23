@@ -13,8 +13,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Save, Eye, Rocket, Copy, Check, Link2, Store, Palette,
-  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Sparkles,
+  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Sparkles, Tags,
 } from "lucide-react";
+import CategoryManager from "@/components/store/CategoryManager";
 
 const COLOR_PALETTE = [
   { name: "Indigo", value: "#4f46e5" }, { name: "Violet", value: "#7c3aed" },

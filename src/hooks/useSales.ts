@@ -31,6 +31,7 @@ export const useSales = () => {
   const { company } = useCompany();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { log } = useActivityLog();
 
   const effectiveUserId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
 
@@ -74,9 +75,19 @@ export const useSales = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['sales', effectiveUserId] });
       queryClient.invalidateQueries({ queryKey: ['products', effectiveUserId] });
+      log({
+        action: 'sale.created',
+        entity_type: 'sale',
+        entity_id: data?.id,
+        metadata: {
+          total: data?.total_amount,
+          quantity: data?.quantity,
+          payment_method: data?.payment_method,
+        },
+      });
       toast({ title: 'Vente enregistrée', description: 'La vente a été enregistrée avec succès' });
     },
     onError: (error) => {

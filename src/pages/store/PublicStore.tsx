@@ -117,6 +117,46 @@ const ZONE_STYLES = `
   .lz-pcard-actions { opacity: 1; transform: none; }
   .lz-pcard-arrows { opacity: 0; }
 }
+
+/* Page transitions */
+@keyframes lz-slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes lz-fade-in-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lz-page-categories { animation: lz-slide-in-right .45s ease-out both; }
+.lz-page-search     { animation: lz-fade-in-down .35s ease-out both; }
+.lz-page-default    { animation: lz-slide-up .4s ease-out both; }
+
+/* Horizontal scroll snap */
+.lz-hscroll {
+  display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; padding-bottom: 4px;
+}
+.lz-hscroll > * { flex: 0 0 70%; max-width: 240px; scroll-snap-align: start; }
+@media (min-width: 640px) { .lz-hscroll > * { flex: 0 0 240px; } }
+
+/* Sticky bottom CTAs (product detail) */
+.lz-sticky-cta {
+  position: sticky; bottom: 0; z-index: 30;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding: 12px 16px;
+  padding-bottom: max(env(safe-area-inset-bottom), 12px);
+}
+.dark .lz-sticky-cta { background: rgba(10,10,15,0.96); border-top-color: rgba(255,255,255,0.08); }
+
+/* Order loading overlay */
+.lz-order-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  animation: lz-fade-in-down .25s ease-out both;
+}
 `;
 
 // ─── Hook fade-in ────────────────────────────────────────────────────────────
@@ -145,6 +185,7 @@ export default function PublicStore() {
   const [store, setStore]           = useState<StoreData | null>(null);
   const [products, setProducts]     = useState<ProductData[]>([]);
   const [productImages, setProductImages] = useState<Record<string, string[]>>({});
+  const [dbCategoryImages, setDbCategoryImages] = useState<Record<string, string>>({});
   const [loading, setLoading]       = useState(true);
 
   const [search, setSearch]                 = useState("");
@@ -154,6 +195,7 @@ export default function PublicStore() {
   const [darkMode, setDarkMode]             = useState(false);
   const [sortBy, setSortBy]                 = useState<SortOption>("recent");
   const [showSort, setShowSort]             = useState(false);
+  const [pageAnimKey, setPageAnimKey]       = useState(0);
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     try { return JSON.parse(localStorage.getItem(`cart-${slug}`) || "[]"); }
@@ -176,7 +218,11 @@ export default function PublicStore() {
   useEffect(() => { localStorage.setItem(`cart-${slug}`, JSON.stringify(cart)); }, [cart, slug]);
   useEffect(() => { localStorage.setItem(`favs-${slug}`, JSON.stringify([...favorites])); }, [favorites, slug]);
 
-  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [activePage, activeProductId]);
+  // Force animation re-trigger on page change & scroll to top
+  useEffect(() => {
+    setPageAnimKey(k => k + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activePage, activeProductId]);
 
   // Load store + ALL products + images
   useEffect(() => {
@@ -219,6 +265,15 @@ export default function PublicStore() {
         setProductImages(grouped);
       }
 
+      // Load category images uploaded by the owner
+      const { data: cats } = await supabase
+        .from("product_categories")
+        .select("name, image_url")
+        .eq("user_id", storeData.user_id);
+      const catMap: Record<string, string> = {};
+      (cats || []).forEach((c: any) => { if (c.image_url) catMap[c.name] = c.image_url; });
+      setDbCategoryImages(catMap);
+
       setLoading(false);
     };
     load();
@@ -236,16 +291,17 @@ export default function PublicStore() {
     [products]
   );
 
-  // First product image per category — used as category cover
+  // Category cover : priorité à l'image uploadée par le propriétaire (StoreConfig),
+  // sinon fallback sur la première image produit de cette catégorie.
   const categoryImages = useMemo(() => {
-    const map: Record<string, string> = {};
+    const map: Record<string, string> = { ...dbCategoryImages };
     for (const p of products) {
       if (p.category && !map[p.category] && p.image_url) {
         map[p.category] = p.image_url;
       }
     }
     return map;
-  }, [products]);
+  }, [products, dbCategoryImages]);
 
   const featured = useMemo(() => products.filter(p => p.is_featured).slice(0, 4), [products]);
 
@@ -838,11 +894,11 @@ export default function PublicStore() {
                 </div>
               </div>
 
-              {/* Boutons */}
+              {/* Boutons (visibles inline desktop, sticky bottom mobile/tablet) */}
               {p.quantity === 0 ? (
                 <p className="text-red-500 font-semibold text-center py-4">Rupture de stock</p>
               ) : store.allow_orders ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     onClick={() => addToCart(p, qty)}
                     className="py-4 px-6 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white text-sm font-semibold hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-colors flex items-center justify-center gap-2 rounded-full"
@@ -1350,13 +1406,33 @@ export default function PublicStore() {
         </div>
       </header>
 
-      {/* PAGES */}
-      {activePage === "home"       && <HomePage />}
-      {activePage === "shop"       && <ShopPage />}
-      {activePage === "categories" && <CategoriesPage />}
-      {activePage === "search"     && <SearchPage />}
-      {activePage === "account"    && <AccountPage />}
-      {activePage === "product"    && <ProductDetailPage />}
+      {/* PAGES — avec animations de transition */}
+      <div
+        key={pageAnimKey}
+        className={
+          activePage === "categories" ? "lz-page-categories" :
+          activePage === "search"     ? "lz-page-search" :
+          "lz-page-default"
+        }
+      >
+        {activePage === "home"       && <HomePage />}
+        {activePage === "shop"       && <ShopPage />}
+        {activePage === "categories" && <CategoriesPage />}
+        {activePage === "search"     && <SearchPage />}
+        {activePage === "account"    && <AccountPage />}
+        {activePage === "product"    && <ProductDetailPage />}
+      </div>
+
+      {/* OVERLAY DE TRAITEMENT COMMANDE */}
+      {submitting && (
+        <div className="lz-order-overlay">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl px-8 py-6 flex flex-col items-center gap-3 shadow-2xl max-w-xs mx-4 text-center">
+            <div className="h-12 w-12 border-4 border-current border-t-transparent rounded-full animate-spin" style={{ color }} />
+            <p className="lz-heading text-base text-gray-900 dark:text-white">Validation en cours…</p>
+            <p className="text-xs text-gray-500">Merci de patienter, nous enregistrons votre commande.</p>
+          </div>
+        </div>
+      )}
 
       {/* WHATSAPP FLOTTANT */}
       {store.whatsapp && (

@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useCompany } from './useCompany';
 import { useRealtimeSync } from './useRealtimeSync';
+import { useActivityLog } from './useActivityLog';
 
 export interface Sale {
   id: string;

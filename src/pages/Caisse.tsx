@@ -126,6 +126,9 @@ export default function Caisse() {
   // Session sales tracking
   const [sessionSales, setSessionSales] = useState({ total: 0, cash: 0, mobile: 0, card: 0 });
 
+  // Last receipt data (for PosReceipt modal)
+  const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
+
   // Discount modals
   const [showDiscountPercent, setShowDiscountPercent] = useState(false);
   const [showDiscountAmount, setShowDiscountAmount] = useState(false);

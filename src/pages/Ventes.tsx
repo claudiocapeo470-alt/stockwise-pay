@@ -203,18 +203,35 @@ export default function Ventes() {
     doc.setFontSize(9);
     doc.setTextColor(107, 114, 128);
     doc.text("Merci pour votre confiance !", pageWidth / 2, y, { align: 'center' });
-    y += 5;
-    doc.setFontSize(8);
-    doc.text(`${docTitle} générée par Stocknix`, pageWidth / 2, y, { align: 'center' });
 
     if (action === 'download') {
       doc.save(`${documentType}_${format(new Date(sale.sale_date), "yyyy-MM-dd")}_${sale.id.slice(0, 8)}.pdf`);
       toast({ title: `✅ ${docTitle} téléchargée` });
     } else {
-      const pdfBlob = doc.output('blob');
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-      const printWindow = window.open(pdfUrl);
-      if (printWindow) { printWindow.onload = () => printWindow.print(); }
+      // Print via hidden iframe — keeps the URL clean (no blob:lovableproject.com exposed)
+      const dataUri = doc.output('datauristring');
+      let iframe = document.getElementById('stx-print-frame') as HTMLIFrameElement | null;
+      if (iframe) iframe.remove();
+      iframe = document.createElement('iframe');
+      iframe.id = 'stx-print-frame';
+      iframe.style.position = 'fixed';
+      iframe.style.right = '0';
+      iframe.style.bottom = '0';
+      iframe.style.width = '0';
+      iframe.style.height = '0';
+      iframe.style.border = '0';
+      iframe.src = dataUri;
+      document.body.appendChild(iframe);
+      iframe.onload = () => {
+        try {
+          iframe!.contentWindow?.focus();
+          iframe!.contentWindow?.print();
+        } catch (e) {
+          // Fallback: open the PDF in a new tab
+          const win = window.open(dataUri, '_blank');
+          if (win) win.focus();
+        }
+      };
       toast({ title: `🖨️ Impression ${docTitle}` });
     }
   };

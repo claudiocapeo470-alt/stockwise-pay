@@ -145,6 +145,7 @@ export default function PublicStore() {
   const [store, setStore]           = useState<StoreData | null>(null);
   const [products, setProducts]     = useState<ProductData[]>([]);
   const [productImages, setProductImages] = useState<Record<string, string[]>>({});
+  const [dbCategoryImages, setDbCategoryImages] = useState<Record<string, string>>({});
   const [loading, setLoading]       = useState(true);
 
   const [search, setSearch]                 = useState("");
@@ -154,6 +155,7 @@ export default function PublicStore() {
   const [darkMode, setDarkMode]             = useState(false);
   const [sortBy, setSortBy]                 = useState<SortOption>("recent");
   const [showSort, setShowSort]             = useState(false);
+  const [pageAnimKey, setPageAnimKey]       = useState(0);
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     try { return JSON.parse(localStorage.getItem(`cart-${slug}`) || "[]"); }
@@ -176,7 +178,11 @@ export default function PublicStore() {
   useEffect(() => { localStorage.setItem(`cart-${slug}`, JSON.stringify(cart)); }, [cart, slug]);
   useEffect(() => { localStorage.setItem(`favs-${slug}`, JSON.stringify([...favorites])); }, [favorites, slug]);
 
-  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [activePage, activeProductId]);
+  // Force animation re-trigger on page change & scroll to top
+  useEffect(() => {
+    setPageAnimKey(k => k + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activePage, activeProductId]);
 
   // Load store + ALL products + images
   useEffect(() => {

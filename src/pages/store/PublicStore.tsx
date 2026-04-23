@@ -807,7 +807,7 @@ export default function PublicStore() {
     };
 
     return (
-      <div className="pb-24">
+      <div className="pb-44 lg:pb-24">
         <div className="container mx-auto px-4 py-6 lg:py-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Galerie */}

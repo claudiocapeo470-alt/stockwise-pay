@@ -257,58 +257,90 @@ function MembersTab() {
         <Button size="sm" onClick={openCreate} className="gap-1"><Plus className="h-4 w-4" /> Ajouter</Button>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {members.map(m => {
-            const roleName = m.role?.name || 'Sans rôle';
-            const roleColor = ROLE_COLORS[roleName] || "bg-muted text-muted-foreground";
-            const initials = `${m.first_name[0]}${(m.last_name || '')[0] || ''}`.toUpperCase();
+        {members.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8">Aucun membre. Ajoutez votre premier employé.</p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {members.map(m => {
+              const roleName = m.role?.name || 'Sans rôle';
+              const initials = `${m.first_name[0]}${(m.last_name || '')[0] || ''}`.toUpperCase();
 
-            return (
-              <div key={m.id} className="flex items-center gap-3 p-3 rounded-lg border border-border">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={m.photo_url || ''} />
-                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-medium text-sm truncate">{m.first_name} {m.last_name || ''}</p>
-                    <Badge className={`text-[10px] px-1.5 py-0 ${roleColor}`}>{roleName}</Badge>
+              return (
+                <div
+                  key={m.id}
+                  className="group relative aspect-square overflow-hidden rounded-2xl border border-border bg-muted shadow-sm hover:shadow-md transition-shadow"
+                >
+                  {/* Photo en fond ou placeholder dégradé avec initiales */}
+                  {m.photo_url ? (
+                    <img
+                      src={m.photo_url}
+                      alt={`${m.first_name} ${m.last_name || ''}`}
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/30 via-primary/10 to-muted">
+                      <span className="text-4xl sm:text-5xl font-bold text-primary/70">{initials}</span>
+                    </div>
+                  )}
+
+                  {/* Dégradé sombre en bas pour lisibilité du texte */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+
+                  {/* Pastille statut */}
+                  <span
+                    className={`absolute top-2 left-2 h-2.5 w-2.5 rounded-full ring-2 ring-white/90 ${
+                      m.is_active ? 'bg-emerald-500' : 'bg-muted-foreground/60'
+                    }`}
+                    title={m.is_active ? 'Actif' : 'Inactif'}
+                  />
+
+                  {/* Menu actions en haut-droite */}
+                  <div className="absolute top-1.5 right-1.5">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="secondary"
+                          size="icon"
+                          className="h-7 w-7 bg-white/85 hover:bg-white text-gray-700 backdrop-blur-sm"
+                        >
+                          <MoreVertical className="h-3.5 w-3.5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => openEdit(m)}>
+                          <Pencil className="h-4 w-4 mr-2" /> Modifier
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => updateMember.mutateAsync({ id: m.id, is_active: !m.is_active })}>
+                          <Power className="h-4 w-4 mr-2" /> {m.is_active ? 'Désactiver' : 'Activer'}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setShowPinDialog(m); setRevealedPin(false); }}>
+                          <Eye className="h-4 w-4 mr-2" /> Voir PIN
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/app/performance?member=${m.id}`)}>
+                          <BarChart3 className="h-4 w-4 mr-2" /> Voir performance
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => deleteMember.mutateAsync(m.id)}>
+                          <Trash2 className="h-4 w-4 mr-2" /> Supprimer
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>{m.is_active ? '🟢 Actif' : '🔴 Inactif'}</span>
-                    <span>•</span>
-                    <span>Dernière connexion : {getLastLoginText(m.last_login_at)}</span>
+
+                  {/* Nom + rôle en bas */}
+                  <div className="absolute inset-x-0 bottom-0 p-3 text-white">
+                    <p className="text-sm sm:text-base font-semibold leading-tight truncate drop-shadow">
+                      {m.first_name} {m.last_name || ''}
+                    </p>
+                    <p className="text-[11px] sm:text-xs text-white/85 truncate mt-0.5 drop-shadow">
+                      {roleName}
+                    </p>
                   </div>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => openEdit(m)}>
-                      <Pencil className="h-4 w-4 mr-2" /> Modifier
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => updateMember.mutateAsync({ id: m.id, is_active: !m.is_active })}>
-                      <Power className="h-4 w-4 mr-2" /> {m.is_active ? 'Désactiver' : 'Activer'}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => { setShowPinDialog(m); setRevealedPin(false); }}>
-                      <Eye className="h-4 w-4 mr-2" /> Voir PIN
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate(`/app/performance?member=${m.id}`)}>
-                      <BarChart3 className="h-4 w-4 mr-2" /> Voir performance
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive" onClick={() => deleteMember.mutateAsync(m.id)}>
-                      <Trash2 className="h-4 w-4 mr-2" /> Supprimer
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            );
-          })}
-          {members.length === 0 && <p className="text-center text-muted-foreground py-8">Aucun membre. Ajoutez votre premier employé.</p>}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
 
       {/* Add/Edit Dialog */}

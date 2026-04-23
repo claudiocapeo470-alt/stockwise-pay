@@ -451,6 +451,30 @@ export default function PublicStore() {
             )}
           </div>
         </div>
+
+        {/* Bouton Commander — visible sur la carte */}
+        {store.allow_orders && product.quantity > 0 && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart(product, 1);
+              localStorage.setItem(
+                `cart-${slug}`,
+                JSON.stringify(
+                  cart.find(i => i.id === product.id)
+                    ? cart.map(i => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i)
+                    : [...cart, { id: product.id, name: product.name, price: product.price, quantity: 1, icon_emoji: product.icon_emoji, image_url: product.image_url }]
+                )
+              );
+              navigate(`/boutique/${slug}/checkout`);
+            }}
+            className="lz-btn-cta mt-2 w-full py-2.5 px-3 text-xs sm:text-sm font-semibold text-white rounded-full flex items-center justify-center gap-1.5"
+            style={{ background: color }}
+          >
+            <ShoppingCart className="h-3.5 w-3.5" />
+            Commander
+          </button>
+        )}
       </div>
     );
   };
@@ -947,51 +971,82 @@ export default function PublicStore() {
     </div>
   );
 
-  // ─── CATEGORIES PAGE — style Capture 6 ───────────────────────────────────────
-  const CategoriesPage = () => (
-    <div className="pb-24 container mx-auto px-4 py-8">
-      <div className="border-b border-gray-100 dark:border-gray-800 pb-3 mb-8">
-        <h2 className="lz-heading text-base text-gray-900 dark:text-white">Toutes les collections</h2>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {categories.map(cat => {
-          const img = categoryImages[cat];
-          const count = products.filter(p => p.category === cat).length;
-          return (
-            <button
-              key={cat}
-              onClick={() => { setActiveCategory(cat); setActivePage("shop"); }}
-              className="group text-center"
+  // ─── CATEGORIES PAGE — mosaïque asymétrique (1 grande + 2x2) ────────────────
+  const CategoriesPage = () => {
+    const [first, ...rest] = categories;
+    const renderCard = (cat: string, big = false) => {
+      const img = categoryImages[cat];
+      const count = products.filter(p => p.category === cat).length;
+      return (
+        <button
+          key={cat}
+          onClick={() => { setActiveCategory(cat); setActivePage("shop"); }}
+          className={`group relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800 ${
+            big ? 'aspect-[16/9] md:aspect-[21/9]' : 'aspect-[4/3]'
+          }`}
+        >
+          {img ? (
+            <img
+              src={img}
+              alt={cat}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          ) : (
+            <div
+              className="absolute inset-0 flex items-center justify-center text-6xl"
+              style={{ background: `linear-gradient(135deg, ${color}55, ${color}22)` }}
             >
-              <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800 mb-3">
-                {img ? (
-                  <img
-                    src={img}
-                    alt={cat}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-5xl" style={{ background: `${color}22` }}>
-                    📦
-                  </div>
-                )}
-                <div className="absolute top-3 left-3 h-7 w-7 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center shadow">
-                  {count}
-                </div>
-              </div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">{cat}</p>
-            </button>
-          );
-        })}
-        {categories.length === 0 && (
-          <div className="col-span-full text-center py-20 text-gray-400">
+              📦
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 p-4 md:p-5 flex items-start justify-between text-white">
+            <span className={`lz-heading uppercase tracking-wide ${big ? 'text-base md:text-xl' : 'text-sm md:text-base'}`}>
+              {cat}
+            </span>
+            <span className="text-[10px] md:text-xs bg-black/40 backdrop-blur px-2 py-0.5 rounded-full">
+              {count} produit{count > 1 ? 's' : ''}
+            </span>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 text-white">
+            <span className="inline-flex items-center gap-1 text-xs md:text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+              Découvrir <ArrowRight className="h-3.5 w-3.5" />
+            </span>
+          </div>
+        </button>
+      );
+    };
+
+    return (
+      <div className="pb-24 container mx-auto px-4 py-8 md:py-12">
+        <div className="text-center mb-8 md:mb-10">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Nos collections</span>
+          <h2 className="lz-heading text-2xl md:text-3xl text-gray-900 dark:text-white mt-1">
+            Toutes les collections
+          </h2>
+        </div>
+
+        {categories.length === 0 ? (
+          <div className="text-center py-20 text-gray-400">
             <Package className="h-12 w-12 mx-auto mb-3 opacity-30" />
             <p className="text-sm">Aucune catégorie disponible</p>
           </div>
+        ) : (
+          <div className="space-y-4 md:space-y-6">
+            {/* 1 grande bannière en haut */}
+            {first && renderCard(first, true)}
+
+            {/* Grille 2x2 (responsive 1 col mobile / 2 col tablet+) */}
+            {rest.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                {rest.map(cat => renderCard(cat))}
+              </div>
+            )}
+          </div>
         )}
       </div>
-    </div>
-  );
+    );
+  };
 
   // ─── ACCOUNT PAGE ────────────────────────────────────────────────────────────
   const AccountPage = () => (

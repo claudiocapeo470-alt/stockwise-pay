@@ -1324,9 +1324,19 @@ export default function Caisse() {
           <div className="grid grid-cols-2 gap-2">
             <ModalBtn label="Annuler" onClick={() => { setShowCashModal(false); setCashInput(""); }} />
             <ModalBtn label="Confirmer" primary disabled={!cashInput || parseFloat(cashInput) < total || addSale.isPending}
-              onClick={() => { validateSale("Espèces"); setCashInput(""); }} />
+              onClick={() => { validateSale("Espèces", parseFloat(cashInput)); setCashInput(""); }} />
           </div>
         </ModalOverlay>
+      )}
+
+      {/* Receipt — Professional POS receipt */}
+      {showReceipt && receiptData && (
+        <PosReceipt
+          open={showReceipt}
+          data={receiptData}
+          onClose={() => { setCart([]); setShowReceipt(false); setShowCashModal(false); setCustomerName(""); setReceiptData(null); }}
+          onNew={() => { setCart([]); setShowReceipt(false); setShowCashModal(false); setCustomerName(""); setReceiptData(null); }}
+        />
       )}
 
       {/* Receipt */}

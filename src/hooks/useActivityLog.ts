@@ -46,19 +46,21 @@ export function useActivityLog() {
     async ({ action, entity_type, entity_id, metadata = {} }: LogParams) => {
       if (!user) return;
       try {
-        await supabase.from('activity_logs').insert({
-          company_id: company?.id ?? null,
-          user_id: user.id,
-          member_id: isEmployee && memberInfo ? memberInfo.member_id : null,
-          user_role: isEmployee
-            ? memberInfo?.member_role_name || 'employee'
-            : 'owner',
-          action,
-          entity_type: entity_type ?? null,
-          entity_id: entity_id ?? null,
-          metadata,
-          user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
-        });
+        await supabase.from('activity_logs').insert([
+          {
+            company_id: company?.id ?? null,
+            user_id: user.id,
+            member_id: isEmployee && memberInfo ? memberInfo.member_id : null,
+            user_role: isEmployee
+              ? memberInfo?.member_role_name || 'employee'
+              : 'owner',
+            action,
+            entity_type: entity_type ?? null,
+            entity_id: entity_id ?? null,
+            metadata: metadata as never,
+            user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+          },
+        ]);
       } catch (err) {
         // Ne jamais bloquer l'UX pour un log
         console.warn('[activity_log] failed:', err);

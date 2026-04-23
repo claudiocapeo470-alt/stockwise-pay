@@ -1406,13 +1406,33 @@ export default function PublicStore() {
         </div>
       </header>
 
-      {/* PAGES */}
-      {activePage === "home"       && <HomePage />}
-      {activePage === "shop"       && <ShopPage />}
-      {activePage === "categories" && <CategoriesPage />}
-      {activePage === "search"     && <SearchPage />}
-      {activePage === "account"    && <AccountPage />}
-      {activePage === "product"    && <ProductDetailPage />}
+      {/* PAGES — avec animations de transition */}
+      <div
+        key={pageAnimKey}
+        className={
+          activePage === "categories" ? "lz-page-categories" :
+          activePage === "search"     ? "lz-page-search" :
+          "lz-page-default"
+        }
+      >
+        {activePage === "home"       && <HomePage />}
+        {activePage === "shop"       && <ShopPage />}
+        {activePage === "categories" && <CategoriesPage />}
+        {activePage === "search"     && <SearchPage />}
+        {activePage === "account"    && <AccountPage />}
+        {activePage === "product"    && <ProductDetailPage />}
+      </div>
+
+      {/* OVERLAY DE TRAITEMENT COMMANDE */}
+      {submitting && (
+        <div className="lz-order-overlay">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl px-8 py-6 flex flex-col items-center gap-3 shadow-2xl max-w-xs mx-4 text-center">
+            <div className="h-12 w-12 border-4 border-current border-t-transparent rounded-full animate-spin" style={{ color }} />
+            <p className="lz-heading text-base text-gray-900 dark:text-white">Validation en cours…</p>
+            <p className="text-xs text-gray-500">Merci de patienter, nous enregistrons votre commande.</p>
+          </div>
+        </div>
+      )}
 
       {/* WHATSAPP FLOTTANT */}
       {store.whatsapp && (

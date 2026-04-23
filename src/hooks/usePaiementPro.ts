@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { useActivityLog } from './useActivityLog';
 
 export type PaiementProPlan = 'starter' | 'business' | 'pro';
 export type BillingCycle = 'monthly' | 'yearly';
@@ -14,6 +15,7 @@ interface InitArgs {
 
 export function usePaiementPro() {
   const { user, profile } = useAuth();
+  const { log } = useActivityLog();
   const [loadingPlan, setLoadingPlan] = useState<PaiementProPlan | null>(null);
 
   const initPayment = async ({ plan, amount, billing_cycle = 'monthly' }: InitArgs) => {
@@ -79,6 +81,13 @@ export function usePaiementPro() {
         setLoadingPlan(null);
         return;
       }
+
+      // Log de l'action de paiement initiée
+      await log({
+        action: 'subscription.payment_initiated',
+        entity_type: 'subscription',
+        metadata: { plan, amount, billing_cycle },
+      });
 
       // Redirect to Paiement Pro hosted page
       window.location.href = data.payment_url;

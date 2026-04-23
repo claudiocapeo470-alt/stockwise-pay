@@ -203,9 +203,6 @@ export default function Ventes() {
     doc.setFontSize(9);
     doc.setTextColor(107, 114, 128);
     doc.text("Merci pour votre confiance !", pageWidth / 2, y, { align: 'center' });
-    y += 5;
-    doc.setFontSize(8);
-    doc.text(`${docTitle} générée par Stocknix`, pageWidth / 2, y, { align: 'center' });
 
     if (action === 'download') {
       doc.save(`${documentType}_${format(new Date(sale.sale_date), "yyyy-MM-dd")}_${sale.id.slice(0, 8)}.pdf`);

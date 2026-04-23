@@ -439,7 +439,7 @@ export default function Caisse() {
   };
 
   // ─── Sale Validation ─────────────────────────────────
-  const validateSale = async (paymentMethod: string = "Espèces") => {
+  const validateSale = async (paymentMethod: string = "Espèces", amountPaid?: number) => {
     if (cart.length === 0) return;
     if (!cashSessionOpen) {
       toast({ title: "Caisse fermée", description: "Veuillez ouvrir la caisse avant de valider une vente", variant: "destructive" });
@@ -447,15 +447,17 @@ export default function Caisse() {
       return;
     }
     try {
+      const createdIds: string[] = [];
       for (const item of cart) {
         const itemTotal = item.price * item.quantity - (item.discount || 0);
-        await addSale.mutateAsync({
+        const created = await addSale.mutateAsync({
           product_id: item.id, quantity: item.quantity, unit_price: item.price,
           total_amount: itemTotal, paid_amount: itemTotal,
           customer_name: customerName || null, customer_phone: null, sale_date: new Date().toISOString(),
           payment_method: paymentMethod,
           created_by_member_id: isEmployee && memberInfo?.member_id ? memberInfo.member_id : undefined,
         });
+        if (created?.id) createdIds.push(created.id);
       }
       setSessionSales(prev => ({
         total: prev.total + total,
@@ -463,6 +465,40 @@ export default function Caisse() {
         mobile: prev.mobile + (paymentMethod === "Mobile Money" ? total : 0),
         card: prev.card + (paymentMethod === "Carte bancaire" ? total : 0),
       }));
+
+      // Build receipt data
+      const now = new Date();
+      const receiptNum = `R-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+      const txId = createdIds[0] || `${now.getTime()}`;
+      const addressParts = [settings?.company_address, settings?.company_postal_code, settings?.company_city].filter(Boolean).join(' ');
+      setReceiptData({
+        company_name: companyName,
+        company_logo_url: settings?.logo_url || null,
+        company_address: addressParts || null,
+        company_phone: settings?.company_phone || null,
+        company_email: settings?.company_email || null,
+        receipt_number: receiptNum,
+        transaction_id: txId,
+        date: now,
+        // Only show cashier name if EMPLOYEE (owner = hide name, show company only)
+        cashier_name: isEmployee ? (memberInfo?.member_first_name || null) : null,
+        customer_name: customerName || null,
+        items: cart.map(i => ({
+          id: i.id,
+          name: i.name,
+          quantity: i.quantity,
+          unit_price: i.price,
+          total: i.price * i.quantity - (i.discount || 0),
+          discount: i.discount,
+        })),
+        subtotal,
+        discount_total: totalDiscount || undefined,
+        total,
+        payment_method: paymentMethod,
+        amount_paid: amountPaid,
+        change_due: amountPaid !== undefined ? Math.max(0, amountPaid - total) : undefined,
+        thank_you_message: "Merci pour votre achat !",
+      });
       setShowReceipt(true);
       toast({ title: "✅ Vente validée", description: `Paiement ${paymentMethod} — ${total.toLocaleString()} FCFA` });
     } catch {

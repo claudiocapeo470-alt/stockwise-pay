@@ -117,6 +117,46 @@ const ZONE_STYLES = `
   .lz-pcard-actions { opacity: 1; transform: none; }
   .lz-pcard-arrows { opacity: 0; }
 }
+
+/* Page transitions */
+@keyframes lz-slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes lz-fade-in-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lz-page-categories { animation: lz-slide-in-right .45s ease-out both; }
+.lz-page-search     { animation: lz-fade-in-down .35s ease-out both; }
+.lz-page-default    { animation: lz-slide-up .4s ease-out both; }
+
+/* Horizontal scroll snap */
+.lz-hscroll {
+  display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; padding-bottom: 4px;
+}
+.lz-hscroll > * { flex: 0 0 70%; max-width: 240px; scroll-snap-align: start; }
+@media (min-width: 640px) { .lz-hscroll > * { flex: 0 0 240px; } }
+
+/* Sticky bottom CTAs (product detail) */
+.lz-sticky-cta {
+  position: sticky; bottom: 0; z-index: 30;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding: 12px 16px;
+  padding-bottom: max(env(safe-area-inset-bottom), 12px);
+}
+.dark .lz-sticky-cta { background: rgba(10,10,15,0.96); border-top-color: rgba(255,255,255,0.08); }
+
+/* Order loading overlay */
+.lz-order-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  animation: lz-fade-in-down .25s ease-out both;
+}
 `;
 
 // ─── Hook fade-in ────────────────────────────────────────────────────────────

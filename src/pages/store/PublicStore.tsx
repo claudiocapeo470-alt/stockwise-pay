@@ -134,16 +134,19 @@ const ZONE_STYLES = `
 /* Horizontal scroll snap */
 .lz-hscroll {
   display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; padding-bottom: 8px;
+  scrollbar-width: none;
 }
-.lz-hscroll > * { flex: 0 0 70%; max-width: 240px; scroll-snap-align: start; }
-@media (min-width: 640px) { .lz-hscroll > * { flex: 0 0 240px; } }
+.lz-hscroll::-webkit-scrollbar { display: none; }
+.lz-hscroll-item { flex: 0 0 65%; max-width: 280px; scroll-snap-align: start; }
+@media (min-width: 640px) { .lz-hscroll-item { flex: 0 0 240px; } }
+@media (min-width: 1024px) { .lz-hscroll-item { flex: 0 0 260px; } }
 
 /* Sticky bottom CTAs (product detail) */
 .lz-sticky-cta {
-  position: sticky; bottom: 0; z-index: 30;
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(10px);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
   border-top: 1px solid rgba(0,0,0,0.06);
   padding: 12px 16px;
   padding-bottom: max(env(safe-area-inset-bottom), 12px);
@@ -804,7 +807,7 @@ export default function PublicStore() {
     };
 
     return (
-      <div className="pb-24">
+      <div className="pb-44 lg:pb-24">
         <div className="container mx-auto px-4 py-6 lg:py-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Galerie */}
@@ -985,16 +988,44 @@ export default function PublicStore() {
             )}
           </div>
 
-          {/* Vous pourriez aussi aimer */}
+          {/* Vous pourriez aussi aimer — carrousel horizontal */}
           {similar.length > 0 && (
             <div className="mt-12 lg:mt-16">
               <h3 className="lz-heading text-xl text-gray-900 dark:text-white mb-6">Vous pourriez aussi aimer</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                {similar.map(s => <ProductCard key={s.id} product={s} />)}
+              <div className="lz-hscroll -mx-4 px-4 md:mx-0 md:px-0">
+                {similar.map(s => (
+                  <div key={s.id} className="lz-hscroll-item">
+                    <ProductCard product={s} />
+                  </div>
+                ))}
               </div>
             </div>
           )}
         </div>
+
+        {/* STICKY BOTTOM CTA — mobile & tablet uniquement */}
+        {p.quantity > 0 && store.allow_orders && (
+          <div className="lz-sticky-cta lg:hidden fixed bottom-16 md:bottom-0 left-0 right-0 z-30 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-950/95 backdrop-blur px-4 py-3">
+            <div className="container mx-auto flex items-center gap-2">
+              <button
+                onClick={() => addToCart(p, qty)}
+                className="flex-1 py-3 px-3 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white text-xs sm:text-sm font-semibold hover:bg-gray-900 hover:text-white transition-colors flex items-center justify-center gap-1.5 rounded-full"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                <span className="hidden sm:inline">Ajouter au panier</span>
+                <span className="sm:hidden">Panier</span>
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="lz-btn-cta flex-1 py-3 px-3 text-white text-xs sm:text-sm font-semibold rounded-full flex items-center justify-center gap-1.5"
+                style={{ background: color }}
+              >
+                <span>Acheter maintenant</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   };

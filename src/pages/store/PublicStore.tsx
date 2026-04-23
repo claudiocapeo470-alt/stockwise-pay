@@ -251,16 +251,17 @@ export default function PublicStore() {
     [products]
   );
 
-  // First product image per category — used as category cover
+  // Category cover : priorité à l'image uploadée par le propriétaire (StoreConfig),
+  // sinon fallback sur la première image produit de cette catégorie.
   const categoryImages = useMemo(() => {
-    const map: Record<string, string> = {};
+    const map: Record<string, string> = { ...dbCategoryImages };
     for (const p of products) {
       if (p.category && !map[p.category] && p.image_url) {
         map[p.category] = p.image_url;
       }
     }
     return map;
-  }, [products]);
+  }, [products, dbCategoryImages]);
 
   const featured = useMemo(() => products.filter(p => p.is_featured).slice(0, 4), [products]);
 

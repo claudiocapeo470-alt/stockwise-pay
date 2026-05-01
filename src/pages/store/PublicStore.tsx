@@ -1120,39 +1120,127 @@ export default function PublicStore() {
     );
   };
 
-  // ─── ACCOUNT PAGE ────────────────────────────────────────────────────────────
-  const AccountPage = () => (
-    <div className="pb-24 px-4 py-6 container mx-auto max-w-2xl space-y-5">
-      <h2 className="lz-heading text-xl text-gray-900 dark:text-white">Mon compte</h2>
-      <div className="space-y-3">
-        {[
-          { icon: ShoppingCart, label: "Mon panier", sub: `${totalItems} article(s)`, action: () => setShowCart(true) },
-          { icon: Heart, label: "Mes favoris", sub: `${favorites.size} produit(s)`, action: () => {} },
-        ].map(item => (
-          <button
-            key={item.label}
-            onClick={item.action}
-            className="w-full flex items-center gap-4 p-4 border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-          >
-            <item.icon className="h-5 w-5 text-gray-400" />
-            <div className="flex-1">
-              <p className="font-medium text-sm text-gray-900 dark:text-white">{item.label}</p>
-              <p className="text-xs text-gray-400">{item.sub}</p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-gray-300" />
+  // ─── ACCOUNT PAGE — design minimaliste type iOS ──────────────────────────────
+  const AccountPage = () => {
+    const favProducts = products.filter(p => favorites.has(p.id));
+    return (
+      <div className="pb-28 px-4 py-6 container mx-auto max-w-2xl space-y-6">
+        {/* En-tête profil */}
+        <div className="flex flex-col items-center text-center pt-4 pb-6">
+          <div className="h-20 w-20 rounded-full flex items-center justify-center text-white shadow-lg mb-3" style={{ background: `linear-gradient(135deg, ${color}, ${color}aa)` }}>
+            <User className="h-10 w-10" />
+          </div>
+          <h2 className="lz-heading text-xl text-gray-900 dark:text-white">Mon compte</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Gérez vos favoris et votre boutique</p>
+        </div>
+
+        {/* Stats compactes */}
+        <div className="grid grid-cols-2 gap-3">
+          <button onClick={() => setShowCart(true)} className="rounded-2xl p-4 bg-gray-50 dark:bg-gray-900 text-left active:scale-95 transition-transform">
+            <ShoppingCart className="h-5 w-5 mb-2" style={{ color }} />
+            <p className="text-2xl lz-heading text-gray-900 dark:text-white">{totalItems}</p>
+            <p className="text-xs text-gray-500">Articles panier</p>
           </button>
-        ))}
+          <div className="rounded-2xl p-4 bg-gray-50 dark:bg-gray-900">
+            <Heart className="h-5 w-5 mb-2 fill-red-500 text-red-500" />
+            <p className="text-2xl lz-heading text-gray-900 dark:text-white">{favorites.size}</p>
+            <p className="text-xs text-gray-500">Favoris</p>
+          </div>
+        </div>
+
+        {/* Mes favoris */}
+        <div>
+          <div className="flex items-center justify-between mb-3 px-1">
+            <h3 className="lz-heading text-sm uppercase tracking-wider text-gray-500">Mes favoris</h3>
+            {favProducts.length > 4 && (
+              <button onClick={() => setActivePage("shop")} className="text-xs font-medium" style={{ color }}>Tout voir</button>
+            )}
+          </div>
+          {favProducts.length === 0 ? (
+            <div className="rounded-2xl p-8 bg-gray-50 dark:bg-gray-900 text-center">
+              <Heart className="h-10 w-10 mx-auto mb-2 text-gray-300" />
+              <p className="text-sm text-gray-500">Aucun favori pour le moment</p>
+              <button onClick={() => setActivePage("shop")} className="mt-3 text-xs font-semibold" style={{ color }}>
+                Découvrir des produits →
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {favProducts.slice(0, 4).map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => goToProduct(p.id)}
+                  className="rounded-2xl overflow-hidden bg-gray-50 dark:bg-gray-900 text-left active:scale-95 transition-transform"
+                >
+                  <div className="aspect-square bg-white dark:bg-gray-800 relative">
+                    {p.image_url
+                      ? <img src={p.image_url} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
+                      : <div className="absolute inset-0 flex items-center justify-center text-4xl">{p.icon_emoji}</div>}
+                  </div>
+                  <div className="p-2.5">
+                    <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{p.name}</p>
+                    <p className="text-xs font-bold mt-0.5" style={{ color }}>{(p.online_price ?? p.price).toLocaleString('fr-FR')} F</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Infos boutique compact */}
         {(store.address || store.phone || store.email) && (
-          <div className="p-5 border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 space-y-3">
-            <p className="lz-heading text-sm text-gray-900 dark:text-white mb-2">📍 Infos boutique</p>
-            {store.address && <div className="flex items-start gap-2 text-sm text-gray-500"><MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color }} />{store.address}</div>}
-            {store.phone   && <div className="flex items-center gap-2 text-sm text-gray-500"><Phone className="h-4 w-4 flex-shrink-0" style={{ color }} />{store.phone}</div>}
-            {store.email   && <div className="flex items-center gap-2 text-sm text-gray-500"><Mail className="h-4 w-4 flex-shrink-0" style={{ color }} />{store.email}</div>}
+          <div>
+            <h3 className="lz-heading text-sm uppercase tracking-wider text-gray-500 mb-3 px-1">Contact boutique</h3>
+            <div className="rounded-2xl bg-gray-50 dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800">
+              {store.phone && (
+                <a href={`tel:${store.phone}`} className="flex items-center gap-3 p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
+                  <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}><Phone className="h-4 w-4" /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500">Téléphone</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{store.phone}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-gray-300" />
+                </a>
+              )}
+              {store.email && (
+                <a href={`mailto:${store.email}`} className="flex items-center gap-3 p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
+                  <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}><Mail className="h-4 w-4" /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500">Email</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{store.email}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-gray-300" />
+                </a>
+              )}
+              {store.address && (
+                <div className="flex items-start gap-3 p-4">
+                  <div className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${color}15`, color }}><MapPin className="h-4 w-4" /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500">Adresse</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{store.address}</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
+
+        {/* Mode sombre */}
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="w-full flex items-center gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-900 active:scale-[0.98] transition-transform"
+        >
+          <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}>
+            {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </div>
+          <div className="flex-1 text-left">
+            <p className="text-sm font-medium text-gray-900 dark:text-white">Mode {darkMode ? 'clair' : 'sombre'}</p>
+            <p className="text-xs text-gray-500">Basculer le thème</p>
+          </div>
+        </button>
       </div>
-    </div>
-  );
+    );
+  };
 
   // ─── CART DRAWER ─────────────────────────────────────────────────────────────
   const CartDrawer = () => (

@@ -1055,8 +1055,7 @@ export default function PublicStore() {
 
   // ─── CATEGORIES PAGE — mosaïque asymétrique (1 grande + 2x2) ────────────────
   const CategoriesPage = () => {
-    const [first, ...rest] = categories;
-    const renderCard = (cat: string, big = false) => {
+    const renderCard = (cat: string) => {
       const img = categoryImages[cat];
       const count = products.filter(p => p.category === cat).length;
       return (

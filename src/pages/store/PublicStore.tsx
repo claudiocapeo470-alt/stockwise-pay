@@ -1112,16 +1112,8 @@ export default function PublicStore() {
             <p className="text-sm">Aucune catégorie disponible</p>
           </div>
         ) : (
-          <div className="space-y-4 md:space-y-6">
-            {/* 1 grande bannière en haut */}
-            {first && renderCard(first, true)}
-
-            {/* Grille 2x2 (responsive 1 col mobile / 2 col tablet+) */}
-            {rest.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                {rest.map(cat => renderCard(cat))}
-              </div>
-            )}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+            {categories.map(cat => renderCard(cat))}
           </div>
         )}
       </div>

@@ -1063,9 +1063,7 @@ export default function PublicStore() {
         <button
           key={cat}
           onClick={() => { setActiveCategory(cat); setActivePage("shop"); }}
-          className={`group relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800 ${
-            big ? 'aspect-[16/9] md:aspect-[21/9]' : 'aspect-[4/3]'
-          }`}
+          className={`group relative overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-800 aspect-square`}
         >
           {img ? (
             <img

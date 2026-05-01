@@ -153,11 +153,14 @@ export default function MySubscription() {
                     </div>
                     <Button
                       size="sm"
-                      disabled={loadingPlan !== null || subLoading || pricesLoading || amount <= 0}
-                      onClick={() => initPayment({ plan: key, amount, billing_cycle: 'monthly' })}
+                      disabled={loadingPlan !== null || subLoading || amount <= 0}
+                      onClick={() => {
+                        const finalAmount = amount > 0 ? amount : (key === 'starter' ? 9900 : key === 'business' ? 24900 : 49900);
+                        initPayment({ plan: key, amount: finalAmount, billing_cycle: 'monthly' });
+                      }}
                       className="w-full"
                     >
-                      {loadingPlan === key ? <Loader2 className="h-4 w-4 animate-spin" /> : "S'abonner"}
+                      {loadingPlan === key ? <Loader2 className="h-4 w-4 animate-spin" /> : (status.isExpired ? 'Réactiver' : "S'abonner")}
                     </Button>
                   </div>
                 );

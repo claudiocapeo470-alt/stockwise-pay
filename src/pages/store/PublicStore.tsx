@@ -1080,7 +1080,7 @@ export default function PublicStore() {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
           <div className="absolute top-0 left-0 right-0 p-4 md:p-5 flex items-start justify-between text-white">
-            <span className={`lz-heading uppercase tracking-wide ${big ? 'text-base md:text-xl' : 'text-sm md:text-base'}`}>
+            <span className="lz-heading uppercase tracking-wide text-sm md:text-base">
               {cat}
             </span>
             <span className="text-[10px] md:text-xs bg-black/40 backdrop-blur px-2 py-0.5 rounded-full">

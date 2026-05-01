@@ -1484,6 +1484,19 @@ export default function PublicStore() {
               >
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
+              {/* Favoris - mobile uniquement, à côté du panier */}
+              <button
+                onClick={() => setActivePage("account")}
+                className="md:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                aria-label="Favoris"
+              >
+                <Heart className={`h-5 w-5 ${favorites.size > 0 ? "fill-red-500 text-red-500" : ""}`} />
+                {favorites.size > 0 && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full text-[9px] flex items-center justify-center text-white font-bold bg-red-500">
+                    {favorites.size}
+                  </span>
+                )}
+              </button>
               {store.allow_orders && (
                 <button
                   onClick={() => setShowCart(true)}

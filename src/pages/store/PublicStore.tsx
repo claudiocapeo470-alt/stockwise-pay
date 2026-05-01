@@ -1551,8 +1551,8 @@ export default function PublicStore() {
         </div>
       )}
 
-      {/* WHATSAPP FLOTTANT */}
-      {store.whatsapp && (
+      {/* WHATSAPP FLOTTANT — uniquement sur la page d'accueil */}
+      {store.whatsapp && activePage === "home" && (
         <a
           href={`https://wa.me/${store.whatsapp.replace(/\D/g, "")}`}
           target="_blank" rel="noopener noreferrer"
@@ -1567,11 +1567,11 @@ export default function PublicStore() {
       <nav className="lz-nav md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur">
         <div className="flex items-center justify-around h-16">
           {[
-            { page: "home" as StorePage,       label: "Accueil",    icon: ShoppingCart },
-            { page: "shop" as StorePage,       label: "Boutique",   icon: Package },
+            { page: "home" as StorePage,       label: "Accueil",    icon: Package },
+            { page: "shop" as StorePage,       label: "Boutique",   icon: ShoppingCart },
             { page: "categories" as StorePage, label: "Catégories", icon: SlidersHorizontal },
             { page: "search" as StorePage,     label: "Recherche",  icon: Search },
-            { page: "account" as StorePage,    label: "Compte",     icon: Heart },
+            { page: "account" as StorePage,    label: "Compte",     icon: User },
           ].map(item => {
             const active = activePage === item.page;
             return (

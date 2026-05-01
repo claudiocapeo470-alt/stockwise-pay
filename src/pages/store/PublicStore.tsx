@@ -14,6 +14,7 @@ import {
   Eye, MessageCircle, Moon, Sun, ChevronRight, ChevronLeft,
   ArrowRight, Truck, Shield, CheckCircle, CreditCard, Package,
   Phone, Mail, MapPin, SlidersHorizontal, ChevronDown,
+  User, Settings, LogOut, Bell, Bookmark,
 } from "lucide-react";
 
 // ─── PARAMÈTRES ──────────────────────────────────────────────────────────────

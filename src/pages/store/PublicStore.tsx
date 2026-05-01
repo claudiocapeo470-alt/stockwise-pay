@@ -14,6 +14,7 @@ import {
   Eye, MessageCircle, Moon, Sun, ChevronRight, ChevronLeft,
   ArrowRight, Truck, Shield, CheckCircle, CreditCard, Package,
   Phone, Mail, MapPin, SlidersHorizontal, ChevronDown,
+  User, Settings, LogOut, Bell, Bookmark,
 } from "lucide-react";
 
 // ─── PARAMÈTRES ──────────────────────────────────────────────────────────────
@@ -635,15 +636,15 @@ export default function PublicStore() {
                 <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Nos collections</span>
                 <h2 className="lz-heading text-2xl md:text-3xl text-gray-900 dark:text-white mt-1">Explorez nos univers</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
-                {categories.slice(0, 4).map(cat => {
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                {categories.slice(0, 8).map(cat => {
                   const img = categoryImages[cat];
                   const count = products.filter(p => p.category === cat).length;
                   return (
                     <button
                       key={cat}
                       onClick={() => { setActiveCategory(cat); setActivePage("shop"); }}
-                      className="relative group aspect-[4/3] overflow-hidden bg-gray-200"
+                      className="relative group aspect-square overflow-hidden bg-gray-200 dark:bg-gray-800 rounded-2xl"
                     >
                       {img ? (
                         <img
@@ -652,18 +653,12 @@ export default function PublicStore() {
                           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                       ) : (
-                        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${color}55, ${color}22)` }} />
+                        <div className="absolute inset-0 flex items-center justify-center text-5xl" style={{ background: `linear-gradient(135deg, ${color}55, ${color}22)` }}>📦</div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-6 text-left text-white">
-                        <p className="text-[10px] uppercase tracking-[0.25em] opacity-80 mb-1">Collection</p>
-                        <h3 className="lz-heading text-xl md:text-2xl mb-2">{cat}</h3>
-                        <span className="inline-flex items-center gap-1 text-sm font-medium">
-                          Découvrir <ArrowRight className="h-4 w-4" />
-                        </span>
-                      </div>
-                      <div className="absolute top-3 right-3 text-[10px] text-white bg-black/40 backdrop-blur px-2 py-0.5 rounded-full">
-                        {count} produit{count > 1 ? "s" : ""}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 text-left text-white">
+                        <h3 className="lz-heading text-sm md:text-base leading-tight">{cat}</h3>
+                        <p className="text-[10px] md:text-xs opacity-80 mt-0.5">{count} produit{count > 1 ? "s" : ""}</p>
                       </div>
                     </button>
                   );
@@ -1060,17 +1055,14 @@ export default function PublicStore() {
 
   // ─── CATEGORIES PAGE — mosaïque asymétrique (1 grande + 2x2) ────────────────
   const CategoriesPage = () => {
-    const [first, ...rest] = categories;
-    const renderCard = (cat: string, big = false) => {
+    const renderCard = (cat: string) => {
       const img = categoryImages[cat];
       const count = products.filter(p => p.category === cat).length;
       return (
         <button
           key={cat}
           onClick={() => { setActiveCategory(cat); setActivePage("shop"); }}
-          className={`group relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800 ${
-            big ? 'aspect-[16/9] md:aspect-[21/9]' : 'aspect-[4/3]'
-          }`}
+          className={`group relative overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-800 aspect-square`}
         >
           {img ? (
             <img
@@ -1088,7 +1080,7 @@ export default function PublicStore() {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
           <div className="absolute top-0 left-0 right-0 p-4 md:p-5 flex items-start justify-between text-white">
-            <span className={`lz-heading uppercase tracking-wide ${big ? 'text-base md:text-xl' : 'text-sm md:text-base'}`}>
+            <span className="lz-heading uppercase tracking-wide text-sm md:text-base">
               {cat}
             </span>
             <span className="text-[10px] md:text-xs bg-black/40 backdrop-blur px-2 py-0.5 rounded-full">
@@ -1119,55 +1111,135 @@ export default function PublicStore() {
             <p className="text-sm">Aucune catégorie disponible</p>
           </div>
         ) : (
-          <div className="space-y-4 md:space-y-6">
-            {/* 1 grande bannière en haut */}
-            {first && renderCard(first, true)}
-
-            {/* Grille 2x2 (responsive 1 col mobile / 2 col tablet+) */}
-            {rest.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                {rest.map(cat => renderCard(cat))}
-              </div>
-            )}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+            {categories.map(cat => renderCard(cat))}
           </div>
         )}
       </div>
     );
   };
 
-  // ─── ACCOUNT PAGE ────────────────────────────────────────────────────────────
-  const AccountPage = () => (
-    <div className="pb-24 px-4 py-6 container mx-auto max-w-2xl space-y-5">
-      <h2 className="lz-heading text-xl text-gray-900 dark:text-white">Mon compte</h2>
-      <div className="space-y-3">
-        {[
-          { icon: ShoppingCart, label: "Mon panier", sub: `${totalItems} article(s)`, action: () => setShowCart(true) },
-          { icon: Heart, label: "Mes favoris", sub: `${favorites.size} produit(s)`, action: () => {} },
-        ].map(item => (
-          <button
-            key={item.label}
-            onClick={item.action}
-            className="w-full flex items-center gap-4 p-4 border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-          >
-            <item.icon className="h-5 w-5 text-gray-400" />
-            <div className="flex-1">
-              <p className="font-medium text-sm text-gray-900 dark:text-white">{item.label}</p>
-              <p className="text-xs text-gray-400">{item.sub}</p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-gray-300" />
+  // ─── ACCOUNT PAGE — design minimaliste type iOS ──────────────────────────────
+  const AccountPage = () => {
+    const favProducts = products.filter(p => favorites.has(p.id));
+    return (
+      <div className="pb-28 px-4 py-6 container mx-auto max-w-2xl space-y-6">
+        {/* En-tête profil */}
+        <div className="flex flex-col items-center text-center pt-4 pb-6">
+          <div className="h-20 w-20 rounded-full flex items-center justify-center text-white shadow-lg mb-3" style={{ background: `linear-gradient(135deg, ${color}, ${color}aa)` }}>
+            <User className="h-10 w-10" />
+          </div>
+          <h2 className="lz-heading text-xl text-gray-900 dark:text-white">Mon compte</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Gérez vos favoris et votre boutique</p>
+        </div>
+
+        {/* Stats compactes */}
+        <div className="grid grid-cols-2 gap-3">
+          <button onClick={() => setShowCart(true)} className="rounded-2xl p-4 bg-gray-50 dark:bg-gray-900 text-left active:scale-95 transition-transform">
+            <ShoppingCart className="h-5 w-5 mb-2" style={{ color }} />
+            <p className="text-2xl lz-heading text-gray-900 dark:text-white">{totalItems}</p>
+            <p className="text-xs text-gray-500">Articles panier</p>
           </button>
-        ))}
+          <div className="rounded-2xl p-4 bg-gray-50 dark:bg-gray-900">
+            <Heart className="h-5 w-5 mb-2 fill-red-500 text-red-500" />
+            <p className="text-2xl lz-heading text-gray-900 dark:text-white">{favorites.size}</p>
+            <p className="text-xs text-gray-500">Favoris</p>
+          </div>
+        </div>
+
+        {/* Mes favoris */}
+        <div>
+          <div className="flex items-center justify-between mb-3 px-1">
+            <h3 className="lz-heading text-sm uppercase tracking-wider text-gray-500">Mes favoris</h3>
+            {favProducts.length > 4 && (
+              <button onClick={() => setActivePage("shop")} className="text-xs font-medium" style={{ color }}>Tout voir</button>
+            )}
+          </div>
+          {favProducts.length === 0 ? (
+            <div className="rounded-2xl p-8 bg-gray-50 dark:bg-gray-900 text-center">
+              <Heart className="h-10 w-10 mx-auto mb-2 text-gray-300" />
+              <p className="text-sm text-gray-500">Aucun favori pour le moment</p>
+              <button onClick={() => setActivePage("shop")} className="mt-3 text-xs font-semibold" style={{ color }}>
+                Découvrir des produits →
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {favProducts.slice(0, 4).map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => goToProduct(p.id)}
+                  className="rounded-2xl overflow-hidden bg-gray-50 dark:bg-gray-900 text-left active:scale-95 transition-transform"
+                >
+                  <div className="aspect-square bg-white dark:bg-gray-800 relative">
+                    {p.image_url
+                      ? <img src={p.image_url} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
+                      : <div className="absolute inset-0 flex items-center justify-center text-4xl">{p.icon_emoji}</div>}
+                  </div>
+                  <div className="p-2.5">
+                    <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{p.name}</p>
+                    <p className="text-xs font-bold mt-0.5" style={{ color }}>{(p.online_price ?? p.price).toLocaleString('fr-FR')} F</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Infos boutique compact */}
         {(store.address || store.phone || store.email) && (
-          <div className="p-5 border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 space-y-3">
-            <p className="lz-heading text-sm text-gray-900 dark:text-white mb-2">📍 Infos boutique</p>
-            {store.address && <div className="flex items-start gap-2 text-sm text-gray-500"><MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color }} />{store.address}</div>}
-            {store.phone   && <div className="flex items-center gap-2 text-sm text-gray-500"><Phone className="h-4 w-4 flex-shrink-0" style={{ color }} />{store.phone}</div>}
-            {store.email   && <div className="flex items-center gap-2 text-sm text-gray-500"><Mail className="h-4 w-4 flex-shrink-0" style={{ color }} />{store.email}</div>}
+          <div>
+            <h3 className="lz-heading text-sm uppercase tracking-wider text-gray-500 mb-3 px-1">Contact boutique</h3>
+            <div className="rounded-2xl bg-gray-50 dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800">
+              {store.phone && (
+                <a href={`tel:${store.phone}`} className="flex items-center gap-3 p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
+                  <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}><Phone className="h-4 w-4" /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500">Téléphone</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{store.phone}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-gray-300" />
+                </a>
+              )}
+              {store.email && (
+                <a href={`mailto:${store.email}`} className="flex items-center gap-3 p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
+                  <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}><Mail className="h-4 w-4" /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500">Email</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{store.email}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-gray-300" />
+                </a>
+              )}
+              {store.address && (
+                <div className="flex items-start gap-3 p-4">
+                  <div className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${color}15`, color }}><MapPin className="h-4 w-4" /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500">Adresse</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{store.address}</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
+
+        {/* Mode sombre */}
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="w-full flex items-center gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-900 active:scale-[0.98] transition-transform"
+        >
+          <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}>
+            {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </div>
+          <div className="flex-1 text-left">
+            <p className="text-sm font-medium text-gray-900 dark:text-white">Mode {darkMode ? 'clair' : 'sombre'}</p>
+            <p className="text-xs text-gray-500">Basculer le thème</p>
+          </div>
+        </button>
       </div>
-    </div>
-  );
+    );
+  };
 
   // ─── CART DRAWER ─────────────────────────────────────────────────────────────
   const CartDrawer = () => (
@@ -1411,6 +1483,19 @@ export default function PublicStore() {
               >
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
+              {/* Favoris - mobile uniquement, à côté du panier */}
+              <button
+                onClick={() => setActivePage("account")}
+                className="md:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                aria-label="Favoris"
+              >
+                <Heart className={`h-5 w-5 ${favorites.size > 0 ? "fill-red-500 text-red-500" : ""}`} />
+                {favorites.size > 0 && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full text-[9px] flex items-center justify-center text-white font-bold bg-red-500">
+                    {favorites.size}
+                  </span>
+                )}
+              </button>
               {store.allow_orders && (
                 <button
                   onClick={() => setShowCart(true)}
@@ -1465,8 +1550,8 @@ export default function PublicStore() {
         </div>
       )}
 
-      {/* WHATSAPP FLOTTANT */}
-      {store.whatsapp && (
+      {/* WHATSAPP FLOTTANT — uniquement sur la page d'accueil */}
+      {store.whatsapp && activePage === "home" && (
         <a
           href={`https://wa.me/${store.whatsapp.replace(/\D/g, "")}`}
           target="_blank" rel="noopener noreferrer"
@@ -1481,11 +1566,11 @@ export default function PublicStore() {
       <nav className="lz-nav md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur">
         <div className="flex items-center justify-around h-16">
           {[
-            { page: "home" as StorePage,       label: "Accueil",    icon: ShoppingCart },
-            { page: "shop" as StorePage,       label: "Boutique",   icon: Package },
+            { page: "home" as StorePage,       label: "Accueil",    icon: Package },
+            { page: "shop" as StorePage,       label: "Boutique",   icon: ShoppingCart },
             { page: "categories" as StorePage, label: "Catégories", icon: SlidersHorizontal },
             { page: "search" as StorePage,     label: "Recherche",  icon: Search },
-            { page: "account" as StorePage,    label: "Compte",     icon: Heart },
+            { page: "account" as StorePage,    label: "Compte",     icon: User },
           ].map(item => {
             const active = activePage === item.page;
             return (

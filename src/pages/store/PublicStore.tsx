@@ -636,15 +636,15 @@ export default function PublicStore() {
                 <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Nos collections</span>
                 <h2 className="lz-heading text-2xl md:text-3xl text-gray-900 dark:text-white mt-1">Explorez nos univers</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
-                {categories.slice(0, 4).map(cat => {
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                {categories.slice(0, 8).map(cat => {
                   const img = categoryImages[cat];
                   const count = products.filter(p => p.category === cat).length;
                   return (
                     <button
                       key={cat}
                       onClick={() => { setActiveCategory(cat); setActivePage("shop"); }}
-                      className="relative group aspect-[4/3] overflow-hidden bg-gray-200"
+                      className="relative group aspect-square overflow-hidden bg-gray-200 dark:bg-gray-800 rounded-2xl"
                     >
                       {img ? (
                         <img
@@ -653,18 +653,12 @@ export default function PublicStore() {
                           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                       ) : (
-                        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${color}55, ${color}22)` }} />
+                        <div className="absolute inset-0 flex items-center justify-center text-5xl" style={{ background: `linear-gradient(135deg, ${color}55, ${color}22)` }}>📦</div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-6 text-left text-white">
-                        <p className="text-[10px] uppercase tracking-[0.25em] opacity-80 mb-1">Collection</p>
-                        <h3 className="lz-heading text-xl md:text-2xl mb-2">{cat}</h3>
-                        <span className="inline-flex items-center gap-1 text-sm font-medium">
-                          Découvrir <ArrowRight className="h-4 w-4" />
-                        </span>
-                      </div>
-                      <div className="absolute top-3 right-3 text-[10px] text-white bg-black/40 backdrop-blur px-2 py-0.5 rounded-full">
-                        {count} produit{count > 1 ? "s" : ""}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 text-left text-white">
+                        <h3 className="lz-heading text-sm md:text-base leading-tight">{cat}</h3>
+                        <p className="text-[10px] md:text-xs opacity-80 mt-0.5">{count} produit{count > 1 ? "s" : ""}</p>
                       </div>
                     </button>
                   );

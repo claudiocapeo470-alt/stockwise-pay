@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -89,7 +89,7 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
     setSaving(true);
     try {
       // Update store_products
-      await supabase.from('store_products').update({
+      await (supabase.from('store_products') as any).update({
         online_price: onlinePrice,
         is_featured: isFeatured,
         is_active: isActive,
@@ -192,7 +192,7 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
           <DialogTitle className="text-lg">
             Modifier — {product?.name}
           </DialogTitle>
-          <p className="text-xs text-muted-foreground">Étape {step}: {stepLabels[step - 1]}</p>
+          <DialogDescription>Étape {step}: {stepLabels[step - 1]}</DialogDescription>
         </DialogHeader>
         <StepIndicator />
 

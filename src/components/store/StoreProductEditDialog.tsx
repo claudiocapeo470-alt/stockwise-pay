@@ -199,10 +199,28 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
           {/* Step 1: Basic info */}
           {step === 1 && (
             <>
+              <div className="space-y-1.5">
+                <Label>Nom du produit</Label>
+                <Input value={name} onChange={e => setName(e.target.value)} placeholder="Nom affiché dans la boutique" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label>Prix stock (FCFA)</Label>
+                  <Input type="number" min="0" value={price} onChange={e => setPrice(Number(e.target.value))} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Catégorie</Label>
+                  <Input value={category} onChange={e => setCategory(e.target.value)} placeholder="Ex: Chaussures" />
+                </div>
+              </div>
               <div>
                 <Label>Prix boutique (FCFA)</Label>
                 <Input type="number" min="0" value={onlinePrice} onChange={e => setOnlinePrice(Number(e.target.value))} />
                 <p className="text-xs text-muted-foreground mt-1">Prix original: {product?.price?.toLocaleString()} FCFA</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Quantité actuelle en stock</Label>
+                <Input type="number" min="0" value={quantity} onChange={e => setQuantity(Number(e.target.value))} />
               </div>
               <div className="flex items-center justify-between">
                 <div>
@@ -213,11 +231,29 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <Label>Stock disponible</Label>
-                  <p className="text-xs text-muted-foreground">Quantité actuelle en stock</p>
+                  <Label>Produit visible</Label>
+                  <p className="text-xs text-muted-foreground">Active ou masque ce produit en boutique</p>
                 </div>
-                <Badge variant={product?.quantity > 0 ? "secondary" : "destructive"}>
-                  {product?.quantity || 0} unités
+                <Switch checked={isActive} onCheckedChange={setIsActive} />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-border p-3">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
+                  <div>
+                    <Label>Forcer la rupture de stock</Label>
+                    <p className="text-xs text-muted-foreground">Le produit reste visible mais impossible à commander</p>
+                  </div>
+                </div>
+                <Switch checked={forceOutOfStock} onCheckedChange={setForceOutOfStock} />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>État boutique</Label>
+                  <p className="text-xs text-muted-foreground">Aperçu du statut client</p>
+                </div>
+                <Badge variant={!isActive ? "secondary" : forceOutOfStock || quantity <= 0 ? "destructive" : "default"} className="gap-1">
+                  {!isActive && <EyeOff className="h-3 w-3" />}
+                  {!isActive ? "Masqué" : forceOutOfStock || quantity <= 0 ? "Rupture" : `${quantity} unités`}
                 </Badge>
               </div>
             </>

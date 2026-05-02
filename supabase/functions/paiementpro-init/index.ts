@@ -196,45 +196,37 @@ serve(async (req) => {
 
     console.log("Calling Paiement Pro curl-init endpoint for reference:", reference);
 
-    const ppRes = await fetch(
-      "https://www.paiementpro.net/webservice/onlinepayment/init/curl-init.php",
+    const attempts = [
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json, text/plain, */*",
-        },
+        label: "json",
+        headers: { "Content-Type": "application/json", "Accept": "application/json, text/plain, */*" },
         body: JSON.stringify(paiementProPayload),
-      }
-    );
-
-    const ppText = await ppRes.text();
-    console.log("PaiementPro response:", ppText);
+      },
+      {
+        label: "form",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json, text/plain, */*" },
+        body: encodedPayload.toString(),
+      },
+    ];
 
     let paymentUrl: string | null = null;
     let sessionId: string | null = null;
     let ppData: any = null;
+    let lastRaw = "";
 
-    try {
-      ppData = JSON.parse(ppText);
-      paymentUrl = ppData?.url || ppData?.payment_url || null;
-      sessionId = ppData?.sessionid || null;
-    } catch {
-      // Some Paiement Pro deployments return plain text or query-string content.
-    }
-
-    if (!paymentUrl) {
-      const urlMatch = ppText.match(/https?:\/\/[^\s'"}]+/i);
-      if (urlMatch) paymentUrl = urlMatch[0].replace(/\\\//g, "/");
-    }
-
-    if (!sessionId) {
-      const sessionMatch = (paymentUrl || ppText).match(/sessionid=([a-zA-Z0-9_-]+)/i);
-      if (sessionMatch) sessionId = sessionMatch[1];
-    }
-
-    if (!paymentUrl && sessionId) {
-      paymentUrl = `https://www.paiementpro.net/webservice/onlinepayment/processing_v2.php?sessionid=${sessionId}`;
+    for (const attempt of attempts) {
+      const ppRes = await fetch("https://www.paiementpro.net/webservice/onlinepayment/init/curl-init.php", {
+        method: "POST",
+        headers: attempt.headers,
+        body: attempt.body,
+      });
+      lastRaw = await ppRes.text();
+      console.log("PaiementPro response:", { attempt: attempt.label, status: ppRes.status, body: lastRaw.slice(0, 300) });
+      const parsed = readPaiementProUrl(lastRaw);
+      paymentUrl = parsed.paymentUrl;
+      sessionId = parsed.sessionId;
+      ppData = parsed.ppData;
+      if (paymentUrl) break;
     }
 
     if (!paymentUrl) {
@@ -244,8 +236,8 @@ serve(async (req) => {
         .eq("reference", reference);
       return new Response(
         JSON.stringify({
-          error: ppData?.message || ppData?.responsemsg || ppData?.decription || `Échec Paiement Pro: ${ppText.slice(0, 200)}`,
-          details: ppData ?? ppText,
+          error: ppData?.message || ppData?.responsemsg || ppData?.description || ppData?.decription || `Échec Paiement Pro: ${lastRaw.slice(0, 200)}`,
+          details: ppData ?? lastRaw,
         }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );

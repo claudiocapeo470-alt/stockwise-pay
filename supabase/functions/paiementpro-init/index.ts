@@ -17,6 +17,40 @@ interface InitPayload {
   phone: string;
 }
 
+const readPaiementProUrl = (raw: string) => {
+  let paymentUrl: string | null = null;
+  let sessionId: string | null = null;
+  let ppData: any = null;
+
+  try {
+    ppData = JSON.parse(raw);
+    paymentUrl = ppData?.url || ppData?.payment_url || ppData?.paymentUrl || ppData?.redirect_url || null;
+    sessionId = ppData?.sessionid || ppData?.sessionId || ppData?.session_id || null;
+  } catch {
+    try {
+      const params = new URLSearchParams(raw);
+      paymentUrl = params.get("url") || params.get("payment_url") || params.get("redirect_url");
+      sessionId = params.get("sessionid") || params.get("sessionId") || params.get("session_id");
+    } catch { /* ignore */ }
+  }
+
+  if (!paymentUrl) {
+    const urlMatch = raw.match(/https?:\/\/[^\s'"}]+/i);
+    if (urlMatch) paymentUrl = urlMatch[0].replace(/\\\//g, "/");
+  }
+
+  if (!sessionId) {
+    const sessionMatch = (paymentUrl || raw).match(/sessionid=([a-zA-Z0-9_-]+)/i);
+    if (sessionMatch) sessionId = sessionMatch[1];
+  }
+
+  if (!paymentUrl && sessionId) {
+    paymentUrl = `https://www.paiementpro.net/webservice/onlinepayment/processing_v2.php?sessionid=${sessionId}`;
+  }
+
+  return { paymentUrl, sessionId, ppData };
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });

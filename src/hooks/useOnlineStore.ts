@@ -113,7 +113,7 @@ export function useStoreProducts(storeId?: string) {
     mutationFn: async (items: { product_id: string; online_price?: number; online_description?: string; is_featured?: boolean; is_active?: boolean; force_out_of_stock?: boolean }[]) => {
       if (!storeId) throw new Error('No store');
       const rows = items.map(item => ({ store_id: storeId, ...item }));
-      const { error } = await supabase.from('store_products').upsert(rows, { onConflict: 'store_id,product_id' });
+      const { error } = await (supabase.from('store_products') as any).upsert(rows, { onConflict: 'store_id,product_id' });
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['store-products', storeId] }),

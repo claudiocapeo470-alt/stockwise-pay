@@ -70,6 +70,23 @@ export default function Checkout() {
   const handleSubmit = async () => {
     if (!store || !form.name.trim() || !form.phone.trim() || cart.length === 0 || submitting) return;
     setSubmitting(true);
+    const ids = cart.map(i => i.id);
+    const { data: availability, error: availabilityError } = await supabase
+      .from("store_products")
+      .select("product_id, is_active, force_out_of_stock, products(quantity)")
+      .eq("store_id", store.id)
+      .in("product_id", ids);
+    if (availabilityError) { setSubmitting(false); alert("Impossible de vérifier le stock"); return; }
+    const byId = new Map((availability || []).map((row: any) => [row.product_id, row]));
+    const unavailable = cart.find(item => {
+      const row: any = byId.get(item.id);
+      return !row || row.is_active === false || row.force_out_of_stock === true || (row.products?.quantity ?? 0) < item.quantity;
+    });
+    if (unavailable) {
+      setSubmitting(false);
+      alert(`${unavailable.name} n'est plus disponible dans cette quantité.`);
+      return;
+    }
     const orderNumber = `CMD-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
     const items = cart.map(i => ({ name: i.name, icon: i.icon_emoji, price: i.price, quantity: i.quantity }));
     const { error } = await supabase.from("store_orders").insert({

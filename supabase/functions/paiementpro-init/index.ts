@@ -17,12 +17,48 @@ interface InitPayload {
   phone: string;
 }
 
+const readPaiementProUrl = (raw: string) => {
+  let paymentUrl: string | null = null;
+  let sessionId: string | null = null;
+  let ppData: any = null;
+
+  try {
+    ppData = JSON.parse(raw);
+    paymentUrl = ppData?.url || ppData?.payment_url || ppData?.paymentUrl || ppData?.redirect_url || null;
+    sessionId = ppData?.sessionid || ppData?.sessionId || ppData?.session_id || null;
+  } catch {
+    try {
+      const params = new URLSearchParams(raw);
+      paymentUrl = params.get("url") || params.get("payment_url") || params.get("redirect_url");
+      sessionId = params.get("sessionid") || params.get("sessionId") || params.get("session_id");
+    } catch { /* ignore */ }
+  }
+
+  if (!paymentUrl) {
+    const urlMatch = raw.match(/https?:\/\/[^\s'"}]+/i);
+    if (urlMatch) paymentUrl = urlMatch[0].replace(/\\\//g, "/");
+  }
+
+  if (!sessionId) {
+    const sessionMatch = (paymentUrl || raw).match(/sessionid=([a-zA-Z0-9_-]+)/i);
+    if (sessionMatch) sessionId = sessionMatch[1];
+  }
+
+  if (!paymentUrl && sessionId) {
+    paymentUrl = `https://www.paiementpro.net/webservice/onlinepayment/processing_v2.php?sessionid=${sessionId}`;
+  }
+
+  return { paymentUrl, sessionId, ppData };
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   console.log("paiementpro-init invoked", { method: req.method, origin: req.headers.get("origin") });
+  let pendingReference: string | null = null;
+  let adminClient: any = null;
 
   try {
     const authHeader = req.headers.get("Authorization");
@@ -94,10 +130,19 @@ serve(async (req) => {
       );
     }
 
-    const reference = `SUB_${Date.now()}_${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const supabase = createClient(supabaseUrl, serviceKey);
+    adminClient = supabase;
+    await supabase
+      .from("subscriptions")
+      .update({ status: "failed" })
+      .eq("user_id", userId)
+      .eq("status", "pending")
+      .lt("created_at", new Date(Date.now() - 10 * 60 * 1000).toISOString());
+
+    const reference = `SUB_${Date.now()}_${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+    pendingReference = reference;
 
     // Persist pending subscription
-    const supabase = createClient(supabaseUrl, serviceKey);
     const { error: insertError } = await supabase.from("subscriptions").insert({
       user_id: userId,
       reference,
@@ -146,47 +191,46 @@ serve(async (req) => {
       hashcode,
     };
 
-    console.log("Calling Paiement Pro curl-init endpoint for reference:", reference);
-
-    const ppRes = await fetch(
-      "https://www.paiementpro.net/webservice/onlinepayment/init/curl-init.php",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json, text/plain, */*",
-        },
-        body: JSON.stringify(paiementProPayload),
-      }
+    const encodedPayload = new URLSearchParams(
+      Object.entries(paiementProPayload).reduce<Record<string, string>>((acc, [key, value]) => {
+        acc[key] = String(value ?? "");
+        return acc;
+      }, {})
     );
 
-    const ppText = await ppRes.text();
-    console.log("PaiementPro response:", ppText);
+    console.log("Calling Paiement Pro curl-init endpoint for reference:", reference);
+
+    const attempts = [
+      {
+        label: "json",
+        headers: { "Content-Type": "application/json", "Accept": "application/json, text/plain, */*" },
+        body: JSON.stringify(paiementProPayload),
+      },
+      {
+        label: "form",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json, text/plain, */*" },
+        body: encodedPayload.toString(),
+      },
+    ];
 
     let paymentUrl: string | null = null;
     let sessionId: string | null = null;
     let ppData: any = null;
+    let lastRaw = "";
 
-    try {
-      ppData = JSON.parse(ppText);
-      paymentUrl = ppData?.url || ppData?.payment_url || null;
-      sessionId = ppData?.sessionid || null;
-    } catch {
-      // Some Paiement Pro deployments return plain text or query-string content.
-    }
-
-    if (!paymentUrl) {
-      const urlMatch = ppText.match(/https?:\/\/[^\s'"}]+/i);
-      if (urlMatch) paymentUrl = urlMatch[0].replace(/\\\//g, "/");
-    }
-
-    if (!sessionId) {
-      const sessionMatch = (paymentUrl || ppText).match(/sessionid=([a-zA-Z0-9_-]+)/i);
-      if (sessionMatch) sessionId = sessionMatch[1];
-    }
-
-    if (!paymentUrl && sessionId) {
-      paymentUrl = `https://www.paiementpro.net/webservice/onlinepayment/processing_v2.php?sessionid=${sessionId}`;
+    for (const attempt of attempts) {
+      const ppRes = await fetch("https://www.paiementpro.net/webservice/onlinepayment/init/curl-init.php", {
+        method: "POST",
+        headers: attempt.headers,
+        body: attempt.body,
+      });
+      lastRaw = await ppRes.text();
+      console.log("PaiementPro response:", { attempt: attempt.label, status: ppRes.status, body: lastRaw.slice(0, 300) });
+      const parsed = readPaiementProUrl(lastRaw);
+      paymentUrl = parsed.paymentUrl;
+      sessionId = parsed.sessionId;
+      ppData = parsed.ppData;
+      if (paymentUrl) break;
     }
 
     if (!paymentUrl) {
@@ -196,8 +240,8 @@ serve(async (req) => {
         .eq("reference", reference);
       return new Response(
         JSON.stringify({
-          error: ppData?.message || ppData?.responsemsg || ppData?.decription || `Échec Paiement Pro: ${ppText.slice(0, 200)}`,
-          details: ppData ?? ppText,
+          error: ppData?.message || ppData?.responsemsg || ppData?.description || ppData?.decription || `Échec Paiement Pro: ${lastRaw.slice(0, 200)}`,
+          details: ppData ?? lastRaw,
         }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -216,8 +260,11 @@ serve(async (req) => {
     );
   } catch (err) {
     console.error("paiementpro-init error:", err);
+    if (pendingReference && adminClient) {
+      await adminClient.from("subscriptions").update({ status: "failed" }).eq("reference", pendingReference);
+    }
     return new Response(
-      JSON.stringify({ error: (err as Error).message }),
+      JSON.stringify({ error: "Impossible de joindre Paiement Pro. Réessayez dans quelques instants.", details: (err as Error).message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

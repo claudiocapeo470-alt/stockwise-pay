@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ChevronLeft, ChevronRight, Check, Star, Trash2, Plus, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Star, Trash2, Plus, User, AlertTriangle, EyeOff } from "lucide-react";
 import { MultiImageUpload } from "@/components/stocks/MultiImageUpload";
 import { RichTextEditor } from "@/components/stocks/RichTextEditor";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,13 +25,20 @@ interface StoreProductEditDialogProps {
 }
 
 export function StoreProductEditDialog({ storeProduct, product, storeId, open, onOpenChange, onSaved }: StoreProductEditDialogProps) {
-  const { user } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || product?.user_id) : user?.id;
 
   // Step 1: Basic info
+  const [name, setName] = useState(product?.name || "");
+  const [price, setPrice] = useState(product?.price || 0);
+  const [quantity, setQuantity] = useState(product?.quantity || 0);
+  const [category, setCategory] = useState(product?.category || "");
   const [onlinePrice, setOnlinePrice] = useState(storeProduct?.online_price || product?.price || 0);
   const [isFeatured, setIsFeatured] = useState(storeProduct?.is_featured || false);
+  const [isActive, setIsActive] = useState(storeProduct?.is_active !== false);
+  const [forceOutOfStock, setForceOutOfStock] = useState(storeProduct?.force_out_of_stock || false);
 
   // Step 2: Images
   const [images, setImages] = useState<string[]>([]);
@@ -64,35 +71,49 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
 
   useEffect(() => {
     if (storeProduct && open) {
+      setName(product?.name || "");
+      setPrice(product?.price || 0);
+      setQuantity(product?.quantity || 0);
+      setCategory(product?.category || "");
       setOnlinePrice(storeProduct.online_price || product?.price || 0);
       setIsFeatured(storeProduct.is_featured || false);
+      setIsActive(storeProduct.is_active !== false);
+      setForceOutOfStock(storeProduct.force_out_of_stock || false);
       setOnlineDescription(storeProduct.online_description || "");
       setStep(1);
     }
   }, [storeProduct, product, open]);
 
   const handleSave = async () => {
-    if (!user || !product) return;
+    if (!user || !effectiveUserId || !product) return;
     setSaving(true);
     try {
       // Update store_products
-      await supabase.from('store_products').update({
+      await (supabase.from('store_products') as any).update({
         online_price: onlinePrice,
         is_featured: isFeatured,
+        is_active: isActive,
+        force_out_of_stock: forceOutOfStock,
         online_description: onlineDescription,
       }).eq('store_id', storeId).eq('product_id', product.id);
 
-      // Update main product image_url to first image
-      if (images.length > 0) {
-        await supabase.from('products').update({ image_url: images[0] }).eq('id', product.id);
-      }
+      // Update main product details
+      const { error: productError } = await supabase.from('products').update({
+        name: name.trim(),
+        price,
+        quantity,
+        category: category.trim() || null,
+        description: onlineDescription,
+        image_url: images[0] || null,
+      }).eq('id', product.id);
+      if (productError) throw productError;
 
       // Sync product_images table
       await supabase.from('product_images').delete().eq('product_id', product.id);
       if (images.length > 0) {
         const rows = images.map((url, i) => ({
           product_id: product.id,
-          user_id: user.id,
+          user_id: effectiveUserId,
           image_url: url,
           sort_order: i,
         }));
@@ -171,7 +192,7 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
           <DialogTitle className="text-lg">
             Modifier — {product?.name}
           </DialogTitle>
-          <p className="text-xs text-muted-foreground">Étape {step}: {stepLabels[step - 1]}</p>
+          <DialogDescription>Étape {step}: {stepLabels[step - 1]}</DialogDescription>
         </DialogHeader>
         <StepIndicator />
 
@@ -179,10 +200,28 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
           {/* Step 1: Basic info */}
           {step === 1 && (
             <>
+              <div className="space-y-1.5">
+                <Label>Nom du produit</Label>
+                <Input value={name} onChange={e => setName(e.target.value)} placeholder="Nom affiché dans la boutique" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label>Prix stock (FCFA)</Label>
+                  <Input type="number" min="0" value={price} onChange={e => setPrice(Number(e.target.value))} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Catégorie</Label>
+                  <Input value={category} onChange={e => setCategory(e.target.value)} placeholder="Ex: Chaussures" />
+                </div>
+              </div>
               <div>
                 <Label>Prix boutique (FCFA)</Label>
                 <Input type="number" min="0" value={onlinePrice} onChange={e => setOnlinePrice(Number(e.target.value))} />
                 <p className="text-xs text-muted-foreground mt-1">Prix original: {product?.price?.toLocaleString()} FCFA</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Quantité actuelle en stock</Label>
+                <Input type="number" min="0" value={quantity} onChange={e => setQuantity(Number(e.target.value))} />
               </div>
               <div className="flex items-center justify-between">
                 <div>
@@ -193,11 +232,29 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <Label>Stock disponible</Label>
-                  <p className="text-xs text-muted-foreground">Quantité actuelle en stock</p>
+                  <Label>Produit visible</Label>
+                  <p className="text-xs text-muted-foreground">Active ou masque ce produit en boutique</p>
                 </div>
-                <Badge variant={product?.quantity > 0 ? "secondary" : "destructive"}>
-                  {product?.quantity || 0} unités
+                <Switch checked={isActive} onCheckedChange={setIsActive} />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-border p-3">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
+                  <div>
+                    <Label>Forcer la rupture de stock</Label>
+                    <p className="text-xs text-muted-foreground">Le produit reste visible mais impossible à commander</p>
+                  </div>
+                </div>
+                <Switch checked={forceOutOfStock} onCheckedChange={setForceOutOfStock} />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>État boutique</Label>
+                  <p className="text-xs text-muted-foreground">Aperçu du statut client</p>
+                </div>
+                <Badge variant={!isActive ? "secondary" : forceOutOfStock || quantity <= 0 ? "destructive" : "default"} className="gap-1">
+                  {!isActive && <EyeOff className="h-3 w-3" />}
+                  {!isActive ? "Masqué" : forceOutOfStock || quantity <= 0 ? "Rupture" : `${quantity} unités`}
                 </Badge>
               </div>
             </>

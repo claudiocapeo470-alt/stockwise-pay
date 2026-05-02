@@ -44,6 +44,7 @@ interface ProductData {
   icon_emoji: string; icon_bg_color: string; category: string | null;
   description: string | null; online_price: number | null;
   is_featured: boolean; image_url: string | null;
+  is_active: boolean; force_out_of_stock: boolean;
   extra_images?: string[];
   compare_at_price?: number | null;
 }
@@ -240,7 +241,7 @@ export default function PublicStore() {
       const { data: sp } = await supabase
         .from("store_products").select("*, products(*)")
         .eq("store_id", storeData.id).order("is_featured", { ascending: false });
-      const mapped: ProductData[] = (sp || []).map((s: any) => ({
+      const mapped: ProductData[] = (sp || []).filter((s: any) => s.is_active !== false).map((s: any) => ({
         id: s.products.id, name: s.products.name,
         price: s.online_price ?? s.products.price,
         quantity: s.products.quantity,
@@ -248,6 +249,8 @@ export default function PublicStore() {
         icon_bg_color: s.products.icon_bg_color || "bg-blue",
         category: s.products.category, description: s.products.description,
         online_price: s.online_price, is_featured: s.is_featured,
+        is_active: s.is_active !== false,
+        force_out_of_stock: s.force_out_of_stock === true,
         image_url: s.products.image_url || null,
         compare_at_price: s.products.price !== (s.online_price ?? s.products.price) && s.online_price ? s.products.price : null,
       }));
@@ -329,10 +332,11 @@ export default function PublicStore() {
     () => products.find(p => p.id === activeProductId) || null,
     [products, activeProductId]
   );
+  const isAvailable = (p: ProductData) => p.is_active !== false && !p.force_out_of_stock && p.quantity > 0;
 
   // Cart helpers
   const addToCart = (p: ProductData, qty = 1) => {
-    if (p.quantity <= 0) return;
+    if (!isAvailable(p)) return;
     setCart(prev => {
       const ex = prev.find(i => i.id === p.id);
       if (ex) return prev.map(i => i.id === p.id ? { ...i, quantity: i.quantity + qty } : i);
@@ -513,7 +517,7 @@ export default function PublicStore() {
         </div>
 
         {/* Bouton Commander — visible sur la carte */}
-        {store.allow_orders && product.quantity > 0 && (
+        {store.allow_orders && isAvailable(product) && (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -790,6 +794,7 @@ export default function PublicStore() {
     const similar = products.filter(x => x.category === p.category && x.id !== p.id).slice(0, 4);
 
     const handleBuyNow = () => {
+      if (!isAvailable(p)) return;
       addToCart(p, qty);
       // Sauvegarder immédiatement le panier mis à jour avant la navigation
       const updatedCart = (() => {
@@ -893,7 +898,7 @@ export default function PublicStore() {
               </div>
 
               {/* Boutons (visibles inline desktop, sticky bottom mobile/tablet) */}
-              {p.quantity === 0 ? (
+              {!isAvailable(p) ? (
                 <p className="text-red-500 font-semibold text-center py-4">Rupture de stock</p>
               ) : store.allow_orders ? (
                 <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -915,7 +920,7 @@ export default function PublicStore() {
                 </div>
               ) : null}
 
-              {store.show_stock && p.quantity > 0 && (
+              {store.show_stock && isAvailable(p) && (
                 <p className="text-xs text-gray-400 text-center mt-3">{p.quantity} en stock</p>
               )}
             </div>
@@ -999,7 +1004,7 @@ export default function PublicStore() {
         </div>
 
         {/* STICKY BOTTOM CTA — mobile & tablet uniquement */}
-        {p.quantity > 0 && store.allow_orders && (
+        {isAvailable(p) && store.allow_orders && (
           <div className="lz-sticky-cta lg:hidden fixed bottom-16 md:bottom-0 left-0 right-0 z-30 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-950/95 backdrop-blur px-4 py-3">
             <div className="container mx-auto flex items-center gap-2">
               <button
@@ -1446,8 +1451,8 @@ export default function PublicStore() {
               <span className="lz-heading text-base md:text-xl uppercase tracking-wide">{store.name}</span>
             </button>
 
-            {/* Navigation desktop centrée */}
-            <nav className="hidden md:flex items-center gap-8 lg:gap-10 absolute left-1/2 -translate-x-1/2">
+            {/* Navigation desktop centrée — PC uniquement */}
+            <nav className="hidden lg:flex items-center gap-8 lg:gap-10 absolute left-1/2 -translate-x-1/2">
               {navItems.map(item => {
                 const active = activePage === item.page || (activePage === "product" && item.page === "shop");
                 return (
@@ -1468,10 +1473,10 @@ export default function PublicStore() {
 
             {/* Actions */}
             <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
-              {/* Bouton recherche - visible sur tablet/desktop */}
+              {/* Bouton recherche - visible sur PC uniquement */}
               <button
                 onClick={() => setActivePage("search")}
-                className="hidden sm:inline-flex h-10 w-10 border border-gray-200 dark:border-gray-700 items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
+                className="hidden lg:inline-flex h-10 w-10 border border-gray-200 dark:border-gray-700 items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
                 aria-label="Rechercher"
               >
                 <Search className="h-4 w-4" />
@@ -1483,10 +1488,18 @@ export default function PublicStore() {
               >
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
-              {/* Favoris - mobile uniquement, à côté du panier */}
+              {/* Compte - mobile/tablette */}
               <button
                 onClick={() => setActivePage("account")}
-                className="md:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                aria-label="Compte"
+              >
+                <User className="h-5 w-5" />
+              </button>
+              {/* Favoris - mobile/tablette, à côté du panier */}
+              <button
+                onClick={() => setActivePage("account")}
+                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
                 aria-label="Favoris"
               >
                 <Heart className={`h-5 w-5 ${favorites.size > 0 ? "fill-red-500 text-red-500" : ""}`} />
@@ -1512,7 +1525,7 @@ export default function PublicStore() {
               )}
               <button
                 onClick={() => setActivePage("shop")}
-                className="lz-btn-cta hidden sm:inline-flex items-center px-5 md:px-7 py-2.5 md:py-3 rounded-full text-white text-sm font-semibold"
+                className="lz-btn-cta hidden lg:inline-flex items-center px-5 md:px-7 py-2.5 md:py-3 rounded-full text-white text-sm font-semibold"
                 style={{ background: color }}
               >
                 Acheter
@@ -1562,8 +1575,8 @@ export default function PublicStore() {
         </a>
       )}
 
-      {/* MOBILE BOTTOM NAV */}
-      <nav className="lz-nav md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur">
+      {/* MOBILE/TABLET BOTTOM NAV */}
+      <nav className="lz-nav lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur">
         <div className="flex items-center justify-around h-16">
           {[
             { page: "home" as StorePage,       label: "Accueil",    icon: Package },

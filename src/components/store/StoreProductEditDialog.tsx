@@ -91,13 +91,21 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
       await supabase.from('store_products').update({
         online_price: onlinePrice,
         is_featured: isFeatured,
+        is_active: isActive,
+        force_out_of_stock: forceOutOfStock,
         online_description: onlineDescription,
       }).eq('store_id', storeId).eq('product_id', product.id);
 
-      // Update main product image_url to first image
-      if (images.length > 0) {
-        await supabase.from('products').update({ image_url: images[0] }).eq('id', product.id);
-      }
+      // Update main product details
+      const { error: productError } = await supabase.from('products').update({
+        name: name.trim(),
+        price,
+        quantity,
+        category: category.trim() || null,
+        description: onlineDescription,
+        image_url: images[0] || null,
+      }).eq('id', product.id);
+      if (productError) throw productError;
 
       // Sync product_images table
       await supabase.from('product_images').delete().eq('product_id', product.id);

@@ -57,6 +57,8 @@ serve(async (req) => {
   }
 
   console.log("paiementpro-init invoked", { method: req.method, origin: req.headers.get("origin") });
+  let pendingReference: string | null = null;
+  let adminClient: any = null;
 
   try {
     const authHeader = req.headers.get("Authorization");
@@ -129,6 +131,7 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, serviceKey);
+    adminClient = supabase;
     await supabase
       .from("subscriptions")
       .update({ status: "failed" })
@@ -137,6 +140,7 @@ serve(async (req) => {
       .lt("created_at", new Date(Date.now() - 10 * 60 * 1000).toISOString());
 
     const reference = `SUB_${Date.now()}_${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+    pendingReference = reference;
 
     // Persist pending subscription
     const { error: insertError } = await supabase.from("subscriptions").insert({
@@ -256,6 +260,9 @@ serve(async (req) => {
     );
   } catch (err) {
     console.error("paiementpro-init error:", err);
+    if (pendingReference && adminClient) {
+      await adminClient.from("subscriptions").update({ status: "failed" }).eq("reference", pendingReference);
+    }
     return new Response(
       JSON.stringify({ error: "Impossible de joindre Paiement Pro. Réessayez dans quelques instants.", details: (err as Error).message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

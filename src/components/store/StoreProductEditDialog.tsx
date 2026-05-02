@@ -25,9 +25,10 @@ interface StoreProductEditDialogProps {
 }
 
 export function StoreProductEditDialog({ storeProduct, product, storeId, open, onOpenChange, onSaved }: StoreProductEditDialogProps) {
-  const { user } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
+  const effectiveUserId = isEmployee ? (memberInfo?.owner_id || product?.user_id) : user?.id;
 
   // Step 1: Basic info
   const [name, setName] = useState(product?.name || "");
@@ -84,7 +85,7 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
   }, [storeProduct, product, open]);
 
   const handleSave = async () => {
-    if (!user || !product) return;
+    if (!user || !effectiveUserId || !product) return;
     setSaving(true);
     try {
       // Update store_products
@@ -112,7 +113,7 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
       if (images.length > 0) {
         const rows = images.map((url, i) => ({
           product_id: product.id,
-          user_id: user.id,
+          user_id: effectiveUserId,
           image_url: url,
           sort_order: i,
         }));

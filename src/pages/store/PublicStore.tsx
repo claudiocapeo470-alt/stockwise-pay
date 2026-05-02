@@ -794,6 +794,7 @@ export default function PublicStore() {
     const similar = products.filter(x => x.category === p.category && x.id !== p.id).slice(0, 4);
 
     const handleBuyNow = () => {
+      if (!isAvailable(p)) return;
       addToCart(p, qty);
       // Sauvegarder immédiatement le panier mis à jour avant la navigation
       const updatedCart = (() => {

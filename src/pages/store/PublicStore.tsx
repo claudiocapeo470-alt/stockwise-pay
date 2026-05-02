@@ -44,6 +44,7 @@ interface ProductData {
   icon_emoji: string; icon_bg_color: string; category: string | null;
   description: string | null; online_price: number | null;
   is_featured: boolean; image_url: string | null;
+  is_active: boolean; force_out_of_stock: boolean;
   extra_images?: string[];
   compare_at_price?: number | null;
 }
@@ -240,7 +241,7 @@ export default function PublicStore() {
       const { data: sp } = await supabase
         .from("store_products").select("*, products(*)")
         .eq("store_id", storeData.id).order("is_featured", { ascending: false });
-      const mapped: ProductData[] = (sp || []).map((s: any) => ({
+      const mapped: ProductData[] = (sp || []).filter((s: any) => s.is_active !== false).map((s: any) => ({
         id: s.products.id, name: s.products.name,
         price: s.online_price ?? s.products.price,
         quantity: s.products.quantity,
@@ -248,6 +249,8 @@ export default function PublicStore() {
         icon_bg_color: s.products.icon_bg_color || "bg-blue",
         category: s.products.category, description: s.products.description,
         online_price: s.online_price, is_featured: s.is_featured,
+        is_active: s.is_active !== false,
+        force_out_of_stock: s.force_out_of_stock === true,
         image_url: s.products.image_url || null,
         compare_at_price: s.products.price !== (s.online_price ?? s.products.price) && s.online_price ? s.products.price : null,
       }));

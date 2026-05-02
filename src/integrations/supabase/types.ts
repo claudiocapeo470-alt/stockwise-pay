@@ -1555,7 +1555,9 @@ export type Database = {
       }
       store_products: {
         Row: {
+          force_out_of_stock: boolean
           id: string
+          is_active: boolean
           is_featured: boolean | null
           online_description: string | null
           online_price: number | null
@@ -1564,7 +1566,9 @@ export type Database = {
           store_id: string
         }
         Insert: {
+          force_out_of_stock?: boolean
           id?: string
+          is_active?: boolean
           is_featured?: boolean | null
           online_description?: string | null
           online_price?: number | null
@@ -1573,7 +1577,9 @@ export type Database = {
           store_id: string
         }
         Update: {
+          force_out_of_stock?: boolean
           id?: string
+          is_active?: boolean
           is_featured?: boolean | null
           online_description?: string | null
           online_price?: number | null

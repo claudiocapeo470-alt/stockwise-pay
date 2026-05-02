@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ChevronLeft, ChevronRight, Check, Star, Trash2, Plus, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Star, Trash2, Plus, User, AlertTriangle, EyeOff } from "lucide-react";
 import { MultiImageUpload } from "@/components/stocks/MultiImageUpload";
 import { RichTextEditor } from "@/components/stocks/RichTextEditor";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,8 +30,14 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
   const [saving, setSaving] = useState(false);
 
   // Step 1: Basic info
+  const [name, setName] = useState(product?.name || "");
+  const [price, setPrice] = useState(product?.price || 0);
+  const [quantity, setQuantity] = useState(product?.quantity || 0);
+  const [category, setCategory] = useState(product?.category || "");
   const [onlinePrice, setOnlinePrice] = useState(storeProduct?.online_price || product?.price || 0);
   const [isFeatured, setIsFeatured] = useState(storeProduct?.is_featured || false);
+  const [isActive, setIsActive] = useState(storeProduct?.is_active !== false);
+  const [forceOutOfStock, setForceOutOfStock] = useState(storeProduct?.force_out_of_stock || false);
 
   // Step 2: Images
   const [images, setImages] = useState<string[]>([]);
@@ -64,8 +70,14 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
 
   useEffect(() => {
     if (storeProduct && open) {
+      setName(product?.name || "");
+      setPrice(product?.price || 0);
+      setQuantity(product?.quantity || 0);
+      setCategory(product?.category || "");
       setOnlinePrice(storeProduct.online_price || product?.price || 0);
       setIsFeatured(storeProduct.is_featured || false);
+      setIsActive(storeProduct.is_active !== false);
+      setForceOutOfStock(storeProduct.force_out_of_stock || false);
       setOnlineDescription(storeProduct.online_description || "");
       setStep(1);
     }

@@ -1451,8 +1451,8 @@ export default function PublicStore() {
               <span className="lz-heading text-base md:text-xl uppercase tracking-wide">{store.name}</span>
             </button>
 
-            {/* Navigation desktop centrée */}
-            <nav className="hidden md:flex items-center gap-8 lg:gap-10 absolute left-1/2 -translate-x-1/2">
+            {/* Navigation desktop centrée — PC uniquement */}
+            <nav className="hidden lg:flex items-center gap-8 lg:gap-10 absolute left-1/2 -translate-x-1/2">
               {navItems.map(item => {
                 const active = activePage === item.page || (activePage === "product" && item.page === "shop");
                 return (
@@ -1473,10 +1473,10 @@ export default function PublicStore() {
 
             {/* Actions */}
             <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
-              {/* Bouton recherche - visible sur tablet/desktop */}
+              {/* Bouton recherche - visible sur PC uniquement */}
               <button
                 onClick={() => setActivePage("search")}
-                className="hidden sm:inline-flex h-10 w-10 border border-gray-200 dark:border-gray-700 items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
+                className="hidden lg:inline-flex h-10 w-10 border border-gray-200 dark:border-gray-700 items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
                 aria-label="Rechercher"
               >
                 <Search className="h-4 w-4" />
@@ -1488,10 +1488,18 @@ export default function PublicStore() {
               >
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
-              {/* Favoris - mobile uniquement, à côté du panier */}
+              {/* Compte - mobile/tablette */}
               <button
                 onClick={() => setActivePage("account")}
-                className="md:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                aria-label="Compte"
+              >
+                <User className="h-5 w-5" />
+              </button>
+              {/* Favoris - mobile/tablette, à côté du panier */}
+              <button
+                onClick={() => setActivePage("account")}
+                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
                 aria-label="Favoris"
               >
                 <Heart className={`h-5 w-5 ${favorites.size > 0 ? "fill-red-500 text-red-500" : ""}`} />
@@ -1517,7 +1525,7 @@ export default function PublicStore() {
               )}
               <button
                 onClick={() => setActivePage("shop")}
-                className="lz-btn-cta hidden sm:inline-flex items-center px-5 md:px-7 py-2.5 md:py-3 rounded-full text-white text-sm font-semibold"
+                className="lz-btn-cta hidden lg:inline-flex items-center px-5 md:px-7 py-2.5 md:py-3 rounded-full text-white text-sm font-semibold"
                 style={{ background: color }}
               >
                 Acheter

@@ -257,7 +257,7 @@ serve(async (req) => {
   } catch (err) {
     console.error("paiementpro-init error:", err);
     return new Response(
-      JSON.stringify({ error: (err as Error).message }),
+      JSON.stringify({ error: "Impossible de joindre Paiement Pro. Réessayez dans quelques instants.", details: (err as Error).message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

@@ -332,10 +332,11 @@ export default function PublicStore() {
     () => products.find(p => p.id === activeProductId) || null,
     [products, activeProductId]
   );
+  const isAvailable = (p: ProductData) => p.is_active !== false && !p.force_out_of_stock && p.quantity > 0;
 
   // Cart helpers
   const addToCart = (p: ProductData, qty = 1) => {
-    if (p.quantity <= 0) return;
+    if (!isAvailable(p)) return;
     setCart(prev => {
       const ex = prev.find(i => i.id === p.id);
       if (ex) return prev.map(i => i.id === p.id ? { ...i, quantity: i.quantity + qty } : i);

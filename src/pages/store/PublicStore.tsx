@@ -1575,8 +1575,8 @@ export default function PublicStore() {
         </a>
       )}
 
-      {/* MOBILE BOTTOM NAV */}
-      <nav className="lz-nav md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur">
+      {/* MOBILE/TABLET BOTTOM NAV */}
+      <nav className="lz-nav lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur">
         <div className="flex items-center justify-around h-16">
           {[
             { page: "home" as StorePage,       label: "Accueil",    icon: Package },

@@ -128,10 +128,17 @@ serve(async (req) => {
       );
     }
 
-    const reference = `SUB_${Date.now()}_${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const supabase = createClient(supabaseUrl, serviceKey);
+    await supabase
+      .from("subscriptions")
+      .update({ status: "failed" })
+      .eq("user_id", userId)
+      .eq("status", "pending")
+      .lt("created_at", new Date(Date.now() - 10 * 60 * 1000).toISOString());
+
+    const reference = `SUB_${Date.now()}_${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
 
     // Persist pending subscription
-    const supabase = createClient(supabaseUrl, serviceKey);
     const { error: insertError } = await supabase.from("subscriptions").insert({
       user_id: userId,
       reference,
@@ -179,6 +186,13 @@ serve(async (req) => {
       returnContext: reference,
       hashcode,
     };
+
+    const encodedPayload = new URLSearchParams(
+      Object.entries(paiementProPayload).reduce<Record<string, string>>((acc, [key, value]) => {
+        acc[key] = String(value ?? "");
+        return acc;
+      }, {})
+    );
 
     console.log("Calling Paiement Pro curl-init endpoint for reference:", reference);
 

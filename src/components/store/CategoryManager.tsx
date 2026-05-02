@@ -253,13 +253,13 @@ export default function CategoryManager() {
           <p className="text-sm">Aucune catégorie. Ajoutez-en une pour commencer.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {allCategories.map(cat => {
             const uploading = uploadingFor === cat.id;
             const isEditing = editingId === cat.id;
             return (
               <div key={cat.id} className="relative group rounded-xl overflow-hidden border border-border bg-card">
-                <div className="aspect-[16/9] bg-muted relative">
+                <div className="aspect-square bg-muted relative">
                   {cat.image_url ? (
                     <img src={cat.image_url} alt={cat.name} className="absolute inset-0 w-full h-full object-cover" />
                   ) : (

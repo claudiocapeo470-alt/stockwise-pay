@@ -174,25 +174,31 @@ serve(async (req) => {
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
 
+    const sanitizePhone = (phone?: string) => {
+      const digits = String(phone || "").replace(/\D/g, "");
+      return digits.length >= 8 ? digits.slice(-10) : "0700000000";
+    };
+
     const paiementProPayload = {
       merchantId,
       amount: body.amount,
       description: `Abonnement Stocknix ${body.plan}`,
-      channel: "",
+      channel: "CARD",
       countryCurrencyCode: "952",
       referenceNumber: reference,
       customerEmail: body.email,
       customerFirstName: body.firstName,
-      customerLastname: body.lastName || "",
-      customerPhoneNumber: body.phone || "0700000000",
+      customerLastname: body.lastName || body.firstName || "Client",
+      customerPhoneNumber: sanitizePhone(body.phone),
       notificationURL: notifyUrl,
       returnURL: returnUrl,
       returnContext: reference,
-      hashcode,
     };
 
-    const encodedPayload = new URLSearchParams(
-      Object.entries(paiementProPayload).reduce<Record<string, string>>((acc, [key, value]) => {
+    const paiementProPayloadWithHash = { ...paiementProPayload, hashcode };
+
+    const encodedPayload = (payload: Record<string, unknown>) => new URLSearchParams(
+      Object.entries(payload).reduce<Record<string, string>>((acc, [key, value]) => {
         acc[key] = String(value ?? "");
         return acc;
       }, {})
@@ -202,14 +208,24 @@ serve(async (req) => {
 
     const attempts = [
       {
-        label: "json",
-        headers: { "Content-Type": "application/json", "Accept": "application/json, text/plain, */*" },
+        label: "json-docs",
+        headers: { "Content-Type": "application/json; charset=utf-8", "Accept": "application/json, text/plain, */*" },
         body: JSON.stringify(paiementProPayload),
       },
       {
-        label: "form",
+        label: "json-hash",
+        headers: { "Content-Type": "application/json; charset=utf-8", "Accept": "application/json, text/plain, */*" },
+        body: JSON.stringify(paiementProPayloadWithHash),
+      },
+      {
+        label: "form-docs",
         headers: { "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json, text/plain, */*" },
-        body: encodedPayload.toString(),
+        body: encodedPayload(paiementProPayload).toString(),
+      },
+      {
+        label: "form-hash",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json, text/plain, */*" },
+        body: encodedPayload(paiementProPayloadWithHash).toString(),
       },
     ];
 

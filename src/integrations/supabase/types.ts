@@ -1561,6 +1561,7 @@ export type Database = {
           is_featured: boolean | null
           online_description: string | null
           online_price: number | null
+          out_of_stock_threshold: number
           product_id: string
           published_at: string | null
           store_id: string
@@ -1572,6 +1573,7 @@ export type Database = {
           is_featured?: boolean | null
           online_description?: string | null
           online_price?: number | null
+          out_of_stock_threshold?: number
           product_id: string
           published_at?: string | null
           store_id: string
@@ -1583,6 +1585,7 @@ export type Database = {
           is_featured?: boolean | null
           online_description?: string | null
           online_price?: number | null
+          out_of_stock_threshold?: number
           product_id?: string
           published_at?: string | null
           store_id?: string

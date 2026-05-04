@@ -182,8 +182,8 @@ serve(async (req) => {
     const paiementProPayload = {
       merchantId,
       amount: body.amount,
-      description: `Abonnement Stocknix ${body.plan}`,
-      channel: "CARD",
+      description: `Abonnement Stocknix ${body.plan}`.replace(/[^a-zA-Z0-9 ]/g, ""),
+      channel: "",
       countryCurrencyCode: "952",
       referenceNumber: reference,
       customerEmail: body.email,

@@ -881,11 +881,18 @@ export default function PublicStore() {
                 </button>
               </div>
 
+    const productReviews = reviewsByProduct[p.id] || [];
+    const avgRating = productReviews.length > 0
+      ? productReviews.reduce((s, r) => s + (r.rating || 0), 0) / productReviews.length
+      : 0;
+
               <div className="flex items-center gap-2 mb-5">
                 <div className="flex">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
+                  {[1,2,3,4,5].map(i => (
+                    <Star key={i} className={`h-4 w-4 ${i <= Math.round(avgRating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                  ))}
                 </div>
-                <span className="text-sm text-gray-500">(19 avis)</span>
+                <span className="text-sm text-gray-500">({productReviews.length} avis)</span>
               </div>
 
               <p className="text-3xl font-bold mb-6" style={{ color }}>{fmt(p.price)}</p>

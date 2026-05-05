@@ -191,6 +191,7 @@ export default function PublicStore() {
   const [products, setProducts]     = useState<ProductData[]>([]);
   const [productImages, setProductImages] = useState<Record<string, string[]>>({});
   const [dbCategoryImages, setDbCategoryImages] = useState<Record<string, string>>({});
+  const [reviewsByProduct, setReviewsByProduct] = useState<Record<string, any[]>>({});
   const [loading, setLoading]       = useState(true);
 
   const [search, setSearch]                 = useState("");

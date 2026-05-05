@@ -1036,7 +1036,7 @@ export default function PublicStore() {
 
         {/* STICKY BOTTOM CTA — mobile & tablet uniquement */}
         {isAvailable(p) && store.allow_orders && (
-          <div className="lz-sticky-cta lg:hidden fixed bottom-16 md:bottom-0 left-0 right-0 z-30 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-950/95 backdrop-blur px-4 py-3">
+          <div className="lz-sticky-cta fixed bottom-16 md:bottom-0 left-0 right-0 z-30 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-950/95 backdrop-blur px-4 py-3">
             <div className="container mx-auto flex items-center gap-2">
               <button
                 onClick={() => addToCart(p, qty)}

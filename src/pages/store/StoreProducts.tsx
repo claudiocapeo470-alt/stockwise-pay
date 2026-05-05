@@ -32,14 +32,35 @@ function ProductIcon({ product }: { product: any }) {
 function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: boolean; onClose: () => void; storeId: string; onCreated: () => void }) {
   const { addProduct } = useProducts();
   const { publishProducts } = useStoreProducts(storeId);
-  const { user } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
+  const effectiveUserId = isEmployee ? memberInfo?.owner_id : user?.id;
   const fileRef = useRef<HTMLInputElement>(null);
+  const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     name: '', description: '', price: '', quantity: '0', min_quantity: '5',
     category: '', image_url: '' as string,
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [existingCategories, setExistingCategories] = useState<string[]>([]);
+  const [addingNewCat, setAddingNewCat] = useState(false);
+  const [newCat, setNewCat] = useState('');
+
+  // Charger catégories existantes à l'ouverture
+  React.useEffect(() => {
+    if (!open || !effectiveUserId) return;
+    setStep(1);
+    (async () => {
+      const [{ data: cats }, { data: prods }] = await Promise.all([
+        supabase.from('product_categories').select('name').eq('user_id', effectiveUserId),
+        supabase.from('products').select('category').eq('user_id', effectiveUserId),
+      ]);
+      const set = new Set<string>();
+      (cats || []).forEach((c: any) => c.name && set.add(c.name));
+      (prods || []).forEach((p: any) => p.category && set.add(p.category));
+      setExistingCategories([...set].sort());
+    })();
+  }, [open, effectiveUserId]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,15 +75,23 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
       const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(path);
       setForm(p => ({ ...p, image_url: publicUrl }));
       toast.success('Image chargée');
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setUploading(false);
-      if (fileRef.current) fileRef.current.value = '';
-    }
+    } catch (err: any) { toast.error(err.message); }
+    finally { setUploading(false); if (fileRef.current) fileRef.current.value = ''; }
   };
 
-  const reset = () => setForm({ name: '', description: '', price: '', quantity: '0', min_quantity: '5', category: '', image_url: '' });
+  const reset = () => { setForm({ name: '', description: '', price: '', quantity: '0', min_quantity: '5', category: '', image_url: '' }); setStep(1); };
+
+  const handleAddNewCat = async () => {
+    const n = newCat.trim();
+    if (!n || !effectiveUserId) return;
+    try {
+      await supabase.from('product_categories').insert({ name: n, user_id: effectiveUserId, icon_emoji: '📦' });
+      setExistingCategories(prev => [...new Set([...prev, n])].sort());
+      setForm(p => ({ ...p, category: n }));
+      setNewCat(''); setAddingNewCat(false);
+      toast.success('Catégorie ajoutée');
+    } catch (e: any) { toast.error(e.message); }
+  };
 
   const handleCreate = async () => {
     if (!form.name.trim()) { toast.error('Le nom du produit est requis'); return; }
@@ -76,22 +105,19 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
         quantity: Number(form.quantity) || 0,
         min_quantity: Number(form.min_quantity) || 5,
         category: form.category.trim() || null,
-        sku: null,
-        icon_emoji: '🛍️',
-        icon_bg_color: null,
+        sku: null, icon_emoji: '🛍️', icon_bg_color: null,
         image_url: form.image_url || null,
       });
       await publishProducts.mutateAsync([{ product_id: newProduct.id, online_price: Number(form.price) }]);
       toast.success('Produit créé et publié !');
-      onCreated();
-      reset();
-      onClose();
-    } catch (e: any) {
-      toast.error('Erreur', { description: e.message });
-    } finally {
-      setSaving(false);
-    }
+      onCreated(); reset(); onClose();
+    } catch (e: any) { toast.error('Erreur', { description: e.message }); }
+    finally { setSaving(false); }
   };
+
+  const STEPS = ['Photo', 'Infos', 'Catégorie', 'Stock'];
+  const totalSteps = STEPS.length;
+  const canNext = step === 1 ? true : step === 2 ? !!form.name.trim() && !!form.price : true;
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
@@ -99,65 +125,120 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2"><Plus className="h-5 w-5" /> Nouveau produit</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          {/* Image upload */}
-          <div className="space-y-1.5">
-            <Label>Image du produit</Label>
-            {form.image_url ? (
-              <div className="relative w-32 h-32 rounded-2xl overflow-hidden border border-border group">
-                <img src={form.image_url} alt="" className="w-full h-full object-cover" />
-                <button onClick={() => setForm(p => ({ ...p, image_url: '' }))} className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-white rounded-full p-1">
-                  <X className="h-3 w-3" />
-                </button>
+
+        {/* Stepper */}
+        <div className="flex items-center justify-center gap-1.5 mb-2">
+          {STEPS.map((label, i) => {
+            const s = i + 1;
+            return (
+              <div key={s} className="flex items-center gap-1.5">
+                <button onClick={() => setStep(s)} className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
+                  s < step ? 'bg-emerald-500 text-white' : s === step ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}>{s}</button>
+                {s < totalSteps && <div className={`w-5 h-0.5 ${s < step ? 'bg-emerald-500' : 'bg-muted'}`} />}
               </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => fileRef.current?.click()}
-                disabled={uploading}
-                className="w-32 h-32 rounded-2xl border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 transition flex flex-col items-center justify-center gap-1 text-muted-foreground"
-              >
-                {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><ImageIcon className="h-5 w-5" /><span className="text-[11px]">Téléverser</span></>}
-              </button>
-            )}
-            <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label>Nom du produit *</Label>
-            <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Ex: T-shirt Wax" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label>Prix (XOF) *</Label>
-              <Input type="number" value={form.price} onChange={e => setForm(p => ({ ...p, price: e.target.value }))} placeholder="5000" />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Quantité en stock</Label>
-              <Input type="number" value={form.quantity} onChange={e => setForm(p => ({ ...p, quantity: e.target.value }))} placeholder="0" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label>Catégorie</Label>
-              <Input value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} placeholder="Vêtements..." />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Seuil rupture</Label>
-              <Input type="number" value={form.min_quantity} onChange={e => setForm(p => ({ ...p, min_quantity: e.target.value }))} placeholder="5" />
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label>Description</Label>
-            <Textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Décrivez votre produit..." rows={3} />
-          </div>
+            );
+          })}
         </div>
-        <DialogFooter className="flex-col sm:flex-row gap-2">
-          <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">Annuler</Button>
-          <Button onClick={handleCreate} disabled={saving} className="w-full sm:w-auto">{saving ? 'Création...' : 'Créer et publier'}</Button>
+        <p className="text-center text-xs text-muted-foreground mb-2">Étape {step}/{totalSteps} — {STEPS[step - 1]}</p>
+
+        <div className="space-y-4 min-h-[260px]">
+          {/* ÉTAPE 1: Photo */}
+          {step === 1 && (
+            <div className="space-y-1.5">
+              <Label>Image du produit</Label>
+              {form.image_url ? (
+                <div className="relative w-40 h-40 rounded-2xl overflow-hidden border border-border mx-auto">
+                  <img src={form.image_url} alt="" className="w-full h-full object-cover" />
+                  <button onClick={() => setForm(p => ({ ...p, image_url: '' }))} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1"><X className="h-3 w-3" /></button>
+                </div>
+              ) : (
+                <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+                  className="w-40 h-40 mx-auto rounded-2xl border-2 border-dashed border-border hover:border-primary flex flex-col items-center justify-center gap-1 text-muted-foreground">
+                  {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><ImageIcon className="h-6 w-6" /><span className="text-xs">Téléverser</span></>}
+                </button>
+              )}
+              <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+              <p className="text-xs text-muted-foreground text-center">PNG, JPG · 3 Mo max (optionnel)</p>
+            </div>
+          )}
+
+          {/* ÉTAPE 2: Infos */}
+          {step === 2 && (
+            <>
+              <div className="space-y-1.5">
+                <Label>Nom du produit *</Label>
+                <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Ex: T-shirt Wax" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Prix (XOF) *</Label>
+                <Input type="number" value={form.price} onChange={e => setForm(p => ({ ...p, price: e.target.value }))} placeholder="5000" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Description</Label>
+                <Textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Décrivez votre produit..." rows={3} />
+              </div>
+            </>
+          )}
+
+          {/* ÉTAPE 3: Catégorie */}
+          {step === 3 && (
+            <div className="space-y-2">
+              <Label>Choisir une catégorie</Label>
+              {existingCategories.length === 0 && !addingNewCat && (
+                <p className="text-xs text-muted-foreground">Aucune catégorie. Créez-en une nouvelle.</p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {existingCategories.map(c => (
+                  <button key={c} onClick={() => setForm(p => ({ ...p, category: c }))}
+                    className={`px-3 py-1.5 text-xs rounded-full border transition-colors ${form.category === c ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-border hover:border-primary'}`}>
+                    {c}
+                  </button>
+                ))}
+                {!addingNewCat && (
+                  <button onClick={() => setAddingNewCat(true)} className="px-3 py-1.5 text-xs rounded-full border border-dashed border-border hover:border-primary flex items-center gap-1">
+                    <Plus className="h-3 w-3" /> Nouvelle
+                  </button>
+                )}
+              </div>
+              {addingNewCat && (
+                <div className="flex gap-2 mt-2">
+                  <Input value={newCat} onChange={e => setNewCat(e.target.value)} placeholder="Nom de la catégorie" autoFocus
+                    onKeyDown={e => { if (e.key === 'Enter') handleAddNewCat(); }} />
+                  <Button size="sm" onClick={handleAddNewCat} disabled={!newCat.trim()}>OK</Button>
+                  <Button size="sm" variant="outline" onClick={() => { setAddingNewCat(false); setNewCat(''); }}>Annuler</Button>
+                </div>
+              )}
+              {form.category && <p className="text-xs text-muted-foreground">Sélectionnée : <span className="font-medium text-foreground">{form.category}</span></p>}
+            </div>
+          )}
+
+          {/* ÉTAPE 4: Stock */}
+          {step === 4 && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label>Quantité en stock</Label>
+                <Input type="number" value={form.quantity} onChange={e => setForm(p => ({ ...p, quantity: e.target.value }))} placeholder="0" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Seuil rupture</Label>
+                <Input type="number" value={form.min_quantity} onChange={e => setForm(p => ({ ...p, min_quantity: e.target.value }))} placeholder="5" />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter className="flex-row gap-2 justify-between">
+          {step > 1 ? (
+            <Button variant="outline" size="sm" onClick={() => setStep(s => s - 1)}>← Précédent</Button>
+          ) : (
+            <Button variant="outline" size="sm" onClick={onClose}>Annuler</Button>
+          )}
+          {step < totalSteps ? (
+            <Button size="sm" onClick={() => setStep(s => s + 1)} disabled={!canNext}>Suivant →</Button>
+          ) : (
+            <Button size="sm" onClick={handleCreate} disabled={saving}>{saving ? 'Création...' : '✓ Créer et publier'}</Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

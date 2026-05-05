@@ -809,6 +809,10 @@ export default function PublicStore() {
     const imgs = getProductImages(p);
     const isFav = favorites.has(p.id);
     const similar = products.filter(x => x.category === p.category && x.id !== p.id).slice(0, 4);
+    const productReviews = reviewsByProduct[p.id] || [];
+    const avgRating = productReviews.length > 0
+      ? productReviews.reduce((s, r) => s + (r.rating || 0), 0) / productReviews.length
+      : 0;
 
     const handleBuyNow = () => {
       if (!isAvailable(p)) return;
@@ -881,10 +885,6 @@ export default function PublicStore() {
                 </button>
               </div>
 
-    const productReviews = reviewsByProduct[p.id] || [];
-    const avgRating = productReviews.length > 0
-      ? productReviews.reduce((s, r) => s + (r.rating || 0), 0) / productReviews.length
-      : 0;
 
               <div className="flex items-center gap-2 mb-5">
                 <div className="flex">

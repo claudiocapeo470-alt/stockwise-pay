@@ -921,28 +921,10 @@ export default function PublicStore() {
                 </div>
               </div>
 
-              {/* Boutons (visibles inline desktop, sticky bottom mobile/tablet) */}
-              {!isAvailable(p) ? (
+              {/* Rupture de stock — sinon les boutons sont en sticky bottom */}
+              {!isAvailable(p) && (
                 <p className="text-red-500 font-semibold text-center py-4">Rupture de stock</p>
-              ) : store.allow_orders ? (
-                <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button
-                    onClick={() => addToCart(p, qty)}
-                    className="py-4 px-6 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white text-sm font-semibold hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-colors flex items-center justify-center gap-2 rounded-full"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    Ajouter au panier
-                  </button>
-                  <button
-                    onClick={handleBuyNow}
-                    className="lz-btn-cta py-4 px-6 text-white text-sm font-semibold rounded-full flex items-center justify-center gap-2"
-                    style={{ background: color }}
-                  >
-                    Acheter maintenant
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              ) : null}
+              )}
 
               {store.show_stock && isAvailable(p) && (
                 <p className="text-xs text-gray-400 text-center mt-3">{p.quantity} en stock</p>

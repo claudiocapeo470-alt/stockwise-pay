@@ -191,6 +191,7 @@ export default function PublicStore() {
   const [products, setProducts]     = useState<ProductData[]>([]);
   const [productImages, setProductImages] = useState<Record<string, string[]>>({});
   const [dbCategoryImages, setDbCategoryImages] = useState<Record<string, string>>({});
+  const [reviewsByProduct, setReviewsByProduct] = useState<Record<string, any[]>>({});
   const [loading, setLoading]       = useState(true);
 
   const [search, setSearch]                 = useState("");
@@ -280,6 +281,21 @@ export default function PublicStore() {
       const catMap: Record<string, string> = {};
       (cats || []).forEach((c: any) => { if (c.image_url) catMap[c.name] = c.image_url; });
       setDbCategoryImages(catMap);
+
+      // Load real reviews for this store
+      const { data: revs } = await supabase
+        .from("store_reviews")
+        .select("*")
+        .eq("store_id", storeData.id)
+        .eq("is_approved", true)
+        .order("created_at", { ascending: false });
+      const revMap: Record<string, any[]> = {};
+      (revs || []).forEach((r: any) => {
+        const key = r.product_id || "_store";
+        if (!revMap[key]) revMap[key] = [];
+        revMap[key].push(r);
+      });
+      setReviewsByProduct(revMap);
 
       setLoading(false);
     };
@@ -467,11 +483,12 @@ export default function PublicStore() {
               <Heart className={`h-4 w-4 ${isFav ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); goToProduct(product.id); }}
+              onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }}
               className="h-9 w-9 bg-white dark:bg-gray-800 shadow flex items-center justify-center hover:scale-110 transition-transform"
-              aria-label="Vue rapide"
+              aria-label="Ajouter au panier"
+              disabled={!isAvailable(product)}
             >
-              <Eye className="h-4 w-4 text-gray-600" />
+              <ShoppingCart className="h-4 w-4 text-gray-600" />
             </button>
           </div>
 
@@ -792,6 +809,10 @@ export default function PublicStore() {
     const imgs = getProductImages(p);
     const isFav = favorites.has(p.id);
     const similar = products.filter(x => x.category === p.category && x.id !== p.id).slice(0, 4);
+    const productReviews = reviewsByProduct[p.id] || [];
+    const avgRating = productReviews.length > 0
+      ? productReviews.reduce((s, r) => s + (r.rating || 0), 0) / productReviews.length
+      : 0;
 
     const handleBuyNow = () => {
       if (!isAvailable(p)) return;
@@ -864,11 +885,14 @@ export default function PublicStore() {
                 </button>
               </div>
 
+
               <div className="flex items-center gap-2 mb-5">
                 <div className="flex">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
+                  {[1,2,3,4,5].map(i => (
+                    <Star key={i} className={`h-4 w-4 ${i <= Math.round(avgRating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                  ))}
                 </div>
-                <span className="text-sm text-gray-500">(19 avis)</span>
+                <span className="text-sm text-gray-500">({productReviews.length} avis)</span>
               </div>
 
               <p className="text-3xl font-bold mb-6" style={{ color }}>{fmt(p.price)}</p>
@@ -897,28 +921,10 @@ export default function PublicStore() {
                 </div>
               </div>
 
-              {/* Boutons (visibles inline desktop, sticky bottom mobile/tablet) */}
-              {!isAvailable(p) ? (
+              {/* Rupture de stock — sinon les boutons sont en sticky bottom */}
+              {!isAvailable(p) && (
                 <p className="text-red-500 font-semibold text-center py-4">Rupture de stock</p>
-              ) : store.allow_orders ? (
-                <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button
-                    onClick={() => addToCart(p, qty)}
-                    className="py-4 px-6 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white text-sm font-semibold hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-colors flex items-center justify-center gap-2 rounded-full"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    Ajouter au panier
-                  </button>
-                  <button
-                    onClick={handleBuyNow}
-                    className="lz-btn-cta py-4 px-6 text-white text-sm font-semibold rounded-full flex items-center justify-center gap-2"
-                    style={{ background: color }}
-                  >
-                    Acheter maintenant
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              ) : null}
+              )}
 
               {store.show_stock && isAvailable(p) && (
                 <p className="text-xs text-gray-400 text-center mt-3">{p.quantity} en stock</p>
@@ -947,7 +953,7 @@ export default function PublicStore() {
                   color: tab === "reviews" ? color : "#6b7280",
                 }}
               >
-                Avis (19)
+                Avis ({productReviews.length})
               </button>
             </div>
 
@@ -973,15 +979,22 @@ export default function PublicStore() {
               </div>
             ) : (
               <div className="space-y-4">
-                {[1,2,3].map(i => (
-                  <div key={i} className="border-b border-gray-100 dark:border-gray-800 pb-4">
+                {productReviews.length === 0 ? (
+                  <div className="text-center py-10 text-gray-400">
+                    <Star className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                    <p className="text-sm">Aucun avis pour le moment</p>
+                  </div>
+                ) : productReviews.map((r: any) => (
+                  <div key={r.id} className="border-b border-gray-100 dark:border-gray-800 pb-4">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex">
-                        {[1,2,3,4,5].map(s => <Star key={s} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />)}
+                        {[1,2,3,4,5].map(s => (
+                          <Star key={s} className={`h-3.5 w-3.5 ${s <= (r.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                        ))}
                       </div>
-                      <span className="text-sm font-semibold">Client satisfait</span>
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">{r.customer_name}</span>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">Excellent produit, je recommande vivement !</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{r.comment}</p>
                   </div>
                 ))}
               </div>
@@ -1005,7 +1018,7 @@ export default function PublicStore() {
 
         {/* STICKY BOTTOM CTA — mobile & tablet uniquement */}
         {isAvailable(p) && store.allow_orders && (
-          <div className="lz-sticky-cta lg:hidden fixed bottom-16 md:bottom-0 left-0 right-0 z-30 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-950/95 backdrop-blur px-4 py-3">
+          <div className="lz-sticky-cta fixed bottom-16 md:bottom-0 left-0 right-0 z-30 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-950/95 backdrop-blur px-4 py-3">
             <div className="container mx-auto flex items-center gap-2">
               <button
                 onClick={() => addToCart(p, qty)}

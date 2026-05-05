@@ -26,11 +26,12 @@ const COLOR_PALETTE = [
   { name: "Noir", value: "#111827" }, { name: "Lime", value: "#65a30d" },
 ];
 
-// 3 étapes au lieu de 4
+// 4 étapes : Identité, Design, Catégories, Contact
 const STEPS = [
   { id: 1, title: "Identité", icon: Store, desc: "Nom et URL de votre boutique" },
   { id: 2, title: "Design", icon: Palette, desc: "Couleur et bannière" },
-  { id: 3, title: "Contact", icon: Phone, desc: "Coordonnées et options" },
+  { id: 3, title: "Catégories", icon: Tags, desc: "Catégories de la boutique" },
+  { id: 4, title: "Contact", icon: Phone, desc: "Coordonnées et options" },
 ];
 
 const MAX_BANNER_SIZE = 3 * 1024 * 1024; // 3 MB
@@ -434,15 +435,22 @@ export default function StoreConfig() {
                 </p>
               </div>
 
-              {/* GESTION DES CATÉGORIES */}
-              <div className="border-t border-border pt-6">
-                <CategoryManager />
-              </div>
             </>
           )}
 
-          {/* ÉTAPE 3 — CONTACT + LIVRAISON + OPTIONS */}
+          {/* ÉTAPE 3 — CATÉGORIES */}
           {currentStep === 3 && (
+            <>
+              <div className="flex items-center gap-2 pb-3 border-b border-border">
+                <Tags className="h-4 w-4 text-primary" />
+                <h2 className="text-base font-bold">Catégories de la boutique</h2>
+              </div>
+              <CategoryManager />
+            </>
+          )}
+
+          {/* ÉTAPE 4 — CONTACT + LIVRAISON + OPTIONS */}
+          {currentStep === 4 && (
             <>
               <div className="flex items-center gap-2 pb-3 border-b border-border">
                 <Phone className="h-4 w-4 text-primary" />

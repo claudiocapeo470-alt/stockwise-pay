@@ -467,11 +467,12 @@ export default function PublicStore() {
               <Heart className={`h-4 w-4 ${isFav ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); goToProduct(product.id); }}
+              onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }}
               className="h-9 w-9 bg-white dark:bg-gray-800 shadow flex items-center justify-center hover:scale-110 transition-transform"
-              aria-label="Vue rapide"
+              aria-label="Ajouter au panier"
+              disabled={!isAvailable(product)}
             >
-              <Eye className="h-4 w-4 text-gray-600" />
+              <ShoppingCart className="h-4 w-4 text-gray-600" />
             </button>
           </div>
 

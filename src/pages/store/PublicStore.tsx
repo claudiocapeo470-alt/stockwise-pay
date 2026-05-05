@@ -971,7 +971,7 @@ export default function PublicStore() {
                   color: tab === "reviews" ? color : "#6b7280",
                 }}
               >
-                Avis (19)
+                Avis ({productReviews.length})
               </button>
             </div>
 
@@ -997,15 +997,22 @@ export default function PublicStore() {
               </div>
             ) : (
               <div className="space-y-4">
-                {[1,2,3].map(i => (
-                  <div key={i} className="border-b border-gray-100 dark:border-gray-800 pb-4">
+                {productReviews.length === 0 ? (
+                  <div className="text-center py-10 text-gray-400">
+                    <Star className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                    <p className="text-sm">Aucun avis pour le moment</p>
+                  </div>
+                ) : productReviews.map((r: any) => (
+                  <div key={r.id} className="border-b border-gray-100 dark:border-gray-800 pb-4">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex">
-                        {[1,2,3,4,5].map(s => <Star key={s} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />)}
+                        {[1,2,3,4,5].map(s => (
+                          <Star key={s} className={`h-3.5 w-3.5 ${s <= (r.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                        ))}
                       </div>
-                      <span className="text-sm font-semibold">Client satisfait</span>
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">{r.customer_name}</span>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">Excellent produit, je recommande vivement !</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{r.comment}</p>
                   </div>
                 ))}
               </div>

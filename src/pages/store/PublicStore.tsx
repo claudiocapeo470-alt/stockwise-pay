@@ -282,6 +282,21 @@ export default function PublicStore() {
       (cats || []).forEach((c: any) => { if (c.image_url) catMap[c.name] = c.image_url; });
       setDbCategoryImages(catMap);
 
+      // Load real reviews for this store
+      const { data: revs } = await supabase
+        .from("store_reviews")
+        .select("*")
+        .eq("store_id", storeData.id)
+        .eq("is_approved", true)
+        .order("created_at", { ascending: false });
+      const revMap: Record<string, any[]> = {};
+      (revs || []).forEach((r: any) => {
+        const key = r.product_id || "_store";
+        if (!revMap[key]) revMap[key] = [];
+        revMap[key].push(r);
+      });
+      setReviewsByProduct(revMap);
+
       setLoading(false);
     };
     load();

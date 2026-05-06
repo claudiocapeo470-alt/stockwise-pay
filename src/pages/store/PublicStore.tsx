@@ -1013,7 +1013,7 @@ export default function PublicStore() {
             <div className="container mx-auto flex items-center gap-2">
               <button
                 onClick={() => addToCart(p, qty)}
-                className="flex-1 py-3 px-3 border-2 border-gray-900 dark:border-white text-foreground text-xs sm:text-sm font-semibold hover:bg-card hover:text-white transition-colors flex items-center justify-center gap-1.5 rounded-full"
+                className="flex-1 py-3 px-3 border-2 border-foreground text-foreground text-xs sm:text-sm font-semibold hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-1.5 rounded-full"
               >
                 <ShoppingCart className="h-4 w-4" />
                 <span className="hidden sm:inline">Ajouter au panier</span>

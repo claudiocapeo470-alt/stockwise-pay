@@ -13,6 +13,7 @@ import {
   ChevronLeft, CheckCircle, ShoppingBag, Truck, Shield,
   CreditCard, MessageCircle, Loader2,
 } from "lucide-react";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 interface CartItem {
   id: string; name: string; price: number; quantity: number;

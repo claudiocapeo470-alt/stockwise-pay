@@ -396,7 +396,7 @@ export default function PublicStore() {
   // ─── Loading / 404 ──────────────────────────────────────────────────────────
   if (loading) return (
     <div style={{ fontFamily: "Inter, sans-serif" }}
-      className="flex items-center justify-center min-h-screen bg-white dark:bg-background">
+      className="flex items-center justify-center min-h-screen bg-background">
       <div className="flex flex-col items-center gap-4">
         <div className="h-10 w-10 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
         <p className="text-sm text-muted-foreground">Chargement de la boutique…</p>
@@ -1201,7 +1201,7 @@ export default function PublicStore() {
             <h3 className="lz-heading text-sm uppercase tracking-wider text-muted-foreground mb-3 px-1">Contact boutique</h3>
             <div className="rounded-2xl bg-muted/40 divide-y divide-gray-100 dark:divide-gray-800">
               {store.phone && (
-                <a href={`tel:${store.phone}`} className="flex items-center gap-3 p-4 active:bg-muted dark:active:bg-gray-800 transition-colors">
+                <a href={`tel:${store.phone}`} className="flex items-center gap-3 p-4 active:bg-muted transition-colors">
                   <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}><Phone className="h-4 w-4" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-muted-foreground">Téléphone</p>
@@ -1211,7 +1211,7 @@ export default function PublicStore() {
                 </a>
               )}
               {store.email && (
-                <a href={`mailto:${store.email}`} className="flex items-center gap-3 p-4 active:bg-muted dark:active:bg-gray-800 transition-colors">
+                <a href={`mailto:${store.email}`} className="flex items-center gap-3 p-4 active:bg-muted transition-colors">
                   <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}><Mail className="h-4 w-4" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-muted-foreground">Email</p>
@@ -1254,7 +1254,7 @@ export default function PublicStore() {
   const CartDrawer = () => (
     <div className="fixed inset-0 z-50 flex">
       <div className="flex-1 bg-black/40 backdrop-blur-sm" onClick={() => setShowCart(false)} />
-      <div className="w-full max-w-sm bg-white dark:bg-background flex flex-col h-full shadow-2xl">
+      <div className="w-full max-w-sm bg-background flex flex-col h-full shadow-2xl">
         <div className="flex items-center justify-between p-5 border-b border-border">
           <h2 className="lz-heading text-lg text-foreground">Panier ({totalItems})</h2>
           <button onClick={() => setShowCart(false)} className="h-9 w-9 flex items-center justify-center text-muted-foreground/70 hover:text-muted-foreground">
@@ -1326,8 +1326,8 @@ export default function PublicStore() {
   const CheckoutModal = () => (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowCheckout(false)} />
-      <div className="relative w-full sm:max-w-md bg-white dark:bg-background max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white dark:bg-background flex items-center justify-between p-5 border-b border-border z-10">
+      <div className="relative w-full sm:max-w-md bg-background max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-background flex items-center justify-between p-5 border-b border-border z-10">
           <h2 className="lz-heading text-lg text-foreground">Finaliser la commande</h2>
           <button onClick={() => setShowCheckout(false)} className="text-muted-foreground/70 hover:text-muted-foreground">
             <X className="h-5 w-5" />
@@ -1403,7 +1403,7 @@ export default function PublicStore() {
 
   // ─── ORDER SUCCESS ───────────────────────────────────────────────────────────
   if (orderSuccess) return (
-    <div className={`lz-root ${darkMode ? "dark" : ""} flex items-center justify-center min-h-screen bg-white dark:bg-background p-6`}>
+    <div className={`lz-root ${darkMode ? "dark" : ""} flex items-center justify-center min-h-screen bg-background p-6`}>
       <style>{ZONE_STYLES}</style>
       <div className="text-center space-y-5 max-w-sm">
         <div className="text-7xl animate-bounce">✅</div>
@@ -1436,11 +1436,11 @@ export default function PublicStore() {
 
   // ─── RENDER ──────────────────────────────────────────────────────────────────
   return (
-    <div className={`lz-root ${darkMode ? "dark" : ""} min-h-screen bg-white dark:bg-background text-foreground`}>
+    <div className={`lz-root ${darkMode ? "dark" : ""} min-h-screen bg-background text-foreground`}>
       <style>{ZONE_STYLES}</style>
 
       {/* HEADER — style Capture 1 */}
-      <header className="sticky top-0 z-40 bg-white dark:bg-background border-b border-border">
+      <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between h-16 md:h-20 gap-4">
             {/* Logo */}

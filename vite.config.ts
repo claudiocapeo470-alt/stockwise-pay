@@ -68,6 +68,16 @@ export default defineConfig(({ mode }) => ({
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
+            // HTML : toujours essayer le réseau (sinon les utilisateurs restent bloqués sur l'ancienne version)
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'html-cache',
+              networkTimeoutSeconds: 3,
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 },
+            },
+          },
+          {
             urlPattern: /\.supabase\.co/,
             handler: 'NetworkFirst',
             options: {

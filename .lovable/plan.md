@@ -1,78 +1,72 @@
+# Plan d'amélioration Boutique en ligne
 
+Travaux organisés en 5 lots indépendants. Je peux exécuter dans l'ordre proposé ou un sous-ensemble selon votre priorité.
 
-## Objectif
+## Lot 1 — Wizard "Créer un produit" (StoreProducts.tsx)
 
-Forcer l'affichage et le partage du lien boutique au format **`https://www.stocknix.com/boutique/<slug>`** uniquement, partout dans l'application — jamais d'URL `lovableproject.com` ou `lovable.app`. Et s'assurer que ce lien fonctionne réellement en production.
+**Étape 1 — Photos (multi-images, design capture 2)**
+- Grille 4 colonnes, jusqu'à 8 photos (PNG/JPG/WEBP, max 5 Mo chacune)
+- Première photo = badge "Principal" bleu
+- Tuiles vides cliquables avec icône `+` et label "Photo"
+- Compteur "X/8 images" + texte d'aide
+- Upload vers bucket `product-images`, stockage URLs dans state local; écriture dans `product_images` après création du produit
 
-## Le problème actuel
+**Étape 2 — Infos + Description riche (capture 1)**
+- Nom, Prix conservés
+- Remplace `Textarea` par `RichTextEditor` existant (`src/components/stocks/RichTextEditor.tsx`) — barre d'outils Bold / Italic / Souligne / Liste / Image, tous boutons fonctionnels
+- Texte d'aide "Utilisez la barre d'outils pour formater"
 
-Dans `src/pages/store/StoreConfig.tsx`, la fonction `getBaseUrl()` n'utilise `https://stocknix.com` **que** si l'utilisateur consulte déjà depuis ce domaine. Sinon, elle retourne `window.location.origin` — ce qui produit des URLs `https://f5fa4211-...lovableproject.com/boutique/...` quand on est dans l'éditeur ou la preview. C'est ce que vous voyez.
+**Étape 3 — Catégorie avec images**
+- Liste des catégories sous forme de cartes arrondies (rounded-2xl) avec image + nom centré
+- Bouton "Nouvelle catégorie" ouvre mini-form: nom + upload image (bucket `product-images/categories/`)
+- Sauvegarde dans `product_categories` avec champ `image_url` (nouveau)
+- Sélection visuelle (ring primary)
 
-Le lien `https://www.stocknix.com/boutique/...` ne fonctionnera réellement que si le domaine `www.stocknix.com` est correctement connecté à ce projet Lovable via DNS.
+**Étape 4 — Stock** (inchangé)
 
-## Plan d'action
+## Lot 2 — Refonte page "Produits en ligne"
 
-### 1. Forcer l'URL canonique partout (code)
+- Container `max-w-5xl` + `px-4 sm:px-6` strict, `overflow-x-hidden` sur racine
+- Suppression du tableau desktop horizontal → grille de cartes responsive (1/2/3 colonnes) cohérente avec mobile
+- Chips de filtre minimalistes au lieu de Tabs lourdes
+- Suppression définitive accessible directement, sans menu
 
-Dans `src/pages/store/StoreConfig.tsx` :
-- Remplacer la logique conditionnelle de `getBaseUrl()` par une **constante figée** `https://www.stocknix.com`.
-- Tous les affichages (étape 1 du formulaire, badge "En ligne", bouton "Voir", bouton "Copier") afficheront et copieront systématiquement :  
-  `https://www.stocknix.com/boutique/<slug>`
-- Le bouton **"Voir"** ouvrira ce lien canonique dans un nouvel onglet (et fonctionnera dès que le domaine sera actif).
+## Lot 3 — Cache / PWA "ancienne version"
 
-Aucune autre page n'expose d'URL boutique au public — ce changement suffit côté code.
+**Diagnostic**: le service worker (`public/manifest.json` + Workbox via Vite) sert l'ancienne build tant que l'utilisateur ne ferme pas tous les onglets. Lovable preview a aussi un cache CDN agressif.
 
-### 2. Vérifier la connexion du domaine personnalisé (action côté Lovable)
+**Correctifs**:
+- Ajouter `<meta http-equiv="Cache-Control" content="no-cache">` sur `index.html`
+- Service worker : activer `skipWaiting` + `clientsClaim` et afficher un toast "Nouvelle version disponible — Recharger" lorsqu'une mise à jour est détectée
+- Versionner les assets (déjà fait via Vite hash) et purger via `caches.keys()` au démarrage si version bump
 
-Après mes modifications, j'ouvrirai pour vous l'écran **Project Settings → Domains** pour vérifier l'état de `stocknix.com` et `www.stocknix.com` :
+## Lot 4 — Sticky CTA mobile (Boutique publique)
 
-| Statut affiché | Signification | Action |
-|---|---|---|
-| ✅ **Active** | Domaine connecté, le lien marche | Rien à faire |
-| ⚠️ **Verifying** / **Setting up** | DNS en cours de propagation | Attendre (jusqu'à 72 h) |
-| ❌ **Action required** / **Offline** / absent | Domaine pas (ou plus) connecté | Suivre l'étape 3 ci-dessous |
+- Sur `/store/:slug/product/:id` (et carte produit) : barre fixe `bottom-16` (au-dessus du `BottomNav` h-16) avec deux boutons côte à côte : "Ajouter au panier" (variant outline) + "Acheter maintenant" (primary)
+- Animation slide-up à l'apparition
+- Padding-bottom du conteneur scroll pour ne pas masquer le contenu
 
-### 3. Configuration DNS (à faire chez Hostinger si nécessaire)
+## Lot 5 — Indicatifs téléphoniques internationaux
 
-Pour que `https://www.stocknix.com/boutique/...` fonctionne, deux **enregistrements A** doivent pointer vers Lovable :
+- Installer `react-phone-number-input` (léger, drapeaux SVG inclus)
+- Créer `<PhoneInput />` wrapper utilisant nos tokens
+- Remplacer tous les `<Input type="tel">` dans : Checkout, StoreConfig, Profile, TeamManagement, AddPaymentDialog, etc.
+- Pays par défaut = pays de la boutique (XOF → CI/SN/BJ selon la devise)
 
-```text
-Type    Nom    Valeur            TTL
-A       @      185.158.133.1     3600
-A       www    185.158.133.1     3600
-```
+## Lot 6 — Icône panier carte produit (capture 3)
 
-Et un enregistrement de vérification (généré par Lovable lors de la connexion) :
+- Sur `PublicStore.tsx` : le bouton flottant en haut à droite de la carte produit (icône cart) appelle `addToCart(product)` directement, toast "Ajouté au panier"
+- Persistance via localStorage par store_slug
 
-```text
-Type    Nom         Valeur
-TXT     _lovable    lovable_verify=XXXX  (fourni par Lovable)
-```
+---
 
-S'il existe d'anciens enregistrements A pointant vers Hostinger (page de parking) → **les supprimer**.
+## Ordre d'exécution recommandé
 
-### 4. Publier
+1. Lot 1 (wizard) — plus gros impact UX
+2. Lot 6 (icône panier) — petit fix rapide  
+3. Lot 4 (CTA mobile fixe)
+4. Lot 5 (indicatifs tél)
+5. Lot 2 (refonte liste produits)
+6. Lot 3 (cache PWA) — délicat, à tester soigneusement
 
-Après la modification du code, publier une nouvelle version pour que le changement prenne effet sur `stocknix.lovable.app` et le domaine personnalisé.
-
-## Détail technique du changement de code
-
-```ts
-// src/pages/store/StoreConfig.tsx
-const PUBLIC_DOMAIN = 'https://www.stocknix.com';
-const storeUrl = `${PUBLIC_DOMAIN}/boutique/${form.slug}`;
-```
-
-Suppression complète de `getBaseUrl()` et de la branche `window.location.origin`.
-
-## Fichiers modifiés
-
-- `src/pages/store/StoreConfig.tsx`
-
-## Ordre d'exécution une fois ce plan approuvé
-
-1. Modifier `StoreConfig.tsx` (URL canonique forcée).
-2. Ouvrir **Project Settings → Domains** pour vérifier l'état du domaine et m'assurer qu'il est bien connecté à ce projet.
-3. Publier la nouvelle version.
-4. Si le domaine n'est pas Active : vous guider précisément dans Hostinger pour corriger les enregistrements DNS.
-
+Confirmez-vous l'ordre et la portée, ou voulez-vous prioriser certains lots seulement ?

@@ -13,6 +13,7 @@ import {
   ChevronLeft, CheckCircle, ShoppingBag, Truck, Shield,
   CreditCard, MessageCircle, Loader2,
 } from "lucide-react";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 interface CartItem {
   id: string; name: string; price: number; quantity: number;
@@ -226,7 +227,10 @@ export default function Checkout() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Nom complet *" placeholder="Jean Dupont" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
-                <Field label="Téléphone *" type="tel" placeholder="+225 07 XX XX XX XX" value={form.phone} onChange={v => setForm(p => ({ ...p, phone: v }))} />
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Téléphone *</label>
+                  <PhoneInput value={form.phone} onChange={v => setForm(p => ({ ...p, phone: v || '' }))} defaultCountry="CI" />
+                </div>
                 <div className="sm:col-span-2">
                   <Field label="Email" type="email" placeholder="exemple@mail.com" value={form.email} onChange={v => setForm(p => ({ ...p, email: v }))} />
                 </div>

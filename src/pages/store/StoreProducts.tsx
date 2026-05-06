@@ -30,68 +30,111 @@ function ProductIcon({ product }: { product: any }) {
   );
 }
 
+interface CategoryItem { id?: string; name: string; image_url: string | null; }
+
 function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: boolean; onClose: () => void; storeId: string; onCreated: () => void }) {
   const { addProduct } = useProducts();
   const { publishProducts } = useStoreProducts(storeId);
   const { user, isEmployee, memberInfo } = useAuth();
   const effectiveUserId = isEmployee ? memberInfo?.owner_id : user?.id;
   const fileRef = useRef<HTMLInputElement>(null);
+  const catFileRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
+  const MAX_IMAGES = 8;
+  const [images, setImages] = useState<string[]>([]);
   const [form, setForm] = useState({
-    name: '', description: '', price: '', quantity: '0', min_quantity: '5',
-    category: '', image_url: '' as string,
+    name: '', description: '', price: '', quantity: '0', min_quantity: '5', category: '',
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [existingCategories, setExistingCategories] = useState<string[]>([]);
+
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [addingNewCat, setAddingNewCat] = useState(false);
-  const [newCat, setNewCat] = useState('');
+  const [newCatName, setNewCatName] = useState('');
+  const [newCatImage, setNewCatImage] = useState<string>('');
+  const [savingCat, setSavingCat] = useState(false);
 
-  // Charger catégories existantes à l'ouverture
-  React.useEffect(() => {
-    if (!open || !effectiveUserId) return;
-    setStep(1);
-    (async () => {
-      const [{ data: cats }, { data: prods }] = await Promise.all([
-        supabase.from('product_categories').select('name').eq('user_id', effectiveUserId),
-        supabase.from('products').select('category').eq('user_id', effectiveUserId),
-      ]);
-      const set = new Set<string>();
-      (cats || []).forEach((c: any) => c.name && set.add(c.name));
-      (prods || []).forEach((p: any) => p.category && set.add(p.category));
-      setExistingCategories([...set].sort());
-    })();
-  }, [open, effectiveUserId]);
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-    if (file.size > 3 * 1024 * 1024) { toast.error('Image trop lourde (max 3 Mo)'); return; }
-    setUploading(true);
-    try {
-      const ext = file.name.split('.').pop();
-      const path = `${user.id}/product-${Date.now()}.${ext}`;
-      const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: false });
-      if (error) throw error;
-      const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(path);
-      setForm(p => ({ ...p, image_url: publicUrl }));
-      toast.success('Image chargée');
-    } catch (err: any) { toast.error(err.message); }
-    finally { setUploading(false); if (fileRef.current) fileRef.current.value = ''; }
+  const reset = () => {
+    setForm({ name: '', description: '', price: '', quantity: '0', min_quantity: '5', category: '' });
+    setImages([]); setStep(1); setAddingNewCat(false); setNewCatName(''); setNewCatImage('');
   };
 
-  const reset = () => { setForm({ name: '', description: '', price: '', quantity: '0', min_quantity: '5', category: '', image_url: '' }); setStep(1); };
+  const loadCategories = React.useCallback(async () => {
+    if (!effectiveUserId) return;
+    const { data: cats } = await supabase
+      .from('product_categories').select('id, name, image_url').eq('user_id', effectiveUserId);
+    const map = new Map<string, CategoryItem>();
+    (cats || []).forEach((c: any) => map.set(c.name, { id: c.id, name: c.name, image_url: c.image_url }));
+    // Inclure les noms de catégories utilisés sur des produits existants même sans image
+    const { data: prods } = await supabase
+      .from('products').select('category').eq('user_id', effectiveUserId);
+    (prods || []).forEach((p: any) => {
+      if (p.category && !map.has(p.category)) map.set(p.category, { name: p.category, image_url: null });
+    });
+    setCategories([...map.values()].sort((a, b) => a.name.localeCompare(b.name)));
+  }, [effectiveUserId]);
 
-  const handleAddNewCat = async () => {
-    const n = newCat.trim();
-    if (!n || !effectiveUserId) return;
+  React.useEffect(() => {
+    if (!open) return;
+    setStep(1); reset();
+    loadCategories();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  const uploadFile = async (file: File, prefix: string): Promise<string | null> => {
+    if (!user) return null;
+    if (file.size > 5 * 1024 * 1024) { toast.error('Image trop lourde (max 5 Mo)'); return null; }
+    const ext = file.name.split('.').pop();
+    const path = `${user.id}/${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+    const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: false });
+    if (error) { toast.error(error.message); return null; }
+    const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(path);
+    return publicUrl;
+  };
+
+  const handleProductImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const remaining = MAX_IMAGES - images.length;
+    const toUpload = files.slice(0, remaining);
+    setUploading(true);
     try {
-      await supabase.from('product_categories').insert({ name: n, user_id: effectiveUserId, icon_emoji: '📦' });
-      setExistingCategories(prev => [...new Set([...prev, n])].sort());
+      const urls: string[] = [];
+      for (const f of toUpload) {
+        const url = await uploadFile(f, 'product');
+        if (url) urls.push(url);
+      }
+      setImages(prev => [...prev, ...urls]);
+      if (urls.length) toast.success(`${urls.length} image(s) ajoutée(s)`);
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
+  const handleCatImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadFile(file, 'cat');
+    if (url) setNewCatImage(url);
+    if (catFileRef.current) catFileRef.current.value = '';
+  };
+
+  const handleSaveNewCat = async () => {
+    const n = newCatName.trim();
+    if (!n || !effectiveUserId) return;
+    setSavingCat(true);
+    try {
+      const { data, error } = await supabase.from('product_categories')
+        .insert({ name: n, user_id: effectiveUserId, icon_emoji: '📦', image_url: newCatImage || null })
+        .select().single();
+      if (error) throw error;
+      setCategories(prev => [...prev, { id: data.id, name: n, image_url: newCatImage || null }].sort((a, b) => a.name.localeCompare(b.name)));
       setForm(p => ({ ...p, category: n }));
-      setNewCat(''); setAddingNewCat(false);
-      toast.success('Catégorie ajoutée');
+      setNewCatName(''); setNewCatImage(''); setAddingNewCat(false);
+      toast.success('Catégorie créée');
     } catch (e: any) { toast.error(e.message); }
+    finally { setSavingCat(false); }
   };
 
   const handleCreate = async () => {
@@ -99,6 +142,7 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
     if (!form.price || isNaN(Number(form.price)) || Number(form.price) <= 0) { toast.error('Entrez un prix valide'); return; }
     setSaving(true);
     try {
+      const mainImage = images[0] || null;
       const newProduct = await addProduct.mutateAsync({
         name: form.name.trim(),
         description: form.description.trim() || null,
@@ -107,8 +151,15 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
         min_quantity: Number(form.min_quantity) || 5,
         category: form.category.trim() || null,
         sku: null, icon_emoji: '🛍️', icon_bg_color: null,
-        image_url: form.image_url || null,
+        image_url: mainImage,
       });
+      // Sauvegarde des images additionnelles
+      if (images.length > 1 && user) {
+        const rows = images.slice(1).map((url, i) => ({
+          product_id: newProduct.id, user_id: user.id, image_url: url, sort_order: i + 1,
+        }));
+        await supabase.from('product_images').insert(rows);
+      }
       await publishProducts.mutateAsync([{ product_id: newProduct.id, online_price: Number(form.price) }]);
       toast.success('Produit créé et publié !');
       onCreated(); reset(); onClose();
@@ -116,7 +167,7 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
     finally { setSaving(false); }
   };
 
-  const STEPS = ['Photo', 'Infos', 'Catégorie', 'Stock'];
+  const STEPS = ['Photos', 'Infos', 'Catégorie', 'Stock'];
   const totalSteps = STEPS.length;
   const canNext = step === 1 ? true : step === 2 ? !!form.name.trim() && !!form.price : true;
 
@@ -135,7 +186,7 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
               <div key={s} className="flex items-center gap-1.5">
                 <button onClick={() => setStep(s)} className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
                   s < step ? 'bg-emerald-500 text-white' : s === step ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                }`}>{s}</button>
+                }`}>{s < step ? <Check className="h-3.5 w-3.5" /> : s}</button>
                 {s < totalSteps && <div className={`w-5 h-0.5 ${s < step ? 'bg-emerald-500' : 'bg-muted'}`} />}
               </div>
             );
@@ -143,28 +194,40 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
         </div>
         <p className="text-center text-xs text-muted-foreground mb-2">Étape {step}/{totalSteps} — {STEPS[step - 1]}</p>
 
-        <div className="space-y-4 min-h-[260px]">
-          {/* ÉTAPE 1: Photo */}
+        <div className="space-y-4 min-h-[280px]">
+          {/* ÉTAPE 1: Photos multiples */}
           {step === 1 && (
-            <div className="space-y-1.5">
-              <Label>Image du produit</Label>
-              {form.image_url ? (
-                <div className="relative w-40 h-40 rounded-2xl overflow-hidden border border-border mx-auto">
-                  <img src={form.image_url} alt="" className="w-full h-full object-cover" />
-                  <button onClick={() => setForm(p => ({ ...p, image_url: '' }))} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1"><X className="h-3 w-3" /></button>
-                </div>
-              ) : (
-                <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
-                  className="w-40 h-40 mx-auto rounded-2xl border-2 border-dashed border-border hover:border-primary flex flex-col items-center justify-center gap-1 text-muted-foreground">
-                  {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><ImageIcon className="h-6 w-6" /><span className="text-xs">Téléverser</span></>}
-                </button>
-              )}
-              <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
-              <p className="text-xs text-muted-foreground text-center">PNG, JPG · 3 Mo max (optionnel)</p>
+            <div className="space-y-2">
+              <Label>Photos du produit</Label>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {images.map((url, i) => (
+                  <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-border group">
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                    {i === 0 && (
+                      <span className="absolute bottom-1 left-1 px-1.5 py-0.5 text-[10px] font-semibold bg-primary text-primary-foreground rounded-md">
+                        Principal
+                      </span>
+                    )}
+                    <button type="button" onClick={() => setImages(prev => prev.filter((_, k) => k !== i))}
+                      className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                {images.length < MAX_IMAGES && (
+                  <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+                    className="aspect-square rounded-2xl border-2 border-dashed border-border hover:border-primary flex flex-col items-center justify-center gap-1 text-muted-foreground transition-colors">
+                    {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Plus className="h-5 w-5" /><span className="text-[11px]">Photo</span></>}
+                  </button>
+                )}
+              </div>
+              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleProductImageUpload} className="hidden" />
+              <p className="text-xs text-muted-foreground">{images.length}/{MAX_IMAGES} images · JPG, PNG, WEBP · Max 5 Mo</p>
+              <p className="text-xs text-muted-foreground">La première image sera la photo principale affichée dans la boutique.</p>
             </div>
           )}
 
-          {/* ÉTAPE 2: Infos */}
+          {/* ÉTAPE 2: Infos + description riche */}
           {step === 2 && (
             <>
               <div className="space-y-1.5">
@@ -176,38 +239,77 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
                 <Input type="number" value={form.price} onChange={e => setForm(p => ({ ...p, price: e.target.value }))} placeholder="5000" />
               </div>
               <div className="space-y-1.5">
-                <Label>Description</Label>
-                <Textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Décrivez votre produit..." rows={3} />
+                <Label>Description pour la boutique en ligne</Label>
+                <RichTextEditor
+                  value={form.description}
+                  onChange={v => setForm(p => ({ ...p, description: v }))}
+                  placeholder="Décrivez votre produit avec du texte riche, des images, du gras, de l'italique..."
+                />
+                <p className="text-xs text-muted-foreground">Utilisez la barre d'outils pour formater: gras, italique, souligné, listes, images.</p>
               </div>
             </>
           )}
 
-          {/* ÉTAPE 3: Catégorie */}
+          {/* ÉTAPE 3: Catégorie avec images */}
           {step === 3 && (
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label>Choisir une catégorie</Label>
-              {existingCategories.length === 0 && !addingNewCat && (
-                <p className="text-xs text-muted-foreground">Aucune catégorie. Créez-en une nouvelle.</p>
+              {categories.length === 0 && !addingNewCat && (
+                <p className="text-xs text-muted-foreground">Aucune catégorie. Créez-en une nouvelle ci-dessous.</p>
               )}
-              <div className="flex flex-wrap gap-2">
-                {existingCategories.map(c => (
-                  <button key={c} onClick={() => setForm(p => ({ ...p, category: c }))}
-                    className={`px-3 py-1.5 text-xs rounded-full border transition-colors ${form.category === c ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-border hover:border-primary'}`}>
-                    {c}
-                  </button>
-                ))}
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {categories.map(c => {
+                  const selected = form.category === c.name;
+                  return (
+                    <button key={c.name} type="button" onClick={() => setForm(p => ({ ...p, category: c.name }))}
+                      className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all ${selected ? 'border-primary ring-2 ring-primary/30' : 'border-border hover:border-primary/50'}`}>
+                      {c.image_url ? (
+                        <img src={c.image_url} alt={c.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-muted flex items-center justify-center text-2xl">📦</div>
+                      )}
+                      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-1.5 py-1.5">
+                        <p className="text-[11px] font-medium text-white truncate text-center">{c.name}</p>
+                      </div>
+                      {selected && (
+                        <div className="absolute top-1 right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                          <Check className="h-3 w-3" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
                 {!addingNewCat && (
-                  <button onClick={() => setAddingNewCat(true)} className="px-3 py-1.5 text-xs rounded-full border border-dashed border-border hover:border-primary flex items-center gap-1">
-                    <Plus className="h-3 w-3" /> Nouvelle
+                  <button type="button" onClick={() => setAddingNewCat(true)}
+                    className="aspect-square rounded-2xl border-2 border-dashed border-border hover:border-primary flex flex-col items-center justify-center gap-1 text-muted-foreground">
+                    <Plus className="h-5 w-5" />
+                    <span className="text-[11px]">Nouvelle</span>
                   </button>
                 )}
               </div>
+
               {addingNewCat && (
-                <div className="flex gap-2 mt-2">
-                  <Input value={newCat} onChange={e => setNewCat(e.target.value)} placeholder="Nom de la catégorie" autoFocus
-                    onKeyDown={e => { if (e.key === 'Enter') handleAddNewCat(); }} />
-                  <Button size="sm" onClick={handleAddNewCat} disabled={!newCat.trim()}>OK</Button>
-                  <Button size="sm" variant="outline" onClick={() => { setAddingNewCat(false); setNewCat(''); }}>Annuler</Button>
+                <div className="border border-border rounded-2xl p-3 space-y-2 bg-muted/30">
+                  <p className="text-xs font-medium">Nouvelle catégorie</p>
+                  <div className="flex items-start gap-3">
+                    <button type="button" onClick={() => catFileRef.current?.click()}
+                      className="relative h-16 w-16 rounded-xl overflow-hidden border-2 border-dashed border-border hover:border-primary flex items-center justify-center bg-background flex-shrink-0">
+                      {newCatImage ? (
+                        <img src={newCatImage} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                      )}
+                    </button>
+                    <input ref={catFileRef} type="file" accept="image/*" onChange={handleCatImageUpload} className="hidden" />
+                    <Input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="Nom de la catégorie" autoFocus
+                      onKeyDown={e => { if (e.key === 'Enter') handleSaveNewCat(); }} />
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <Button size="sm" variant="outline" onClick={() => { setAddingNewCat(false); setNewCatName(''); setNewCatImage(''); }}>Annuler</Button>
+                    <Button size="sm" onClick={handleSaveNewCat} disabled={!newCatName.trim() || savingCat}>
+                      {savingCat ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Créer'}
+                    </Button>
+                  </div>
                 </div>
               )}
               {form.category && <p className="text-xs text-muted-foreground">Sélectionnée : <span className="font-medium text-foreground">{form.category}</span></p>}

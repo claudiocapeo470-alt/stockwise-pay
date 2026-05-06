@@ -12,6 +12,7 @@ import { ModuleGuard } from './components/auth/ModuleGuard';
 import { SubscriptionGuard } from './components/auth/SubscriptionGuard';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ScrollToTop } from './components/ScrollToTop';
+import { SWUpdater } from './components/SWUpdater';
 import Dashboard from './pages/Dashboard';
 import Stocks from './pages/Stocks';
 import Ventes from './pages/Ventes';

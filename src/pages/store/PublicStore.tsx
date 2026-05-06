@@ -533,27 +533,18 @@ export default function PublicStore() {
           </div>
         </div>
 
-        {/* Bouton Commander — visible sur la carte */}
+        {/* Bouton Ajouter au panier — visible sur la carte */}
         {store.allow_orders && isAvailable(product) && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               addToCart(product, 1);
-              localStorage.setItem(
-                `cart-${slug}`,
-                JSON.stringify(
-                  cart.find(i => i.id === product.id)
-                    ? cart.map(i => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i)
-                    : [...cart, { id: product.id, name: product.name, price: product.price, quantity: 1, icon_emoji: product.icon_emoji, image_url: product.image_url }]
-                )
-              );
-              navigate(`/boutique/${slug}/checkout`);
             }}
             className="lz-btn-cta mt-2 w-full py-2.5 px-3 text-xs sm:text-sm font-semibold text-white rounded-full flex items-center justify-center gap-1.5"
             style={{ background: color }}
           >
             <ShoppingCart className="h-3.5 w-3.5" />
-            Commander
+            Ajouter au panier
           </button>
         )}
       </div>

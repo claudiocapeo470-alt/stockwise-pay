@@ -439,7 +439,7 @@ export default function PublicStore() {
     return (
       <div className="lz-pcard group">
         {/* Image avec aspect carré */}
-        <div className="lz-pcard-img-wrap aspect-square bg-gray-50 dark:bg-gray-900 mb-3 cursor-pointer" onClick={() => goToProduct(product.id)}>
+        <div className="lz-pcard-img-wrap aspect-square bg-muted/40 mb-3 cursor-pointer" onClick={() => goToProduct(product.id)}>
           {imgs.length > 0 ? (
             <>
               <img
@@ -477,14 +477,14 @@ export default function PublicStore() {
           <div className="lz-pcard-actions z-10">
             <button
               onClick={(e) => { e.stopPropagation(); toggleFav(product.id); }}
-              className="h-9 w-9 bg-white dark:bg-gray-800 shadow flex items-center justify-center hover:scale-110 transition-transform"
+              className="h-9 w-9 bg-card shadow flex items-center justify-center hover:scale-110 transition-transform"
               aria-label="Favori"
             >
               <Heart className={`h-4 w-4 ${isFav ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }}
-              className="h-9 w-9 bg-white dark:bg-gray-800 shadow flex items-center justify-center hover:scale-110 transition-transform"
+              className="h-9 w-9 bg-card shadow flex items-center justify-center hover:scale-110 transition-transform"
               aria-label="Ajouter au panier"
               disabled={!isAvailable(product)}
             >
@@ -497,14 +497,14 @@ export default function PublicStore() {
             <div className="lz-pcard-arrows z-10">
               <button
                 onClick={(e) => { e.stopPropagation(); setImgIdx((imgIdx - 1 + imgs.length) % imgs.length); }}
-                className="h-9 w-9 bg-white/90 dark:bg-gray-800/90 shadow flex items-center justify-center hover:bg-white"
+                className="h-9 w-9 bg-card/90 shadow flex items-center justify-center hover:bg-white"
                 aria-label="Image précédente"
               >
                 <ChevronLeft className="h-5 w-5 text-gray-700" />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); setImgIdx((imgIdx + 1) % imgs.length); }}
-                className="h-9 w-9 bg-white/90 dark:bg-gray-800/90 shadow flex items-center justify-center hover:bg-white"
+                className="h-9 w-9 bg-card/90 shadow flex items-center justify-center hover:bg-white"
                 aria-label="Image suivante"
               >
                 <ChevronRight className="h-5 w-5 text-gray-700" />
@@ -515,7 +515,7 @@ export default function PublicStore() {
 
         {/* Infos sous l'image */}
         <div className="px-1 cursor-pointer" onClick={() => goToProduct(product.id)}>
-          <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-1 line-clamp-1 transition-colors group-hover:text-current"
+          <h3 className="text-sm font-medium text-foreground mb-1 line-clamp-1 transition-colors group-hover:text-current"
               style={{ color: undefined }}>
             <span className="group-hover:opacity-0 transition-opacity duration-200 inline-block w-full" style={{ color: 'inherit' }}>
               {product.name}
@@ -526,7 +526,7 @@ export default function PublicStore() {
             {product.name}
           </h3>
           <div className="flex items-baseline gap-2">
-            <span className="text-base font-bold text-gray-900 dark:text-white">{fmt(product.price)}</span>
+            <span className="text-base font-bold text-foreground">{fmt(product.price)}</span>
             {product.compare_at_price && product.compare_at_price > product.price && (
               <span className="text-xs text-gray-400 line-through">{fmt(product.compare_at_price)}</span>
             )}
@@ -566,7 +566,7 @@ export default function PublicStore() {
   const BenefitsSection = () => {
     const ref = useFadeIn();
     return (
-      <div ref={ref} className="lz-fade py-6 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
+      <div ref={ref} className="lz-fade py-6 bg-muted/40 border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
             {BENEFITS.map((b) => (
@@ -623,7 +623,7 @@ export default function PublicStore() {
           <section ref={featRef} className="lz-fade container mx-auto px-4 py-12">
             <div className="text-center mb-10">
               <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Sélection</span>
-              <h2 className="lz-heading text-2xl md:text-3xl text-gray-900 dark:text-white mt-1">Produits vedettes</h2>
+              <h2 className="lz-heading text-2xl md:text-3xl text-foreground mt-1">Produits vedettes</h2>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {featured.map(p => <ProductCard key={p.id} product={p} />)}
@@ -642,11 +642,11 @@ export default function PublicStore() {
 
         {/* CATÉGORIES — style Capture 3 */}
         {categories.length > 0 && (
-          <section className="bg-gray-50 dark:bg-gray-900 py-12">
+          <section className="bg-muted/40 py-12">
             <div ref={catRef} className="lz-fade container mx-auto px-4">
               <div className="text-center mb-10">
                 <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Nos collections</span>
-                <h2 className="lz-heading text-2xl md:text-3xl text-gray-900 dark:text-white mt-1">Explorez nos univers</h2>
+                <h2 className="lz-heading text-2xl md:text-3xl text-foreground mt-1">Explorez nos univers</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                 {categories.slice(0, 8).map(cat => {
@@ -699,7 +699,7 @@ export default function PublicStore() {
         {/* Tous nos produits preview */}
         <section className="container mx-auto px-4 py-10">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="lz-heading text-xl md:text-2xl text-gray-900 dark:text-white">Tous nos produits</h2>
+            <h2 className="lz-heading text-xl md:text-2xl text-foreground">Tous nos produits</h2>
             <button onClick={() => setActivePage("shop")} className="text-sm font-semibold flex items-center gap-1" style={{ color }}>
               Voir tout <ChevronRight className="h-4 w-4" />
             </button>
@@ -716,19 +716,19 @@ export default function PublicStore() {
   const ShopPage = () => (
     <div className="pb-24">
       {/* Barre filtre + tri */}
-      <div className="border-b border-gray-100 dark:border-gray-800">
+      <div className="border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <button className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900">
+          <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-gray-900">
             <span>Filtre</span>
             <SlidersHorizontal className="h-4 w-4" />
           </button>
           <div className="relative">
-            <button onClick={() => setShowSort(s => !s)} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900">
+            <button onClick={() => setShowSort(s => !s)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-gray-900">
               {sortBy === "recent" ? "Plus récent" : sortBy === "price_asc" ? "Prix croissant" : sortBy === "price_desc" ? "Prix décroissant" : "Nom A-Z"}
               <ChevronDown className="h-4 w-4" />
             </button>
             {showSort && (
-              <div className="absolute right-0 top-full mt-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-lg z-30 w-44">
+              <div className="absolute right-0 top-full mt-2 bg-card border border-border shadow-lg z-30 w-44">
                 {[
                   { v: "recent", l: "Plus récent" },
                   { v: "price_asc", l: "Prix croissant" },
@@ -738,7 +738,7 @@ export default function PublicStore() {
                   <button
                     key={opt.v}
                     onClick={() => { setSortBy(opt.v as SortOption); setShowSort(false); }}
-                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800"
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-muted"
                   >
                     {opt.l}
                   </button>
@@ -824,7 +824,7 @@ export default function PublicStore() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Galerie */}
             <div>
-              <div className="relative aspect-square bg-gray-50 dark:bg-gray-900 mb-4 border border-gray-100 dark:border-gray-800">
+              <div className="relative aspect-square bg-muted/40 mb-4 border border-border">
                 {imgs.length > 0 ? (
                   <img src={imgs[imgIdx]} alt={p.name} className="w-full h-full object-cover" />
                 ) : (
@@ -866,7 +866,7 @@ export default function PublicStore() {
             {/* Infos */}
             <div>
               <div className="flex items-start justify-between gap-4 mb-3">
-                <h1 className="lz-heading text-2xl md:text-3xl text-gray-900 dark:text-white">{p.name}</h1>
+                <h1 className="lz-heading text-2xl md:text-3xl text-foreground">{p.name}</h1>
                 <button
                   onClick={() => toggleFav(p.id)}
                   className="h-11 w-11 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:border-gray-400 transition-colors flex-shrink-0"
@@ -889,9 +889,9 @@ export default function PublicStore() {
               <p className="text-3xl font-bold mb-6" style={{ color }}>{fmt(p.price)}</p>
 
               {/* Bénéfices */}
-              <div className="grid grid-cols-2 gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+              <div className="grid grid-cols-2 gap-3 mb-6 pb-6 border-b border-border">
                 {BENEFITS.map(b => (
-                  <div key={b.text} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                  <div key={b.text} className="flex items-center gap-2 text-sm text-muted-foreground">
                     <b.icon className="h-4 w-4 flex-shrink-0" style={{ color }} />
                     <span>{b.text}</span>
                   </div>
@@ -900,13 +900,13 @@ export default function PublicStore() {
 
               {/* Quantité */}
               <div className="flex items-center justify-between mb-6">
-                <span className="text-sm text-gray-600 dark:text-gray-300">Quantité</span>
+                <span className="text-sm text-muted-foreground">Quantité</span>
                 <div className="flex items-center border border-gray-200 dark:border-gray-700">
-                  <button onClick={() => setQty(Math.max(1, qty - 1))} className="h-10 w-10 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <button onClick={() => setQty(Math.max(1, qty - 1))} className="h-10 w-10 flex items-center justify-center hover:bg-muted">
                     <Minus className="h-4 w-4" />
                   </button>
                   <span className="w-12 text-center text-sm font-semibold">{qty}</span>
-                  <button onClick={() => setQty(Math.min(p.quantity, qty + 1))} className="h-10 w-10 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <button onClick={() => setQty(Math.min(p.quantity, qty + 1))} className="h-10 w-10 flex items-center justify-center hover:bg-muted">
                     <Plus className="h-4 w-4" />
                   </button>
                 </div>
@@ -951,16 +951,16 @@ export default function PublicStore() {
             {tab === "description" ? (
               <div className="space-y-6">
                 <div>
-                  <h3 className="lz-heading text-base text-gray-900 dark:text-white mb-3">À propos de ce produit</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                  <h3 className="lz-heading text-base text-foreground mb-3">À propos de ce produit</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {p.description || `${p.name} — Produit de qualité premium, idéal pour un usage quotidien.`}
                   </p>
                 </div>
                 <div>
-                  <h3 className="lz-heading text-base text-gray-900 dark:text-white mb-3">Caractéristiques</h3>
+                  <h3 className="lz-heading text-base text-foreground mb-3">Caractéristiques</h3>
                   <ul className="space-y-2">
                     {["Matériaux de haute qualité", "Design moderne et élégant", "Garantie satisfaction"].map(f => (
-                      <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
                         <CheckCircle className="h-4 w-4 flex-shrink-0" style={{ color }} />
                         {f}
                       </li>
@@ -976,16 +976,16 @@ export default function PublicStore() {
                     <p className="text-sm">Aucun avis pour le moment</p>
                   </div>
                 ) : productReviews.map((r: any) => (
-                  <div key={r.id} className="border-b border-gray-100 dark:border-gray-800 pb-4">
+                  <div key={r.id} className="border-b border-border pb-4">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex">
                         {[1,2,3,4,5].map(s => (
                           <Star key={s} className={`h-3.5 w-3.5 ${s <= (r.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
                         ))}
                       </div>
-                      <span className="text-sm font-semibold text-gray-900 dark:text-white">{r.customer_name}</span>
+                      <span className="text-sm font-semibold text-foreground">{r.customer_name}</span>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">{r.comment}</p>
+                    <p className="text-sm text-muted-foreground">{r.comment}</p>
                   </div>
                 ))}
               </div>
@@ -995,7 +995,7 @@ export default function PublicStore() {
           {/* Vous pourriez aussi aimer — carrousel horizontal */}
           {similar.length > 0 && (
             <div className="mt-12 lg:mt-16">
-              <h3 className="lz-heading text-xl text-gray-900 dark:text-white mb-6">Vous pourriez aussi aimer</h3>
+              <h3 className="lz-heading text-xl text-foreground mb-6">Vous pourriez aussi aimer</h3>
               <div className="lz-hscroll -mx-4 px-4 md:mx-0 md:px-0">
                 {similar.map(s => (
                   <div key={s.id} className="lz-hscroll-item">
@@ -1013,7 +1013,7 @@ export default function PublicStore() {
             <div className="container mx-auto flex items-center gap-2">
               <button
                 onClick={() => addToCart(p, qty)}
-                className="flex-1 py-3 px-3 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white text-xs sm:text-sm font-semibold hover:bg-gray-900 hover:text-white transition-colors flex items-center justify-center gap-1.5 rounded-full"
+                className="flex-1 py-3 px-3 border-2 border-gray-900 dark:border-white text-foreground text-xs sm:text-sm font-semibold hover:bg-gray-900 hover:text-white transition-colors flex items-center justify-center gap-1.5 rounded-full"
               >
                 <ShoppingCart className="h-4 w-4" />
                 <span className="hidden sm:inline">Ajouter au panier</span>
@@ -1045,7 +1045,7 @@ export default function PublicStore() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           autoFocus
-          className="w-full pl-11 pr-4 h-12 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2"
+          className="w-full pl-11 pr-4 h-12 rounded-full border border-gray-200 dark:border-gray-700 bg-card text-sm focus:outline-none focus:ring-2"
           style={{ ["--tw-ring-color" as any]: color + "60" }}
         />
       </div>
@@ -1071,7 +1071,7 @@ export default function PublicStore() {
         <button
           key={cat}
           onClick={() => { setActiveCategory(cat); setActivePage("shop"); }}
-          className={`group relative overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-800 aspect-square`}
+          className={`group relative overflow-hidden rounded-2xl bg-muted aspect-square`}
         >
           {img ? (
             <img
@@ -1109,7 +1109,7 @@ export default function PublicStore() {
       <div className="pb-24 container mx-auto px-4 py-8 md:py-12">
         <div className="text-center mb-8 md:mb-10">
           <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400">Nos collections</span>
-          <h2 className="lz-heading text-2xl md:text-3xl text-gray-900 dark:text-white mt-1">
+          <h2 className="lz-heading text-2xl md:text-3xl text-foreground mt-1">
             Toutes les collections
           </h2>
         </div>
@@ -1138,20 +1138,20 @@ export default function PublicStore() {
           <div className="h-20 w-20 rounded-full flex items-center justify-center text-white shadow-lg mb-3" style={{ background: `linear-gradient(135deg, ${color}, ${color}aa)` }}>
             <User className="h-10 w-10" />
           </div>
-          <h2 className="lz-heading text-xl text-gray-900 dark:text-white">Mon compte</h2>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Gérez vos favoris et votre boutique</p>
+          <h2 className="lz-heading text-xl text-foreground">Mon compte</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Gérez vos favoris et votre boutique</p>
         </div>
 
         {/* Stats compactes */}
         <div className="grid grid-cols-2 gap-3">
-          <button onClick={() => setShowCart(true)} className="rounded-2xl p-4 bg-gray-50 dark:bg-gray-900 text-left active:scale-95 transition-transform">
+          <button onClick={() => setShowCart(true)} className="rounded-2xl p-4 bg-muted/40 text-left active:scale-95 transition-transform">
             <ShoppingCart className="h-5 w-5 mb-2" style={{ color }} />
-            <p className="text-2xl lz-heading text-gray-900 dark:text-white">{totalItems}</p>
+            <p className="text-2xl lz-heading text-foreground">{totalItems}</p>
             <p className="text-xs text-gray-500">Articles panier</p>
           </button>
-          <div className="rounded-2xl p-4 bg-gray-50 dark:bg-gray-900">
+          <div className="rounded-2xl p-4 bg-muted/40">
             <Heart className="h-5 w-5 mb-2 fill-red-500 text-red-500" />
-            <p className="text-2xl lz-heading text-gray-900 dark:text-white">{favorites.size}</p>
+            <p className="text-2xl lz-heading text-foreground">{favorites.size}</p>
             <p className="text-xs text-gray-500">Favoris</p>
           </div>
         </div>
@@ -1165,7 +1165,7 @@ export default function PublicStore() {
             )}
           </div>
           {favProducts.length === 0 ? (
-            <div className="rounded-2xl p-8 bg-gray-50 dark:bg-gray-900 text-center">
+            <div className="rounded-2xl p-8 bg-muted/40 text-center">
               <Heart className="h-10 w-10 mx-auto mb-2 text-gray-300" />
               <p className="text-sm text-gray-500">Aucun favori pour le moment</p>
               <button onClick={() => setActivePage("shop")} className="mt-3 text-xs font-semibold" style={{ color }}>
@@ -1178,15 +1178,15 @@ export default function PublicStore() {
                 <button
                   key={p.id}
                   onClick={() => goToProduct(p.id)}
-                  className="rounded-2xl overflow-hidden bg-gray-50 dark:bg-gray-900 text-left active:scale-95 transition-transform"
+                  className="rounded-2xl overflow-hidden bg-muted/40 text-left active:scale-95 transition-transform"
                 >
-                  <div className="aspect-square bg-white dark:bg-gray-800 relative">
+                  <div className="aspect-square bg-card relative">
                     {p.image_url
                       ? <img src={p.image_url} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
                       : <div className="absolute inset-0 flex items-center justify-center text-4xl">{p.icon_emoji}</div>}
                   </div>
                   <div className="p-2.5">
-                    <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{p.name}</p>
+                    <p className="text-xs font-medium text-foreground truncate">{p.name}</p>
                     <p className="text-xs font-bold mt-0.5" style={{ color }}>{(p.online_price ?? p.price).toLocaleString('fr-FR')} F</p>
                   </div>
                 </button>
@@ -1199,13 +1199,13 @@ export default function PublicStore() {
         {(store.address || store.phone || store.email) && (
           <div>
             <h3 className="lz-heading text-sm uppercase tracking-wider text-gray-500 mb-3 px-1">Contact boutique</h3>
-            <div className="rounded-2xl bg-gray-50 dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800">
+            <div className="rounded-2xl bg-muted/40 divide-y divide-gray-100 dark:divide-gray-800">
               {store.phone && (
                 <a href={`tel:${store.phone}`} className="flex items-center gap-3 p-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors">
                   <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}><Phone className="h-4 w-4" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-500">Téléphone</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{store.phone}</p>
+                    <p className="text-sm font-medium text-foreground truncate">{store.phone}</p>
                   </div>
                   <ChevronRight className="h-4 w-4 text-gray-300" />
                 </a>
@@ -1215,7 +1215,7 @@ export default function PublicStore() {
                   <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}><Mail className="h-4 w-4" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-500">Email</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{store.email}</p>
+                    <p className="text-sm font-medium text-foreground truncate">{store.email}</p>
                   </div>
                   <ChevronRight className="h-4 w-4 text-gray-300" />
                 </a>
@@ -1225,7 +1225,7 @@ export default function PublicStore() {
                   <div className="h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${color}15`, color }}><MapPin className="h-4 w-4" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-500">Adresse</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{store.address}</p>
+                    <p className="text-sm font-medium text-foreground">{store.address}</p>
                   </div>
                 </div>
               )}
@@ -1236,13 +1236,13 @@ export default function PublicStore() {
         {/* Mode sombre */}
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className="w-full flex items-center gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-900 active:scale-[0.98] transition-transform"
+          className="w-full flex items-center gap-3 p-4 rounded-2xl bg-muted/40 active:scale-[0.98] transition-transform"
         >
           <div className="h-9 w-9 rounded-full flex items-center justify-center" style={{ background: `${color}15`, color }}>
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </div>
           <div className="flex-1 text-left">
-            <p className="text-sm font-medium text-gray-900 dark:text-white">Mode {darkMode ? 'clair' : 'sombre'}</p>
+            <p className="text-sm font-medium text-foreground">Mode {darkMode ? 'clair' : 'sombre'}</p>
             <p className="text-xs text-gray-500">Basculer le thème</p>
           </div>
         </button>
@@ -1255,8 +1255,8 @@ export default function PublicStore() {
     <div className="fixed inset-0 z-50 flex">
       <div className="flex-1 bg-black/40 backdrop-blur-sm" onClick={() => setShowCart(false)} />
       <div className="w-full max-w-sm bg-white dark:bg-gray-950 flex flex-col h-full shadow-2xl">
-        <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
-          <h2 className="lz-heading text-lg text-gray-900 dark:text-white">Panier ({totalItems})</h2>
+        <div className="flex items-center justify-between p-5 border-b border-border">
+          <h2 className="lz-heading text-lg text-foreground">Panier ({totalItems})</h2>
           <button onClick={() => setShowCart(false)} className="h-9 w-9 flex items-center justify-center text-gray-400 hover:text-gray-600">
             <X className="h-5 w-5" />
           </button>
@@ -1275,13 +1275,13 @@ export default function PublicStore() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {cart.map(item => (
                 <div key={item.id} className="flex gap-3">
-                  <div className="h-16 w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-900 overflow-hidden">
+                  <div className="h-16 w-16 flex-shrink-0 bg-muted/40 overflow-hidden">
                     {item.image_url
                       ? <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" />
                       : <div className="h-full w-full flex items-center justify-center text-2xl">{item.icon_emoji}</div>}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
+                    <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
                     <p className="text-sm font-bold mt-0.5" style={{ color }}>{fmt(item.price)}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <button onClick={() => updateQty(item.id, -1)} className="h-7 w-7 rounded-full border border-gray-200 flex items-center justify-center hover:border-current" style={{ color }}>
@@ -1293,11 +1293,11 @@ export default function PublicStore() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-sm font-bold text-gray-900 dark:text-white whitespace-nowrap">{fmt(item.price * item.quantity)}</p>
+                  <p className="text-sm font-bold text-foreground whitespace-nowrap">{fmt(item.price * item.quantity)}</p>
                 </div>
               ))}
             </div>
-            <div className="border-t border-gray-100 dark:border-gray-800 p-5 space-y-3">
+            <div className="border-t border-border p-5 space-y-3">
               <div className="flex justify-between text-sm text-gray-500"><span>Sous-total</span><span>{fmt(subtotal)}</span></div>
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Livraison</span>
@@ -1305,7 +1305,7 @@ export default function PublicStore() {
                   {deliveryFee === 0 ? "Gratuite" : fmt(deliveryFee)}
                 </span>
               </div>
-              <div className="flex justify-between lz-heading text-base text-gray-900 dark:text-white border-t border-gray-100 dark:border-gray-800 pt-3">
+              <div className="flex justify-between lz-heading text-base text-foreground border-t border-border pt-3">
                 <span>Total</span><span style={{ color }}>{fmt(cartTotal)}</span>
               </div>
               <button
@@ -1327,8 +1327,8 @@ export default function PublicStore() {
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowCheckout(false)} />
       <div className="relative w-full sm:max-w-md bg-white dark:bg-gray-950 max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white dark:bg-gray-950 flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800 z-10">
-          <h2 className="lz-heading text-lg text-gray-900 dark:text-white">Finaliser la commande</h2>
+        <div className="sticky top-0 bg-white dark:bg-gray-950 flex items-center justify-between p-5 border-b border-border z-10">
+          <h2 className="lz-heading text-lg text-foreground">Finaliser la commande</h2>
           <button onClick={() => setShowCheckout(false)} className="text-gray-400 hover:text-gray-600">
             <X className="h-5 w-5" />
           </button>
@@ -1347,7 +1347,7 @@ export default function PublicStore() {
                 placeholder={f.placeholder}
                 value={(orderForm as any)[f.key]}
                 onChange={e => setOrderForm(prev => ({ ...prev, [f.key]: e.target.value }))}
-                className="w-full h-11 px-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 rounded-none"
+                className="w-full h-11 px-4 border border-gray-200 dark:border-gray-700 bg-card text-sm focus:outline-none focus:ring-2 rounded-none"
                 style={{ ["--tw-ring-color" as any]: color + "60" }}
               />
             </div>
@@ -1357,7 +1357,7 @@ export default function PublicStore() {
             <select
               value={orderForm.payment_method}
               onChange={e => setOrderForm(prev => ({ ...prev, payment_method: e.target.value }))}
-              className="w-full h-11 px-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:outline-none"
+              className="w-full h-11 px-4 border border-gray-200 dark:border-gray-700 bg-card text-sm focus:outline-none"
             >
               <option value="cash_on_delivery">💵 Paiement à la livraison</option>
               <option value="mobile_money">📱 Mobile Money</option>
@@ -1371,10 +1371,10 @@ export default function PublicStore() {
               value={orderForm.notes}
               onChange={e => setOrderForm(prev => ({ ...prev, notes: e.target.value }))}
               rows={3}
-              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:outline-none resize-none"
+              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-card text-sm focus:outline-none resize-none"
             />
           </div>
-          <div className="p-4 bg-gray-50 dark:bg-gray-900 space-y-2">
+          <div className="p-4 bg-muted/40 space-y-2">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Récapitulatif</p>
             {cart.map(i => (
               <div key={i.id} className="flex justify-between text-sm">
@@ -1407,7 +1407,7 @@ export default function PublicStore() {
       <style>{ZONE_STYLES}</style>
       <div className="text-center space-y-5 max-w-sm">
         <div className="text-7xl animate-bounce">✅</div>
-        <h1 className="lz-heading text-3xl text-gray-900 dark:text-white">Commande confirmée !</h1>
+        <h1 className="lz-heading text-3xl text-foreground">Commande confirmée !</h1>
         <p className="text-gray-500">Numéro de commande :</p>
         <p className="font-mono font-bold text-lg" style={{ color }}>{orderSuccess}</p>
         <p className="text-sm text-gray-400">Vous serez contacté(e) prochainement pour la livraison.</p>
@@ -1436,11 +1436,11 @@ export default function PublicStore() {
 
   // ─── RENDER ──────────────────────────────────────────────────────────────────
   return (
-    <div className={`lz-root ${darkMode ? "dark" : ""} min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white`}>
+    <div className={`lz-root ${darkMode ? "dark" : ""} min-h-screen bg-white dark:bg-gray-950 text-foreground`}>
       <style>{ZONE_STYLES}</style>
 
       {/* HEADER — style Capture 1 */}
-      <header className="sticky top-0 z-40 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800">
+      <header className="sticky top-0 z-40 bg-white dark:bg-gray-950 border-b border-border">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between h-16 md:h-20 gap-4">
             {/* Logo */}
@@ -1480,14 +1480,14 @@ export default function PublicStore() {
               {/* Bouton recherche - visible sur PC uniquement */}
               <button
                 onClick={() => setActivePage("search")}
-                className="hidden lg:inline-flex h-10 w-10 border border-gray-200 dark:border-gray-700 items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
+                className="hidden lg:inline-flex h-10 w-10 border border-gray-200 dark:border-gray-700 items-center justify-center text-gray-600 hover:bg-muted transition-colors rounded-full"
                 aria-label="Rechercher"
               >
                 <Search className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setDarkMode(!darkMode)}
-                className="h-10 w-10 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-full"
+                className="h-10 w-10 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 hover:bg-muted transition-colors rounded-full"
                 aria-label="Mode sombre"
               >
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -1495,7 +1495,7 @@ export default function PublicStore() {
               {/* Compte - mobile/tablette */}
               <button
                 onClick={() => setActivePage("account")}
-                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-gray-900"
                 aria-label="Compte"
               >
                 <User className="h-5 w-5" />
@@ -1503,7 +1503,7 @@ export default function PublicStore() {
               {/* Favoris - mobile/tablette, à côté du panier */}
               <button
                 onClick={() => setActivePage("account")}
-                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-gray-900"
                 aria-label="Favoris"
               >
                 <Heart className={`h-5 w-5 ${favorites.size > 0 ? "fill-red-500 text-red-500" : ""}`} />
@@ -1516,7 +1516,7 @@ export default function PublicStore() {
               {store.allow_orders && (
                 <button
                   onClick={() => setShowCart(true)}
-                  className="relative h-10 w-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                  className="relative h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-gray-900"
                   aria-label="Panier"
                 >
                   <ShoppingCart className="h-5 w-5" />
@@ -1559,9 +1559,9 @@ export default function PublicStore() {
       {/* OVERLAY DE TRAITEMENT COMMANDE */}
       {submitting && (
         <div className="lz-order-overlay">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl px-8 py-6 flex flex-col items-center gap-3 shadow-2xl max-w-xs mx-4 text-center">
+          <div className="bg-card rounded-2xl px-8 py-6 flex flex-col items-center gap-3 shadow-2xl max-w-xs mx-4 text-center">
             <div className="h-12 w-12 border-4 border-current border-t-transparent rounded-full animate-spin" style={{ color }} />
-            <p className="lz-heading text-base text-gray-900 dark:text-white">Validation en cours…</p>
+            <p className="lz-heading text-base text-foreground">Validation en cours…</p>
             <p className="text-xs text-gray-500">Merci de patienter, nous enregistrons votre commande.</p>
           </div>
         </div>
@@ -1580,7 +1580,7 @@ export default function PublicStore() {
       )}
 
       {/* MOBILE/TABLET BOTTOM NAV */}
-      <nav className="lz-nav lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur">
+      <nav className="lz-nav lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-white/95 dark:bg-gray-950/95 backdrop-blur">
         <div className="flex items-center justify-around h-16">
           {[
             { page: "home" as StorePage,       label: "Accueil",    icon: Package },

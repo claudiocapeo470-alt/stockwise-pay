@@ -359,6 +359,17 @@ export default function PublicStore() {
       return [...prev, { id: p.id, name: p.name, price: p.price, quantity: qty, icon_emoji: p.icon_emoji, image_url: p.image_url }];
     });
   };
+  const buyNow = (p: ProductData, qty = 1) => {
+    if (!isAvailable(p)) return;
+    const updatedCart = (() => {
+      const ex = cart.find(i => i.id === p.id);
+      if (ex) return cart.map(i => i.id === p.id ? { ...i, quantity: i.quantity + qty } : i);
+      return [...cart, { id: p.id, name: p.name, price: p.price, quantity: qty, icon_emoji: p.icon_emoji, image_url: p.image_url }];
+    })();
+    setCart(updatedCart);
+    localStorage.setItem(`cart-${slug}`, JSON.stringify(updatedCart));
+    navigate(`/boutique/${slug}/checkout`);
+  };
   const updateQty = (id: string, d: number) =>
     setCart(prev => prev.map(i => i.id === id ? { ...i, quantity: Math.max(0, i.quantity + d) } : i).filter(i => i.quantity > 0));
   const toggleFav = (id: string) =>
@@ -533,18 +544,18 @@ export default function PublicStore() {
           </div>
         </div>
 
-        {/* Bouton Ajouter au panier — visible sur la carte */}
+        {/* Bouton Acheter maintenant — visible sur la carte */}
         {store.allow_orders && isAvailable(product) && (
           <button
             onClick={(e) => {
               e.stopPropagation();
-              addToCart(product, 1);
+              buyNow(product, 1);
             }}
             className="lz-btn-cta mt-2 w-full py-2.5 px-3 text-xs sm:text-sm font-semibold text-white rounded-full flex items-center justify-center gap-1.5"
             style={{ background: color }}
           >
             <ShoppingCart className="h-3.5 w-3.5" />
-            Ajouter au panier
+            Acheter maintenant
           </button>
         )}
       </div>
@@ -912,6 +923,27 @@ export default function PublicStore() {
                 </div>
               </div>
 
+              {/* CTA desktop — inline (mobile/tablet utilisent la barre sticky) */}
+              {isAvailable(p) && store.allow_orders && (
+                <div className="hidden lg:flex items-center gap-2 mb-4">
+                  <button
+                    onClick={() => addToCart(p, qty)}
+                    className="flex-1 py-3 px-3 border-2 border-foreground text-foreground text-sm font-semibold hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-1.5 rounded-full"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Ajouter au panier
+                  </button>
+                  <button
+                    onClick={handleBuyNow}
+                    className="lz-btn-cta flex-1 py-3 px-3 text-white text-sm font-semibold rounded-full flex items-center justify-center gap-1.5"
+                    style={{ background: color }}
+                  >
+                    <span>Acheter maintenant</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+
               {/* Rupture de stock — sinon les boutons sont en sticky bottom */}
               {!isAvailable(p) && (
                 <p className="text-red-500 font-semibold text-center py-4">Rupture de stock</p>
@@ -1009,7 +1041,7 @@ export default function PublicStore() {
 
         {/* STICKY BOTTOM CTA — mobile & tablet uniquement */}
         {isAvailable(p) && store.allow_orders && (
-          <div className="lz-sticky-cta fixed bottom-16 md:bottom-0 left-0 right-0 z-30 border-t border-border  bg-card/95 dark:bg-background/95 backdrop-blur px-4 py-3">
+          <div className="lz-sticky-cta lg:hidden fixed bottom-16 md:bottom-0 left-0 right-0 z-30 border-t border-border  bg-card/95 dark:bg-background/95 backdrop-blur px-4 py-3">
             <div className="container mx-auto flex items-center gap-2">
               <button
                 onClick={() => addToCart(p, qty)}

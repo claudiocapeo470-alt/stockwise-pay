@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Bold, Italic, Underline, List, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";

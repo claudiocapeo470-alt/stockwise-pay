@@ -105,8 +105,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       <div
         ref={editorRef}
         contentEditable
+        suppressContentEditableWarning
         onInput={handleInput}
-        dangerouslySetInnerHTML={{ __html: value }}
         dir="ltr"
         className="min-h-[120px] max-h-[300px] overflow-y-auto p-3 border border-border border-t-0 rounded-b-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring bg-background text-left"
         data-placeholder={placeholder || "Tapez votre description ici..."}

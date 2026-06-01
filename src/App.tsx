@@ -73,9 +73,10 @@ import { CeoLayout } from './components/layout/CeoLayout';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 30,
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
+      staleTime: 1000 * 60 * 2,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
       refetchInterval: false,
       retry: (failureCount, error: any) => {
         if (error?.status === 401 || error?.message?.includes('JWT')) return false;

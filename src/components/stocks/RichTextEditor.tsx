@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Bold, Italic, Underline, List, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,21 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       onChange(editorRef.current.innerHTML);
     }
   }, [onChange]);
+
+  // Initialize content once, and only sync from external `value` when it differs
+  // from the current DOM content (prevents caret reset on every keystroke).
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = value || "";
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (editorRef.current && value !== editorRef.current.innerHTML && document.activeElement !== editorRef.current) {
+      editorRef.current.innerHTML = value || "";
+    }
+  }, [value]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -90,8 +105,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       <div
         ref={editorRef}
         contentEditable
+        suppressContentEditableWarning
         onInput={handleInput}
-        dangerouslySetInnerHTML={{ __html: value }}
         dir="ltr"
         className="min-h-[120px] max-h-[300px] overflow-y-auto p-3 border border-border border-t-0 rounded-b-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring bg-background text-left"
         data-placeholder={placeholder || "Tapez votre description ici..."}

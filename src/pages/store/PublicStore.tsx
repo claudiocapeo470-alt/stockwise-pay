@@ -544,18 +544,18 @@ export default function PublicStore() {
           </div>
         </div>
 
-        {/* Bouton Ajouter au panier — visible sur la carte */}
+        {/* Bouton Acheter maintenant — visible sur la carte */}
         {store.allow_orders && isAvailable(product) && (
           <button
             onClick={(e) => {
               e.stopPropagation();
-              addToCart(product, 1);
+              buyNow(product, 1);
             }}
             className="lz-btn-cta mt-2 w-full py-2.5 px-3 text-xs sm:text-sm font-semibold text-white rounded-full flex items-center justify-center gap-1.5"
             style={{ background: color }}
           >
             <ShoppingCart className="h-3.5 w-3.5" />
-            Ajouter au panier
+            Acheter maintenant
           </button>
         )}
       </div>

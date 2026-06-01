@@ -359,6 +359,17 @@ export default function PublicStore() {
       return [...prev, { id: p.id, name: p.name, price: p.price, quantity: qty, icon_emoji: p.icon_emoji, image_url: p.image_url }];
     });
   };
+  const buyNow = (p: ProductData, qty = 1) => {
+    if (!isAvailable(p)) return;
+    const updatedCart = (() => {
+      const ex = cart.find(i => i.id === p.id);
+      if (ex) return cart.map(i => i.id === p.id ? { ...i, quantity: i.quantity + qty } : i);
+      return [...cart, { id: p.id, name: p.name, price: p.price, quantity: qty, icon_emoji: p.icon_emoji, image_url: p.image_url }];
+    })();
+    setCart(updatedCart);
+    localStorage.setItem(`cart-${slug}`, JSON.stringify(updatedCart));
+    navigate(`/boutique/${slug}/checkout`);
+  };
   const updateQty = (id: string, d: number) =>
     setCart(prev => prev.map(i => i.id === id ? { ...i, quantity: Math.max(0, i.quantity + d) } : i).filter(i => i.quantity > 0));
   const toggleFav = (id: string) =>

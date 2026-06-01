@@ -923,6 +923,27 @@ export default function PublicStore() {
                 </div>
               </div>
 
+              {/* CTA desktop — inline (mobile/tablet utilisent la barre sticky) */}
+              {isAvailable(p) && store.allow_orders && (
+                <div className="hidden lg:flex items-center gap-2 mb-4">
+                  <button
+                    onClick={() => addToCart(p, qty)}
+                    className="flex-1 py-3 px-3 border-2 border-foreground text-foreground text-sm font-semibold hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-1.5 rounded-full"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Ajouter au panier
+                  </button>
+                  <button
+                    onClick={handleBuyNow}
+                    className="lz-btn-cta flex-1 py-3 px-3 text-white text-sm font-semibold rounded-full flex items-center justify-center gap-1.5"
+                    style={{ background: color }}
+                  >
+                    <span>Acheter maintenant</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+
               {/* Rupture de stock — sinon les boutons sont en sticky bottom */}
               {!isAvailable(p) && (
                 <p className="text-red-500 font-semibold text-center py-4">Rupture de stock</p>

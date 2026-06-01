@@ -31,6 +31,21 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
     }
   }, [onChange]);
 
+  // Initialize content once, and only sync from external `value` when it differs
+  // from the current DOM content (prevents caret reset on every keystroke).
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = value || "";
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (editorRef.current && value !== editorRef.current.innerHTML && document.activeElement !== editorRef.current) {
+      editorRef.current.innerHTML = value || "";
+    }
+  }, [value]);
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;

@@ -95,10 +95,12 @@ export default {
 				'4xl': '96px',
 			},
 			borderRadius: {
-				lg: '0',
-				md: '0',
-				sm: '0',
-				DEFAULT: '0',
+				sm: '4px',
+				md: '8px',
+				lg: '12px',
+				xl: '16px',
+				'2xl': '24px',
+				DEFAULT: '8px',
 			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',

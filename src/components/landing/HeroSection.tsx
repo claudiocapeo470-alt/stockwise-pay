@@ -78,7 +78,7 @@ const HeroSection = () => {
               <Button 
                 size="lg"
                 onClick={() => navigate('/auth')}
-                className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-secondary shadow-xl shadow-primary/25 font-semibold group"
+                className="text-lg px-8 py-6 bg-accent text-accent-foreground hover:bg-accent/90 shadow-xl shadow-accent/25 font-semibold group"
               >
                 Démarrer gratuitement
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

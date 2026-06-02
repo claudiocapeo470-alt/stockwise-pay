@@ -81,7 +81,7 @@ const HeaderSection = () => {
               </Button>
               <Button
                 onClick={() => navigate('/auth')}
-                className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 font-semibold shadow-lg shadow-primary/20"
+                className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold shadow-md shadow-accent/25"
               >
                 Essai Gratuit
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -144,7 +144,7 @@ const HeaderSection = () => {
                   </Button>
                   <Button
                     onClick={() => { navigate('/auth'); setMobileMenuOpen(false); }}
-                    className="w-full bg-gradient-to-r from-primary to-secondary"
+                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
                   >
                     Essai Gratuit
                   </Button>

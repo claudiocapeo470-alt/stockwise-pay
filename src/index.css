@@ -194,12 +194,13 @@ input, select, textarea {
   .card-elevated { @apply bg-card border border-border shadow-[var(--shadow-soft)]; }
   .card-interactive { @apply bg-card border border-border shadow-[var(--shadow-soft)] transition-all duration-200; }
   .card-interactive:hover { @apply shadow-[var(--shadow-medium)] border-primary/20; }
-  .status-success { @apply bg-success/10 text-success border border-success/20; }
-  .status-warning { @apply bg-warning/10 text-warning border border-warning/20; }
-  .status-error { @apply bg-destructive/10 text-destructive border border-destructive/20; }
-  .status-neutral { @apply bg-muted text-muted-foreground border border-border; }
-  .table-header { @apply bg-muted/50 font-semibold text-sm; }
-  .table-row-hover:hover { @apply bg-muted/30; }
+  .status-success { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20; }
+  .status-warning { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20; }
+  .status-error   { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive border border-destructive/20; }
+  .status-info    { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent border border-accent/20; }
+  .status-neutral { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground border border-border; }
+  .table-header { @apply bg-muted/50 text-xs font-semibold uppercase tracking-wider text-muted-foreground; }
+  .table-row-hover:hover { @apply bg-accent/5; }
   .text-balance { text-wrap: balance; }
   .space-xs { @apply gap-1; }
   .space-sm { @apply gap-2; }

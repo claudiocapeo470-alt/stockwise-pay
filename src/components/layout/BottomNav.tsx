@@ -157,20 +157,23 @@ export function BottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-primary/5 dark:bg-primary/10 border-t-2 border-primary/20 dark:border-primary/30 md:hidden pb-safe backdrop-blur-sm">
-        <div className="flex items-center justify-around h-14 px-1">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 border-t border-border md:hidden pb-safe backdrop-blur-md shadow-medium">
+        <div className="flex items-center justify-around h-16 px-1">
           {navigation.map((item) => {
             const active = isActive(item.href);
             return (
               <NavLink
                 key={item.name}
                 to={item.href}
-                className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors duration-200 min-w-0 ${
-                  active ? "text-primary" : "text-muted-foreground"
+                className={`relative flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all duration-200 min-w-0 min-h-[44px] ${
+                  active ? "text-accent" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <item.icon className={`h-5 w-5 flex-shrink-0 ${active ? "stroke-[2.5]" : "stroke-2"}`} />
-                <span className={`text-[10px] truncate max-w-[56px] ${active ? "font-semibold" : "font-normal"}`}>
+                {active && (
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-accent" />
+                )}
+                <item.icon className={`h-5 w-5 flex-shrink-0 transition-transform ${active ? "stroke-[2.5] scale-110" : "stroke-2"}`} />
+                <span className={`text-[10px] truncate max-w-[60px] ${active ? "font-semibold" : "font-normal"}`}>
                   {item.label || item.name}
                 </span>
               </NavLink>
@@ -179,7 +182,7 @@ export function BottomNav() {
           {showMenuButton && (
             <button
               onClick={() => setDrawerOpen(true)}
-              className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors duration-200 min-w-0 text-muted-foreground"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors duration-200 min-w-0 min-h-[44px] text-muted-foreground hover:text-foreground"
             >
               <Menu className="h-5 w-5 flex-shrink-0 stroke-2" />
               <span className="text-[10px] font-normal">Menu</span>
@@ -187,6 +190,7 @@ export function BottomNav() {
           )}
         </div>
       </nav>
+
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DrawerContent className="max-h-[85vh]">
@@ -210,9 +214,9 @@ export function BottomNav() {
                       <button
                         key={item.href}
                         onClick={() => handleNavClick(item.href)}
-                        className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm transition-colors ${
+                        className={`w-full flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-md text-sm transition-all ${
                           isActive(item.href)
-                            ? "bg-primary text-primary-foreground font-medium"
+                            ? "bg-accent text-accent-foreground font-semibold shadow-sm"
                             : "text-foreground hover:bg-muted"
                         }`}
                       >

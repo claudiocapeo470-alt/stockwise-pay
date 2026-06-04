@@ -166,6 +166,7 @@ export default function StoreConfig() {
 
   return (
     <div className="space-y-5 sm:space-y-6 animate-fade-in max-w-5xl mx-auto pb-6">
+      <StoreNav />
       {/* ────────────────────────────────────────────────────────────
            HEADER : titre + boutons sur la MÊME LIGNE (responsive)
          ──────────────────────────────────────────────────────────── */}

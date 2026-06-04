@@ -11,6 +11,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck } from "lucide-react";
 import { useOrderNotifications } from '@/hooks/useOrderNotifications';
+import { StoreNav } from '@/components/store/StoreNav';
 
 const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }> = {
   pending: { label: "En attente", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", emoji: "⏳" },

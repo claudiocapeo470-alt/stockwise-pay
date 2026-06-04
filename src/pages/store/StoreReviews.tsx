@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useOnlineStore, useStoreReviews } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
 import { Star, Check, X, Trash2 } from "lucide-react";
+import { StoreNav } from "@/components/store/StoreNav";
 
 export default function StoreReviews() {
   const { store } = useOnlineStore();

@@ -38,8 +38,10 @@ export default function StoreReviews() {
   );
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold">⭐ Avis clients</h1>
+    <div className="space-y-5 animate-fade-in max-w-5xl mx-auto w-full">
+      <StoreNav />
+      <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2"><Star className="h-5 w-5 text-primary" /> Avis clients</h1>
+
 
       {/* Desktop table */}
       <Card className="hidden md:block">

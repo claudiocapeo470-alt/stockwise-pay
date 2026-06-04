@@ -16,6 +16,7 @@ import {
   Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Sparkles, Tags,
 } from "lucide-react";
 import CategoryManager from "@/components/store/CategoryManager";
+import { StoreNav } from "@/components/store/StoreNav";
 
 const COLOR_PALETTE = [
   { name: "Indigo", value: "#4f46e5" }, { name: "Violet", value: "#7c3aed" },
@@ -165,6 +166,7 @@ export default function StoreConfig() {
 
   return (
     <div className="space-y-5 sm:space-y-6 animate-fade-in max-w-5xl mx-auto pb-6">
+      <StoreNav />
       {/* ────────────────────────────────────────────────────────────
            HEADER : titre + boutons sur la MÊME LIGNE (responsive)
          ──────────────────────────────────────────────────────────── */}

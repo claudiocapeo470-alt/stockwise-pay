@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check } from 'lucide-react';
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
+import { StoreNav } from '@/components/store/StoreNav';
 
 function ProductIcon({ product }: { product: any }) {
   if (product.image_url) return <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover" />;
@@ -348,32 +349,33 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
   );
 }
 
-// Mobile card for online products
+// Mobile card for online products — design épuré
 function OnlineProductCard({ sp, onEdit, onUnpublish, onDelete }: { sp: any; onEdit: () => void; onUnpublish: () => void; onDelete: () => void }) {
   const product = sp.products;
   return (
     <Card className="overflow-hidden">
-      <CardContent className="p-3">
-        <div className="flex items-start gap-3">
-          {product && <ProductIcon product={product} />}
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm truncate">{product?.name || '—'}</p>
-            <p className="text-xs text-muted-foreground truncate">{product?.category || 'Sans catégorie'}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-sm font-bold">{sp.online_price?.toLocaleString()} XOF</span>
-              <Badge variant="secondary" className="text-[10px]">{sp.is_active !== false ? 'Actif' : 'Inactif'}</Badge>
-            </div>
+      <CardContent className="p-3 flex items-center gap-3">
+        {product && <ProductIcon product={product} />}
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-sm truncate">{product?.name || '—'}</p>
+          <p className="text-xs text-muted-foreground truncate">{product?.category || 'Sans catégorie'}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-sm font-bold tracking-tight">{sp.online_price?.toLocaleString()} XOF</span>
+            <Badge variant={sp.is_active !== false ? 'success' : 'secondary'} className="text-[10px] px-1.5 py-0">
+              {sp.is_active !== false ? 'Actif' : 'Inactif'}
+            </Badge>
           </div>
-          <div className="flex flex-col gap-1 flex-shrink-0">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onEdit} title="Modifier"><Edit2 className="h-3.5 w-3.5" /></Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-orange-500" onClick={onUnpublish} title="Retirer de la boutique"><Globe className="h-3.5 w-3.5" /></Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={onDelete} title="Supprimer définitivement"><Trash2 className="h-3.5 w-3.5" /></Button>
-          </div>
+        </div>
+        <div className="flex items-center gap-0.5 flex-shrink-0">
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onEdit} title="Modifier"><Edit2 className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-orange-500" onClick={onUnpublish} title="Retirer"><Globe className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={onDelete} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
         </div>
       </CardContent>
     </Card>
   );
 }
+
 
 // Mobile card for stock products
 function StockProductCard({ product, selected, onToggle, onlinePrice, onPriceChange, onPublish, onDelete }: {
@@ -465,6 +467,7 @@ export default function StoreProducts() {
 
   return (
     <div className="space-y-4 sm:space-y-5 max-w-5xl mx-auto w-full overflow-x-hidden px-1">
+      <StoreNav />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2"><Globe className="h-5 w-5 text-primary" /> Produits en ligne</h1>

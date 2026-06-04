@@ -985,9 +985,21 @@ export default function PublicStore() {
               <div className="space-y-6">
                 <div>
                   <h3 className="lz-heading text-base text-foreground mb-3">À propos de ce produit</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {p.description || `${p.name} — Produit de qualité premium, idéal pour un usage quotidien.`}
-                  </p>
+                  {p.description ? (
+                    <div
+                      className="text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none [&_img]:rounded-lg [&_img]:my-2 [&_h1]:text-base [&_h1]:font-semibold [&_h2]:text-sm [&_h2]:font-semibold [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(p.description, {
+                          ALLOWED_TAGS: ['p','br','strong','b','em','i','u','ul','ol','li','h1','h2','h3','h4','a','img','span','div'],
+                          ALLOWED_ATTR: ['href','src','alt','title','style','target','rel'],
+                        }),
+                      }}
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {p.name} — Produit de qualité premium, idéal pour un usage quotidien.
+                    </p>
+                  )}
                 </div>
                 <div>
                   <h3 className="lz-heading text-base text-foreground mb-3">Caractéristiques</h3>

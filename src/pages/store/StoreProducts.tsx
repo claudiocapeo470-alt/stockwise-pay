@@ -466,6 +466,7 @@ export default function StoreProducts() {
 
   return (
     <div className="space-y-4 sm:space-y-5 max-w-5xl mx-auto w-full overflow-x-hidden px-1">
+      <StoreNav />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2"><Globe className="h-5 w-5 text-primary" /> Produits en ligne</h1>

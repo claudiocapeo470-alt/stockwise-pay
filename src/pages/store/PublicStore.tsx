@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import DOMPurify from "dompurify";
 import { supabase } from "@/integrations/supabase/client";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import {

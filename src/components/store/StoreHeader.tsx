@@ -42,20 +42,34 @@ export function StoreHeader({
   };
 
   return (
-    <div className="space-y-3 sm:space-y-4 w-full">
-      {/* Titre + actions sur la même ligne */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3 min-w-0">
+    <div className="w-full">
+      {/* Tout sur une seule ligne en desktop, empilé en mobile */}
+      <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4">
+        {/* Bloc titre */}
+        <div className="flex items-start gap-3 min-w-0 lg:flex-shrink-0">
           <div className="h-11 w-11 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
             <Store className="h-5 w-5 text-muted-foreground" />
           </div>
           <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate">{title}</h1>
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight truncate">{title}</h1>
             <p className="text-xs sm:text-sm text-muted-foreground truncate">{subtitle}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        {/* Bloc URL "En ligne" — centré, prend l'espace dispo */}
+        {store?.is_published && storeUrl && (
+          <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl px-3 py-2 flex items-center gap-2 min-w-0 lg:flex-1">
+            <Badge className="bg-emerald-600 text-white flex-shrink-0 text-[10px] px-2 py-0.5">En ligne</Badge>
+            <span className="text-xs sm:text-sm font-medium truncate flex-1 min-w-0">{storeUrl}</span>
+            <Button variant="ghost" size="sm" onClick={copyUrl} className="gap-1 flex-shrink-0 h-7 px-2 rounded-full">
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              <span className="hidden sm:inline text-xs">{copied ? "Copié" : "Copier"}</span>
+            </Button>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 flex-wrap lg:flex-nowrap lg:flex-shrink-0">
           {onSave && (
             <Button
               size="sm"
@@ -65,7 +79,7 @@ export function StoreHeader({
               className="gap-1.5 rounded-full px-4 shadow-sm"
             >
               {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-              OK
+              Enregistrer
             </Button>
           )}
           {store && (
@@ -92,20 +106,6 @@ export function StoreHeader({
           )}
         </div>
       </div>
-
-      {/* Barre URL "En ligne" */}
-      {store?.is_published && storeUrl && (
-        <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <Badge className="bg-emerald-600 text-white flex-shrink-0">En ligne</Badge>
-            <span className="text-xs sm:text-sm font-medium truncate">{storeUrl}</span>
-          </div>
-          <Button variant="outline" size="sm" onClick={copyUrl} className="gap-1.5 flex-shrink-0 rounded-full">
-            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            {copied ? "Copié" : "Copier"}
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

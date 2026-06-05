@@ -11,7 +11,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck } from "lucide-react";
 import { useOrderNotifications } from '@/hooks/useOrderNotifications';
-import { StoreNav } from '@/components/store/StoreNav';
+import { StoreHeader } from '@/components/store/StoreHeader';
 
 const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }> = {
   pending: { label: "En attente", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", emoji: "⏳" },
@@ -55,8 +55,7 @@ export default function StoreOrders() {
 
   return (
     <div className="space-y-5 animate-fade-in max-w-5xl mx-auto w-full">
-      <StoreNav />
-      <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2"><Package className="h-5 w-5 text-primary" /> Commandes reçues</h1>
+      <StoreHeader title="Commandes reçues" subtitle="Suivi et gestion des commandes de votre boutique" />
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

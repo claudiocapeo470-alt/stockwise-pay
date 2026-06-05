@@ -56,6 +56,21 @@ interface CartItem {
 type StorePage = "home" | "shop" | "categories" | "search" | "account" | "product";
 type SortOption = "recent" | "price_asc" | "price_desc" | "name";
 
+// Décodage récursif des entités HTML + strip des balises pour rendu plain text
+const decodeToPlainText = (raw: string): string => {
+  if (!raw) return "";
+  let s = raw;
+  if (typeof document === "undefined") return s.replace(/<[^>]*>/g, "");
+  const div = document.createElement("div");
+  for (let i = 0; i < 3; i++) {
+    div.innerHTML = s;
+    const next = div.textContent || "";
+    if (next === s) break;
+    s = next;
+  }
+  return s.trim();
+};
+
 // ── CSS ──────────────────────────────────────────────────────────────────────
 const ZONE_STYLES = `
 @import url('${FONT_HEADING_URL}');
@@ -986,15 +1001,9 @@ export default function PublicStore() {
                 <div>
                   <h3 className="lz-heading text-base text-foreground mb-3">À propos de ce produit</h3>
                   {p.description ? (
-                    <div
-                      className="text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none [&_img]:rounded-lg [&_img]:my-2 [&_h1]:text-base [&_h1]:font-semibold [&_h2]:text-sm [&_h2]:font-semibold [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline"
-                      dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(p.description, {
-                          ALLOWED_TAGS: ['p','br','strong','b','em','i','u','ul','ol','li','h1','h2','h3','h4','a','img','span','div'],
-                          ALLOWED_ATTR: ['href','src','alt','title','style','target','rel'],
-                        }),
-                      }}
-                    />
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap break-words">
+                      {decodeToPlainText(p.description)}
+                    </p>
                   ) : (
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       {p.name} — Produit de qualité premium, idéal pour un usage quotidien.

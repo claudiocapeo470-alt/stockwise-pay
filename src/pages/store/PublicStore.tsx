@@ -56,6 +56,21 @@ interface CartItem {
 type StorePage = "home" | "shop" | "categories" | "search" | "account" | "product";
 type SortOption = "recent" | "price_asc" | "price_desc" | "name";
 
+// Décodage récursif des entités HTML + strip des balises pour rendu plain text
+const decodeToPlainText = (raw: string): string => {
+  if (!raw) return "";
+  let s = raw;
+  if (typeof document === "undefined") return s.replace(/<[^>]*>/g, "");
+  const div = document.createElement("div");
+  for (let i = 0; i < 3; i++) {
+    div.innerHTML = s;
+    const next = div.textContent || "";
+    if (next === s) break;
+    s = next;
+  }
+  return s.trim();
+};
+
 // ── CSS ──────────────────────────────────────────────────────────────────────
 const ZONE_STYLES = `
 @import url('${FONT_HEADING_URL}');

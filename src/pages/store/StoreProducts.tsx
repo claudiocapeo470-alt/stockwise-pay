@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check } from 'lucide-react';
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
-import { StoreNav } from '@/components/store/StoreNav';
+import { StoreHeader } from '@/components/store/StoreHeader';
 
 function ProductIcon({ product }: { product: any }) {
   if (product.image_url) return <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover" />;
@@ -467,13 +467,9 @@ export default function StoreProducts() {
 
   return (
     <div className="space-y-4 sm:space-y-5 max-w-5xl mx-auto w-full overflow-x-hidden px-1">
-      <StoreNav />
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2"><Globe className="h-5 w-5 text-primary" /> Produits en ligne</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">{storeProducts.length} en ligne · {unpublished.length} non publiés</p>
-        </div>
-        <Button size={isMobile ? "sm" : "default"} onClick={() => setShowCreateDialog(true)} className="gap-1.5 self-start sm:self-auto">
+      <StoreHeader title="Produits en ligne" subtitle={`${storeProducts.length} en ligne · ${unpublished.length} non publiés`} />
+      <div className="flex justify-end">
+        <Button size={isMobile ? "sm" : "default"} onClick={() => setShowCreateDialog(true)} className="gap-1.5">
           <Plus className="h-4 w-4" /> Créer un produit
         </Button>
       </div>

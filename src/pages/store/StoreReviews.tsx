@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useOnlineStore, useStoreReviews } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
 import { Star, Check, X, Trash2 } from "lucide-react";
-import { StoreNav } from "@/components/store/StoreNav";
+import { StoreHeader } from "@/components/store/StoreHeader";
 
 export default function StoreReviews() {
   const { store } = useOnlineStore();
@@ -39,8 +39,7 @@ export default function StoreReviews() {
 
   return (
     <div className="space-y-5 animate-fade-in max-w-5xl mx-auto w-full">
-      <StoreNav />
-      <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2"><Star className="h-5 w-5 text-primary" /> Avis clients</h1>
+      <StoreHeader title="Avis clients" subtitle="Modérer et publier les avis de vos clients" />
 
 
       {/* Desktop table */}

@@ -16,7 +16,7 @@ import {
   Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Sparkles, Tags,
 } from "lucide-react";
 import CategoryManager from "@/components/store/CategoryManager";
-import { StoreNav } from "@/components/store/StoreNav";
+import { StoreHeader } from "@/components/store/StoreHeader";
 
 const COLOR_PALETTE = [
   { name: "Indigo", value: "#4f46e5" }, { name: "Violet", value: "#7c3aed" },
@@ -166,73 +166,7 @@ export default function StoreConfig() {
 
   return (
     <div className="space-y-5 sm:space-y-6 animate-fade-in max-w-5xl mx-auto pb-6">
-      <StoreNav />
-      {/* ────────────────────────────────────────────────────────────
-           HEADER : titre + boutons sur la MÊME LIGNE (responsive)
-         ──────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Store className="h-5 w-5 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Ma Boutique</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Configurez et publiez votre boutique en ligne
-            </p>
-          </div>
-        </div>
-
-        {/* Actions — toutes sur la même ligne que le titre */}
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <Button
-            size="sm"
-            variant="default"
-            onClick={handleSave}
-            disabled={upsertStore.isPending}
-            className="gap-1.5 rounded-full px-4 shadow-sm"
-          >
-            {upsertStore.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-            <span className="hidden xs:inline">Enregistrer</span>
-            <span className="xs:hidden">OK</span>
-          </Button>
-          {store && (
-            <Button size="sm" variant="outline" asChild className="gap-1.5 rounded-full px-4">
-              <a href={storeUrl} target="_blank" rel="noopener">
-                <Eye className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Voir</span>
-              </a>
-            </Button>
-          )}
-          {store && (
-            <Button
-              size="sm"
-              onClick={handlePublish}
-              disabled={togglePublish.isPending}
-              className={`gap-1.5 rounded-full px-4 shadow-sm ${store.is_published
-                ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                : 'bg-emerald-600 hover:bg-emerald-700 text-white'}`}
-            >
-              <Rocket className="h-3.5 w-3.5" />
-              {store.is_published ? "Dépublier" : "Publier"}
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* URL publiée */}
-      {store?.is_published && (
-        <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0 w-full sm:w-auto">
-            <Badge className="bg-emerald-600 text-white flex-shrink-0">En ligne</Badge>
-            <span className="text-xs sm:text-sm font-medium truncate">{storeUrl}</span>
-          </div>
-          <Button variant="outline" size="sm" onClick={copyUrl} className="gap-1.5 flex-shrink-0 rounded-full">
-            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            {copied ? "Copié" : "Copier"}
-          </Button>
-        </div>
-      )}
+      <StoreHeader onSave={handleSave} saving={upsertStore.isPending} />
 
       {/* ────────────────────────────────────────────────────────────
            STEPPER 3 ÉTAPES — design simple

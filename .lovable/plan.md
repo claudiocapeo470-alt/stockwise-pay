@@ -1,72 +1,41 @@
-# Plan d'amélioration Boutique en ligne
+## 1. Supprimer le pilule StoreNav (capture 1) — partout
 
-Travaux organisés en 5 lots indépendants. Je peux exécuter dans l'ordre proposé ou un sous-ensemble selon votre priorité.
+- Supprimer l'import + l'usage `<StoreNav />` dans :
+  - `src/pages/store/StoreConfig.tsx`
+  - `src/pages/store/StoreProducts.tsx`
+  - `src/pages/store/StoreOrders.tsx`
+  - `src/pages/store/StoreReviews.tsx`
+- Supprimer le fichier `src/components/store/StoreNav.tsx` (plus utilisé).
 
-## Lot 1 — Wizard "Créer un produit" (StoreProducts.tsx)
+## 2. Header partagé "Ma Boutique" sur les 4 pages (capture 3)
 
-**Étape 1 — Photos (multi-images, design capture 2)**
-- Grille 4 colonnes, jusqu'à 8 photos (PNG/JPG/WEBP, max 5 Mo chacune)
-- Première photo = badge "Principal" bleu
-- Tuiles vides cliquables avec icône `+` et label "Photo"
-- Compteur "X/8 images" + texte d'aide
-- Upload vers bucket `product-images`, stockage URLs dans state local; écriture dans `product_images` après création du produit
+Créer **`src/components/store/StoreHeader.tsx`** : header responsive contenant exactement le bloc de la capture 3 — icône carrée + titre + sous-titre + boutons **OK / Voir / Publier ou Dépublier** + barre URL "En ligne" copiable. Tout sur la même ligne sur desktop, empilé proprement sur mobile.
 
-**Étape 2 — Infos + Description riche (capture 1)**
-- Nom, Prix conservés
-- Remplace `Textarea` par `RichTextEditor` existant (`src/components/stocks/RichTextEditor.tsx`) — barre d'outils Bold / Italic / Souligne / Liste / Image, tous boutons fonctionnels
-- Texte d'aide "Utilisez la barre d'outils pour formater"
+- Prop `title?` et `subtitle?` pour personnaliser par page (défaut : "Ma Boutique" / "Configurez et publiez votre boutique en ligne").
+- Le composant lit `useOnlineStore()` lui-même (store, togglePublish) et l'action **Enregistrer** est masquée par défaut (seul `StoreConfig` la passe via prop `onSave`), pour ne pas dupliquer la logique de sauvegarde sur les pages Produits/Commandes/Avis.
+- Barre URL "En ligne" affichée uniquement si `store.is_published`.
+- Layout : `flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between` ; boutons en `flex-wrap` ; URL en `truncate`. Aucun overflow horizontal.
 
-**Étape 3 — Catégorie avec images**
-- Liste des catégories sous forme de cartes arrondies (rounded-2xl) avec image + nom centré
-- Bouton "Nouvelle catégorie" ouvre mini-form: nom + upload image (bucket `product-images/categories/`)
-- Sauvegarde dans `product_categories` avec champ `image_url` (nouveau)
-- Sélection visuelle (ring primary)
+Intégrer `<StoreHeader />` en tête de :
+- `StoreConfig.tsx` (avec `onSave={handleSave}` → bouton OK affiché, remplace le header local actuel).
+- `StoreProducts.tsx` (remplace le bloc titre actuel).
+- `StoreOrders.tsx` (remplace le `<h1>Commandes reçues</h1>`).
+- `StoreReviews.tsx` (remplace le `<h1>Avis clients</h1>`).
 
-**Étape 4 — Stock** (inchangé)
+Chaque page conserve son contenu spécifique (stats, tables, dialogs) sous le header.
 
-## Lot 2 — Refonte page "Produits en ligne"
+## 3. Description produit lisible (capture 2)
 
-- Container `max-w-5xl` + `px-4 sm:px-6` strict, `overflow-x-hidden` sur racine
-- Suppression du tableau desktop horizontal → grille de cartes responsive (1/2/3 colonnes) cohérente avec mobile
-- Chips de filtre minimalistes au lieu de Tabs lourdes
-- Suppression définitive accessible directement, sans menu
+Dans `src/pages/store/PublicStore.tsx`, l'onglet "Description" affiche actuellement le HTML brut visible (l'utilisateur a collé du code HTML dans l'éditeur, qui a été stocké encodé `&lt;h2&gt;…`).
 
-## Lot 3 — Cache / PWA "ancienne version"
+- Ajouter un helper `decodeToPlainText(raw)` qui décode récursivement les entités HTML (jusqu'à 3 passes) puis retourne le `textContent` final — donc strippé de toutes les balises.
+- Remplacer le `dangerouslySetInnerHTML` actuel par un rendu `<p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{decodeToPlainText(p.description)}</p>`.
+- Garder le fallback existant (texte par défaut) si description vide.
 
-**Diagnostic**: le service worker (`public/manifest.json` + Workbox via Vite) sert l'ancienne build tant que l'utilisateur ne ferme pas tous les onglets. Lovable preview a aussi un cache CDN agressif.
+Résultat : l'utilisateur ne voit plus jamais les balises `<h2 class="…">…</h2>`, seulement le texte lisible.
 
-**Correctifs**:
-- Ajouter `<meta http-equiv="Cache-Control" content="no-cache">` sur `index.html`
-- Service worker : activer `skipWaiting` + `clientsClaim` et afficher un toast "Nouvelle version disponible — Recharger" lorsqu'une mise à jour est détectée
-- Versionner les assets (déjà fait via Vite hash) et purger via `caches.keys()` au démarrage si version bump
+## Fichiers touchés
 
-## Lot 4 — Sticky CTA mobile (Boutique publique)
-
-- Sur `/store/:slug/product/:id` (et carte produit) : barre fixe `bottom-16` (au-dessus du `BottomNav` h-16) avec deux boutons côte à côte : "Ajouter au panier" (variant outline) + "Acheter maintenant" (primary)
-- Animation slide-up à l'apparition
-- Padding-bottom du conteneur scroll pour ne pas masquer le contenu
-
-## Lot 5 — Indicatifs téléphoniques internationaux
-
-- Installer `react-phone-number-input` (léger, drapeaux SVG inclus)
-- Créer `<PhoneInput />` wrapper utilisant nos tokens
-- Remplacer tous les `<Input type="tel">` dans : Checkout, StoreConfig, Profile, TeamManagement, AddPaymentDialog, etc.
-- Pays par défaut = pays de la boutique (XOF → CI/SN/BJ selon la devise)
-
-## Lot 6 — Icône panier carte produit (capture 3)
-
-- Sur `PublicStore.tsx` : le bouton flottant en haut à droite de la carte produit (icône cart) appelle `addToCart(product)` directement, toast "Ajouté au panier"
-- Persistance via localStorage par store_slug
-
----
-
-## Ordre d'exécution recommandé
-
-1. Lot 1 (wizard) — plus gros impact UX
-2. Lot 6 (icône panier) — petit fix rapide  
-3. Lot 4 (CTA mobile fixe)
-4. Lot 5 (indicatifs tél)
-5. Lot 2 (refonte liste produits)
-6. Lot 3 (cache PWA) — délicat, à tester soigneusement
-
-Confirmez-vous l'ordre et la portée, ou voulez-vous prioriser certains lots seulement ?
+- créé : `src/components/store/StoreHeader.tsx`
+- supprimé : `src/components/store/StoreNav.tsx`
+- modifié : `src/pages/store/StoreConfig.tsx`, `StoreProducts.tsx`, `StoreOrders.tsx`, `StoreReviews.tsx`, `PublicStore.tsx`

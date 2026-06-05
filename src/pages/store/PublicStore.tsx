@@ -56,18 +56,22 @@ interface CartItem {
 type StorePage = "home" | "shop" | "categories" | "search" | "account" | "product";
 type SortOption = "recent" | "price_asc" | "price_desc" | "name";
 
-// Décodage récursif des entités HTML + strip des balises pour rendu plain text
+// Convertit en texte lisible : décode les entités HTML (jusqu'à 5 passes)
+// et strippe toute balise restante. Garantit qu'aucun code HTML ne s'affiche.
 const decodeToPlainText = (raw: string): string => {
   if (!raw) return "";
-  let s = raw;
-  if (typeof document === "undefined") return s.replace(/<[^>]*>/g, "");
-  const div = document.createElement("div");
-  for (let i = 0; i < 3; i++) {
-    div.innerHTML = s;
-    const next = div.textContent || "";
-    if (next === s) break;
-    s = next;
+  let s = String(raw);
+  if (typeof document !== "undefined") {
+    const div = document.createElement("div");
+    for (let i = 0; i < 5; i++) {
+      div.innerHTML = s;
+      const next = div.textContent || "";
+      if (next === s) break;
+      s = next;
+    }
   }
+  // Filet de sécurité : retire toute balise résiduelle (<h2 ...>, </h2>, etc.)
+  s = s.replace(/<\/?[a-z][^>]*>/gi, "");
   return s.trim();
 };
 

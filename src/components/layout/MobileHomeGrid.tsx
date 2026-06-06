@@ -50,9 +50,11 @@ const ALL_TILES: Tile[] = [
 
 export function MobileHomeGrid() {
   const navigate = useNavigate();
-  const { isEmployee, hasPermission } = useAuth();
-  const { hasModule } = useCompanyModules();
+  const { isEmployee, hasPermission, loading: authLoading } = useAuth();
+  const { hasModule, loading: modulesLoading } = useCompanyModules();
   const [boutiqueOpen, setBoutiqueOpen] = useState(false);
+
+  const isReady = !authLoading && !modulesLoading;
 
   const visibleTiles = ALL_TILES.filter(tile => {
     if (tile.module && !hasModule(tile.module)) return false;

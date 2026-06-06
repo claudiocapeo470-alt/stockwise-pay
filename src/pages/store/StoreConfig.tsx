@@ -13,10 +13,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Save, Eye, Rocket, Copy, Check, Link2, Store, Palette,
-  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Sparkles, Tags,
+  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Sparkles, Tags, Settings2,
 } from "lucide-react";
 import CategoryManager from "@/components/store/CategoryManager";
 import { StoreHeader } from "@/components/store/StoreHeader";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import boutique3D from "@/assets/boutique-3d.png";
 
 const COLOR_PALETTE = [
   { name: "Indigo", value: "#4f46e5" }, { name: "Violet", value: "#7c3aed" },
@@ -48,6 +50,7 @@ export default function StoreConfig() {
   const [currentStep, setCurrentStep] = useState(1);
   const [uploadingBanner, setUploadingBanner] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
 
   const [form, setForm] = useState({
     name: "", slug: "", description: "", primary_color: "#4f46e5",
@@ -164,54 +167,83 @@ export default function StoreConfig() {
     </div>
   );
 
+  const progressPct = (currentStep / STEPS.length) * 100;
+  const CurrentIcon = STEPS[currentStep - 1].icon;
+
   return (
     <div className="space-y-5 sm:space-y-6 animate-fade-in max-w-5xl mx-auto pb-6">
       <StoreHeader onSave={handleSave} saving={upsertStore.isPending} />
 
       {/* ────────────────────────────────────────────────────────────
-           STEPPER 3 ÉTAPES — design simple
+           HERO — Bloc 3D boutique + bouton d'ouverture du wizard
          ──────────────────────────────────────────────────────────── */}
-      <div className="bg-card border border-border rounded-2xl p-4 sm:p-5">
-        <div className="flex items-center justify-between mb-1">
-          {STEPS.map((step, i) => {
-            const isActive = currentStep === step.id;
-            const isDone = currentStep > step.id;
-            return (
-              <div key={step.id} className="flex items-center flex-1">
-                <button
-                  onClick={() => setCurrentStep(step.id)}
-                  className="flex flex-col items-center gap-1.5 group flex-shrink-0"
-                >
-                  <div className={`h-9 w-9 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                    isActive
-                      ? 'bg-primary text-primary-foreground shadow-md scale-110'
-                      : isDone
-                        ? 'bg-primary/20 text-primary'
-                        : 'bg-muted text-muted-foreground'
-                  }`}>
-                    {isDone ? <Check className="h-4 w-4" /> : step.id}
-                  </div>
-                  <span className={`text-[11px] sm:text-xs font-medium ${isActive || isDone ? 'text-foreground' : 'text-muted-foreground'}`}>
-                    {step.title}
-                  </span>
-                </button>
-                {i < STEPS.length - 1 && (
-                  <div className={`flex-1 h-0.5 mx-2 sm:mx-3 transition-colors ${isDone ? 'bg-primary' : 'bg-border'}`} />
-                )}
-              </div>
-            );
-          })}
+      <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-background to-primary/5 p-6 sm:p-10">
+        <div className="absolute -right-6 -top-6 h-40 w-40 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
+        <div className="absolute -left-10 -bottom-10 h-48 w-48 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
+
+        <div className="relative flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
+          <div className="flex-shrink-0">
+            <img
+              src={boutique3D}
+              alt="Boutique 3D"
+              loading="lazy"
+              width={1024}
+              height={1024}
+              className="h-40 w-40 sm:h-52 sm:w-52 object-contain drop-shadow-2xl animate-fade-in"
+            />
+          </div>
+          <div className="flex-1 text-center sm:text-left space-y-3">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              {store ? "Votre boutique en ligne" : "Lancez votre boutique en ligne"}
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-md">
+              {store
+                ? "Modifiez votre identité, votre design, vos catégories et vos options en quelques étapes."
+                : "En 4 étapes guidées, configurez l'identité, le design et le contact de votre boutique."}
+            </p>
+            <Button
+              size="lg"
+              onClick={() => { setCurrentStep(1); setWizardOpen(true); }}
+              className="rounded-full h-12 px-6 gap-2 shadow-lg hover:shadow-xl transition-all"
+            >
+              <Settings2 className="h-5 w-5" />
+              {store ? "Configurer ma boutique" : "Configurer votre boutique"}
+            </Button>
+          </div>
         </div>
-        <p className="text-center text-xs text-muted-foreground mt-3">
-          Étape {currentStep} sur {STEPS.length} — {STEPS[currentStep - 1].desc}
-        </p>
       </div>
 
       {/* ────────────────────────────────────────────────────────────
-           CONTENU PAR ÉTAPE
+           WIZARD — Bottom sheet style appli mobile (du bas vers le haut)
          ──────────────────────────────────────────────────────────── */}
-      <Card className="rounded-2xl border-border">
-        <CardContent className="p-5 sm:p-6 space-y-6">
+      <Sheet open={wizardOpen} onOpenChange={setWizardOpen}>
+        <SheetContent
+          side="bottom"
+          className="h-[92vh] sm:h-[90vh] p-0 rounded-t-3xl border-t-0 flex flex-col gap-0 overflow-hidden"
+        >
+          {/* Drag handle + header */}
+          <div className="flex-shrink-0 pt-3 pb-2 px-5 bg-background border-b border-border">
+            <div className="mx-auto h-1.5 w-12 rounded-full bg-muted mb-3" />
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <CurrentIcon className="h-5 w-5 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-base font-bold truncate">{STEPS[currentStep - 1].title}</p>
+                <p className="text-xs text-muted-foreground truncate">{STEPS[currentStep - 1].desc}</p>
+              </div>
+            </div>
+            {/* Progress bar (no numbers) */}
+            <div className="mt-3 h-1.5 w-full bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
           {/* ÉTAPE 1 — IDENTITÉ */}
           {currentStep === 1 && (
             <>
@@ -481,8 +513,9 @@ export default function StoreConfig() {
               </Button>
             )}
           </div>
-        </CardContent>
-      </Card>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

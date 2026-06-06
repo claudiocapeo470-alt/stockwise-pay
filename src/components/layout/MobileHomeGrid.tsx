@@ -50,9 +50,11 @@ const ALL_TILES: Tile[] = [
 
 export function MobileHomeGrid() {
   const navigate = useNavigate();
-  const { isEmployee, hasPermission } = useAuth();
-  const { hasModule } = useCompanyModules();
+  const { isEmployee, hasPermission, loading: authLoading } = useAuth();
+  const { hasModule, loading: modulesLoading } = useCompanyModules();
   const [boutiqueOpen, setBoutiqueOpen] = useState(false);
+
+  const isReady = !authLoading && !modulesLoading;
 
   const visibleTiles = ALL_TILES.filter(tile => {
     if (tile.module && !hasModule(tile.module)) return false;
@@ -74,20 +76,28 @@ export function MobileHomeGrid() {
   return (
     <>
       <div className="grid grid-cols-3 gap-3 px-1 w-full overflow-hidden">
-        {visibleTiles.map((tile) => (
-          <button
-            key={tile.id}
-            onClick={() => handleTileClick(tile)}
-            className="flex flex-col items-center justify-center rounded-2xl p-3 aspect-square gap-2 active:scale-95 transition-transform shadow-sm min-w-0"
-            style={{ backgroundColor: tile.color }}
-          >
-            <tile.icon className="h-7 w-7 text-white" strokeWidth={1.8} />
-            <span className="text-white text-[11px] font-medium text-center leading-tight line-clamp-2 break-words">
-              {tile.label}
-            </span>
-          </button>
-        ))}
+        {!isReady
+          ? Array.from({ length: 9 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-2xl aspect-square bg-muted/60 animate-pulse"
+              />
+            ))
+          : visibleTiles.map((tile) => (
+              <button
+                key={tile.id}
+                onClick={() => handleTileClick(tile)}
+                className="flex flex-col items-center justify-center rounded-2xl p-3 aspect-square gap-2 active:scale-95 transition-transform shadow-sm min-w-0"
+                style={{ backgroundColor: tile.color }}
+              >
+                <tile.icon className="h-7 w-7 text-white" strokeWidth={1.8} />
+                <span className="text-white text-[11px] font-medium text-center leading-tight line-clamp-2 break-words">
+                  {tile.label}
+                </span>
+              </button>
+            ))}
       </div>
+
 
       <Dialog open={boutiqueOpen} onOpenChange={setBoutiqueOpen}>
         <DialogContent className="max-w-[90vw] sm:max-w-sm">

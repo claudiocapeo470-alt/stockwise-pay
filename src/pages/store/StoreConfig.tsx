@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Card, CardContent } from "@/components/ui/card";
+// Card removed — wizard now lives in a bottom sheet
 import { Badge } from "@/components/ui/badge";
 import { useOnlineStore } from "@/hooks/useOnlineStore";
 import { useAuth } from "@/contexts/AuthContext";

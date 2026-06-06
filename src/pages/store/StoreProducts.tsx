@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -17,7 +18,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check } from 'lucide-react';
+import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes } from 'lucide-react';
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
@@ -168,34 +169,45 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
     finally { setSaving(false); }
   };
 
-  const STEPS = ['Photos', 'Infos', 'Catégorie', 'Stock'];
+  const STEPS = [
+    { label: 'Photos', icon: Camera, desc: 'Ajoutez les photos de votre produit' },
+    { label: 'Infos', icon: Info, desc: 'Nom, prix et description' },
+    { label: 'Catégorie', icon: Tag, desc: 'Choisissez ou créez une catégorie' },
+    { label: 'Stock', icon: Boxes, desc: 'Quantité et seuil de rupture' },
+  ];
   const totalSteps = STEPS.length;
   const canNext = step === 1 ? true : step === 2 ? !!form.name.trim() && !!form.price : true;
+  const progressPct = (step / totalSteps) * 100;
+  const StepIcon = STEPS[step - 1].icon;
 
   return (
-    <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2"><Plus className="h-5 w-5" /> Nouveau produit</DialogTitle>
-        </DialogHeader>
-
-        {/* Stepper */}
-        <div className="flex items-center justify-center gap-1.5 mb-2">
-          {STEPS.map((label, i) => {
-            const s = i + 1;
-            return (
-              <div key={s} className="flex items-center gap-1.5">
-                <button onClick={() => setStep(s)} className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
-                  s < step ? 'bg-emerald-500 text-white' : s === step ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                }`}>{s < step ? <Check className="h-3.5 w-3.5" /> : s}</button>
-                {s < totalSteps && <div className={`w-5 h-0.5 ${s < step ? 'bg-emerald-500' : 'bg-muted'}`} />}
-              </div>
-            );
-          })}
+    <Sheet open={open} onOpenChange={v => !v && onClose()}>
+      <SheetContent
+        side="bottom"
+        className="h-[92vh] sm:h-[90vh] p-0 rounded-t-3xl border-t-0 flex flex-col gap-0 overflow-hidden"
+      >
+        {/* Header with drag handle + progress bar (no numbers) */}
+        <div className="flex-shrink-0 pt-3 pb-2 px-5 bg-background border-b border-border">
+          <div className="mx-auto h-1.5 w-12 rounded-full bg-muted mb-3" />
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <StepIcon className="h-5 w-5 text-primary" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-base font-bold truncate">Nouveau produit · {STEPS[step - 1].label}</p>
+              <p className="text-xs text-muted-foreground truncate">{STEPS[step - 1].desc}</p>
+            </div>
+          </div>
+          <div className="mt-3 h-1.5 w-full bg-muted rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
         </div>
-        <p className="text-center text-xs text-muted-foreground mb-2">Étape {step}/{totalSteps} — {STEPS[step - 1]}</p>
 
-        <div className="space-y-4 min-h-[280px]">
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {/* ÉTAPE 1: Photos multiples */}
           {step === 1 && (
             <div className="space-y-2">
@@ -332,20 +344,21 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
           )}
         </div>
 
-        <DialogFooter className="flex-row gap-2 justify-between">
+        {/* Footer actions */}
+        <div className="flex-shrink-0 flex items-center justify-between gap-2 px-5 py-3 border-t border-border bg-background">
           {step > 1 ? (
-            <Button variant="outline" size="sm" onClick={() => setStep(s => s - 1)}>← Précédent</Button>
+            <Button variant="outline" size="sm" onClick={() => setStep(s => s - 1)} className="rounded-full">← Précédent</Button>
           ) : (
-            <Button variant="outline" size="sm" onClick={onClose}>Annuler</Button>
+            <Button variant="outline" size="sm" onClick={onClose} className="rounded-full">Annuler</Button>
           )}
           {step < totalSteps ? (
-            <Button size="sm" onClick={() => setStep(s => s + 1)} disabled={!canNext}>Suivant →</Button>
+            <Button size="sm" onClick={() => setStep(s => s + 1)} disabled={!canNext} className="rounded-full">Suivant →</Button>
           ) : (
-            <Button size="sm" onClick={handleCreate} disabled={saving}>{saving ? 'Création...' : '✓ Créer et publier'}</Button>
+            <Button size="sm" onClick={handleCreate} disabled={saving} className="rounded-full">{saving ? 'Création...' : '✓ Créer et publier'}</Button>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 

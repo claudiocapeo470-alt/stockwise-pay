@@ -479,7 +479,12 @@ export default function StoreProducts() {
 
   return (
     <div className="space-y-4 sm:space-y-5 max-w-5xl mx-auto w-full overflow-x-hidden px-1">
-      <StoreHeader title="Produits en ligne" subtitle={`${storeProducts.length} en ligne · ${unpublished.length} non publiés`} />
+      <StoreHeader
+        title="Produits en ligne"
+        subtitle={`${storeProducts.length} en ligne · ${unpublished.length} non publiés`}
+        onSave={async () => { refreshAll(); toast.success('Modifications enregistrées'); }}
+      />
+
 
       {/* Recherche + Créer sur la même ligne */}
       <div className="flex items-center gap-2 w-full">

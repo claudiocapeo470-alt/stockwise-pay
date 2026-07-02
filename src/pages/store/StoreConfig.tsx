@@ -39,6 +39,40 @@ const STEPS = [
 
 const MAX_BANNER_SIZE = 3 * 1024 * 1024; // 3 MB
 
+// ─── Preview Panel (Desktop / Tablette) ─────────────────────────────
+function PreviewPanel({ storeUrl }: { storeUrl: string }) {
+  const [device, setDevice] = useState<'desktop' | 'tablet'>('desktop');
+  const [reloadKey, setReloadKey] = useState(0);
+  const width = device === 'desktop' ? '100%' : '768px';
+  return (
+    <div className="rounded-3xl border border-border bg-card overflow-hidden">
+      <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-border bg-muted/30">
+        <div className="flex items-center gap-2">
+          <Eye className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold">Aperçu de votre boutique</h3>
+        </div>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setDevice('desktop')} className={`px-3 py-1 text-xs rounded-full transition ${device === 'desktop' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}>Desktop</button>
+          <button onClick={() => setDevice('tablet')} className={`px-3 py-1 text-xs rounded-full transition ${device === 'tablet' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}>Tablette</button>
+          <button onClick={() => setReloadKey(k => k + 1)} className="p-1.5 rounded-full hover:bg-muted" title="Rafraîchir">
+            <Loader2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+      <div className="bg-muted/50 p-3 flex justify-center overflow-x-auto">
+        <iframe
+          key={reloadKey}
+          src={storeUrl}
+          title="Aperçu boutique"
+          className="bg-white rounded-xl border border-border shadow-medium"
+          style={{ width, maxWidth: '100%', height: '600px' }}
+        />
+      </div>
+    </div>
+  );
+}
+
+
 export default function StoreConfig() {
   const { store, isLoading, upsertStore, togglePublish, checkSlugAvailability } = useOnlineStore();
   const { user } = useAuth();
@@ -212,6 +246,12 @@ export default function StoreConfig() {
           </div>
         </div>
       </div>
+
+      {/* ────────────────────────────────────────────────────────────
+           PRÉVISUALISATION — Aperçu Desktop / Tablette
+         ──────────────────────────────────────────────────────────── */}
+      {store && store.is_published && form.slug && <PreviewPanel storeUrl={storeUrl} />}
+
 
       {/* ────────────────────────────────────────────────────────────
            WIZARD — Bottom sheet style appli mobile (du bas vers le haut)

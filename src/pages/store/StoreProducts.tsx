@@ -341,7 +341,31 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
               </div>
             </div>
           )}
+
+          {/* ─── Prévisualisation LIVE de la carte produit ─── */}
+          {(images.length > 0 || form.name || form.price) && (
+            <div className="mt-4 border border-dashed border-primary/30 rounded-2xl p-3 bg-primary/5">
+              <p className="text-[11px] font-semibold text-primary uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <ImageIcon className="h-3 w-3" /> Aperçu carte produit
+              </p>
+              <div className="max-w-[200px] mx-auto bg-card rounded-xl border border-border overflow-hidden shadow-soft">
+                <div className="aspect-square bg-muted flex items-center justify-center">
+                  {images[0] ? (
+                    <img src={images[0]} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <Package className="h-10 w-10 text-muted-foreground/40" />
+                  )}
+                </div>
+                <div className="p-2.5 space-y-1">
+                  <p className="text-sm font-medium truncate">{form.name || 'Nom du produit'}</p>
+                  <p className="text-xs text-muted-foreground truncate">{form.category || 'Catégorie'}</p>
+                  <p className="text-sm font-bold">{form.price ? Number(form.price).toLocaleString() : '0'} XOF</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+
 
         {/* Footer actions */}
         <div className="flex-shrink-0 flex items-center justify-between gap-2 px-5 py-3 border-t border-border bg-background">

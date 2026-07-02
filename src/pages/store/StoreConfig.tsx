@@ -214,6 +214,12 @@ export default function StoreConfig() {
       </div>
 
       {/* ────────────────────────────────────────────────────────────
+           PRÉVISUALISATION — Aperçu Desktop / Tablette
+         ──────────────────────────────────────────────────────────── */}
+      {store && store.is_published && form.slug && <PreviewPanel storeUrl={storeUrl} />}
+
+
+      {/* ────────────────────────────────────────────────────────────
            WIZARD — Bottom sheet style appli mobile (du bas vers le haut)
          ──────────────────────────────────────────────────────────── */}
       <Sheet open={wizardOpen} onOpenChange={setWizardOpen}>

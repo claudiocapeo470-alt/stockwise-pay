@@ -322,6 +322,40 @@ export default function PublicStore() {
     load();
   }, [slug]);
 
+  // Dynamic <title> + OG tags per boutique (client-side, best-effort for JS crawlers + tab title)
+  useEffect(() => {
+    if (!store) return;
+    const setMeta = (attr: 'name' | 'property', key: string, content: string) => {
+      let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attr, key);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+    };
+    const title = `${store.name} — Boutique en ligne`;
+    const desc = store.description || `Découvrez les produits de ${store.name}. Commandez en ligne, livraison rapide.`;
+    const image = store.logo_url || store.banner_url || 'https://www.stocknix.com/stocknix-logo-official.png';
+    const url = `https://www.stocknix.com/boutique/${store.slug}`;
+    document.title = title;
+    setMeta('name', 'description', desc);
+    setMeta('property', 'og:title', title);
+    setMeta('property', 'og:description', desc);
+    setMeta('property', 'og:image', image);
+    setMeta('property', 'og:url', url);
+    setMeta('property', 'og:site_name', store.name);
+    setMeta('property', 'og:type', 'website');
+    setMeta('name', 'twitter:card', 'summary_large_image');
+    setMeta('name', 'twitter:title', title);
+    setMeta('name', 'twitter:description', desc);
+    setMeta('name', 'twitter:image', image);
+    // Favicon
+    let favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement | null;
+    if (favicon && store.logo_url) favicon.href = store.logo_url;
+  }, [store]);
+
+
   // Get all images for a product (main + extras, deduplicated)
   const getProductImages = (p: ProductData): string[] => {
     const extras = productImages[p.id] || [];

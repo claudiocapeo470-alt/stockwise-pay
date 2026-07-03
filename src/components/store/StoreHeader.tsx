@@ -13,6 +13,7 @@ interface StoreHeaderProps {
 }
 
 const PUBLIC_DOMAIN = "https://www.stocknix.com";
+const SHARE_ENDPOINT = "https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/store-og";
 
 export function StoreHeader({
   title = "Ma Boutique",
@@ -24,6 +25,9 @@ export function StoreHeader({
   const [copied, setCopied] = useState(false);
 
   const storeUrl = store?.slug ? `${PUBLIC_DOMAIN}/boutique/${store.slug}` : "";
+  // Smart link : les crawlers (WhatsApp, Facebook, LinkedIn...) reçoivent
+  // les meta OG de la boutique, les humains sont redirigés vers l'URL propre.
+  const shareUrl = store?.slug ? `${SHARE_ENDPOINT}?slug=${encodeURIComponent(store.slug)}` : "";
 
   const handlePublish = async () => {
     try {
@@ -35,11 +39,13 @@ export function StoreHeader({
   };
 
   const copyUrl = () => {
-    if (!storeUrl) return;
-    navigator.clipboard.writeText(storeUrl);
+    if (!shareUrl) return;
+    navigator.clipboard.writeText(shareUrl);
     setCopied(true);
+    toast.success("Lien de partage copié — nom et logo s'afficheront sur WhatsApp/Facebook/LinkedIn.");
     setTimeout(() => setCopied(false), 2000);
   };
+
 
   return (
     <div className="w-full">

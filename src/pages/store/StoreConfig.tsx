@@ -556,6 +556,19 @@ export default function StoreConfig() {
             )}
           </div>
           </div>
+
+          {/* Preview aside — visible on lg+ */}
+          <aside className="hidden lg:flex flex-col w-[520px] xl:w-[600px] bg-muted/20 overflow-y-auto p-5">
+            {form.slug ? (
+              <PreviewPanel storeUrl={`${window.location.origin}/boutique/${form.slug}`} />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center text-sm text-muted-foreground gap-2 p-6 border-2 border-dashed border-border rounded-2xl">
+                <Eye className="h-8 w-8 opacity-40" />
+                <p>Renseignez une URL personnalisée pour voir l'aperçu de votre boutique ici.</p>
+              </div>
+            )}
+          </aside>
+          </div>
         </SheetContent>
       </Sheet>
     </div>

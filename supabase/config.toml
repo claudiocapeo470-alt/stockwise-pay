@@ -82,3 +82,6 @@ verify_jwt = true
 
 [functions.paiementpro-notify]
 verify_jwt = false
+
+[functions.store-og]
+verify_jwt = false

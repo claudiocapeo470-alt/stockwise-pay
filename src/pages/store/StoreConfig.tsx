@@ -259,7 +259,7 @@ export default function StoreConfig() {
       <Sheet open={wizardOpen} onOpenChange={setWizardOpen}>
         <SheetContent
           side="bottom"
-          className="h-[92vh] sm:h-[90vh] p-0 rounded-t-3xl border-t-0 flex flex-col gap-0 overflow-hidden"
+          className="h-[92vh] sm:h-[90vh] p-0 rounded-t-3xl border-t-0 flex flex-col gap-0 overflow-hidden sm:max-w-none"
         >
           {/* Drag handle + header */}
           <div className="flex-shrink-0 pt-3 pb-2 px-5 bg-background border-b border-border">
@@ -282,8 +282,10 @@ export default function StoreConfig() {
             </div>
           </div>
 
-          {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+          {/* Body: form (left) + preview (right on lg+) */}
+          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            {/* Scrollable form content */}
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 lg:border-r lg:border-border lg:max-w-2xl">
           {/* ÉTAPE 1 — IDENTITÉ */}
           {currentStep === 1 && (
             <>

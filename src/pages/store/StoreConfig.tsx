@@ -259,7 +259,7 @@ export default function StoreConfig() {
       <Sheet open={wizardOpen} onOpenChange={setWizardOpen}>
         <SheetContent
           side="bottom"
-          className="h-[92vh] sm:h-[90vh] p-0 rounded-t-3xl border-t-0 flex flex-col gap-0 overflow-hidden"
+          className="h-[92vh] sm:h-[90vh] p-0 rounded-t-3xl border-t-0 flex flex-col gap-0 overflow-hidden sm:max-w-none"
         >
           {/* Drag handle + header */}
           <div className="flex-shrink-0 pt-3 pb-2 px-5 bg-background border-b border-border">
@@ -282,8 +282,10 @@ export default function StoreConfig() {
             </div>
           </div>
 
-          {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+          {/* Body: form (left) + preview (right on lg+) */}
+          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            {/* Scrollable form content */}
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 lg:border-r lg:border-border lg:max-w-2xl">
           {/* ÉTAPE 1 — IDENTITÉ */}
           {currentStep === 1 && (
             <>
@@ -553,6 +555,19 @@ export default function StoreConfig() {
               </Button>
             )}
           </div>
+          </div>
+
+          {/* Preview aside — visible on lg+ */}
+          <aside className="hidden lg:flex flex-col w-[520px] xl:w-[600px] bg-muted/20 overflow-y-auto p-5">
+            {form.slug ? (
+              <PreviewPanel storeUrl={`${window.location.origin}/boutique/${form.slug}`} />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center text-sm text-muted-foreground gap-2 p-6 border-2 border-dashed border-border rounded-2xl">
+                <Eye className="h-8 w-8 opacity-40" />
+                <p>Renseignez une URL personnalisée pour voir l'aperçu de votre boutique ici.</p>
+              </div>
+            )}
+          </aside>
           </div>
         </SheetContent>
       </Sheet>

@@ -1,25 +1,14 @@
-import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { Package } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useAdminAllProducts } from "@/hooks/useAdmin";
 
 export default function AdminStocks() {
-  const [products, setProducts] = useState<any[]>([]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
-    const { data } = await supabase.from('products').select('*, profiles!inner(email)').order('created_at', { ascending: false });
-    setProducts(data || []);
-  };
+  const { data: products = [], isLoading } = useAdminAllProducts();
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Gestion des Stocks</h1>
-      
+
       <Card>
         <CardHeader><CardTitle>Tous les Produits</CardTitle></CardHeader>
         <CardContent>
@@ -33,7 +22,9 @@ export default function AdminStocks() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((p) => (
+              {isLoading ? (
+                <TableRow><TableCell colSpan={4} className="text-center py-6 text-muted-foreground">Chargement...</TableCell></TableRow>
+              ) : products.map((p: any) => (
                 <TableRow key={p.id}>
                   <TableCell>{p.name}</TableCell>
                   <TableCell>{p.profiles?.email}</TableCell>

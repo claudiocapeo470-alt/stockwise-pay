@@ -17,7 +17,7 @@ interface EditUserDialogProps {
     last_name: string | null;
     company_name: string | null;
   };
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export function EditUserDialog({ open, onOpenChange, user, onSuccess }: EditUserDialogProps) {

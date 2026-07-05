@@ -49,7 +49,8 @@ export function EditSubscriptionDialog({ open, onOpenChange, subscription, onSuc
       if (error) throw error;
 
       toast.success("Abonnement mis à jour avec succès");
-      onSuccess();
+      qc.invalidateQueries({ queryKey: adminKeys.subscriptions });
+      onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
       console.error('Erreur:', error);

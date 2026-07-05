@@ -20,10 +20,11 @@ interface EditSubscriptionDialogProps {
     subscription_end: string | null;
     amount: number;
   };
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export function EditSubscriptionDialog({ open, onOpenChange, subscription, onSuccess }: EditSubscriptionDialogProps) {
+  const qc = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     subscribed: subscription.subscribed,

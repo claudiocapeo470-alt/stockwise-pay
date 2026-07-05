@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { adminKeys } from "@/hooks/useAdmin";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,10 +19,11 @@ interface EditUserDialogProps {
     last_name: string | null;
     company_name: string | null;
   };
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export function EditUserDialog({ open, onOpenChange, user, onSuccess }: EditUserDialogProps) {
+  const qc = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: user.email || "",
@@ -47,7 +50,8 @@ export function EditUserDialog({ open, onOpenChange, user, onSuccess }: EditUser
       if (error) throw error;
 
       toast.success("Utilisateur mis à jour avec succès");
-      onSuccess();
+      qc.invalidateQueries({ queryKey: adminKeys.users });
+      onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
       console.error('Erreur:', error);

@@ -5,39 +5,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useSendMassEmail } from "@/hooks/useAdmin";
 
 export default function AdminNotifications() {
   const [type, setType] = useState<'all' | 'subscribed' | 'specific'>('all');
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
-  const [sending, setSending] = useState(false);
+  const sendMutation = useSendMassEmail();
 
-  const handleSend = async () => {
+  const handleSend = () => {
     if (!subject || !message) return toast.error("Remplir tous les champs");
-    
-    setSending(true);
-    try {
-      await supabase.functions.invoke('admin-send-mass-email', {
-        body: { subject, message, notificationType: type, specificEmail: email }
-      });
-      toast.success("Emails envoyés");
-      setSubject("");
-      setMessage("");
-      setEmail("");
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setSending(false);
-    }
+    sendMutation.mutate(
+      { subject, message, notificationType: type, specificEmail: email },
+      {
+        onSuccess: () => {
+          setSubject("");
+          setMessage("");
+          setEmail("");
+        },
+      }
+    );
   };
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Notifications & Annonces</h1>
-      
+
       <Card>
         <CardHeader><CardTitle>Envoyer une Notification</CardTitle></CardHeader>
         <CardContent className="space-y-4">
@@ -52,8 +47,8 @@ export default function AdminNotifications() {
           {type === 'specific' && <Input placeholder="email@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />}
           <Input placeholder="Objet" value={subject} onChange={(e) => setSubject(e.target.value)} />
           <Textarea placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} rows={6} />
-          <Button onClick={handleSend} disabled={sending}>
-            {sending ? "Envoi..." : "Envoyer"}
+          <Button onClick={handleSend} disabled={sendMutation.isPending}>
+            {sendMutation.isPending ? "Envoi..." : "Envoyer"}
           </Button>
         </CardContent>
       </Card>

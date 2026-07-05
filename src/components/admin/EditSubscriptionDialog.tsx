@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { adminKeys } from "@/hooks/useAdmin";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,10 +20,11 @@ interface EditSubscriptionDialogProps {
     subscription_end: string | null;
     amount: number;
   };
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export function EditSubscriptionDialog({ open, onOpenChange, subscription, onSuccess }: EditSubscriptionDialogProps) {
+  const qc = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     subscribed: subscription.subscribed,
@@ -46,7 +49,8 @@ export function EditSubscriptionDialog({ open, onOpenChange, subscription, onSuc
       if (error) throw error;
 
       toast.success("Abonnement mis à jour avec succès");
-      onSuccess();
+      qc.invalidateQueries({ queryKey: adminKeys.subscriptions });
+      onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
       console.error('Erreur:', error);

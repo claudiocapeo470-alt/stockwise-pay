@@ -50,7 +50,8 @@ export function EditUserDialog({ open, onOpenChange, user, onSuccess }: EditUser
       if (error) throw error;
 
       toast.success("Utilisateur mis à jour avec succès");
-      onSuccess();
+      qc.invalidateQueries({ queryKey: adminKeys.users });
+      onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
       console.error('Erreur:', error);

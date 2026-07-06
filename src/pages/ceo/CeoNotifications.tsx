@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Send, Loader2 } from 'lucide-react';
+import { useSendMassEmail } from '@/hooks/useCeo';
 
 const TARGETS = [
   { key: 'all', label: 'Tous les utilisateurs' },
@@ -22,11 +22,12 @@ const TEMPLATES = [
 interface LogEntry { date: string; subject: string; target: string; count?: number }
 
 export default function CeoNotifications() {
+  const sendMail = useSendMassEmail();
   const [target, setTarget] = useState<string>('all');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
-  const [sending, setSending] = useState(false);
   const [logs, setLogs] = useState<LogEntry[]>([]);
+  const sending = sendMail.isPending;
 
   useEffect(() => {
     const saved = localStorage.getItem('ceo_notification_logs');
@@ -35,24 +36,17 @@ export default function CeoNotifications() {
 
   const handleSend = async () => {
     if (!subject.trim() || !message.trim()) { toast.error('Sujet et message requis'); return; }
-    setSending(true);
     try {
-      const { data, error } = await supabase.functions.invoke('admin-send-mass-email', {
-        body: { subject, message, notificationType: target },
-      });
-      if (error) throw error;
+      const data = await sendMail.mutateAsync({ subject, message, notificationType: target });
       toast.success(data?.message || 'Emails envoyés !');
-
       const newLog: LogEntry = { date: new Date().toISOString(), subject, target, count: data?.details?.total };
       const updated = [newLog, ...logs].slice(0, 20);
       setLogs(updated);
       localStorage.setItem('ceo_notification_logs', JSON.stringify(updated));
       setSubject('');
       setMessage('');
-    } catch (err: any) {
-      toast.error('Erreur', { description: err.message });
-    } finally {
-      setSending(false);
+    } catch {
+      // toast handled in hook
     }
   };
 

@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Search, Edit2, Trash2, Shield, Clock, Loader2, Download } from 'lucide-react';
+import { useCeoUsers, useCeoUpdateUser, useCeoGiveTrial, useCeoToggleRole, useCeoDeleteUser } from '@/hooks/useCeo';
 
 interface UserRow {
   user_id: string;
@@ -19,41 +18,17 @@ interface UserRow {
 }
 
 export default function CeoUsers() {
-  const [users, setUsers] = useState<UserRow[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: users = [], isLoading } = useCeoUsers();
+  const updateUser = useCeoUpdateUser();
+  const giveTrial = useCeoGiveTrial();
+  const toggleRole = useCeoToggleRole();
+  const deleteUser = useCeoDeleteUser();
+
   const [search, setSearch] = useState('');
   const [editUser, setEditUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState({ first_name: '', last_name: '', email: '', company_name: '' });
-  const [saving, setSaving] = useState(false);
 
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const [{ data: profiles }, { data: roles }, { data: subs }] = await Promise.all([
-        supabase.from('profiles').select('*').order('created_at', { ascending: false }),
-        supabase.from('user_roles').select('user_id, role'),
-        supabase.from('subscribers').select('user_id, plan_name, subscribed'),
-      ]);
-
-      const rolesMap = new Map((roles || []).map(r => [r.user_id, r.role]));
-      const subsMap = new Map((subs || []).map(s => [s.user_id, s]));
-
-      setUsers((profiles || []).map(p => ({
-        ...p,
-        role: rolesMap.get(p.user_id) || 'user',
-        plan_name: subsMap.get(p.user_id)?.plan_name,
-        subscribed: subsMap.get(p.user_id)?.subscribed,
-      })));
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchUsers(); }, []);
-
-  const filtered = users.filter(u => {
+  const filtered = (users as UserRow[]).filter(u => {
     const q = search.toLowerCase();
     return !q || [u.email, u.first_name, u.last_name, u.company_name].some(f => f?.toLowerCase().includes(q));
   });
@@ -65,59 +40,16 @@ export default function CeoUsers() {
 
   const handleSaveEdit = async () => {
     if (!editUser) return;
-    setSaving(true);
-    try {
-      await supabase.from('profiles').update({
-        first_name: editForm.first_name || null,
-        last_name: editForm.last_name || null,
-        company_name: editForm.company_name || null,
-      }).eq('user_id', editUser.user_id);
-      toast.success('Utilisateur mis à jour');
-      setEditUser(null);
-      fetchUsers();
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setSaving(false);
-    }
+    await updateUser.mutateAsync({
+      user_id: editUser.user_id,
+      first_name: editForm.first_name || null,
+      last_name: editForm.last_name || null,
+      company_name: editForm.company_name || null,
+    });
+    setEditUser(null);
   };
 
-  const giveTrialDays = async (userId: string, email: string) => {
-    const trialEnd = new Date(Date.now() + 14 * 86400000).toISOString();
-    const { error } = await supabase.from('subscribers').upsert({
-      user_id: userId,
-      email,
-      is_trial: true,
-      subscribed: true,
-      trial_ends_at: trialEnd,
-      subscription_end: trialEnd,
-      plan_name: 'trial',
-    }, { onConflict: 'user_id' });
-    if (error) { toast.error(error.message); return; }
-    toast.success('14 jours d\'essai accordés');
-    fetchUsers();
-  };
-
-  const toggleRole = async (userId: string, currentRole: string) => {
-    const newRole = currentRole === 'admin' ? 'user' : 'admin';
-    const { error } = await supabase.from('user_roles').upsert(
-      { user_id: userId, role: newRole as any },
-      { onConflict: 'user_id,role' }
-    );
-    if (error) { toast.error(error.message); return; }
-    toast.success(`Rôle changé en ${newRole}`);
-    fetchUsers();
-  };
-
-  const deleteUser = async (userId: string) => {
-    if (!confirm('Supprimer cet utilisateur ? Cette action est irréversible.')) return;
-    const { error } = await supabase.from('profiles').delete().eq('user_id', userId);
-    if (error) { toast.error(error.message); return; }
-    toast.success('Utilisateur supprimé');
-    fetchUsers();
-  };
-
-  if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 text-teal-400 animate-spin" /></div>;
+  if (isLoading) return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 text-teal-400 animate-spin" /></div>;
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -188,9 +120,9 @@ export default function CeoUsers() {
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <button onClick={() => handleEdit(u)} className="p-1.5 rounded-lg hover:bg-slate-700/60 text-slate-400 hover:text-white" title="Modifier"><Edit2 className="h-3.5 w-3.5" /></button>
-                      <button onClick={() => giveTrialDays(u.user_id, u.email || '')} className="p-1.5 rounded-lg hover:bg-yellow-500/10 text-slate-400 hover:text-yellow-400" title="14j essai"><Clock className="h-3.5 w-3.5" /></button>
-                      <button onClick={() => toggleRole(u.user_id, u.role || 'user')} className="p-1.5 rounded-lg hover:bg-purple-500/10 text-slate-400 hover:text-purple-400" title="Toggle admin"><Shield className="h-3.5 w-3.5" /></button>
-                      <button onClick={() => deleteUser(u.user_id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400" title="Supprimer"><Trash2 className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => giveTrial.mutate({ user_id: u.user_id, email: u.email || '' })} className="p-1.5 rounded-lg hover:bg-yellow-500/10 text-slate-400 hover:text-yellow-400" title="14j essai"><Clock className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => toggleRole.mutate({ user_id: u.user_id, currentRole: u.role || 'user' })} className="p-1.5 rounded-lg hover:bg-purple-500/10 text-slate-400 hover:text-purple-400" title="Toggle admin"><Shield className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => { if (confirm('Supprimer cet utilisateur ? Cette action est irréversible.')) deleteUser.mutate(u.user_id); }} className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400" title="Supprimer"><Trash2 className="h-3.5 w-3.5" /></button>
                     </div>
                   </td>
                 </tr>
@@ -200,7 +132,6 @@ export default function CeoUsers() {
         </div>
       </div>
 
-      {/* Edit Dialog */}
       <Dialog open={!!editUser} onOpenChange={v => !v && setEditUser(null)}>
         <DialogContent className="bg-slate-900 border-slate-700/40 text-white">
           <DialogHeader><DialogTitle>Modifier l'utilisateur</DialogTitle></DialogHeader>
@@ -213,7 +144,7 @@ export default function CeoUsers() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditUser(null)} className="border-slate-700 text-slate-300">Annuler</Button>
-            <Button onClick={handleSaveEdit} disabled={saving} className="bg-gradient-to-r from-teal-500 to-blue-600 border-0">{saving ? 'Sauvegarde...' : 'Sauvegarder'}</Button>
+            <Button onClick={handleSaveEdit} disabled={updateUser.isPending} className="bg-gradient-to-r from-teal-500 to-blue-600 border-0">{updateUser.isPending ? 'Sauvegarde...' : 'Sauvegarder'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

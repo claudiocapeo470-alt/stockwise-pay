@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { Save, Loader2, ExternalLink } from 'lucide-react';
+import { useCeoSettings, useSaveCeoSetting } from '@/hooks/useCeo';
 
 const TABS = ['Plateforme', 'Tarifs', 'Sécurité', 'Notifications', 'Base de données'] as const;
 
@@ -30,6 +31,9 @@ const PRICING_FIELDS: { key: 'starter' | 'business' | 'pro'; label: string; desc
 const formatXof = (n: number) => Number.isFinite(n) ? n.toLocaleString('fr-FR').replace(/,/g, ' ') : '0';
 
 export default function CeoSettings() {
+  const { data: settingsMap, isLoading } = useCeoSettings();
+  const saveSetting = useSaveCeoSetting();
+
   const [tab, setTab] = useState<typeof TABS[number]>('Plateforme');
   const [platform, setPlatform] = useState(DEFAULT_PLATFORM);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -38,49 +42,23 @@ export default function CeoSettings() {
   const [changingPw, setChangingPw] = useState(false);
   const [notifSettings, setNotifSettings] = useState(DEFAULT_NOTIF);
   const [pricing, setPricing] = useState(DEFAULT_PRICING);
-  const [savingPricing, setSavingPricing] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadFromDB();
-  }, []);
-
-  const loadFromDB = async () => {
-    try {
-      const { data } = await supabase.from('ceo_settings' as any).select('key, value');
-      if (data && Array.isArray(data)) {
-        const map: Record<string, any> = {};
-        data.forEach((r: any) => { map[r.key] = r.value; });
-        if (map.platform) setPlatform({ ...DEFAULT_PLATFORM, ...map.platform });
-        if (map.notifications) setNotifSettings({ ...DEFAULT_NOTIF, ...map.notifications });
-        if (map.subscription_pricing) {
-          const p = map.subscription_pricing;
-          setPricing({
-            starter: Number(p.starter) || DEFAULT_PRICING.starter,
-            business: Number(p.business) || DEFAULT_PRICING.business,
-            pro: Number(p.pro) || DEFAULT_PRICING.pro,
-          });
-        }
-      }
-    } catch {
-      // fallback to defaults
+    if (!settingsMap) return;
+    if (settingsMap.platform) setPlatform({ ...DEFAULT_PLATFORM, ...settingsMap.platform });
+    if (settingsMap.notifications) setNotifSettings({ ...DEFAULT_NOTIF, ...settingsMap.notifications });
+    if (settingsMap.subscription_pricing) {
+      const p = settingsMap.subscription_pricing;
+      setPricing({
+        starter: Number(p.starter) || DEFAULT_PRICING.starter,
+        business: Number(p.business) || DEFAULT_PRICING.business,
+        pro: Number(p.pro) || DEFAULT_PRICING.pro,
+      });
     }
-    setLoading(false);
-  };
-
-  const saveToDB = async (key: string, value: any) => {
-    try {
-      await supabase.from('ceo_settings' as any).upsert(
-        { key, value, updated_at: new Date().toISOString() } as any,
-        { onConflict: 'key' }
-      );
-    } catch {
-      // silent
-    }
-  };
+  }, [settingsMap]);
 
   const savePlatform = async () => {
-    await saveToDB('platform', platform);
+    await saveSetting.mutateAsync({ key: 'platform', value: platform });
     toast.success('Paramètres sauvegardés');
   };
 
@@ -89,17 +67,11 @@ export default function CeoSettings() {
     if (newPassword.length < 8) { toast.error('8 caractères minimum'); return; }
     if (newPassword !== confirmPassword) { toast.error('Les mots de passe ne correspondent pas'); return; }
     setChangingPw(true);
-    
-    // Re-authenticate first
     const { data: userData } = await supabase.auth.getUser();
     const email = userData?.user?.email;
     if (!email) { toast.error('Erreur de session'); setChangingPw(false); return; }
-    
-    const { error: reAuthError } = await supabase.auth.signInWithPassword({
-      email, password: currentPassword
-    });
+    const { error: reAuthError } = await supabase.auth.signInWithPassword({ email, password: currentPassword });
     if (reAuthError) { toast.error('Mot de passe actuel incorrect'); setChangingPw(false); return; }
-    
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) toast.error(error.message);
     else { toast.success('Mot de passe mis à jour'); setCurrentPassword(''); setNewPassword(''); setConfirmPassword(''); }
@@ -107,7 +79,7 @@ export default function CeoSettings() {
   };
 
   const saveNotif = async () => {
-    await saveToDB('notifications', notifSettings);
+    await saveSetting.mutateAsync({ key: 'notifications', value: notifSettings });
     toast.success('Préférences sauvegardées');
   };
 
@@ -119,14 +91,11 @@ export default function CeoSettings() {
         return;
       }
     }
-    setSavingPricing(true);
     try {
-      await saveToDB('subscription_pricing', pricing);
+      await saveSetting.mutateAsync({ key: 'subscription_pricing', value: pricing });
       toast.success('Tarifs mis à jour avec succès');
     } catch {
       toast.error('Erreur lors de la sauvegarde');
-    } finally {
-      setSavingPricing(false);
     }
   };
 
@@ -135,13 +104,12 @@ export default function CeoSettings() {
     toast.info('Valeurs par défaut restaurées (non sauvegardées)');
   };
 
-  if (loading) return <div className="flex items-center justify-center p-12"><Loader2 className="h-6 w-6 animate-spin text-teal-400" /></div>;
+  if (isLoading) return <div className="flex items-center justify-center p-12"><Loader2 className="h-6 w-6 animate-spin text-teal-400" /></div>;
 
   return (
     <div className="space-y-6 max-w-4xl">
       <h2 className="text-xl font-bold text-white">Paramètres</h2>
 
-      {/* Tabs - responsive */}
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
         <div className="flex sm:flex-col sm:w-48 shrink-0 gap-1 overflow-x-auto sm:overflow-x-visible">
           {TABS.map(t => (
@@ -180,7 +148,7 @@ export default function CeoSettings() {
                 </div>
               ))}
             </div>
-            <Button onClick={savePlatform} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0"><Save className="h-4 w-4" /> Sauvegarder</Button>
+            <Button onClick={savePlatform} disabled={saveSetting.isPending} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0"><Save className="h-4 w-4" /> Sauvegarder</Button>
           </>}
 
           {tab === 'Tarifs' && <>
@@ -208,8 +176,8 @@ export default function CeoSettings() {
               ))}
             </div>
             <div className="flex flex-wrap gap-2 pt-2">
-              <Button onClick={savePricing} disabled={savingPricing} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0">
-                {savingPricing ? <><Loader2 className="h-4 w-4 animate-spin" /> Sauvegarde...</> : <><Save className="h-4 w-4" /> Sauvegarder</>}
+              <Button onClick={savePricing} disabled={saveSetting.isPending} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0">
+                {saveSetting.isPending ? <><Loader2 className="h-4 w-4 animate-spin" /> Sauvegarde...</> : <><Save className="h-4 w-4" /> Sauvegarder</>}
               </Button>
               <Button variant="outline" onClick={resetPricing} className="bg-slate-800/60 border-slate-700/40 text-slate-300 hover:text-white">
                 Réinitialiser par défaut
@@ -263,7 +231,7 @@ export default function CeoSettings() {
                 <Input type="number" value={notifSettings.expiry_warning_days} onChange={e => setNotifSettings((s: any) => ({ ...s, expiry_warning_days: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white w-24" />
               </div>
             </div>
-            <Button onClick={saveNotif} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0"><Save className="h-4 w-4" /> Sauvegarder</Button>
+            <Button onClick={saveNotif} disabled={saveSetting.isPending} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0"><Save className="h-4 w-4" /> Sauvegarder</Button>
           </>}
 
           {tab === 'Base de données' && <>

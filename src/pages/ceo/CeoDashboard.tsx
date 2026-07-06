@@ -1,76 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { Users, CreditCard, Package, TrendingUp, AlertTriangle, RefreshCw, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface Metrics {
-  totalUsers: number;
-  newUsersThisWeek: number;
-  activeSubscriptions: number;
-  trialSubscriptions: number;
-  expiredSubscriptions: number;
-  totalRevenue: number;
-  revenueThisMonth: number;
-  totalProducts: number;
-  lowStockProducts: number;
-  conversionRate: number;
-}
-
-interface RecentProfile { first_name: string | null; last_name: string | null; email: string | null; created_at: string }
-interface RecentSub { email: string; plan_name: string | null; subscribed: boolean; is_trial: boolean | null; created_at: string }
+import { useCeoDashboard } from '@/hooks/useCeo';
 
 export default function CeoDashboard() {
   const navigate = useNavigate();
-  const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [recentUsers, setRecentUsers] = useState<RecentProfile[]>([]);
-  const [recentSubs, setRecentSubs] = useState<RecentSub[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, refetch, isFetching } = useCeoDashboard();
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const now = new Date();
-      const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString();
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-
-      const [profiles, subs, products, salesMonth, recent5, recentSubs5] = await Promise.all([
-        supabase.from('profiles').select('created_at', { count: 'exact' }),
-        supabase.from('subscribers').select('*'),
-        supabase.from('products').select('quantity, min_quantity', { count: 'exact' }),
-        supabase.from('sales').select('total_amount').gte('sale_date', monthStart),
-        supabase.from('profiles').select('first_name, last_name, email, created_at').order('created_at', { ascending: false }).limit(5),
-        supabase.from('subscribers').select('email, plan_name, subscribed, is_trial, created_at').order('created_at', { ascending: false }).limit(5),
-      ]);
-
-      const totalUsers = profiles.count || 0;
-      const newUsersThisWeek = (profiles.data || []).filter(p => p.created_at >= weekAgo).length;
-      const subsData = subs.data || [];
-      const active = subsData.filter(s => s.subscribed).length;
-      const trial = subsData.filter(s => s.is_trial).length;
-      const expired = subsData.filter(s => !s.subscribed).length;
-      const totalRevenue = subsData.filter(s => s.subscribed).reduce((sum, s) => sum + (s.plan_price || 0), 0);
-      const revenueMonth = (salesMonth.data || []).reduce((sum, s) => sum + (s.total_amount || 0), 0);
-      const totalProds = products.count || 0;
-      const lowStock = (products.data || []).filter(p => p.quantity <= p.min_quantity).length;
-
-      setMetrics({
+  const { metrics, recentUsers, recentSubs } = useMemo(() => {
+    if (!data) return { metrics: null, recentUsers: [] as any[], recentSubs: [] as any[] };
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString();
+    const totalUsers = data.profiles.count || 0;
+    const newUsersThisWeek = ((data.profiles.data as any[]) || []).filter((p: any) => p.created_at >= weekAgo).length;
+    const active = data.subs.filter((s: any) => s.subscribed).length;
+    const trial = data.subs.filter((s: any) => s.is_trial).length;
+    const expired = data.subs.filter((s: any) => !s.subscribed).length;
+    const totalRevenue = data.subs.filter((s: any) => s.subscribed).reduce((sum: number, s: any) => sum + (s.plan_price || 0), 0);
+    const revenueMonth = data.salesMonth.reduce((sum: number, s: any) => sum + (s.total_amount || 0), 0);
+    const totalProds = data.products.count || 0;
+    const lowStock = ((data.products.data as any[]) || []).filter((p: any) => p.quantity <= p.min_quantity).length;
+    return {
+      metrics: {
         totalUsers, newUsersThisWeek, activeSubscriptions: active, trialSubscriptions: trial,
         expiredSubscriptions: expired, totalRevenue, revenueThisMonth: revenueMonth,
         totalProducts: totalProds, lowStockProducts: lowStock,
         conversionRate: totalUsers > 0 ? Math.round((active / totalUsers) * 100) : 0,
-      });
-      setRecentUsers(recent5.data || []);
-      setRecentSubs(recentSubs5.data || []);
-    } catch (err: any) {
-      toast.error('Erreur chargement', { description: err.message });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchData(); }, []);
+      },
+      recentUsers: data.recent5,
+      recentSubs: data.recentSubs5,
+    };
+  }, [data]);
 
   const METRIC_CARDS = metrics ? [
     { label: 'Utilisateurs', value: metrics.totalUsers, sub: `+${metrics.newUsersThisWeek} cette semaine`, icon: Users, color: 'text-teal-400' },
@@ -88,7 +49,7 @@ export default function CeoDashboard() {
     { label: 'Paramètres', url: '/ceo/settings' },
   ];
 
-  if (loading) return (
+  if (isLoading) return (
     <div className="flex items-center justify-center h-64">
       <Loader2 className="h-8 w-8 text-teal-400 animate-spin" />
     </div>
@@ -101,12 +62,11 @@ export default function CeoDashboard() {
           <h2 className="text-xl font-bold text-white">Tableau de bord CEO</h2>
           <p className="text-sm text-slate-400">Vue d'ensemble de la plateforme Stocknix</p>
         </div>
-        <Button onClick={fetchData} variant="outline" size="sm" className="gap-2 bg-slate-800/60 border-slate-700/40 text-slate-300 hover:bg-slate-700/60 hover:text-white">
-          <RefreshCw className="h-4 w-4" /> Actualiser
+        <Button onClick={() => refetch()} disabled={isFetching} variant="outline" size="sm" className="gap-2 bg-slate-800/60 border-slate-700/40 text-slate-300 hover:bg-slate-700/60 hover:text-white">
+          <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} /> Actualiser
         </Button>
       </div>
 
-      {/* Metrics */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {METRIC_CARDS.map(m => (
           <div key={m.label} className="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-4 space-y-2">
@@ -121,11 +81,10 @@ export default function CeoDashboard() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Recent users */}
         <div className="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-5">
           <h3 className="text-sm font-semibold text-white mb-4">Derniers inscrits</h3>
           <div className="space-y-3">
-            {recentUsers.map((u, i) => (
+            {recentUsers.map((u: any, i: number) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 text-xs font-bold">
                   {(u.first_name?.[0] || u.email?.[0] || '?').toUpperCase()}
@@ -140,11 +99,10 @@ export default function CeoDashboard() {
           </div>
         </div>
 
-        {/* Recent subs */}
         <div className="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-5">
           <h3 className="text-sm font-semibold text-white mb-4">Derniers abonnements</h3>
           <div className="space-y-3">
-            {recentSubs.map((s, i) => (
+            {recentSubs.map((s: any, i: number) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-white truncate">{s.email}</p>
@@ -159,7 +117,6 @@ export default function CeoDashboard() {
         </div>
       </div>
 
-      {/* Shortcuts */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {shortcuts.map(s => (
           <button key={s.url} onClick={() => navigate(s.url)} className="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-4 text-left hover:border-teal-500/30 transition-all group">

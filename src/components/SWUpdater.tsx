@@ -1,6 +1,7 @@
 /**
  * SWUpdater — Affiche un toast "Nouvelle version" lorsque le service worker détecte
- * une mise à jour, et déclenche un skipWaiting + reload contrôlé.
+ * une mise à jour. Le rechargement est déclenché uniquement par action utilisateur
+ * (clic sur "Recharger") pour éviter les boucles de rechargement automatique.
  * Ne fait rien en preview/iframe (le SW y est déjà désinscrit dans main.tsx).
  */
 import { useEffect } from "react";
@@ -12,13 +13,6 @@ export function SWUpdater() {
     const isInIframe = (() => { try { return window.self !== window.top; } catch { return true; } })();
     if (isInIframe) return;
 
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (refreshing) return;
-      refreshing = true;
-      window.location.reload();
-    });
-
     const onUpdate = (reg: ServiceWorkerRegistration) => {
       const sw = reg.waiting || reg.installing;
       if (!sw) return;
@@ -29,7 +23,11 @@ export function SWUpdater() {
             duration: Infinity,
             action: {
               label: "Recharger",
-              onClick: () => sw.postMessage?.({ type: "SKIP_WAITING" }),
+              onClick: () => {
+                sw.postMessage?.({ type: "SKIP_WAITING" });
+                // Recharge une seule fois après activation
+                setTimeout(() => window.location.reload(), 300);
+              },
             },
           });
         }
@@ -40,8 +38,6 @@ export function SWUpdater() {
       regs.forEach((reg) => {
         if (reg.waiting) onUpdate(reg);
         reg.addEventListener("updatefound", () => onUpdate(reg));
-        // Force la vérification toutes les 60 secondes pour ne pas rester sur ancienne version
-        setInterval(() => reg.update().catch(() => {}), 60_000);
       });
     });
   }, []);

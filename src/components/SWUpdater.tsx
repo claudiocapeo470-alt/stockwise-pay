@@ -6,6 +6,7 @@
  */
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { updateAppToLatest } from "@/lib/serviceWorker";
 
 export function SWUpdater() {
   useEffect(() => {
@@ -23,22 +24,7 @@ export function SWUpdater() {
             duration: Infinity,
             action: {
               label: "Recharger",
-              onClick: async () => {
-                sw.postMessage?.({ type: "SKIP_WAITING" });
-                // La navigation n'est rechargée qu'après le clic et l'activation réelle.
-                await new Promise<void>((resolve) => {
-                  if (sw.state === "activated") return resolve();
-                  const handleState = () => {
-                    if (sw.state === "activated") {
-                      sw.removeEventListener("statechange", handleState);
-                      resolve();
-                    }
-                  };
-                  sw.addEventListener("statechange", handleState);
-                  setTimeout(resolve, 3000);
-                });
-                window.location.reload();
-              },
+              onClick: () => void updateAppToLatest(),
             },
           });
         }

@@ -64,7 +64,7 @@ function PreviewPanel({ storeUrl }: { storeUrl: string }) {
           key={reloadKey}
           src={storeUrl}
           title="Aperçu boutique"
-          sandbox="allow-scripts allow-forms allow-popups"
+          sandbox="allow-scripts allow-forms allow-popups allow-same-origin"
           referrerPolicy="no-referrer"
           loading="lazy"
           className="bg-white rounded-xl border border-border shadow-medium"

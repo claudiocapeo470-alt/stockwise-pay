@@ -7,4 +7,6 @@ registerAppServiceWorker().catch((error) => {
   console.warn("Service worker indisponible :", error);
 });
 
-createRoot(document.getElementById("root")!).render(<App />);
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("Conteneur React introuvable");
+createRoot(rootElement).render(<App />);

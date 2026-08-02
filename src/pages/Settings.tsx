@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Building2, Palette, User, Shield, Globe, ChevronRight, ArrowLeft, Crown, Save, Download, LogOut, Moon, Sun, Monitor, Check } from "lucide-react";
+import { Building2, Palette, User, Shield, Globe, ChevronRight, ArrowLeft, Crown, Save, Download, LogOut, Moon, Sun, Monitor, Check, RefreshCw } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -20,6 +20,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import * as XLSX from 'xlsx';
+import { updateAppToLatest } from "@/lib/serviceWorker";
 
 type SettingsPage = "main" | "company" | "appearance" | "profile" | "security-data" | "system" | "subscription";
 
@@ -410,12 +411,26 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
 // ─── Informations système ───
 function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin: boolean }) {
   const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error'>('checking');
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   
   useEffect(() => {
     supabase.from('profiles').select('id').limit(1).then(({ error }) => {
       setDbStatus(error ? 'error' : 'connected');
     });
   }, []);
+
+  const handleAppUpdate = async () => {
+    setIsCheckingUpdate(true);
+    try {
+      const result = await updateAppToLatest();
+      if (result === 'current') toast.success("L’application est déjà à jour");
+      if (result === 'unsupported') toast.info("Les mises à jour sont gérées automatiquement par votre navigateur");
+    } catch {
+      toast.error("Impossible de vérifier la mise à jour. Réessayez avec une connexion stable.");
+    } finally {
+      setIsCheckingUpdate(false);
+    }
+  };
 
   return (
     <Card>
@@ -447,7 +462,7 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
               { label: "Temps de réponse", value: "< 100ms", success: true },
               { label: "Disponibilité", value: "99.9%", success: true },
               { label: "Support", value: "24h/7j" },
-              { label: "Mises à jour", value: "Automatiques", success: true },
+              { label: "Mises à jour", value: "Sur demande", success: true },
               { label: "Hébergement", value: "Supabase Cloud", success: true },
             ].map(item => (
               <div key={item.label} className="flex items-center justify-between text-sm">
@@ -458,6 +473,16 @@ function SystemSettings({ displayName, isAdmin }: { displayName: string; isAdmin
               </div>
             ))}
           </div>
+        </div>
+        <div className="pt-4 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium">Mise à jour de l’application</p>
+            <p className="text-xs text-muted-foreground">Vérifie et installe la dernière version uniquement lorsque vous le demandez.</p>
+          </div>
+          <Button type="button" onClick={handleAppUpdate} disabled={isCheckingUpdate} className="w-full sm:w-auto">
+            <RefreshCw className={`h-4 w-4 mr-2 ${isCheckingUpdate ? 'animate-spin' : ''}`} />
+            {isCheckingUpdate ? "Vérification…" : "Mettre à jour"}
+          </Button>
         </div>
       </CardContent>
     </Card>

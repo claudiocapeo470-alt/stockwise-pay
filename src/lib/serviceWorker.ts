@@ -26,6 +26,33 @@ const removeAppWorker = async () => {
   );
 };
 
+export type AppUpdateResult = "updated" | "current" | "unsupported";
+
+export async function updateAppToLatest(): Promise<AppUpdateResult> {
+  if (!("serviceWorker" in navigator)) return "unsupported";
+
+  const registration = await navigator.serviceWorker.getRegistration("/");
+  if (!registration) return "current";
+
+  await registration.update();
+  const worker = registration.waiting || registration.installing;
+  if (!worker) return "current";
+
+  if (worker.state !== "activated") {
+    worker.postMessage({ type: "SKIP_WAITING" });
+    await new Promise<void>((resolve) => {
+      const finish = () => resolve();
+      worker.addEventListener("statechange", () => {
+        if (worker.state === "activated") finish();
+      });
+      window.setTimeout(finish, 4000);
+    });
+  }
+
+  window.location.replace(window.location.href);
+  return "updated";
+}
+
 export async function registerAppServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
 
@@ -38,7 +65,7 @@ export async function registerAppServiceWorker() {
     return;
   }
 
-  // A same-origin shop preview must never manage the parent page's worker.
+  // An embedded page must never touch the top-level application's worker.
   if (isEmbedded()) return;
 
   await navigator.serviceWorker.register("/sw.js", { scope: "/" });

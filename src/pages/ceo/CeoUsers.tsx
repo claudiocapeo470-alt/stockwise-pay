@@ -134,6 +134,7 @@ export default function CeoUsers() {
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <button onClick={() => handleEdit(u)} className="p-1.5 rounded-lg hover:bg-slate-700/60 text-slate-400 hover:text-white" title="Modifier"><Edit2 className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => { setPwdUser(u); setNewPwd(''); }} className="p-1.5 rounded-lg hover:bg-blue-500/10 text-slate-400 hover:text-blue-400" title="Modifier le mot de passe"><KeyRound className="h-3.5 w-3.5" /></button>
                       <button onClick={() => giveTrial.mutate({ user_id: u.user_id, email: u.email || '' })} className="p-1.5 rounded-lg hover:bg-yellow-500/10 text-slate-400 hover:text-yellow-400" title="14j essai"><Clock className="h-3.5 w-3.5" /></button>
                       <button onClick={() => toggleRole.mutate({ user_id: u.user_id, currentRole: u.role || 'user' })} className="p-1.5 rounded-lg hover:bg-purple-500/10 text-slate-400 hover:text-purple-400" title="Toggle admin"><Shield className="h-3.5 w-3.5" /></button>
                       <button onClick={() => { if (confirm('Supprimer cet utilisateur ? Cette action est irréversible.')) deleteUser.mutate(u.user_id); }} className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400" title="Supprimer"><Trash2 className="h-3.5 w-3.5" /></button>

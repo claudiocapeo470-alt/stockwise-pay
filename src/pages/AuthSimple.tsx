@@ -58,6 +58,25 @@ export default function AuthSimple() {
   
   const [resetEmail, setResetEmail] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleAuth = async () => {
+    setGoogleLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/app`,
+          queryParams: { access_type: 'offline', prompt: 'consent' },
+        },
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      toast.error('Connexion Google impossible', { description: err?.message });
+      setGoogleLoading(false);
+    }
+  };
+
 
   // noindex for auth pages - prevent SEO indexing
   useEffect(() => {

@@ -68,7 +68,11 @@ export default function CeoUsers() {
           <h2 className="text-xl font-bold text-white">Utilisateurs</h2>
           <p className="text-sm text-slate-400">{users.length} utilisateurs inscrits</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button size="sm" onClick={() => { setNewForm({ email: '', password: '', first_name: '', last_name: '', company_name: '' }); setNewOpen(true); }} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0 text-white">
+            <UserPlus className="h-4 w-4" /> Nouvel utilisateur
+          </Button>
+
           <Button variant="outline" size="sm" onClick={() => {
             const headers = ['Email', 'Prénom', 'Nom', 'Entreprise', 'Rôle', 'Plan', 'Date inscription'];
             const rows = filtered.map(u => [u.email || '', u.first_name || '', u.last_name || '', u.company_name || '', u.role || 'user', u.plan_name || 'Aucun', new Date(u.created_at).toLocaleDateString('fr')]);

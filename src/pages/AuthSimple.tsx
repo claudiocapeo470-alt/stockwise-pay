@@ -486,7 +486,7 @@ export default function AuthSimple() {
           {/* CLASSIC AUTH MODE */}
           {authMode === 'classic' && (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
                 <TabsTrigger value="login">Connexion</TabsTrigger>
                 <TabsTrigger value="register">Inscription</TabsTrigger>
               </TabsList>

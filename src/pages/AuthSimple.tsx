@@ -63,23 +63,13 @@ export default function AuthSimple() {
   const handleGoogleAuth = async () => {
     setGoogleLoading(true);
     try {
-      const inIframe = window.self !== window.top;
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/app`,
-          skipBrowserRedirect: inIframe,
         },
       });
       if (error) throw error;
-      if (inIframe && data?.url) {
-        // Google refuse l'OAuth dans une iframe : on navigue la fenêtre principale
-        try {
-          window.top!.location.href = data.url;
-        } catch {
-          window.location.href = data.url;
-        }
-      }
     } catch (err: any) {
       toast.error('Connexion Google impossible', { description: err?.message });
       setGoogleLoading(false);

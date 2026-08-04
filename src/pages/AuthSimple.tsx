@@ -63,19 +63,26 @@ export default function AuthSimple() {
   const handleGoogleAuth = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const inIframe = window.self !== window.top;
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/app`,
-          queryParams: { access_type: 'offline', prompt: 'consent' },
+          skipBrowserRedirect: inIframe,
         },
       });
       if (error) throw error;
+      if (inIframe && data?.url) {
+        // Google bloque l'OAuth dans une iframe (403) : on ouvre au niveau supérieur
+        window.open(data.url, '_blank', 'noopener,noreferrer');
+        setGoogleLoading(false);
+      }
     } catch (err: any) {
       toast.error('Connexion Google impossible', { description: err?.message });
       setGoogleLoading(false);
     }
   };
+
 
 
   // noindex for auth pages - prevent SEO indexing
@@ -485,11 +492,6 @@ export default function AuthSimple() {
           {/* CLASSIC AUTH MODE */}
           {authMode === 'classic' && (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login">Connexion</TabsTrigger>
-                <TabsTrigger value="register">Inscription</TabsTrigger>
-              </TabsList>
-
               <div className="mb-6 space-y-4">
                 <Button
                   type="button"
@@ -519,6 +521,12 @@ export default function AuthSimple() {
                   </div>
                 </div>
               </div>
+
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="login">Connexion</TabsTrigger>
+                <TabsTrigger value="register">Inscription</TabsTrigger>
+              </TabsList>
+
 
 
               

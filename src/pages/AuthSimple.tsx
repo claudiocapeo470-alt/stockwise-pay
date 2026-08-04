@@ -454,27 +454,27 @@ export default function AuthSimple() {
       </div>
 
       {/* Right Side - Auth Forms */}
-      <div className="flex-1 flex items-start lg:items-center justify-center p-6 lg:p-8 bg-background relative overflow-y-auto h-screen">
+      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 bg-background relative overflow-hidden h-full">
         {/* Back button hidden in PWA standalone mode */}
         {!window.matchMedia('(display-mode: standalone)').matches && (
           <Link 
             to="/" 
-            className="absolute top-6 left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Retour
           </Link>
         )}
 
-        <div className="w-full max-w-md space-y-6">
+        <div className="w-full max-w-md mx-auto space-y-3 sm:space-y-4">
           {/* Mobile logo — icon version */}
           <div className="lg:hidden text-center">
-            <img src={stocknixLogoIcon} alt="Stocknix" className="h-20 w-20 object-contain mx-auto mb-3" />
+            <img src={stocknixLogoIcon} alt="Stocknix" className="h-14 w-14 sm:h-16 sm:w-16 object-contain mx-auto mb-2" />
           </div>
 
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight">Bienvenue</h1>
-            <p className="text-muted-foreground">
+          <div className="text-center space-y-1 sm:space-y-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">Bienvenue</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               {authMode === 'classic' 
                 ? 'Connectez-vous ou créez un compte' 
                 : 'Connexion employé avec code PIN'

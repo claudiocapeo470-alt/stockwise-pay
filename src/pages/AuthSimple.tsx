@@ -496,8 +496,8 @@ export default function AuthSimple() {
               
               <TabsContent value="login" className="space-y-4">
                 <form onSubmit={handleSubmit} className="space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="email" className="text-sm">Email</Label>
                     <Input
                       id="email"
                       type="email"
@@ -511,8 +511,8 @@ export default function AuthSimple() {
                     )}
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Mot de passe</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="password" className="text-sm">Mot de passe</Label>
                     <div className="relative">
                       <Input
                         id="password"

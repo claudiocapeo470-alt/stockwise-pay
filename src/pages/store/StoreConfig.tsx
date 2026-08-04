@@ -254,10 +254,6 @@ export default function StoreConfig() {
         </div>
       </div>
 
-      {/* ────────────────────────────────────────────────────────────
-           PRÉVISUALISATION — Aperçu Desktop / Tablette
-         ──────────────────────────────────────────────────────────── */}
-      {store && store.is_published && form.slug && <PreviewPanel storeUrl={storeUrl} name={form.name} description={form.description} bannerUrl={form.banner_url} />}
 
 
       {/* ────────────────────────────────────────────────────────────

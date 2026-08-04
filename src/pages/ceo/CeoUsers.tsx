@@ -147,6 +147,73 @@ export default function CeoUsers() {
         </div>
       </div>
 
+      <Dialog open={newOpen} onOpenChange={setNewOpen}>
+        <DialogContent className="bg-slate-900 border-slate-700/40 text-white">
+          <DialogHeader><DialogTitle>Nouvel utilisateur</DialogTitle></DialogHeader>
+          <Tabs defaultValue="create">
+            <TabsList className="bg-slate-800/60 border border-slate-700/40">
+              <TabsTrigger value="create">Créer avec mot de passe</TabsTrigger>
+              <TabsTrigger value="invite">Inviter par email</TabsTrigger>
+            </TabsList>
+
+            <div className="space-y-3 mt-4">
+              <div><label className="text-xs text-slate-500">Email</label><Input type="email" value={newForm.email} onChange={e => setNewForm(f => ({ ...f, email: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" placeholder="client@exemple.com" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="text-xs text-slate-500">Prénom</label><Input value={newForm.first_name} onChange={e => setNewForm(f => ({ ...f, first_name: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" /></div>
+                <div><label className="text-xs text-slate-500">Nom</label><Input value={newForm.last_name} onChange={e => setNewForm(f => ({ ...f, last_name: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" /></div>
+              </div>
+              <div><label className="text-xs text-slate-500">Entreprise</label><Input value={newForm.company_name} onChange={e => setNewForm(f => ({ ...f, company_name: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" /></div>
+            </div>
+
+            <TabsContent value="create" className="mt-4 space-y-4">
+              <div>
+                <label className="text-xs text-slate-500">Mot de passe (min. 8 caractères)</label>
+                <Input type="text" value={newForm.password} onChange={e => setNewForm(f => ({ ...f, password: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" />
+              </div>
+              <p className="text-[11px] text-slate-500">Le compte est créé et confirmé immédiatement. L'utilisateur peut se connecter avec cet email et ce mot de passe.</p>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setNewOpen(false)} className="border-slate-700 text-slate-300">Annuler</Button>
+                <Button
+                  disabled={createUser.isPending || !newForm.email || newForm.password.length < 8}
+                  onClick={async () => { await createUser.mutateAsync(newForm); setNewOpen(false); }}
+                  className="bg-gradient-to-r from-teal-500 to-blue-600 border-0"
+                >{createUser.isPending ? 'Création...' : 'Créer le compte'}</Button>
+              </DialogFooter>
+            </TabsContent>
+
+            <TabsContent value="invite" className="mt-4 space-y-4">
+              <p className="text-[11px] text-slate-500">Un email d'invitation est envoyé. Dès que la personne confirme, son compte est créé automatiquement et elle définit son mot de passe.</p>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setNewOpen(false)} className="border-slate-700 text-slate-300">Annuler</Button>
+                <Button
+                  disabled={inviteUser.isPending || !newForm.email}
+                  onClick={async () => { await inviteUser.mutateAsync(newForm); setNewOpen(false); }}
+                  className="bg-gradient-to-r from-teal-500 to-blue-600 border-0"
+                >{inviteUser.isPending ? 'Envoi...' : "Envoyer l'invitation"}</Button>
+              </DialogFooter>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!pwdUser} onOpenChange={v => !v && setPwdUser(null)}>
+        <DialogContent className="bg-slate-900 border-slate-700/40 text-white">
+          <DialogHeader><DialogTitle>Modifier le mot de passe</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <p className="text-xs text-slate-400">{pwdUser?.email}</p>
+            <div><label className="text-xs text-slate-500">Nouveau mot de passe (min. 8 caractères)</label><Input type="text" value={newPwd} onChange={e => setNewPwd(e.target.value)} className="bg-slate-800/60 border-slate-700/40 text-white" /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPwdUser(null)} className="border-slate-700 text-slate-300">Annuler</Button>
+            <Button
+              disabled={setPassword.isPending || newPwd.length < 8}
+              onClick={async () => { await setPassword.mutateAsync({ user_id: pwdUser!.user_id, password: newPwd }); setPwdUser(null); }}
+              className="bg-gradient-to-r from-teal-500 to-blue-600 border-0"
+            >{setPassword.isPending ? 'Mise à jour...' : 'Enregistrer'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={!!editUser} onOpenChange={v => !v && setEditUser(null)}>
         <DialogContent className="bg-slate-900 border-slate-700/40 text-white">
           <DialogHeader><DialogTitle>Modifier l'utilisateur</DialogTitle></DialogHeader>

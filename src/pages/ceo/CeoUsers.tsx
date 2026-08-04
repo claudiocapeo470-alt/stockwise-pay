@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Search, Edit2, Trash2, Shield, Clock, Loader2, Download } from 'lucide-react';
-import { useCeoUsers, useCeoUpdateUser, useCeoGiveTrial, useCeoToggleRole, useCeoDeleteUser } from '@/hooks/useCeo';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Search, Edit2, Trash2, Shield, Clock, Loader2, Download, UserPlus, KeyRound } from 'lucide-react';
+import { useCeoUsers, useCeoUpdateUser, useCeoGiveTrial, useCeoToggleRole, useCeoDeleteUser, useCeoCreateUser, useCeoInviteUser, useCeoSetPassword } from '@/hooks/useCeo';
+
 
 interface UserRow {
   user_id: string;
@@ -23,10 +25,18 @@ export default function CeoUsers() {
   const giveTrial = useCeoGiveTrial();
   const toggleRole = useCeoToggleRole();
   const deleteUser = useCeoDeleteUser();
+  const createUser = useCeoCreateUser();
+  const inviteUser = useCeoInviteUser();
+  const setPassword = useCeoSetPassword();
 
   const [search, setSearch] = useState('');
   const [editUser, setEditUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState({ first_name: '', last_name: '', email: '', company_name: '' });
+  const [newOpen, setNewOpen] = useState(false);
+  const [newForm, setNewForm] = useState({ email: '', password: '', first_name: '', last_name: '', company_name: '' });
+  const [pwdUser, setPwdUser] = useState<UserRow | null>(null);
+  const [newPwd, setNewPwd] = useState('');
+
 
   const filtered = (users as UserRow[]).filter(u => {
     const q = search.toLowerCase();
@@ -58,7 +68,11 @@ export default function CeoUsers() {
           <h2 className="text-xl font-bold text-white">Utilisateurs</h2>
           <p className="text-sm text-slate-400">{users.length} utilisateurs inscrits</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button size="sm" onClick={() => { setNewForm({ email: '', password: '', first_name: '', last_name: '', company_name: '' }); setNewOpen(true); }} className="gap-2 bg-gradient-to-r from-teal-500 to-blue-600 border-0 text-white">
+            <UserPlus className="h-4 w-4" /> Nouvel utilisateur
+          </Button>
+
           <Button variant="outline" size="sm" onClick={() => {
             const headers = ['Email', 'Prénom', 'Nom', 'Entreprise', 'Rôle', 'Plan', 'Date inscription'];
             const rows = filtered.map(u => [u.email || '', u.first_name || '', u.last_name || '', u.company_name || '', u.role || 'user', u.plan_name || 'Aucun', new Date(u.created_at).toLocaleDateString('fr')]);
@@ -120,6 +134,7 @@ export default function CeoUsers() {
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <button onClick={() => handleEdit(u)} className="p-1.5 rounded-lg hover:bg-slate-700/60 text-slate-400 hover:text-white" title="Modifier"><Edit2 className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => { setPwdUser(u); setNewPwd(''); }} className="p-1.5 rounded-lg hover:bg-blue-500/10 text-slate-400 hover:text-blue-400" title="Modifier le mot de passe"><KeyRound className="h-3.5 w-3.5" /></button>
                       <button onClick={() => giveTrial.mutate({ user_id: u.user_id, email: u.email || '' })} className="p-1.5 rounded-lg hover:bg-yellow-500/10 text-slate-400 hover:text-yellow-400" title="14j essai"><Clock className="h-3.5 w-3.5" /></button>
                       <button onClick={() => toggleRole.mutate({ user_id: u.user_id, currentRole: u.role || 'user' })} className="p-1.5 rounded-lg hover:bg-purple-500/10 text-slate-400 hover:text-purple-400" title="Toggle admin"><Shield className="h-3.5 w-3.5" /></button>
                       <button onClick={() => { if (confirm('Supprimer cet utilisateur ? Cette action est irréversible.')) deleteUser.mutate(u.user_id); }} className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400" title="Supprimer"><Trash2 className="h-3.5 w-3.5" /></button>
@@ -131,6 +146,73 @@ export default function CeoUsers() {
           </table>
         </div>
       </div>
+
+      <Dialog open={newOpen} onOpenChange={setNewOpen}>
+        <DialogContent className="bg-slate-900 border-slate-700/40 text-white">
+          <DialogHeader><DialogTitle>Nouvel utilisateur</DialogTitle></DialogHeader>
+          <Tabs defaultValue="create">
+            <TabsList className="bg-slate-800/60 border border-slate-700/40">
+              <TabsTrigger value="create">Créer avec mot de passe</TabsTrigger>
+              <TabsTrigger value="invite">Inviter par email</TabsTrigger>
+            </TabsList>
+
+            <div className="space-y-3 mt-4">
+              <div><label className="text-xs text-slate-500">Email</label><Input type="email" value={newForm.email} onChange={e => setNewForm(f => ({ ...f, email: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" placeholder="client@exemple.com" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="text-xs text-slate-500">Prénom</label><Input value={newForm.first_name} onChange={e => setNewForm(f => ({ ...f, first_name: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" /></div>
+                <div><label className="text-xs text-slate-500">Nom</label><Input value={newForm.last_name} onChange={e => setNewForm(f => ({ ...f, last_name: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" /></div>
+              </div>
+              <div><label className="text-xs text-slate-500">Entreprise</label><Input value={newForm.company_name} onChange={e => setNewForm(f => ({ ...f, company_name: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" /></div>
+            </div>
+
+            <TabsContent value="create" className="mt-4 space-y-4">
+              <div>
+                <label className="text-xs text-slate-500">Mot de passe (min. 8 caractères)</label>
+                <Input type="text" value={newForm.password} onChange={e => setNewForm(f => ({ ...f, password: e.target.value }))} className="bg-slate-800/60 border-slate-700/40 text-white" />
+              </div>
+              <p className="text-[11px] text-slate-500">Le compte est créé et confirmé immédiatement. L'utilisateur peut se connecter avec cet email et ce mot de passe.</p>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setNewOpen(false)} className="border-slate-700 text-slate-300">Annuler</Button>
+                <Button
+                  disabled={createUser.isPending || !newForm.email || newForm.password.length < 8}
+                  onClick={async () => { await createUser.mutateAsync(newForm); setNewOpen(false); }}
+                  className="bg-gradient-to-r from-teal-500 to-blue-600 border-0"
+                >{createUser.isPending ? 'Création...' : 'Créer le compte'}</Button>
+              </DialogFooter>
+            </TabsContent>
+
+            <TabsContent value="invite" className="mt-4 space-y-4">
+              <p className="text-[11px] text-slate-500">Un email d'invitation est envoyé. Dès que la personne confirme, son compte est créé automatiquement et elle définit son mot de passe.</p>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setNewOpen(false)} className="border-slate-700 text-slate-300">Annuler</Button>
+                <Button
+                  disabled={inviteUser.isPending || !newForm.email}
+                  onClick={async () => { await inviteUser.mutateAsync(newForm); setNewOpen(false); }}
+                  className="bg-gradient-to-r from-teal-500 to-blue-600 border-0"
+                >{inviteUser.isPending ? 'Envoi...' : "Envoyer l'invitation"}</Button>
+              </DialogFooter>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!pwdUser} onOpenChange={v => !v && setPwdUser(null)}>
+        <DialogContent className="bg-slate-900 border-slate-700/40 text-white">
+          <DialogHeader><DialogTitle>Modifier le mot de passe</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <p className="text-xs text-slate-400">{pwdUser?.email}</p>
+            <div><label className="text-xs text-slate-500">Nouveau mot de passe (min. 8 caractères)</label><Input type="text" value={newPwd} onChange={e => setNewPwd(e.target.value)} className="bg-slate-800/60 border-slate-700/40 text-white" /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPwdUser(null)} className="border-slate-700 text-slate-300">Annuler</Button>
+            <Button
+              disabled={setPassword.isPending || newPwd.length < 8}
+              onClick={async () => { await setPassword.mutateAsync({ user_id: pwdUser!.user_id, password: newPwd }); setPwdUser(null); }}
+              className="bg-gradient-to-r from-teal-500 to-blue-600 border-0"
+            >{setPassword.isPending ? 'Mise à jour...' : 'Enregistrer'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!editUser} onOpenChange={v => !v && setEditUser(null)}>
         <DialogContent className="bg-slate-900 border-slate-700/40 text-white">

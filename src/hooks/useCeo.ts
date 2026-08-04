@@ -96,6 +96,66 @@ export function useCeoToggleRole() {
   });
 }
 
+export function useCeoCreateUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { email: string; password: string; first_name?: string; last_name?: string; company_name?: string }) => {
+      const { data, error } = await supabase.functions.invoke('admin-manage-user', {
+        body: {
+          action: 'create',
+          email: payload.email,
+          password: payload.password,
+          firstName: payload.first_name || null,
+          lastName: payload.last_name || null,
+          companyName: payload.company_name || null,
+        },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      return data;
+    },
+    onSuccess: () => { toast.success('Utilisateur créé'); qc.invalidateQueries({ queryKey: ceoKeys.users }); },
+    onError: (e: any) => toast.error(e.message),
+  });
+}
+
+export function useCeoInviteUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { email: string; first_name?: string; last_name?: string; company_name?: string }) => {
+      const { data, error } = await supabase.functions.invoke('admin-manage-user', {
+        body: {
+          action: 'invite',
+          email: payload.email,
+          firstName: payload.first_name || null,
+          lastName: payload.last_name || null,
+          companyName: payload.company_name || null,
+        },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      return data;
+    },
+    onSuccess: () => { toast.success('Invitation envoyée par email'); qc.invalidateQueries({ queryKey: ceoKeys.users }); },
+    onError: (e: any) => toast.error(e.message),
+  });
+}
+
+export function useCeoSetPassword() {
+  return useMutation({
+    mutationFn: async ({ user_id, password }: { user_id: string; password: string }) => {
+      const { data, error } = await supabase.functions.invoke('admin-manage-user', {
+        body: { action: 'set_password', userId: user_id, password },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      return data;
+    },
+    onSuccess: () => toast.success('Mot de passe modifié'),
+    onError: (e: any) => toast.error(e.message),
+  });
+}
+
 export function useCeoDeleteUser() {
   const qc = useQueryClient();
   return useMutation({

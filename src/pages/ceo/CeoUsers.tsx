@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Search, Edit2, Trash2, Shield, Clock, Loader2, Download } from 'lucide-react';
-import { useCeoUsers, useCeoUpdateUser, useCeoGiveTrial, useCeoToggleRole, useCeoDeleteUser } from '@/hooks/useCeo';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Search, Edit2, Trash2, Shield, Clock, Loader2, Download, UserPlus, KeyRound } from 'lucide-react';
+import { useCeoUsers, useCeoUpdateUser, useCeoGiveTrial, useCeoToggleRole, useCeoDeleteUser, useCeoCreateUser, useCeoInviteUser, useCeoSetPassword } from '@/hooks/useCeo';
+
 
 interface UserRow {
   user_id: string;

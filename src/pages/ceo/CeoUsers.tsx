@@ -25,10 +25,18 @@ export default function CeoUsers() {
   const giveTrial = useCeoGiveTrial();
   const toggleRole = useCeoToggleRole();
   const deleteUser = useCeoDeleteUser();
+  const createUser = useCeoCreateUser();
+  const inviteUser = useCeoInviteUser();
+  const setPassword = useCeoSetPassword();
 
   const [search, setSearch] = useState('');
   const [editUser, setEditUser] = useState<UserRow | null>(null);
   const [editForm, setEditForm] = useState({ first_name: '', last_name: '', email: '', company_name: '' });
+  const [newOpen, setNewOpen] = useState(false);
+  const [newForm, setNewForm] = useState({ email: '', password: '', first_name: '', last_name: '', company_name: '' });
+  const [pwdUser, setPwdUser] = useState<UserRow | null>(null);
+  const [newPwd, setNewPwd] = useState('');
+
 
   const filtered = (users as UserRow[]).filter(u => {
     const q = search.toLowerCase();

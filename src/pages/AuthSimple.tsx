@@ -494,8 +494,8 @@ export default function AuthSimple() {
 
 
               
-              <TabsContent value="login" className="space-y-6">
-                <form onSubmit={handleSubmit} className="space-y-4">
+              <TabsContent value="login" className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input

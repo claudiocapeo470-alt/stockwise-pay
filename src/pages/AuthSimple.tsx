@@ -598,11 +598,11 @@ export default function AuthSimple() {
                 </div>
               </TabsContent>
               
-              <TabsContent value="register" className="space-y-6">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">Prénom (optionnel)</Label>
+              <TabsContent value="register" className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="firstName" className="text-sm">Prénom (optionnel)</Label>
                       <Input
                         id="firstName"
                         value={formData.firstName}
@@ -610,8 +610,8 @@ export default function AuthSimple() {
                         placeholder="John"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Nom (optionnel)</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="lastName" className="text-sm">Nom (optionnel)</Label>
                       <Input
                         id="lastName"
                         value={formData.lastName}
@@ -621,8 +621,8 @@ export default function AuthSimple() {
                     </div>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="registerEmail">Email</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="registerEmail" className="text-sm">Email</Label>
                     <Input
                       id="registerEmail"
                       type="email"
@@ -636,8 +636,8 @@ export default function AuthSimple() {
                     )}
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="registerPassword">Mot de passe</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="registerPassword" className="text-sm">Mot de passe</Label>
                     <div className="relative">
                       <Input
                         id="registerPassword"

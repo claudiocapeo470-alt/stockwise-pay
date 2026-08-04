@@ -73,15 +73,19 @@ export default function AuthSimple() {
       });
       if (error) throw error;
       if (inIframe && data?.url) {
-        // Google bloque l'OAuth dans une iframe (403) : on ouvre au niveau supérieur
-        window.open(data.url, '_blank', 'noopener,noreferrer');
-        setGoogleLoading(false);
+        // Google refuse l'OAuth dans une iframe : on navigue la fenêtre principale
+        try {
+          window.top!.location.href = data.url;
+        } catch {
+          window.location.href = data.url;
+        }
       }
     } catch (err: any) {
       toast.error('Connexion Google impossible', { description: err?.message });
       setGoogleLoading(false);
     }
   };
+
 
 
 

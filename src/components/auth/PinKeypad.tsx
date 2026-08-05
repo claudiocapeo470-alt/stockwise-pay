@@ -38,15 +38,15 @@ export function PinKeypad({ length = 6, onComplete, label = "Code PIN", isLoadin
   const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "clear", "0", "delete"];
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full max-w-xs mx-auto">
+    <div className="flex flex-col items-center gap-3 w-full max-w-[16rem] sm:max-w-xs mx-auto">
       <p className="text-sm font-medium text-muted-foreground">{label}</p>
       
       {/* PIN dots */}
-      <div className="flex gap-3 mb-2">
+      <div className="flex gap-2 sm:gap-3 mb-1">
         {Array.from({ length }).map((_, i) => (
           <div
             key={i}
-            className={`w-4 h-4 rounded-full border-2 transition-all duration-150 ${
+            className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 transition-all duration-150 ${
               i < pin.length
                 ? "bg-primary border-primary scale-110"
                 : "border-muted-foreground/30 bg-transparent"

@@ -699,9 +699,9 @@ export default function AuthSimple() {
 
           {/* EMPLOYEE PIN AUTH MODE */}
           {authMode === 'employee' && (
-            <div className="space-y-6 py-4">
+            <div className="space-y-4 py-2">
               {pinStep === 'company' && (
-                <div className="space-y-5">
+                <div className="space-y-3">
                   <p className="text-center text-sm text-muted-foreground">
                     Saisissez le code de votre entreprise (6 chiffres)
                   </p>
@@ -715,7 +715,7 @@ export default function AuthSimple() {
               )}
 
               {pinStep === 'pin' && (
-                <div className="space-y-5">
+                <div className="space-y-3">
                   <div className="text-center">
                     <p className="text-xs text-muted-foreground mb-1">
                       Entreprise : <span className="font-mono font-bold text-foreground">{companyCode}</span>
@@ -741,7 +741,7 @@ export default function AuthSimple() {
           )}
           {/* Employee login link - subtle, at bottom */}
           {authMode === 'classic' && (
-            <div className="text-center pt-4 border-t border-border/40">
+            <div className="text-center pt-2 border-t border-border/40">
               <button
                 type="button"
                 onClick={() => { setAuthMode('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}

@@ -38,15 +38,15 @@ export function PinKeypad({ length = 6, onComplete, label = "Code PIN", isLoadin
   const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "clear", "0", "delete"];
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full max-w-xs mx-auto">
+    <div className="flex flex-col items-center gap-3 w-full max-w-[16rem] sm:max-w-xs mx-auto">
       <p className="text-sm font-medium text-muted-foreground">{label}</p>
       
       {/* PIN dots */}
-      <div className="flex gap-3 mb-2">
+      <div className="flex gap-2 sm:gap-3 mb-1">
         {Array.from({ length }).map((_, i) => (
           <div
             key={i}
-            className={`w-4 h-4 rounded-full border-2 transition-all duration-150 ${
+            className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 transition-all duration-150 ${
               i < pin.length
                 ? "bg-primary border-primary scale-110"
                 : "border-muted-foreground/30 bg-transparent"
@@ -60,7 +60,7 @@ export function PinKeypad({ length = 6, onComplete, label = "Code PIN", isLoadin
       )}
 
       {/* Keypad grid */}
-      <div className="grid grid-cols-3 gap-3 w-full">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full">
         {keys.map((key) => (
           <button
             key={key}
@@ -68,11 +68,11 @@ export function PinKeypad({ length = 6, onComplete, label = "Code PIN", isLoadin
             disabled={isLoading}
             onClick={() => handleKey(key)}
             className={`
-              h-16 rounded-2xl font-semibold text-xl transition-all duration-150
+              h-12 sm:h-14 rounded-xl sm:rounded-2xl font-semibold text-lg sm:text-xl transition-all duration-150
               active:scale-95 select-none
               disabled:opacity-50 disabled:cursor-not-allowed
               ${key === "clear"
-                ? "text-base text-destructive bg-destructive/10 hover:bg-destructive/15 border border-destructive/20"
+                ? "text-sm sm:text-base text-destructive bg-destructive/10 hover:bg-destructive/15 border border-destructive/20"
                 : key === "delete"
                 ? "bg-muted hover:bg-muted/80 flex items-center justify-center text-foreground border border-border/60"
                 : "bg-card text-foreground border border-border/60 shadow-sm hover:shadow-md hover:border-primary/40 hover:bg-primary/5"
@@ -80,7 +80,7 @@ export function PinKeypad({ length = 6, onComplete, label = "Code PIN", isLoadin
             `}
           >
             {key === "delete" ? (
-              <Delete className="h-6 w-6 mx-auto" />
+              <Delete className="h-5 w-5 sm:h-6 sm:w-6 mx-auto" />
             ) : key === "clear" ? (
               "C"
             ) : (

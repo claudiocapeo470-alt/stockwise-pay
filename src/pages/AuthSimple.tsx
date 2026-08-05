@@ -454,27 +454,27 @@ export default function AuthSimple() {
       </div>
 
       {/* Right Side - Auth Forms */}
-      <div className="flex-1 flex items-start lg:items-center justify-center p-6 lg:p-8 bg-background relative overflow-y-auto h-screen">
+      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 bg-background relative overflow-hidden h-full">
         {/* Back button hidden in PWA standalone mode */}
         {!window.matchMedia('(display-mode: standalone)').matches && (
           <Link 
             to="/" 
-            className="absolute top-6 left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Retour
           </Link>
         )}
 
-        <div className="w-full max-w-md space-y-6">
+        <div className="w-full max-w-md mx-auto space-y-3 sm:space-y-4">
           {/* Mobile logo — icon version */}
           <div className="lg:hidden text-center">
-            <img src={stocknixLogoIcon} alt="Stocknix" className="h-20 w-20 object-contain mx-auto mb-3" />
+            <img src={stocknixLogoIcon} alt="Stocknix" className="h-14 w-14 sm:h-16 sm:w-16 object-contain mx-auto mb-2" />
           </div>
 
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight">Bienvenue</h1>
-            <p className="text-muted-foreground">
+          <div className="text-center space-y-1 sm:space-y-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">Bienvenue</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               {authMode === 'classic' 
                 ? 'Connectez-vous ou créez un compte' 
                 : 'Connexion employé avec code PIN'
@@ -486,7 +486,7 @@ export default function AuthSimple() {
           {/* CLASSIC AUTH MODE */}
           {authMode === 'classic' && (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
                 <TabsTrigger value="login">Connexion</TabsTrigger>
                 <TabsTrigger value="register">Inscription</TabsTrigger>
               </TabsList>
@@ -494,10 +494,10 @@ export default function AuthSimple() {
 
 
               
-              <TabsContent value="login" className="space-y-6">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+              <TabsContent value="login" className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="email" className="text-sm">Email</Label>
                     <Input
                       id="email"
                       type="email"
@@ -511,8 +511,8 @@ export default function AuthSimple() {
                     )}
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Mot de passe</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="password" className="text-sm">Mot de passe</Label>
                     <div className="relative">
                       <Input
                         id="password"
@@ -598,11 +598,11 @@ export default function AuthSimple() {
                 </div>
               </TabsContent>
               
-              <TabsContent value="register" className="space-y-6">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">Prénom (optionnel)</Label>
+              <TabsContent value="register" className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="firstName" className="text-sm">Prénom (optionnel)</Label>
                       <Input
                         id="firstName"
                         value={formData.firstName}
@@ -610,8 +610,8 @@ export default function AuthSimple() {
                         placeholder="John"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Nom (optionnel)</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="lastName" className="text-sm">Nom (optionnel)</Label>
                       <Input
                         id="lastName"
                         value={formData.lastName}
@@ -621,8 +621,8 @@ export default function AuthSimple() {
                     </div>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="registerEmail">Email</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="registerEmail" className="text-sm">Email</Label>
                     <Input
                       id="registerEmail"
                       type="email"
@@ -636,8 +636,8 @@ export default function AuthSimple() {
                     )}
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="registerPassword">Mot de passe</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="registerPassword" className="text-sm">Mot de passe</Label>
                     <div className="relative">
                       <Input
                         id="registerPassword"
@@ -699,9 +699,9 @@ export default function AuthSimple() {
 
           {/* EMPLOYEE PIN AUTH MODE */}
           {authMode === 'employee' && (
-            <div className="space-y-6 py-4">
+            <div className="space-y-4 py-2">
               {pinStep === 'company' && (
-                <div className="space-y-5">
+                <div className="space-y-3">
                   <p className="text-center text-sm text-muted-foreground">
                     Saisissez le code de votre entreprise (6 chiffres)
                   </p>
@@ -715,7 +715,7 @@ export default function AuthSimple() {
               )}
 
               {pinStep === 'pin' && (
-                <div className="space-y-5">
+                <div className="space-y-3">
                   <div className="text-center">
                     <p className="text-xs text-muted-foreground mb-1">
                       Entreprise : <span className="font-mono font-bold text-foreground">{companyCode}</span>
@@ -741,7 +741,7 @@ export default function AuthSimple() {
           )}
           {/* Employee login link - subtle, at bottom */}
           {authMode === 'classic' && (
-            <div className="text-center pt-4 border-t border-border/40">
+            <div className="text-center pt-2 border-t border-border/40">
               <button
                 type="button"
                 onClick={() => { setAuthMode('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}

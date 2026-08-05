@@ -60,8 +60,8 @@ export default function ResetPassword() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      toast.error('Le mot de passe doit contenir au moins 6 caractères');
+    if (password.length < 8) {
+      toast.error('Le mot de passe doit contenir au moins 8 caractères');
       return;
     }
     if (password !== confirmPassword) {
@@ -114,7 +114,7 @@ export default function ResetPassword() {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Minimum 6 caractères"
+                    placeholder="Minimum 8 caractères"
                     className="bg-[#0d1f3c] border-[#1e3a5f] text-white pr-10"
                     required
                   />

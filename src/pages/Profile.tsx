@@ -39,7 +39,7 @@ export default function Profile() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword.length < 6) return toast.error("Min. 6 caractères");
+    if (newPassword.length < 8) return toast.error("Min. 8 caractères");
     if (newPassword !== confirmPassword) return toast.error("Les mots de passe ne correspondent pas");
     setIsUpdatingPassword(true);
     try {
@@ -212,7 +212,7 @@ export default function Profile() {
               <div>
                 <Label>Nouveau mot de passe</Label>
                 <div className="relative">
-                  <Input type={showPassword ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 6 caractères" required />
+                  <Input type={showPassword ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 8 caractères" required />
                   <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3" onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>

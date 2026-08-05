@@ -22,7 +22,7 @@ const loginSchema = z.object({
 
 const signupSchema = z.object({
   email: z.string().email('Email invalide'),
-  password: z.string().min(6, 'Minimum 6 caractères'),
+  password: z.string().min(8, 'Minimum 8 caractères'),
   firstName: z.string().optional(),
   lastName: z.string().optional()
 });
@@ -644,7 +644,7 @@ export default function AuthSimple() {
                         type={showPassword ? 'text' : 'password'}
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
-                        placeholder="Minimum 6 caractères"
+                        placeholder="Minimum 8 caractères"
                         className={getFieldError('password') ? 'border-destructive' : ''}
                       />
                       <Button

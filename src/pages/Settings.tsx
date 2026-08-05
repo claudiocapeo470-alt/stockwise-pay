@@ -331,7 +331,7 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword.length < 6) { toast.error("Le mot de passe doit contenir au moins 6 caractères"); return; }
+    if (newPassword.length < 8) { toast.error("Le mot de passe doit contenir au moins 8 caractères"); return; }
     if (newPassword !== confirmPassword) { toast.error("Les mots de passe ne correspondent pas"); return; }
     setIsUpdating(true);
     try {
@@ -376,7 +376,7 @@ function SecurityDataSettings({ signOut }: { signOut: () => void }) {
           </div>
           {isChangingPassword && (
             <form onSubmit={handlePasswordChange} className="space-y-3 p-4 rounded-lg bg-muted/40">
-              <div><Label htmlFor="new_password">Nouveau mot de passe</Label><Input id="new_password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 6 caractères" required /></div>
+              <div><Label htmlFor="new_password">Nouveau mot de passe</Label><Input id="new_password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 8 caractères" required /></div>
               <div><Label htmlFor="confirm_password">Confirmer</Label><Input id="confirm_password" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required /></div>
               <div className="flex gap-2">
                 <Button type="submit" size="sm" disabled={isUpdating}>{isUpdating ? "Modification..." : "Confirmer"}</Button>

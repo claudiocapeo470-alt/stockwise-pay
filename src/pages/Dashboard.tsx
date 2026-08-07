@@ -29,18 +29,20 @@ export default function Dashboard() {
   // Mobile: owners get summary cards + grid
   if (isMobile && !isEmployee) {
     return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-primary rounded-xl p-4 text-primary-foreground">
-            <p className="text-xs opacity-80">C.A (Mois)</p>
-            <p className="text-lg font-bold mt-1">{formatCurrency(monthlyCA)}</p>
+      <div className="flex flex-col gap-2 h-[calc(100dvh-10.25rem)] min-h-0 overflow-hidden">
+        <div className="grid grid-cols-2 gap-2 shrink-0">
+          <div className="bg-primary rounded-xl px-3 py-2.5 text-primary-foreground">
+            <p className="text-[11px] opacity-80">C.A (Mois)</p>
+            <p className="text-base font-bold mt-0.5 truncate">{formatCurrency(monthlyCA)}</p>
           </div>
-          <div className="bg-card border border-border rounded-xl p-4">
-            <p className="text-xs text-muted-foreground">Ventes (Mois)</p>
-            <p className="text-lg font-bold mt-1 text-foreground">{monthlySales.length}</p>
+          <div className="bg-card border border-border rounded-xl px-3 py-2.5">
+            <p className="text-[11px] text-muted-foreground">Ventes (Mois)</p>
+            <p className="text-base font-bold mt-0.5 text-foreground">{monthlySales.length}</p>
           </div>
         </div>
-        <MobileHomeGrid />
+        <div className="flex-1 min-h-0">
+          <MobileHomeGrid />
+        </div>
       </div>
     );
   }

@@ -76,9 +76,9 @@ export default function Paiements() {
     return (
       <div className="space-y-5 animate-fade-in">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
-          <Card><CardContent className="p-4 flex items-center gap-4"><div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl"><Receipt className="h-5 w-5 text-primary" /></div><div><p className="text-2xl font-bold">0</p><p className="text-sm text-muted-foreground">Total Paiements</p></div></CardContent></Card>
-          <Card><CardContent className="p-4 flex items-center gap-4"><div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl"><CheckCircle className="h-5 w-5 text-success" /></div><div><p className="text-2xl font-bold">0</p><p className="text-sm text-muted-foreground">Payés</p></div></CardContent></Card>
-          <Card><CardContent className="p-4 flex items-center gap-4"><div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl"><Clock className="h-5 w-5 text-warning" /></div><div><p className="text-2xl font-bold">0</p><p className="text-sm text-muted-foreground">En attente</p></div></CardContent></Card>
+          <Card><CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"><div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0"><Receipt className="h-5 w-5 text-primary" /></div><div><p className="text-lg sm:text-2xl font-bold leading-none truncate">0</p><p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Total Paiements</p></div></CardContent></Card>
+          <Card><CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"><div className="h-9 w-9 sm:h-10 sm:w-10 bg-success/10 flex items-center justify-center rounded-xl shrink-0"><CheckCircle className="h-5 w-5 text-success" /></div><div><p className="text-lg sm:text-2xl font-bold leading-none truncate">0</p><p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Payés</p></div></CardContent></Card>
+          <Card><CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"><div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0"><Clock className="h-5 w-5 text-warning" /></div><div><p className="text-lg sm:text-2xl font-bold leading-none truncate">0</p><p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">En attente</p></div></CardContent></Card>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
           <div className="relative flex-1 max-w-md w-full">
@@ -97,7 +97,7 @@ export default function Paiements() {
       {/* Header large inspiré */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
             {paymentStats.totalPayments} encaissements • {formatAmount(paymentStats.remainingAmount)} restants à recevoir
           </p>
         </div>
@@ -107,46 +107,46 @@ export default function Paiements() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">
               <Receipt className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{paymentStats.totalPayments}</p>
-              <p className="text-sm text-muted-foreground">Total Paiements</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{paymentStats.totalPayments}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Total Paiements</p>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-success/10 flex items-center justify-center rounded-xl shrink-0">
               <CheckCircle className="h-5 w-5 text-success" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{paymentStats.completedPayments}</p>
-              <p className="text-sm text-muted-foreground">Payés</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{paymentStats.completedPayments}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Payés</p>
             </div>
           </CardContent>
         </Card>
         <Card className={paymentStats.overduePayments > 0 ? "border-destructive/30" : ""}>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-destructive/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-destructive/10 flex items-center justify-center rounded-xl shrink-0">
               <AlertCircle className="h-5 w-5 text-destructive" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{paymentStats.overduePayments}</p>
-              <p className="text-sm text-muted-foreground">En retard</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{paymentStats.overduePayments}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">En retard</p>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0">
               <TrendingUp className="h-5 w-5 text-warning" />
             </div>
             <div>
               <p className="text-lg font-bold">{formatAmount(paymentStats.remainingAmount)}</p>
-              <p className="text-sm text-muted-foreground">Reste à recevoir</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Reste à recevoir</p>
             </div>
           </CardContent>
         </Card>
@@ -225,7 +225,7 @@ export default function Paiements() {
                           </div>
                           <div>
                             <p className="font-medium">{payment.customer_first_name} {payment.customer_last_name}</p>
-                            {payment.customer_phone && <p className="text-xs text-muted-foreground">{payment.customer_phone}</p>}
+                            {payment.customer_phone && <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">{payment.customer_phone}</p>}
                           </div>
                         </div>
                       </TableCell>

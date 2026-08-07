@@ -105,8 +105,8 @@ export default function Performance() {
       {/* Stats — style Stocknix */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">
               <TrendingUp className="h-5 w-5 text-primary" />
             </div>
             <div className="min-w-0">
@@ -116,8 +116,8 @@ export default function Performance() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-success/10 flex items-center justify-center rounded-xl shrink-0">
               <ShoppingCart className="h-5 w-5 text-success" />
             </div>
             <div>
@@ -127,7 +127,7 @@ export default function Performance() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
             <div className="h-10 w-10 bg-secondary/30 flex items-center justify-center rounded-xl">
               <Receipt className="h-5 w-5 text-foreground" />
             </div>
@@ -138,8 +138,8 @@ export default function Performance() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0">
               <BarChart3 className="h-5 w-5 text-warning" />
             </div>
             <div className="min-w-0">

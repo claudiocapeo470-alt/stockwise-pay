@@ -100,33 +100,43 @@ export default function Settings() {
     );
   }
 
-  return (
-    <div className="space-y-6 max-w-4xl mx-auto animate-fade-in">
-      <p className="text-sm text-muted-foreground">Configuration et préférences</p>
+  const groups: { title: string; ids: SettingsPage[] }[] = [
+    { title: "Entreprise", ids: ["company"] },
+    { title: "Préférences", ids: ["appearance"] },
+    { title: "Sécurité", ids: ["security-data"] },
+    { title: "Abonnement", ids: ["subscription"] },
+    { title: "Système", ids: ["system"] },
+  ];
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        {visibleCards.map((card) => (
-          <Card
-            key={card.id}
-            className="cursor-pointer hover:shadow-md hover:border-primary/30 transition-all duration-200 group"
-            onClick={() => card.id === "profile" ? navigate('/app/profile') : card.id === "subscription" ? navigate('/app/subscription') : setActivePage(card.id)}
-          >
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className={`h-11 w-11 rounded-xl ${card.iconBg} flex items-center justify-center flex-shrink-0`}>
-                <card.icon className={`h-5 w-5 ${card.iconColor}`} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm">{card.title}</h3>
-                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{card.description}</p>
-              </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all flex-shrink-0" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+  return (
+    <div className="space-y-6 max-w-2xl mx-auto animate-fade-in pb-4">
+      {groups.map((group) => {
+        const cards = visibleCards.filter((c) => group.ids.includes(c.id));
+        if (cards.length === 0) return null;
+        return (
+          <div key={group.title} className="space-y-2">
+            <p className="text-sm font-semibold text-foreground px-1">{group.title}</p>
+            <div className="rounded-2xl bg-muted/60 overflow-hidden">
+              {cards.map((card, i) => (
+                <button
+                  key={card.id}
+                  type="button"
+                  onClick={() => card.id === "profile" ? navigate('/app/profile') : card.id === "subscription" ? navigate('/app/subscription') : setActivePage(card.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-colors hover:bg-muted ${i > 0 ? "border-t border-border/50" : ""}`}
+                >
+                  <card.icon className="h-5 w-5 text-foreground/80 flex-shrink-0" />
+                  <span className="flex-1 min-w-0 text-[15px] text-foreground truncate">{card.title}</span>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
+
 
 // ─── Apparence & Thème ───
 const ACCENT_COLORS = [

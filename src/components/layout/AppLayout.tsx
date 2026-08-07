@@ -17,6 +17,8 @@ import { useStockAlerts } from "@/hooks/useStockAlerts";
 import { NotificationCenter } from "./NotificationCenter";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";
+import { StatScrollerDots } from "./StatScrollerDots";
+
 import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 
 interface AppLayoutProps {

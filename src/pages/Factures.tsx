@@ -106,7 +106,6 @@ export default function Factures() {
       {/* Header large */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div className="space-y-1.5">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">Factures</h1>
           <p className="text-sm text-muted-foreground">
             {invoices.length} facture{invoices.length > 1 ? 's' : ''} émise{invoices.length > 1 ? 's' : ''} · {paidCount} payée{paidCount > 1 ? 's' : ''}
           </p>

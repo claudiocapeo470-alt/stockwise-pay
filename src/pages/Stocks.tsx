@@ -67,8 +67,7 @@ export default function Stocks() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header with StockAlertBell */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Gestion des stocks</h2>
+      <div className="flex items-center justify-end">
         <StockAlertBell />
       </div>
 

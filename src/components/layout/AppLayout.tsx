@@ -93,7 +93,15 @@ export function AppLayout({ children }: AppLayoutProps) {
     if (path.includes('/settings')) return 'Paramètres';
     if (path.includes('/team')) return 'Mon équipe';
     if (path.includes('/livraisons')) return 'Livraisons';
-    if (path.includes('/boutique')) return 'Boutique en ligne';
+    if (path.includes('/clients')) return 'Clients';
+    if (path.includes('/devis')) return 'Devis';
+    if (path.includes('/factures')) return 'Factures';
+    if (path.includes('/paiements')) return 'Paiements';
+    if (path.includes('/subscription')) return 'Mon abonnement';
+    if (path.includes('/boutique/produits')) return 'Produits en ligne';
+    if (path.includes('/boutique/commandes')) return 'Commandes reçues';
+    if (path.includes('/boutique/avis')) return 'Avis clients';
+    if (path.includes('/boutique')) return 'Ma Boutique';
     return 'Tableau de bord';
   }, [location.pathname]);
 

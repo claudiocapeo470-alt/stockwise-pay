@@ -257,9 +257,6 @@ export default function Ventes() {
       {/* Header large inspiré */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-            Suivi des ventes
-          </h1>
           <p className="text-sm text-muted-foreground">
             {sales.length} {sales.length > 1 ? "transactions enregistrées" : "transaction enregistrée"} • {totalSales.toLocaleString()} FCFA de chiffre d'affaires
           </p>

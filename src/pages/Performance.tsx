@@ -94,12 +94,7 @@ export default function Performance() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold">Performance</h2>
-          <p className="text-sm text-muted-foreground">Suivez l'évolution de votre activité</p>
-        </div>
-      </div>
+      <p className="text-sm text-muted-foreground">Suivez l'évolution de votre activité</p>
 
       {isPersonalView && (
         <div className="bg-primary/5 border border-primary/20 rounded-lg px-3 py-2 text-xs text-primary">

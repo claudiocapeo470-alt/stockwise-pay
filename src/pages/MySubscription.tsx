@@ -76,10 +76,7 @@ export default function MySubscription() {
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto pb-8 animate-fade-in">
-      <div>
-        <h2 className="text-xl font-bold">Mon abonnement</h2>
-        <p className="text-sm text-muted-foreground">Plan actuel et modules activés</p>
-      </div>
+      <p className="text-sm text-muted-foreground">Plan actuel et modules activés</p>
 
       {/* Bande rouge — essai terminé */}
       {trialExpired && (

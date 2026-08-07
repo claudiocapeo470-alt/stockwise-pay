@@ -233,15 +233,7 @@ export default function Rapports() {
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-              <BarChart3 className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Rapports & Analyses</h1>
-          </div>
-          <p className="text-sm text-muted-foreground">Visualisez vos données en temps réel avec des graphiques interactifs</p>
-        </div>
+        <p className="text-sm text-muted-foreground">Visualisez vos données en temps réel avec des graphiques interactifs</p>
         <Select value={period} onValueChange={(v: Period) => setPeriod(v)}>
           <SelectTrigger className="w-full sm:w-44">
             <Calendar className="h-4 w-4 mr-2" />

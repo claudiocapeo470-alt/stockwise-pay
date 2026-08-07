@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useOnlineStore } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
-import { Save, Eye, Rocket, Copy, Check, Store, Loader2 } from "lucide-react";
+import { Save, Eye, Rocket, Copy, Check, Loader2 } from "lucide-react";
 
 interface StoreHeaderProps {
   title?: string;
@@ -49,18 +49,9 @@ export function StoreHeader({
 
   return (
     <div className="w-full">
-      {/* Tout sur une seule ligne en desktop, empilé en mobile */}
+      {/* Titre affiché dans le header global de l'app — pas de doublon ici */}
       <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4">
-        {/* Bloc titre */}
-        <div className="flex items-start gap-3 min-w-0 lg:flex-shrink-0">
-          <div className="h-11 w-11 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
-            <Store className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <div className="min-w-0">
-            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight truncate">{title}</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground truncate">{subtitle}</p>
-          </div>
-        </div>
+
 
         {/* Bloc URL "En ligne" — centré, prend l'espace dispo */}
         {store?.is_published && storeUrl && (

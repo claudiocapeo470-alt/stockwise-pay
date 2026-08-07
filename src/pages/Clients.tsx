@@ -110,8 +110,7 @@ export default function Clients() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold flex items-center gap-2"><Users className="h-6 w-6" /> Clients</h1>
+      <div className="flex items-center justify-end">
         <Button onClick={openCreate} className="gap-1"><Plus className="h-4 w-4" /> Ajouter</Button>
       </div>
 

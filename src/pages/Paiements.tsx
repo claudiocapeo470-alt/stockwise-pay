@@ -97,9 +97,6 @@ export default function Paiements() {
       {/* Header large inspiré */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-            Paiements
-          </h1>
           <p className="text-sm text-muted-foreground">
             {paymentStats.totalPayments} encaissements • {formatAmount(paymentStats.remainingAmount)} restants à recevoir
           </p>

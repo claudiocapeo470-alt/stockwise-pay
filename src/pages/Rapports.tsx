@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Download, TrendingUp, BarChart3, PieChart as PieIcon, LineChart as LineIcon,
@@ -36,8 +34,6 @@ export default function Rapports() {
   const { formatCurrency } = useCurrency();
   const [selectedReportType, setSelectedReportType] = useState<string | null>(null);
   const [showReportDialog, setShowReportDialog] = useState(false);
-  const [salesChartType, setSalesChartType] = useState<ChartType>('area');
-  const [revenueChartType, setRevenueChartType] = useState<ChartType>('bar');
   const [period, setPeriod] = useState<Period>('30');
 
   // ─── METRICS ───
@@ -211,24 +207,6 @@ export default function Rapports() {
     );
   };
 
-  const ChartTypeSelector = ({ value, onChange, options }: { value: ChartType; onChange: (v: ChartType) => void; options: ChartType[] }) => (
-    <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
-      {options.map(opt => {
-        const Icon = opt === 'area' ? Activity : opt === 'bar' ? BarChart3 : opt === 'line' ? LineIcon : opt === 'pie' ? PieIcon : Sparkles;
-        return (
-          <button
-            key={opt}
-            onClick={() => onChange(opt)}
-            className={`p-1.5 rounded-md transition-all ${value === opt ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-            title={opt}
-          >
-            <Icon className="h-3.5 w-3.5" />
-          </button>
-        );
-      })}
-    </div>
-  );
-
   return (
     <div className="space-y-5 max-w-7xl mx-auto pb-8">
       {/* Header */}
@@ -295,7 +273,6 @@ export default function Rapports() {
           <ReportCard
             title="Ventes"
             icon={TrendingUp}
-            color="blue"
             stats={[{ label: 'Total', value: metrics.totalSales }, { label: 'CA', value: formatCurrency(metrics.totalRevenue) }]}
             onView={() => { setSelectedReportType('sales'); setShowReportDialog(true); }}
             onExcel={() => handleExport('excel', 'sales')}
@@ -304,7 +281,6 @@ export default function Rapports() {
           <ReportCard
             title="Stocks"
             icon={Package}
-            color="emerald"
             stats={[{ label: 'Produits', value: metrics.totalProducts }, { label: 'Stock bas', value: metrics.lowStockProducts }]}
             onView={() => { setSelectedReportType('inventory'); setShowReportDialog(true); }}
             onExcel={() => handleExport('excel', 'products')}
@@ -313,7 +289,6 @@ export default function Rapports() {
           <ReportCard
             title="Paiements"
             icon={Wallet}
-            color="orange"
             stats={[{ label: 'Recouvrés', value: `${metrics.paymentRate}%` }, { label: 'Encaissé', value: formatCurrency(metrics.totalPaid) }]}
             onView={() => { setSelectedReportType('payments'); setShowReportDialog(true); }}
             onExcel={() => handleExport('excel', 'payments')}

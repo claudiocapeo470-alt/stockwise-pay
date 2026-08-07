@@ -6,6 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileHomeGrid } from '@/components/layout/MobileHomeGrid';
 import { useSales } from '@/hooks/useSales';
 import { useCurrency } from '@/hooks/useCurrency';
+import { useCompany } from '@/hooks/useCompany';
 
 export default function Dashboard() {
   useRoleRedirect();
@@ -13,6 +14,8 @@ export default function Dashboard() {
   const isMobile = useIsMobile();
   const { sales } = useSales();
   const { formatCurrency } = useCurrency();
+  const { company } = useCompany();
+  const companyName = company?.name?.trim() || 'Votre entreprise';
 
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);

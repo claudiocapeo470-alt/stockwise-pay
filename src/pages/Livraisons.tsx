@@ -67,7 +67,7 @@ export default function Livraisons() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
         {[
           { label: "Assignées", value: stats.assigned, bg: "bg-primary/10", color: "text-primary", icon: UserPlus },
           { label: "En cours", value: stats.in_progress, bg: "bg-warning/10", color: "text-warning", icon: Truck },

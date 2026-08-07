@@ -58,7 +58,7 @@ export default function StoreOrders() {
       <StoreHeader title="Commandes reçues" subtitle="Suivi et gestion des commandes de votre boutique" />
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
         {[
           { icon: Package, label: "Aujourd'hui", value: todayOrders.length, color: "text-primary" },
           { icon: Clock, label: "En attente", value: pendingOrders.length, color: "text-yellow-600" },

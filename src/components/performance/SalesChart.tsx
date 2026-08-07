@@ -137,7 +137,7 @@ export const SalesChart = React.memo(function SalesChart({ sales, period, dateRa
           </div>
         </CardHeader>
         <CardContent className="pt-2">
-          <ChartContainer config={chartConfig} className="h-[220px] sm:h-[280px]">
+          <ChartContainer config={chartConfig} className="h-[170px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
@@ -173,7 +173,7 @@ export const SalesChart = React.memo(function SalesChart({ sales, period, dateRa
           </div>
         </CardHeader>
         <CardContent className="pt-2">
-          <ChartContainer config={chartConfig} className="h-[220px] sm:h-[280px]">
+          <ChartContainer config={chartConfig} className="h-[170px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} barCategoryGap="25%" margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} opacity={0.5} />

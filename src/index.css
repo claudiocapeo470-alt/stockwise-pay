@@ -315,10 +315,48 @@ input, select, textarea {
 }
 .stat-scroller::-webkit-scrollbar { display: none; }
 .stat-scroller > * {
-  flex: 0 0 60%;
+  flex: 0 0 72%;
   min-width: 0;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
 }
+
+/* ── Cartes statistiques : cycle de bleus, texte clair ── */
+.stat-scroller > * {
+  border: none !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 6px 18px -12px hsl(var(--primary) / 0.6);
+  color: hsl(var(--primary-foreground)) !important;
+  background: hsl(217 91% 45%) !important;
+}
+.stat-scroller > *:nth-child(4n + 2) { background: hsl(221 60% 25%) !important; }
+.stat-scroller > *:nth-child(4n + 3) { background: hsl(199 89% 40%) !important; }
+.stat-scroller > *:nth-child(4n + 4) { background: hsl(230 55% 38%) !important; }
+.stat-scroller > * p,
+.stat-scroller > * span,
+.stat-scroller > * h3 { color: hsl(var(--primary-foreground)) !important; }
+.stat-scroller > * .text-muted-foreground { color: hsl(0 0% 100% / 0.72) !important; }
+.stat-scroller > * svg { color: hsl(var(--primary-foreground)) !important; }
+.stat-scroller > * .rounded-xl { background: hsl(0 0% 100% / 0.18) !important; }
+
+/* Pastilles de position (générées dynamiquement) */
+.stat-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+.stat-dots > span {
+  height: 6px;
+  width: 6px;
+  border-radius: 9999px;
+  background: hsl(var(--muted-foreground) / 0.3);
+  transition: all 0.2s ease;
+}
+.stat-dots > span[data-active="true"] {
+  width: 18px;
+  background: hsl(var(--primary));
+}
+
 @media (min-width: 768px) {
   .stat-scroller {
     display: grid;
@@ -330,4 +368,6 @@ input, select, textarea {
     max-width: none;
   }
   .stat-scroller > * { flex: initial; }
+  .stat-dots { display: none; }
 }
+

@@ -17,6 +17,8 @@ import { useStockAlerts } from "@/hooks/useStockAlerts";
 import { NotificationCenter } from "./NotificationCenter";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";
+import { StatScrollerDots } from "./StatScrollerDots";
+
 import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 
 interface AppLayoutProps {
@@ -176,7 +178,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 )}
               </div>
 
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 [&_button]:rounded-full">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 [&_button]:rounded-full [&_button]:bg-muted/70 [&_button]:hover:bg-muted">
                 {!isMobile && <GlobalSearch />}
                 {isEmployee && !isMobile && (
                   <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground hover:text-foreground rounded-full bg-muted/60" title="Verrouiller">
@@ -184,15 +186,18 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </Button>
                 )}
                 <SubscriptionAlert />
-                <NotificationCenter />
                 <ThemeToggle />
+                <NotificationCenter />
                 {user && <UserMenu />}
               </div>
+
             </div>
           </header>
           <div className={`flex-1 p-3 sm:p-4 md:p-6 lg:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
             {children}
+            <StatScrollerDots />
           </div>
+
         </main>
       </div>
       

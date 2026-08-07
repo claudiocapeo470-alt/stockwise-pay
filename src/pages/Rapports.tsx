@@ -331,61 +331,54 @@ export default function Rapports() {
   );
 }
 
-function KPICard({ icon: Icon, label, value, sublabel, gradient }: any) {
+function KPICard({ icon: Icon, label, value, sublabel }: any) {
   return (
-    <Card className="overflow-hidden border-border/60 hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm`}>
-            <Icon className="h-4 w-4 text-white" />
-          </div>
+    <Card className="border-border/60">
+      <CardContent className="p-4 flex items-center gap-3">
+        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <Icon className="h-4 w-4 text-primary" />
         </div>
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="text-lg sm:text-xl font-bold text-foreground mt-0.5 truncate">{value}</p>
-        <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{sublabel}</p>
+        <div className="min-w-0">
+          <p className="text-base sm:text-lg font-bold text-foreground truncate">{value}</p>
+          <p className="text-xs text-muted-foreground truncate">{label}</p>
+          <p className="text-[11px] text-muted-foreground/80 truncate">{sublabel}</p>
+        </div>
       </CardContent>
     </Card>
   );
 }
 
-function ReportCard({ title, icon: Icon, color, stats, onView, onExcel, onPDF }: any) {
-  const colorMap: Record<string, string> = {
-    blue: 'from-blue-500 to-cyan-500',
-    emerald: 'from-emerald-500 to-teal-500',
-    orange: 'from-orange-500 to-red-500',
-  };
+function ReportCard({ title, icon: Icon, stats, onView, onExcel, onPDF }: any) {
   return (
-    <Card className="border-border/60 hover:shadow-md transition-all">
+    <Card className="border-border/60">
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center gap-3">
-          <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${colorMap[color]} flex items-center justify-center`}>
-            <Icon className="h-5 w-5 text-white" />
+          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <Icon className="h-4 w-4 text-primary" />
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground">{title}</h3>
-            <Badge variant="secondary" className="text-[10px] mt-0.5">Temps réel</Badge>
-          </div>
+          <h3 className="font-semibold text-foreground">{title}</h3>
         </div>
         <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/60">
           {stats.map((s: any, i: number) => (
-            <div key={i}>
+            <div key={i} className="min-w-0">
               <p className="text-[11px] text-muted-foreground">{s.label}</p>
               <p className="text-sm font-semibold text-foreground truncate">{s.value}</p>
             </div>
           ))}
         </div>
         <div className="flex gap-2">
-          <Button size="sm" variant="default" className="flex-1 h-8 text-xs" onClick={onView}>
-            <Eye className="h-3 w-3 mr-1" /> Voir
+          <Button size="sm" className="flex-1 h-9 text-xs" onClick={onView}>
+            <Eye className="h-3.5 w-3.5 mr-1" /> Voir
           </Button>
-          <Button size="sm" variant="outline" className="h-8 px-2" onClick={onExcel} title="Excel">
-            <FileSpreadsheet className="h-3 w-3" />
+          <Button size="sm" variant="outline" className="h-9 px-3" onClick={onExcel} title="Excel">
+            <FileSpreadsheet className="h-3.5 w-3.5" />
           </Button>
-          <Button size="sm" variant="outline" className="h-8 px-2" onClick={onPDF} title="PDF">
-            <FileText className="h-3 w-3" />
+          <Button size="sm" variant="outline" className="h-9 px-3" onClick={onPDF} title="PDF">
+            <FileText className="h-3.5 w-3.5" />
           </Button>
         </div>
       </CardContent>
     </Card>
   );
 }
+

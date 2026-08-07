@@ -232,7 +232,7 @@ export default function Rapports() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <p className="text-sm text-muted-foreground">Visualisez vos données en temps réel avec des graphiques interactifs</p>
         <Select value={period} onValueChange={(v: Period) => setPeriod(v)}>
           <SelectTrigger className="w-full sm:w-44">

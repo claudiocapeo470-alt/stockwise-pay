@@ -253,11 +253,11 @@ export default function Ventes() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header large inspiré */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
             {sales.length} {sales.length > 1 ? "transactions enregistrées" : "transaction enregistrée"} • {totalSales.toLocaleString()} FCFA de chiffre d'affaires
           </p>
         </div>
@@ -267,39 +267,39 @@ export default function Ventes() {
       </div>
 
       {/* Stats compactes */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">
               <ShoppingCart className="h-5 w-5 text-primary" />
             </div>
             <div className="min-w-0">
-              <p className="text-2xl font-bold truncate">{sales.length}</p>
-              <p className="text-xs text-muted-foreground">Ventes totales</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{sales.length}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Ventes totales</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-success/10 flex items-center justify-center rounded-xl shrink-0">
               <ShoppingCart className="h-5 w-5 text-success" />
             </div>
             <div className="min-w-0">
-              <p className="text-2xl font-bold truncate">{todaySales.length}</p>
-              <p className="text-xs text-muted-foreground">Aujourd'hui • {todayTotal.toLocaleString()} FCFA</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{todaySales.length}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Aujourd'hui • {todayTotal.toLocaleString()} FCFA</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-secondary/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-secondary/10 flex items-center justify-center rounded-xl shrink-0">
               <TrendingUp className="h-5 w-5 text-secondary" />
             </div>
             <div className="min-w-0">
-              <p className="text-2xl font-bold truncate">{totalSales.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">Chiffre d'affaires (FCFA)</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{totalSales.toLocaleString()}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Chiffre d'affaires (FCFA)</p>
             </div>
           </CardContent>
         </Card>

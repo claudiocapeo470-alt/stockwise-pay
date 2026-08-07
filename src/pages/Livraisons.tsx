@@ -56,11 +56,11 @@ export default function Livraisons() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header large */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-1.5">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
             {deliveries.length} commande{deliveries.length > 1 ? 's' : ''} suivie{deliveries.length > 1 ? 's' : ''} · {drivers.length} livreur{drivers.length > 1 ? 's' : ''} actif{drivers.length > 1 ? 's' : ''}
           </p>
         </div>
@@ -75,13 +75,13 @@ export default function Livraisons() {
           { label: "Problèmes", value: stats.problem, bg: "bg-destructive/10", color: "text-destructive", icon: AlertTriangle },
         ].map((s, i) => (
           <Card key={i} className="border-border/60">
-            <CardContent className="p-4 flex items-center gap-4">
+            <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <div className={`h-10 w-10 ${s.bg} flex items-center justify-center rounded-xl`}>
                 <s.icon className={`h-5 w-5 ${s.color}`} />
               </div>
               <div>
-                <p className="text-2xl font-bold">{s.value}</p>
-                <p className="text-sm text-muted-foreground">{s.label}</p>
+                <p className="text-lg sm:text-2xl font-bold leading-none truncate">{s.value}</p>
+                <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">{s.label}</p>
               </div>
             </CardContent>
           </Card>
@@ -128,7 +128,7 @@ export default function Livraisons() {
                   <TableCell>
                     <div>
                       <p className="font-semibold text-foreground">{d.order?.customer_name || '—'}</p>
-                      <p className="text-xs text-muted-foreground">{d.order?.customer_address || ''}</p>
+                      <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">{d.order?.customer_address || ''}</p>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -167,7 +167,7 @@ export default function Livraisons() {
                   <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${st.color}`}>{st.label}</span>
                 </div>
                 <p className="font-semibold">{d.order?.customer_name || '—'}</p>
-                {d.driver && <p className="text-sm text-muted-foreground">🚚 {d.driver.first_name} {d.driver.last_name || ''}</p>}
+                {d.driver && <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">🚚 {d.driver.first_name} {d.driver.last_name || ''}</p>}
                 {(d.status === 'unassigned' || d.status === 'problem') && (
                   <Button size="sm" variant="outline" className="w-full gap-1" onClick={() => setAssignDialog(d.id)}>
                     <UserPlus className="h-3.5 w-3.5" /> Assigner un livreur

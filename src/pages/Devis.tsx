@@ -101,11 +101,11 @@ export default function Devis() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header large */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-1.5">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
             {invoices.length} devis émis · {acceptedCount} accepté{acceptedCount > 1 ? 's' : ''}
           </p>
         </div>
@@ -118,35 +118,35 @@ export default function Devis() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="border-border/60">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">
               <FileText className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{invoices.length}</p>
-              <p className="text-sm text-muted-foreground">Total Devis</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{invoices.length}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Total Devis</p>
             </div>
           </CardContent>
         </Card>
         <Card className="border-border/60">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-success/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-success/10 flex items-center justify-center rounded-xl shrink-0">
               <CheckCircle2 className="h-5 w-5 text-success" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{acceptedCount}</p>
-              <p className="text-sm text-muted-foreground">Acceptés</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{acceptedCount}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Acceptés</p>
             </div>
           </CardContent>
         </Card>
         <Card className="border-border/60">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0">
               <Clock className="h-5 w-5 text-warning" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{pendingCount}</p>
-              <p className="text-sm text-muted-foreground">En attente</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{pendingCount}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">En attente</p>
             </div>
           </CardContent>
         </Card>
@@ -272,11 +272,11 @@ export default function Devis() {
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs text-muted-foreground">Date</p>
+                        <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Date</p>
                         <p className="text-sm font-medium">{format(new Date(invoice.issue_date), 'dd/MM/yyyy', { locale: fr })}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Montant</p>
+                        <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Montant</p>
                         <p className="text-lg font-bold">{invoice.total_amount.toLocaleString()} <span className="text-xs font-normal">FCFA</span></p>
                       </div>
                     </div>

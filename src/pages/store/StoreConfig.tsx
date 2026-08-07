@@ -39,45 +39,8 @@ const STEPS = [
 
 const MAX_BANNER_SIZE = 3 * 1024 * 1024; // 3 MB
 
-// ─── Preview Panel (Desktop / Tablette) ─────────────────────────────
-function PreviewPanel({ storeUrl, name, description, bannerUrl }: { storeUrl: string; name: string; description: string; bannerUrl: string }) {
-  const [device, setDevice] = useState<'desktop' | 'tablet'>('desktop');
-  return (
-    <div className="rounded-3xl border border-border bg-card overflow-hidden">
-      <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-border bg-muted/30">
-        <div className="flex items-center gap-2">
-          <Eye className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-semibold">Aperçu de votre boutique</h3>
-        </div>
-        <div className="flex items-center gap-1">
-          <Button type="button" size="sm" variant={device === 'desktop' ? 'default' : 'ghost'} onClick={() => setDevice('desktop')} className="h-7 px-3 text-xs rounded-full">Desktop</Button>
-          <Button type="button" size="sm" variant={device === 'tablet' ? 'default' : 'ghost'} onClick={() => setDevice('tablet')} className="h-7 px-3 text-xs rounded-full">Tablette</Button>
-        </div>
-      </div>
-      <div className="bg-muted/50 p-3 flex justify-center overflow-hidden">
-        <div className={`w-full bg-background border border-border rounded-xl overflow-hidden shadow-medium transition-[max-width] ${device === 'tablet' ? 'max-w-2xl' : 'max-w-full'}`}>
-          <div className="h-12 px-4 flex items-center justify-between border-b border-border">
-            <p className="font-semibold truncate">{name || "Ma boutique"}</p>
-            <Badge variant="secondary">Boutique en ligne</Badge>
-          </div>
-          <div className="relative h-52 sm:h-64 bg-muted overflow-hidden">
-            {bannerUrl ? <img src={bannerUrl} alt="Aperçu de la bannière" className="h-full w-full object-cover" /> : <div className="h-full flex items-center justify-center"><Store className="h-16 w-16 text-muted-foreground/40" /></div>}
-            <div className="absolute inset-x-0 bottom-0 bg-background/90 p-4 backdrop-blur-sm">
-              <h3 className="text-lg font-bold truncate">{name || "Le nom de votre boutique"}</h3>
-              <p className="text-sm text-muted-foreground line-clamp-2">{description || "La description de votre boutique apparaîtra ici."}</p>
-            </div>
-          </div>
-          <div className="p-4 flex items-center justify-between gap-3">
-            <p className="text-xs text-muted-foreground truncate">Aperçu simplifié, sans rechargement automatique</p>
-            <Button type="button" size="sm" variant="outline" asChild>
-              <a href={storeUrl} target="_blank" rel="noopener noreferrer"><Eye className="h-4 w-4 mr-2" />Ouvrir</a>
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+
+
 
 
 export default function StoreConfig() {
@@ -285,10 +248,10 @@ export default function StoreConfig() {
             </div>
           </div>
 
-          {/* Body: form (left) + preview (right on lg+) */}
-          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-            {/* Scrollable form content */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 lg:border-r lg:border-border lg:max-w-2xl">
+          {/* Body: formulaire centré, pleine largeur */}
+          <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-5 space-y-6 w-full max-w-3xl mx-auto">
+
           {/* ÉTAPE 1 — IDENTITÉ */}
           {currentStep === 1 && (
             <>
@@ -560,17 +523,7 @@ export default function StoreConfig() {
           </div>
           </div>
 
-          {/* Preview aside — visible on lg+ */}
-          <aside className="hidden lg:flex flex-col w-[520px] xl:w-[600px] bg-muted/20 overflow-y-auto p-5">
-            {form.slug ? (
-              <PreviewPanel storeUrl={storeUrl} name={form.name} description={form.description} bannerUrl={form.banner_url} />
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-center text-sm text-muted-foreground gap-2 p-6 border-2 border-dashed border-border rounded-2xl">
-                <Eye className="h-8 w-8 opacity-40" />
-                <p>Renseignez une URL personnalisée pour voir l'aperçu de votre boutique ici.</p>
-              </div>
-            )}
-          </aside>
+
           </div>
         </SheetContent>
       </Sheet>

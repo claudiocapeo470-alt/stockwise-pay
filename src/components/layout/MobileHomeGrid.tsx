@@ -75,23 +75,26 @@ export function MobileHomeGrid() {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-3 px-1 w-full overflow-hidden">
+      <div
+        className="grid grid-cols-3 gap-2 px-1 w-full h-full min-h-0 overflow-hidden"
+        style={{ gridTemplateRows: `repeat(${Math.max(1, Math.ceil((isReady ? visibleTiles.length : 9) / 3))}, minmax(0, 1fr))` }}
+      >
         {!isReady
           ? Array.from({ length: 9 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl aspect-square bg-muted/60 animate-pulse"
+                className="rounded-2xl bg-muted/60 animate-pulse"
               />
             ))
           : visibleTiles.map((tile) => (
               <button
                 key={tile.id}
                 onClick={() => handleTileClick(tile)}
-                className="flex flex-col items-center justify-center rounded-2xl p-3 aspect-square gap-2 active:scale-95 transition-transform shadow-sm min-w-0"
+                className="flex flex-col items-center justify-center rounded-2xl p-1.5 gap-1 active:scale-95 transition-transform shadow-sm min-w-0 min-h-0"
                 style={{ backgroundColor: tile.color }}
               >
-                <tile.icon className="h-7 w-7 text-white" strokeWidth={1.8} />
-                <span className="text-white text-[11px] font-medium text-center leading-tight line-clamp-2 break-words">
+                <tile.icon className="h-[clamp(16px,4.5vh,26px)] w-[clamp(16px,4.5vh,26px)] text-white shrink-0" strokeWidth={1.8} />
+                <span className="text-white text-[10px] font-medium text-center leading-tight line-clamp-2 break-words">
                   {tile.label}
                 </span>
               </button>

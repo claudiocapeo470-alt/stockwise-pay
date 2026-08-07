@@ -101,9 +101,9 @@ export default function Devis() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header large */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-1.5">
           <p className="text-sm text-muted-foreground">
             {invoices.length} devis émis · {acceptedCount} accepté{acceptedCount > 1 ? 's' : ''}

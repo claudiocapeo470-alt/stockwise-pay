@@ -93,7 +93,7 @@ export default function Performance() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <p className="text-sm text-muted-foreground">Suivez l'évolution de votre activité</p>
 
       {isPersonalView && (

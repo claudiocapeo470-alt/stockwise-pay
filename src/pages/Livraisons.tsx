@@ -56,9 +56,9 @@ export default function Livraisons() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header large */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-1.5">
           <p className="text-sm text-muted-foreground">
             {deliveries.length} commande{deliveries.length > 1 ? 's' : ''} suivie{deliveries.length > 1 ? 's' : ''} · {drivers.length} livreur{drivers.length > 1 ? 's' : ''} actif{drivers.length > 1 ? 's' : ''}

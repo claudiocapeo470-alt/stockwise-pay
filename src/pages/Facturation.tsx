@@ -53,7 +53,7 @@ export default function Facturation() {
 
   if (activeSection !== "menu") {
     return (
-      <div className="space-y-6 animate-fade-in">
+      <div className="space-y-5 animate-fade-in">
         <Button
           variant="ghost"
           onClick={() => setActiveSection("menu")}
@@ -68,7 +68,7 @@ export default function Facturation() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <p className="text-sm text-muted-foreground">Gérez vos paiements, factures et devis</p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

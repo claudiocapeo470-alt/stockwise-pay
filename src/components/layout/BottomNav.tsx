@@ -157,23 +157,20 @@ export function BottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 border-t border-border md:hidden pb-safe backdrop-blur-md shadow-medium">
-        <div className="flex items-center justify-around h-16 px-1">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 md:hidden pb-safe backdrop-blur-xl">
+        <div className="flex items-end justify-around h-[68px] px-2 pb-2">
           {navigation.map((item) => {
             const active = isActive(item.href);
             return (
               <NavLink
                 key={item.name}
                 to={item.href}
-                className={`relative flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all duration-200 min-w-0 min-h-[44px] ${
-                  active ? "text-accent" : "text-muted-foreground hover:text-foreground"
+                className={`flex flex-col items-center justify-center flex-1 gap-1.5 pt-2 transition-colors duration-200 min-w-0 min-h-[44px] ${
+                  active ? "text-foreground" : "text-muted-foreground/70"
                 }`}
               >
-                {active && (
-                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-accent" />
-                )}
-                <item.icon className={`h-5 w-5 flex-shrink-0 transition-transform ${active ? "stroke-[2.5] scale-110" : "stroke-2"}`} />
-                <span className={`text-[10px] truncate max-w-[60px] ${active ? "font-semibold" : "font-normal"}`}>
+                <item.icon className={`h-[22px] w-[22px] flex-shrink-0 ${active ? "stroke-[2.4]" : "stroke-[1.75]"}`} />
+                <span className={`text-[11px] leading-none truncate max-w-[64px] ${active ? "font-semibold" : "font-normal"}`}>
                   {item.label || item.name}
                 </span>
               </NavLink>
@@ -182,14 +179,15 @@ export function BottomNav() {
           {showMenuButton && (
             <button
               onClick={() => setDrawerOpen(true)}
-              className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors duration-200 min-w-0 min-h-[44px] text-muted-foreground hover:text-foreground"
+              className="flex flex-col items-center justify-center flex-1 gap-1.5 pt-2 transition-colors duration-200 min-w-0 min-h-[44px] text-muted-foreground/70"
             >
-              <Menu className="h-5 w-5 flex-shrink-0 stroke-2" />
-              <span className="text-[10px] font-normal">Menu</span>
+              <Menu className="h-[22px] w-[22px] flex-shrink-0 stroke-[1.75]" />
+              <span className="text-[11px] leading-none font-normal">Menu</span>
             </button>
           )}
         </div>
       </nav>
+
 
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>

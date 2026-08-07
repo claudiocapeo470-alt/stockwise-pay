@@ -60,7 +60,6 @@ export default function Livraisons() {
       {/* Header large */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div className="space-y-1.5">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">Livraisons</h1>
           <p className="text-sm text-muted-foreground">
             {deliveries.length} commande{deliveries.length > 1 ? 's' : ''} suivie{deliveries.length > 1 ? 's' : ''} · {drivers.length} livreur{drivers.length > 1 ? 's' : ''} actif{drivers.length > 1 ? 's' : ''}
           </p>

@@ -91,7 +91,6 @@ export default function Profile() {
     const initials = `${(memberInfo.member_first_name || 'E')[0]}${(memberInfo.member_last_name || '')[0] || ''}`.toUpperCase();
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold text-foreground">Mon Profil</h1>
         <Card className="border-border/60">
           <CardContent className="p-6 space-y-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
@@ -123,10 +122,7 @@ export default function Profile() {
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto pb-8 animate-fade-in">
-      <div>
-        <h2 className="text-xl font-bold">Mon Profil</h2>
-        <p className="text-sm text-muted-foreground">Gérez vos informations personnelles</p>
-      </div>
+      <p className="text-sm text-muted-foreground">Gérez vos informations personnelles</p>
 
       {/* Identity Card — épuré */}
       <Card>

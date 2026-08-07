@@ -69,10 +69,7 @@ export default function Facturation() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="mb-2">
-        <h1 className="text-2xl font-bold text-foreground">Facturation</h1>
-        <p className="text-sm text-muted-foreground">Gérez vos paiements, factures et devis</p>
-      </div>
+      <p className="text-sm text-muted-foreground">Gérez vos paiements, factures et devis</p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {sections.map((section) => (

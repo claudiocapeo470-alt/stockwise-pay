@@ -54,12 +54,7 @@ export default function TeamManagement() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
-          <Users className="h-7 w-7" /> Mon équipe
-        </h1>
-        <p className="text-muted-foreground">Gérez votre code entreprise et vos membres</p>
-      </div>
+      <p className="text-sm text-muted-foreground">Gérez votre code entreprise et vos membres</p>
 
       <Tabs defaultValue="code" className="w-full">
         <TabsList className="w-full grid grid-cols-2">

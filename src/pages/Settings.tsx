@@ -102,10 +102,7 @@ export default function Settings() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-fade-in">
-      <div>
-        <h2 className="text-xl font-bold">Paramètres</h2>
-        <p className="text-sm text-muted-foreground">Configuration et préférences</p>
-      </div>
+      <p className="text-sm text-muted-foreground">Configuration et préférences</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {visibleCards.map((card) => (

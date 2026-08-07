@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useOnlineStore } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
-import { Save, Eye, Rocket, Copy, Check, Store, Loader2 } from "lucide-react";
+import { Save, Eye, Rocket, Copy, Check, Loader2 } from "lucide-react";
 
 interface StoreHeaderProps {
   title?: string;

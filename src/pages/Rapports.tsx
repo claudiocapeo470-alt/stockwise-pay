@@ -241,7 +241,7 @@ export default function Rapports() {
             <CardTitle className="text-base">Évolution des ventes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[240px] w-full">
+            <div className="h-[190px] sm:h-[230px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 {renderChart('area', 'ventes', 'hsl(var(--primary))')}
               </ResponsiveContainer>
@@ -254,7 +254,7 @@ export default function Rapports() {
             <CardTitle className="text-base">Chiffre d'affaires</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[240px] w-full">
+            <div className="h-[190px] sm:h-[230px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 {renderChart('bar', 'revenu', 'hsl(var(--primary))')}
               </ResponsiveContainer>

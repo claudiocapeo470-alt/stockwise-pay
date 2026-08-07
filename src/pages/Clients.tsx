@@ -122,7 +122,7 @@ export default function Clients() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
         <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold">{clients.length}</p><p className="text-xs text-muted-foreground">Total clients</p></CardContent></Card>
         <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold">{formatCurrency(clients.reduce((s, c) => s + (c.total_spent || 0), 0))}</p><p className="text-xs text-muted-foreground">CA total</p></CardContent></Card>
       </div>

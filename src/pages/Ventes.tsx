@@ -267,7 +267,7 @@ export default function Ventes() {
       </div>
 
       {/* Stats compactes */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+      <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
         <Card>
           <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
             <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">

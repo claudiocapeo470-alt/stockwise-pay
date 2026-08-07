@@ -10,9 +10,7 @@ import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
 import { EditProductDialog } from "@/components/stocks/EditProductDialog";
 import { ImportProductsDialog } from "@/components/stocks/ImportProductsDialog";
-import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import { StockMovementsDialog } from "@/components/stocks/StockMovementsDialog";
-import { StockAlertBell } from "@/components/layout/StockAlertBell";
 import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -65,64 +63,58 @@ export default function Stocks() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header with StockAlertBell */}
-      <div className="flex items-center justify-end">
-        <StockAlertBell />
-      </div>
-
+    <div className="space-y-5 animate-fade-in">
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-        <Card>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
-              <Package className="h-5 w-5 text-primary" />
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        <Card className="border-border/60">
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">
+              <Package className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             </div>
-            <div>
-              <p className="text-2xl font-bold">{products.length}</p>
-              <p className="text-sm text-muted-foreground">Total Produits</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className={lowStockProducts.length > 0 ? "border-warning/30" : ""}>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-warning/10 flex items-center justify-center rounded-xl">
-              <AlertTriangle className="h-5 w-5 text-warning" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{lowStockProducts.length}</p>
-              <p className="text-sm text-muted-foreground">Stock Critique</p>
+            <div className="min-w-0">
+              <p className="text-xl sm:text-2xl font-bold leading-none">{products.length}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Total Produits</p>
             </div>
           </CardContent>
         </Card>
-        <Card className={outOfStockProducts.length > 0 ? "border-destructive/30" : ""}>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 bg-destructive/10 flex items-center justify-center rounded-xl">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
+        <Card className={`border-border/60 ${lowStockProducts.length > 0 ? "border-warning/40 bg-warning/5" : ""}`}>
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0">
+              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-warning" />
             </div>
-            <div>
-              <p className="text-2xl font-bold">{outOfStockProducts.length}</p>
-              <p className="text-sm text-muted-foreground">Rupture de Stock</p>
+            <div className="min-w-0">
+              <p className="text-xl sm:text-2xl font-bold leading-none">{lowStockProducts.length}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Stock Critique</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className={`border-border/60 ${outOfStockProducts.length > 0 ? "border-destructive/40 bg-destructive/5" : ""}`}>
+          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-destructive/10 flex items-center justify-center rounded-xl shrink-0">
+              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xl sm:text-2xl font-bold leading-none">{outOfStockProducts.length}</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Rupture</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
+      <div className="flex flex-col lg:flex-row gap-2 lg:gap-3 lg:items-center lg:justify-between">
         <div className="relative flex-1 lg:max-w-md w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input placeholder="Rechercher par nom, catégorie ou SKU..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 h-11" />
+          <Input placeholder="Rechercher un produit..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 h-11" />
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="grid grid-cols-3 gap-2 lg:flex lg:items-center lg:gap-2">
           {!isMobile && (
-            <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
+            <div className="hidden lg:inline-flex rounded-lg border border-border bg-card p-0.5">
               <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0"><List className="h-4 w-4" /></Button>
               <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0"><Grid3x3 className="h-4 w-4" /></Button>
             </div>
           )}
-          <div className="hidden sm:block h-8 w-px bg-border mx-1" />
-          <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-2"><History className="h-4 w-4" /> Mouvements</Button>
+          <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-2 text-xs sm:text-sm lg:px-4"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
           <ImportProductsDialog />
           <AddProductDialog />
         </div>
@@ -161,9 +153,10 @@ export default function Stocks() {
                       <TableRow key={product.id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
-                              <span className="text-xl">{product.icon_emoji || '📦'}</span>
-                            </div>
+                            {product.image_url && (
+                              <img src={product.image_url} alt={product.name} loading="lazy" className="h-9 w-9 rounded-lg object-cover shrink-0 border border-border/60" />
+                            )}
+
                             <div>
                               <p className="font-medium">{product.name}</p>
                               {product.sku && <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>}
@@ -210,9 +203,10 @@ export default function Stocks() {
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
-                            <span className="text-2xl">{product.icon_emoji || '📦'}</span>
-                          </div>
+                          {product.image_url && (
+                            <img src={product.image_url} alt={product.name} loading="lazy" className="h-11 w-11 rounded-xl object-cover shrink-0 border border-border/60" />
+                          )}
+
                           <div className="min-w-0">
                             <CardTitle className="text-base truncate">{product.name}</CardTitle>
                             {product.sku && <p className="text-xs text-muted-foreground mt-0.5">SKU: {product.sku}</p>}

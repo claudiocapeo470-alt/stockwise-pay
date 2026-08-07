@@ -165,9 +165,9 @@ export function AppLayout({ children }: AppLayoutProps) {
 
               <div className="flex-1 min-w-0">
                 {isMobile && isHomePage ? (
-                  <div className="flex items-center gap-2">
-                    <img src={stocknixLogoIcon} alt="Stocknix" className="h-8 w-8 object-contain flex-shrink-0" />
-                    <h1 className="text-[22px] leading-none font-bold text-foreground truncate tracking-tight" style={{ fontFamily: "'Futura', 'Trebuchet MS', Arial, sans-serif" }}>
+                  <div className="flex items-center gap-2.5">
+                    <img src={stocknixLogoIcon} alt="Stocknix" className="h-11 w-11 object-contain flex-shrink-0" />
+                    <h1 className="text-[24px] leading-none font-bold text-foreground truncate tracking-tight" style={{ fontFamily: "'Futura', 'Trebuchet MS', Arial, sans-serif" }}>
                       {(() => { const n = company?.name || 'Stocknix'; return n.charAt(0).toUpperCase() + n.slice(1).toLowerCase(); })()}
                     </h1>
                   </div>
@@ -178,7 +178,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 )}
               </div>
 
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 [&_button]:rounded-full [&_button]:bg-muted/70 [&_button]:hover:bg-muted">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 [&_button]:rounded-full [&_button]:bg-muted/40 [&_button]:border [&_button]:border-border [&_button]:hover:bg-muted">
                 {!isMobile && <GlobalSearch />}
                 {isEmployee && !isMobile && (
                   <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground hover:text-foreground rounded-full bg-muted/60" title="Verrouiller">
@@ -188,7 +188,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <SubscriptionAlert />
                 <ThemeToggle />
                 <NotificationCenter />
-                {user && <UserMenu />}
+                {user && <div className="hidden lg:block">{<UserMenu />}</div>}
               </div>
 
             </div>

@@ -191,34 +191,34 @@ export function BottomNav() {
 
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="max-h-[85vh]">
-          <DrawerHeader className="flex items-center justify-between">
-            <DrawerTitle>Menu</DrawerTitle>
+        <DrawerContent className="max-h-[85vh] border-0">
+          <DrawerHeader className="flex items-center justify-between px-5 pb-2">
+            <DrawerTitle className="text-2xl font-bold tracking-tight">Menu</DrawerTitle>
             <DrawerClose asChild>
-              <button className="p-1.5 rounded-full hover:bg-muted"><X className="h-4 w-4" /></button>
+              <button className="h-9 w-9 rounded-full bg-muted/60 flex items-center justify-center text-muted-foreground"><X className="h-4 w-4" /></button>
             </DrawerClose>
           </DrawerHeader>
-          <div className="overflow-y-auto px-4 pb-8 space-y-6">
+          <div className="overflow-y-auto px-5 pb-8 space-y-6">
             {allDrawerNavigation.map((section) => {
               const items = filterItems(section.items);
               if (items.length === 0) return null;
               return (
                 <div key={section.section}>
-                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">
+                  <p className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-[0.12em] mb-1">
                     {section.section}
                   </p>
-                  <div className="space-y-1">
+                  <div>
                     {items.map((item) => (
                       <button
                         key={item.href}
                         onClick={() => handleNavClick(item.href)}
-                        className={`w-full flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-md text-sm transition-all ${
+                        className={`w-full flex items-center gap-3.5 py-3 min-h-[48px] text-[15px] text-left transition-colors ${
                           isActive(item.href)
-                            ? "bg-accent text-accent-foreground font-semibold shadow-sm"
-                            : "text-foreground hover:bg-muted"
+                            ? "text-accent font-semibold"
+                            : "text-foreground/90 active:text-accent"
                         }`}
                       >
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        <item.icon className={`h-[22px] w-[22px] flex-shrink-0 ${isActive(item.href) ? "stroke-[2.4]" : "stroke-[1.75]"}`} />
                         {item.name}
                       </button>
                     ))}
@@ -226,6 +226,7 @@ export function BottomNav() {
                 </div>
               );
             })}
+
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <button className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors">

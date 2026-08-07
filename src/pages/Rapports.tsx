@@ -230,10 +230,10 @@ export default function Rapports() {
   );
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-8">
+    <div className="space-y-5 max-w-7xl mx-auto pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <p className="text-sm text-muted-foreground">Visualisez vos données en temps réel avec des graphiques interactifs</p>
+        <p className="text-sm text-muted-foreground">Suivi de votre activité en temps réel</p>
         <Select value={period} onValueChange={(v: Period) => setPeriod(v)}>
           <SelectTrigger className="w-full sm:w-44">
             <Calendar className="h-4 w-4 mr-2" />
@@ -250,102 +250,41 @@ export default function Rapports() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <KPICard icon={TrendingUp} label="Chiffre d'affaires" value={formatCurrency(metrics.totalRevenue)} sublabel={`${metrics.totalSales} ventes`} gradient="from-blue-500 to-cyan-500" />
-        <KPICard icon={Wallet} label="Encaissé" value={formatCurrency(metrics.totalPaid)} sublabel={`${metrics.paymentRate}% recouvré`} gradient="from-emerald-500 to-teal-500" />
-        <KPICard icon={Package} label="Valeur stock" value={formatCurrency(metrics.stockValue)} sublabel={`${metrics.totalProducts} produits`} gradient="from-purple-500 to-pink-500" />
-        <KPICard icon={Activity} label="Panier moyen" value={formatCurrency(metrics.avgSale)} sublabel="par transaction" gradient="from-orange-500 to-red-500" />
+        <KPICard icon={TrendingUp} label="Chiffre d'affaires" value={formatCurrency(metrics.totalRevenue)} sublabel={`${metrics.totalSales} ventes`} />
+        <KPICard icon={Wallet} label="Encaissé" value={formatCurrency(metrics.totalPaid)} sublabel={`${metrics.paymentRate}% recouvré`} />
+        <KPICard icon={Package} label="Valeur stock" value={formatCurrency(metrics.stockValue)} sublabel={`${metrics.totalProducts} produits`} />
+        <KPICard icon={Activity} label="Panier moyen" value={formatCurrency(metrics.avgSale)} sublabel="par transaction" />
       </div>
 
-      {/* Main Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Sales Chart */}
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="border-border/60">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-base flex items-center gap-2"><Activity className="h-4 w-4 text-primary" /> Évolution des ventes</CardTitle>
-                <p className="text-xs text-muted-foreground mt-0.5">Nombre de ventes par jour</p>
-              </div>
-              <ChartTypeSelector value={salesChartType} onChange={setSalesChartType} options={['area', 'line', 'bar']} />
-            </div>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Évolution des ventes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[260px] w-full">
+            <div className="h-[240px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                {renderChart(salesChartType, 'ventes', 'hsl(var(--primary))')}
+                {renderChart('area', 'ventes', 'hsl(var(--primary))')}
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
-        {/* Revenue Chart */}
         <Card className="border-border/60">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-base flex items-center gap-2"><TrendingUp className="h-4 w-4 text-emerald-500" /> Chiffre d'affaires</CardTitle>
-                <p className="text-xs text-muted-foreground mt-0.5">Revenus quotidiens</p>
-              </div>
-              <ChartTypeSelector value={revenueChartType} onChange={setRevenueChartType} options={['bar', 'area', 'line']} />
-            </div>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Chiffre d'affaires</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[260px] w-full">
+            <div className="h-[240px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                {renderChart(revenueChartType, 'revenu', '#10b981')}
+                {renderChart('bar', 'revenu', 'hsl(var(--primary))')}
               </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Categories Pie */}
-        <Card className="border-border/60">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2"><PieIcon className="h-4 w-4 text-purple-500" /> Répartition par catégorie</CardTitle>
-            <p className="text-xs text-muted-foreground">Valeur du stock par catégorie</p>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[260px] w-full">
-              {categoryData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">{renderChart('pie', 'ventes', '')}</ResponsiveContainer>
-              ) : (
-                <div className="h-full flex items-center justify-center text-sm text-muted-foreground">Aucune donnée</div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Payment Radial */}
-        <Card className="border-border/60">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2"><Sparkles className="h-4 w-4 text-orange-500" /> Taux de recouvrement</CardTitle>
-            <p className="text-xs text-muted-foreground">Performance de paiement</p>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[260px] w-full relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadialBarChart innerRadius="60%" outerRadius="100%" data={paymentRadial} startAngle={180} endAngle={0}>
-                  <RadialBar background={{ fill: 'hsl(var(--muted))' }} dataKey="value" cornerRadius={10} fill="hsl(var(--primary))" />
-                </RadialBarChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <div className="text-4xl font-bold text-foreground">{metrics.paymentRate}%</div>
-                <div className="text-xs text-muted-foreground mt-1">recouvré</div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border/60">
-              <div>
-                <p className="text-xs text-muted-foreground">Encaissé</p>
-                <p className="font-semibold text-emerald-600 dark:text-emerald-400">{formatCurrency(metrics.totalPaid)}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">En attente</p>
-                <p className="font-semibold text-orange-600 dark:text-orange-400">{formatCurrency(metrics.totalPending)}</p>
-              </div>
             </div>
           </CardContent>
         </Card>
       </div>
+
 
       {/* Reports Grid */}
       <div>

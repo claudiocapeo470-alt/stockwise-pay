@@ -155,9 +155,10 @@ export default function Stocks() {
                       <TableRow key={product.id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
-                              <span className="text-xl">{product.icon_emoji || '📦'}</span>
-                            </div>
+                            {product.image_url && (
+                              <img src={product.image_url} alt={product.name} loading="lazy" className="h-9 w-9 rounded-lg object-cover shrink-0 border border-border/60" />
+                            )}
+
                             <div>
                               <p className="font-medium">{product.name}</p>
                               {product.sku && <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>}

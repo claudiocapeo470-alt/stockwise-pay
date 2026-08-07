@@ -155,34 +155,31 @@ export function AppLayout({ children }: AppLayoutProps) {
         {!isMobile && <AppSidebar />}
         
         <main className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden">
-          <header className="sticky top-0 z-40 h-14 sm:h-16 border-b border-border bg-background px-3 sm:px-4 flex items-center">
+          <header className="sticky top-0 z-40 h-14 sm:h-16 bg-background px-4 sm:px-5 flex items-center">
             <div className="flex items-center gap-2 sm:gap-4 w-full min-w-0">
               {!isMobile && (
-                <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 flex items-center justify-center transition-colors flex-shrink-0" />
+                <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0" />
               )}
-              
+
               <div className="flex-1 min-w-0">
                 {isMobile && isHomePage ? (
                   <div className="flex items-center gap-2">
                     <img src={stocknixLogoIcon} alt="Stocknix" className="h-8 w-8 object-contain flex-shrink-0" />
-                    <h1 className="text-lg font-bold text-foreground truncate" style={{ fontFamily: "'Futura', 'Trebuchet MS', Arial, sans-serif" }}>
+                    <h1 className="text-[22px] leading-none font-bold text-foreground truncate tracking-tight" style={{ fontFamily: "'Futura', 'Trebuchet MS', Arial, sans-serif" }}>
                       {(() => { const n = company?.name || 'Stocknix'; return n.charAt(0).toUpperCase() + n.slice(1).toLowerCase(); })()}
                     </h1>
                   </div>
                 ) : isMobile ? (
-                  <div className="flex items-center gap-2">
-                    <img src={stocknixLogoIcon} alt="Stocknix" className="h-7 w-7 object-contain flex-shrink-0" />
-                    <h1 className="text-base font-semibold text-foreground truncate">{pageTitle}</h1>
-                  </div>
+                  <h1 className="text-[22px] leading-none font-bold text-foreground truncate tracking-tight">{pageTitle}</h1>
                 ) : (
                   <h1 className="text-base sm:text-lg font-semibold text-foreground truncate">{pageTitle}</h1>
                 )}
               </div>
-              
-              <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 [&_button]:rounded-full">
                 {!isMobile && <GlobalSearch />}
                 {isEmployee && !isMobile && (
-                  <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground hover:text-foreground" title="Verrouiller">
+                  <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground hover:text-foreground rounded-full bg-muted/60" title="Verrouiller">
                     <Lock className="h-4 w-4" />
                   </Button>
                 )}

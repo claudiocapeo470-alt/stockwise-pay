@@ -248,10 +248,10 @@ export default function StoreConfig() {
             </div>
           </div>
 
-          {/* Body: form (left) + preview (right on lg+) */}
-          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-            {/* Scrollable form content */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 lg:border-r lg:border-border lg:max-w-2xl">
+          {/* Body: formulaire centré, pleine largeur */}
+          <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-5 space-y-6 w-full max-w-3xl mx-auto">
+
           {/* ÉTAPE 1 — IDENTITÉ */}
           {currentStep === 1 && (
             <>

@@ -205,9 +205,10 @@ export default function Stocks() {
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0" style={getIconBgStyle(product.icon_bg_color || 'bg-blue')}>
-                            <span className="text-2xl">{product.icon_emoji || '📦'}</span>
-                          </div>
+                          {product.image_url && (
+                            <img src={product.image_url} alt={product.name} loading="lazy" className="h-11 w-11 rounded-xl object-cover shrink-0 border border-border/60" />
+                          )}
+
                           <div className="min-w-0">
                             <CardTitle className="text-base truncate">{product.name}</CardTitle>
                             {product.sku && <p className="text-xs text-muted-foreground mt-0.5">SKU: {product.sku}</p>}

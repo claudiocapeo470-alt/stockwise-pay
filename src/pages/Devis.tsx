@@ -1,3 +1,4 @@
+import { PageActionBar } from "@/components/layout/PageActionBar";
 import { useState } from "react";
 import { useInvoices } from "@/hooks/useInvoices";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -283,33 +283,18 @@ input, select, textarea {
 }
 
 /* ═══════════════════════════════════════════════════
-   PRINT STYLES — REÇU THERMIQUE POS 80mm
+   PRINT STYLES — DOCUMENTS A4 (factures, devis, rapports)
+   Les reçus POS 80mm sont imprimés dans une fenêtre dédiée
    ═══════════════════════════════════════════════════ */
 @media print {
   @page {
-    size: 80mm auto;
-    margin: 2mm;
+    size: A4 portrait;
+    margin: 12mm;
   }
 
-  body * {
-    visibility: hidden;
-  }
-
-  #receipt-print,
-  #receipt-print * {
-    visibility: visible;
-  }
-
-  #receipt-print {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80mm;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    line-height: 1.4;
-    color: #000;
+  body {
     background: #fff;
+    color: #000;
   }
 
   .no-print {

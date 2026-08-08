@@ -110,7 +110,7 @@ export default function Stocks() {
         searchPlaceholder="Rechercher un produit..."
         segments={
           <>
-            <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
+            <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm rounded-xl"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
             <ImportProductsDialog />
             {!isMobile && (
               <div className="hidden lg:inline-flex rounded-lg border border-border bg-card p-0.5">

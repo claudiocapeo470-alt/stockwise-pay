@@ -137,9 +137,10 @@ export function ImportProductsDialog() {
 
   return (
     <>
-      <Button variant="outline" onClick={() => setOpen(true)} className="h-11 gap-2">
+      <Button variant="outline" onClick={() => setOpen(true)} className="h-11 gap-2 rounded-xl border-accent/40 bg-accent/5 text-accent hover:bg-accent/10 hover:text-accent">
         <Upload className="h-4 w-4" /> Importer
       </Button>
+
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">

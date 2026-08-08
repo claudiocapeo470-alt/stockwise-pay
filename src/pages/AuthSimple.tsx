@@ -492,7 +492,7 @@ export default function AuthSimple() {
         {/* ÉCRAN 1 — Choix */}
         {screen === 'welcome' && (
           <div className="w-full max-w-md mx-auto text-center space-y-8 animate-fade-in">
-            <img src={stocknixLogo} alt="Stocknix" className="h-14 w-auto object-contain mx-auto" />
+            <img src={stocknixLogo} alt="Stocknix" className="h-24 sm:h-28 w-auto object-contain mx-auto" />
             <div className="space-y-2">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
                 Gérez votre business en toute simplicité

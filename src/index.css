@@ -444,3 +444,47 @@ table td .truncate, table th .truncate { display: block; max-width: 100%; }
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ═══════════════════════════════════════════════════
+   COHÉRENCE DESKTOP / TABLETTE
+   Reprend le langage visuel mobile (arrondis 1rem+,
+   ombres douces, densité confortable) sur grand écran.
+   ═══════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+  /* Cartes : arrondi et ombre homogènes partout */
+  [data-slot="card"],
+  .card {
+    border-radius: 1rem;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Cartes de liste cliquables : élévation subtile au survol */
+  [data-slot="card"]:hover {
+    box-shadow: 0 12px 28px -20px hsl(var(--foreground) / 0.35);
+    border-color: hsl(var(--border));
+  }
+
+  /* Statistiques : plus généreuses sur grand écran */
+  .stat-scroller > * { border-radius: 1.25rem !important; }
+  .stat-scroller > * > * { padding: 1.25rem 1.5rem !important; }
+
+  /* Tableaux : en-têtes discrets, lignes aérées */
+  table thead th {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    font-weight: 600;
+  }
+  table tbody td { padding-top: 0.875rem; padding-bottom: 0.875rem; }
+  table tbody tr { transition: background-color 0.15s ease; }
+
+  /* Dialogues / feuilles : même arrondi que sur mobile */
+  [role="dialog"] { border-radius: 1.25rem; }
+}
+
+@media (min-width: 1280px) {
+  /* Densité de lecture confortable sur très grand écran */
+  .stat-scroller { gap: 1.25rem; }
+}
+

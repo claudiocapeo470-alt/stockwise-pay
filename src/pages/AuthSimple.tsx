@@ -378,7 +378,7 @@ export default function AuthSimple() {
                     <p className="text-sm text-destructive mt-1">{getFieldError('resetEmail')}</p>
                   )}
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full h-12 rounded-full text-base font-semibold" disabled={isLoading}>
                   {isLoading ? 'Envoi...' : 'Envoyer le lien'}
                 </Button>
               </form>
@@ -505,7 +505,7 @@ export default function AuthSimple() {
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="votre@email.com"
-                      className={getFieldError('email') ? 'border-destructive' : ''}
+                      className={`h-12 rounded-xl bg-muted/40 border-border/60 ${getFieldError('email') ? 'border-destructive' : ''}`}
                     />
                     {getFieldError('email') && (
                       <p className="text-sm text-destructive">{getFieldError('email')}</p>
@@ -521,7 +521,7 @@ export default function AuthSimple() {
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         placeholder="••••••••"
-                        className={getFieldError('password') ? 'border-destructive' : ''}
+                        className={`h-12 rounded-xl bg-muted/40 border-border/60 pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
                       />
                       <Button
                         type="button"
@@ -541,7 +541,7 @@ export default function AuthSimple() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full"
+                    className="w-full h-12 rounded-full border-border/70 bg-background font-medium"
                     onClick={handleGoogleAuth}
                     disabled={googleLoading || isLoading}
                   >
@@ -558,7 +558,7 @@ export default function AuthSimple() {
                     Continuer avec Google
                   </Button>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full h-12 rounded-full text-base font-semibold" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -609,6 +609,7 @@ export default function AuthSimple() {
                         value={formData.firstName}
                         onChange={(e) => handleInputChange('firstName', e.target.value)}
                         placeholder="John"
+                        className="h-12 rounded-xl bg-muted/40 border-border/60"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -618,6 +619,7 @@ export default function AuthSimple() {
                         value={formData.lastName}
                         onChange={(e) => handleInputChange('lastName', e.target.value)}
                         placeholder="Doe"
+                        className="h-12 rounded-xl bg-muted/40 border-border/60"
                       />
                     </div>
                   </div>
@@ -630,7 +632,7 @@ export default function AuthSimple() {
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="votre@email.com"
-                      className={getFieldError('email') ? 'border-destructive' : ''}
+                      className={`h-12 rounded-xl bg-muted/40 border-border/60 ${getFieldError('email') ? 'border-destructive' : ''}`}
                     />
                     {getFieldError('email') && (
                       <p className="text-sm text-destructive">{getFieldError('email')}</p>
@@ -646,7 +648,7 @@ export default function AuthSimple() {
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         placeholder="Minimum 8 caractères"
-                        className={getFieldError('password') ? 'border-destructive' : ''}
+                        className={`h-12 rounded-xl bg-muted/40 border-border/60 pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
                       />
                       <Button
                         type="button"
@@ -666,7 +668,7 @@ export default function AuthSimple() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full"
+                    className="w-full h-12 rounded-full border-border/70 bg-background font-medium"
                     onClick={handleGoogleAuth}
                     disabled={googleLoading || isLoading}
                   >
@@ -683,7 +685,7 @@ export default function AuthSimple() {
                     Continuer avec Google
                   </Button>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full h-12 rounded-full text-base font-semibold" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -742,13 +744,13 @@ export default function AuthSimple() {
           )}
           {/* Employee login link - subtle, at bottom */}
           {authMode === 'classic' && (
-            <div className="text-center pt-2 border-t border-border/40">
+            <div className="text-center pt-3 border-t border-border/40">
               <button
                 type="button"
                 onClick={() => { setAuthMode('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-                className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center justify-center gap-2 w-full h-11 rounded-full bg-muted/60 text-sm font-medium text-foreground hover:bg-muted transition-colors"
               >
-                <Users className="h-3.5 w-3.5" />
+                <Users className="h-4 w-4" />
                 Connexion employé (PIN)
               </button>
             </div>

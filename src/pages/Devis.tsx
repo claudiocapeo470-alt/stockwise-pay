@@ -110,11 +110,8 @@ export default function Devis() {
             {invoices.length} devis émis · {acceptedCount} accepté{acceptedCount > 1 ? 's' : ''}
           </p>
         </div>
-        <Button onClick={() => navigate('/app/devis/new')} className="h-10 px-5 rounded-lg shadow-sm">
-          <Plus className="mr-2 h-4 w-4" />
-          Nouveau Devis
-        </Button>
       </div>
+
 
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
@@ -170,24 +167,21 @@ export default function Devis() {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1 lg:w-72">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Rechercher devis..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 bg-muted/40 border-border/60"
-            />
-          </div>
-          {!isMobile && (
-            <div className="inline-flex rounded-lg border border-border/60 bg-card p-0.5">
-              <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-8 w-8 p-0"><List className="h-4 w-4" /></Button>
-              <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-8 w-8 p-0"><Grid3x3 className="h-4 w-4" /></Button>
-            </div>
-          )}
-        </div>
       </div>
+
+      <PageActionBar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Rechercher devis..."
+        segments={!isMobile ? (
+          <div className="inline-flex rounded-lg border border-border/60 bg-card p-0.5">
+            <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-8 w-8 p-0"><List className="h-4 w-4" /></Button>
+            <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-8 w-8 p-0"><Grid3x3 className="h-4 w-4" /></Button>
+          </div>
+        ) : undefined}
+        primary={<Button onClick={() => navigate('/app/devis/new')} className="h-11 px-5 rounded-xl gap-2"><Plus className="h-4 w-4" /><span>Nouveau Devis</span></Button>}
+      />
+
 
       {/* Content */}
       {filteredInvoices.length === 0 ? (

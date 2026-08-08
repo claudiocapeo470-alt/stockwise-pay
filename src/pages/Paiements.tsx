@@ -102,7 +102,6 @@ export default function Paiements() {
             {paymentStats.totalPayments} encaissements • {formatAmount(paymentStats.remainingAmount)} restants à recevoir
           </p>
         </div>
-        <AddPaymentDialog />
       </div>
 
       {/* Stats */}
@@ -153,12 +152,16 @@ export default function Paiements() {
         </Card>
       </div>
 
-      {/* Toolbar — pills filtres */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between border-b border-border/60 pb-4">
-        <div className="relative flex-1 max-w-md w-full">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input placeholder="Rechercher par nom ou téléphone..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 h-10 bg-muted/40 border-border/60" />
-        </div>
+      <PageActionBar
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Rechercher par nom ou téléphone..."
+        primary={<AddPaymentDialog />}
+      />
+
+      {/* Filtres */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-end border-b border-border/60 pb-4">
+
         <div className="flex gap-2 flex-wrap items-center">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-[150px] h-10 rounded-xl bg-muted/40 border-border/60"><SelectValue placeholder="Statut" /></SelectTrigger>

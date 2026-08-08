@@ -21,6 +21,7 @@ import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
+import { PageActionBar } from '@/components/layout/PageActionBar';
 
 function ProductIcon({ product }: { product: any }) {
   if (product.image_url) return <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover" />;

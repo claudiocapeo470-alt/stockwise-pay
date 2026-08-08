@@ -487,10 +487,10 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 1 — Choix */}
         {screen === 'welcome' && (
-          <div className="w-full max-w-md mx-auto text-center space-y-8 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 text-center space-y-7 animate-fade-in">
             <img src={stocknixLogo} alt="Stocknix" className="h-14 w-auto object-contain mx-auto" />
             <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                 Gérez votre business en toute simplicité
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -500,14 +500,14 @@ export default function AuthSimple() {
 
             <div className="space-y-3">
               <Button
-                className="w-full h-14 rounded-full text-base font-semibold"
+                className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium"
                 onClick={() => { setIntent('login'); setScreen('method'); }}
               >
                 Se connecter
               </Button>
               <Button
-                variant="secondary"
-                className="w-full h-14 rounded-full text-base font-semibold bg-muted hover:bg-muted/80"
+                variant="outline"
+                className="w-full h-14 rounded-full text-base font-semibold border-2 border-primary/25 bg-card text-primary hover:bg-primary/5"
                 onClick={() => { setIntent('register'); setScreen('method'); }}
               >
                 Créer un compte
@@ -515,13 +515,14 @@ export default function AuthSimple() {
               <button
                 type="button"
                 onClick={() => { setScreen('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-                className="inline-flex items-center justify-center gap-2 w-full h-12 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center justify-center gap-2 w-full h-12 text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Users className="h-4 w-4" />
                 Continuer en tant qu'employé
               </button>
             </div>
           </div>
+
         )}
 
         {/* ÉCRAN 2 — Méthode (email ou Google) */}

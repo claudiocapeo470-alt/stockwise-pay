@@ -38,7 +38,7 @@ interface StoreData {
   primary_color: string; logo_url: string | null; banner_url: string | null;
   show_stock: boolean; allow_orders: boolean; delivery_fee: number;
   free_delivery_minimum: number; whatsapp: string | null; phone: string | null;
-  email: string | null; address: string | null;
+  email: string | null; address: string | null; enable_reviews?: boolean;
 }
 interface ProductData {
   id: string; name: string; price: number; quantity: number;

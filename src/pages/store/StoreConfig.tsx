@@ -18,7 +18,6 @@ import {
 import CategoryManager from "@/components/store/CategoryManager";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import boutique3D from "@/assets/boutique-3d.png";
 
 const COLOR_PALETTE = [
   { name: "Indigo", value: "#4f46e5" }, { name: "Violet", value: "#7c3aed" },

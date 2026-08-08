@@ -53,17 +53,36 @@ export default function TeamManagement() {
   if (isEmployee) return null;
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <p className="text-sm text-muted-foreground">Gérez votre code entreprise et vos membres</p>
+    <div className="space-y-5 max-w-5xl mx-auto">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">Gérez votre code entreprise et vos membres</p>
+        <Button
+          variant="outline"
+          onClick={() => navigate('/app/rapport-employes')}
+          className="hidden md:inline-flex h-11 gap-1.5 rounded-xl shrink-0"
+        >
+          <UserSquare2 className="h-4 w-4" /> Rapport employé
+        </Button>
+      </div>
 
       <Tabs defaultValue="code" className="w-full">
-        <TabsList className="w-full grid grid-cols-2">
-          <TabsTrigger value="code" className="text-xs sm:text-sm"><Building2 className="h-4 w-4 mr-1 hidden sm:inline" />Code Entreprise</TabsTrigger>
-          <TabsTrigger value="members" className="text-xs sm:text-sm"><Users className="h-4 w-4 mr-1 hidden sm:inline" />Membres</TabsTrigger>
+        <TabsList className="w-full grid grid-cols-2 h-auto bg-transparent p-0 gap-2">
+          <TabsTrigger
+            value="code"
+            className="h-11 rounded-xl border border-border bg-card shadow-soft text-[13px] font-semibold text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary"
+          >
+            <Building2 className="h-4 w-4 mr-1.5" />Code Entreprise
+          </TabsTrigger>
+          <TabsTrigger
+            value="members"
+            className="h-11 rounded-xl border border-border bg-card shadow-soft text-[13px] font-semibold text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary"
+          >
+            <Users className="h-4 w-4 mr-1.5" />Membres
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="code"><CompanyCodeTab /></TabsContent>
-        <TabsContent value="members"><MembersTab /></TabsContent>
+        <TabsContent value="code" className="mt-4"><CompanyCodeTab /></TabsContent>
+        <TabsContent value="members" className="mt-4"><MembersTab /></TabsContent>
       </Tabs>
     </div>
   );

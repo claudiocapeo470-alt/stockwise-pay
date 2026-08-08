@@ -188,7 +188,9 @@ export function AppLayout({ children }: AppLayoutProps) {
             {useCenteredHeader ? (
               <div className="relative flex items-center w-full min-w-0">
                 <div className="flex items-center flex-shrink-0">
-                  {headerLeftAction ? (
+                  {isStorePage ? (
+                    <StoreOpenButton />
+                  ) : headerLeftAction ? (
                     <Button
                       variant="ghost"
                       size="icon"
@@ -202,6 +204,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                     <span className="h-10 w-10 block" aria-hidden />
                   )}
                 </div>
+
 
                 <h1 className="absolute left-1/2 -translate-x-1/2 max-w-[55%] text-[19px] leading-none font-bold text-foreground truncate tracking-tight text-center">
                   {pageTitle}

@@ -462,7 +462,7 @@ export default function AuthSimple() {
       </div>
 
       {/* Right Side - Auth Flow */}
-      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 bg-muted/40 relative overflow-y-auto h-full">
+      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 auth-bg relative overflow-y-auto h-full">
         {/* Back button */}
         {screen === 'welcome' ? (
           !window.matchMedia('(display-mode: standalone)').matches && (
@@ -487,10 +487,10 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 1 — Choix */}
         {screen === 'welcome' && (
-          <div className="w-full max-w-md mx-auto text-center space-y-8 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 text-center space-y-7 animate-fade-in">
             <img src={stocknixLogo} alt="Stocknix" className="h-14 w-auto object-contain mx-auto" />
             <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                 Gérez votre business en toute simplicité
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -500,14 +500,14 @@ export default function AuthSimple() {
 
             <div className="space-y-3">
               <Button
-                className="w-full h-14 rounded-full text-base font-semibold"
+                className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium"
                 onClick={() => { setIntent('login'); setScreen('method'); }}
               >
                 Se connecter
               </Button>
               <Button
-                variant="secondary"
-                className="w-full h-14 rounded-full text-base font-semibold bg-muted hover:bg-muted/80"
+                variant="outline"
+                className="w-full h-14 rounded-full text-base font-semibold border-2 border-primary/25 bg-card text-primary hover:bg-primary/5"
                 onClick={() => { setIntent('register'); setScreen('method'); }}
               >
                 Créer un compte
@@ -515,33 +515,34 @@ export default function AuthSimple() {
               <button
                 type="button"
                 onClick={() => { setScreen('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-                className="inline-flex items-center justify-center gap-2 w-full h-12 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center justify-center gap-2 w-full h-12 text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Users className="h-4 w-4" />
                 Continuer en tant qu'employé
               </button>
             </div>
           </div>
+
         )}
 
         {/* ÉCRAN 2 — Méthode (email ou Google) */}
         {screen === 'method' && (
-          <div className="w-full max-w-md mx-auto rounded-[28px] bg-background shadow-xl shadow-foreground/5 border border-border/50 p-6 sm:p-8 space-y-6 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 space-y-6 animate-fade-in">
             <div className="text-center space-y-3">
               <img src={stocknixLogo} alt="Stocknix" className="h-11 w-auto object-contain mx-auto" />
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                 {intent === 'login' ? 'Connectez-vous pour continuer' : 'Créez un compte pour continuer'}
               </h2>
             </div>
 
             <Button
-              variant="secondary"
-              className="w-full h-14 rounded-full text-base font-medium bg-muted hover:bg-muted/80"
+              className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium"
               onClick={() => { setActiveTab(intent); setScreen('form'); }}
             >
               <Mail className="mr-2 h-5 w-5" />
               {intent === 'login' ? 'Se connecter avec l\'e-mail' : 'S\'inscrire avec l\'e-mail'}
             </Button>
+
 
             <div className="flex items-center gap-3">
               <div className="h-px flex-1 bg-border" />
@@ -555,7 +556,7 @@ export default function AuthSimple() {
                 onClick={handleGoogleAuth}
                 disabled={googleLoading}
                 aria-label="Continuer avec Google"
-                className="h-16 w-16 rounded-full bg-muted hover:bg-muted/80 transition-colors inline-flex items-center justify-center disabled:opacity-60"
+                className="h-16 w-16 rounded-full bg-card border-2 border-border hover:bg-muted shadow-soft transition-colors inline-flex items-center justify-center disabled:opacity-60"
               >
                 {googleLoading ? (
                   <Loader2 className="h-6 w-6 animate-spin" />
@@ -579,15 +580,16 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 3 — Formulaire e-mail */}
         {screen === 'form' && (
-          <div className="w-full max-w-md mx-auto pt-14 space-y-6 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 mt-12 space-y-6 animate-fade-in">
             <div className="space-y-2">
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                 {activeTab === 'login' ? 'Heureux de vous revoir !' : 'Bienvenue sur Stocknix'}
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {activeTab === 'login' ? 'Connectez-vous pour continuer.' : 'Créez votre compte en quelques secondes.'}
               </p>
             </div>
+
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {activeTab === 'register' && (
@@ -599,7 +601,7 @@ export default function AuthSimple() {
                       value={formData.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
                       placeholder="John"
-                      className="h-14 rounded-2xl bg-muted/60 border-transparent"
+                      className="h-14 rounded-2xl bg-muted/40 border border-border"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -609,7 +611,7 @@ export default function AuthSimple() {
                       value={formData.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
                       placeholder="Doe"
-                      className="h-14 rounded-2xl bg-muted/60 border-transparent"
+                      className="h-14 rounded-2xl bg-muted/40 border border-border"
                     />
                   </div>
                 </div>
@@ -623,7 +625,7 @@ export default function AuthSimple() {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="vous@exemple.com"
-                  className={`h-14 rounded-2xl bg-muted/60 border-transparent ${getFieldError('email') ? 'border-destructive' : ''}`}
+                  className={`h-14 rounded-2xl bg-muted/40 border border-border ${getFieldError('email') ? 'border-destructive' : ''}`}
                 />
                 {getFieldError('email') && (
                   <p className="text-sm text-destructive">{getFieldError('email')}</p>
@@ -639,7 +641,7 @@ export default function AuthSimple() {
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
                     placeholder={activeTab === 'login' ? '••••••••' : 'Minimum 8 caractères'}
-                    className={`h-14 rounded-2xl bg-muted/60 border-transparent pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
+                    className={`h-14 rounded-2xl bg-muted/40 border border-border pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
                   />
                   <button
                     type="button"
@@ -663,7 +665,7 @@ export default function AuthSimple() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full h-14 rounded-full text-base font-semibold" disabled={isLoading}>
+              <Button type="submit" className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium" disabled={isLoading}>
                 {isLoading ? (
                   <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{activeTab === 'login' ? 'Connexion...' : 'Inscription...'}</>
                 ) : (
@@ -712,7 +714,7 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 4 — Employé (PIN) */}
         {screen === 'employee' && (
-          <div className="w-full max-w-md mx-auto rounded-[28px] bg-background shadow-xl shadow-foreground/5 border border-border/50 p-6 sm:p-8 space-y-5 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 space-y-5 animate-fade-in">
             <div className="text-center space-y-2">
               <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <img src={stocknixLogoIcon} alt="Stocknix" className="h-9 w-9 object-contain" />

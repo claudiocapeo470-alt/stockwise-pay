@@ -654,11 +654,12 @@ export default function PublicStore() {
             <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${color}33 0%, #111827 100%)` }} />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70" />
-          <div className="relative z-10 container mx-auto px-4 text-center text-white">
-            <p className="lz-hero-sub text-xs uppercase tracking-[0.3em] text-white/60 mb-4">Boutique en ligne</p>
-            <h1 className="lz-heading lz-hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
+          <div className="relative z-10 container mx-auto px-4 text-center text-white max-w-2xl">
+            <p className="lz-hero-sub text-[10px] uppercase tracking-[0.3em] text-white/60 mb-3">Boutique en ligne</p>
+            <h1 className="lz-heading lz-hero-title text-lg sm:text-xl md:text-2xl lg:text-3xl mb-6 leading-snug font-medium text-white/95 line-clamp-4">
               {store.description || HERO_TAGLINE}
             </h1>
+
             <div className="lz-hero-btn">
               <button
                 onClick={() => setActivePage("shop")}

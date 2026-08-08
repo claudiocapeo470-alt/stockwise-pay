@@ -156,7 +156,7 @@ export default function Livraisons() {
       </Card>
 
       {/* Mobile cards */}
-      <div className="md:hidden space-y-3">
+      <div className="md:hidden space-y-4">
         {filtered.map(d => {
           const st = STATUS_MAP[d.status] || STATUS_MAP.unassigned;
           return (
@@ -177,7 +177,7 @@ export default function Livraisons() {
             </Card>
           );
         })}
-        {filtered.length === 0 && <p className="text-center text-muted-foreground py-8">Aucune livraison</p>}
+        {filtered.length === 0 && <EmptyDeliveries />}
       </div>
 
       {/* Assign dialog */}

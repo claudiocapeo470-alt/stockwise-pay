@@ -122,7 +122,7 @@ export default function StoreOrders() {
       </Card>
 
       {/* Mobile cards — design minimaliste */}
-      <div className="md:hidden space-y-4">
+      <div className="mt-6 md:hidden space-y-3">
         {orders.map(order => {
           const status = STATUS_MAP[order.status] || STATUS_MAP.pending;
           const items = Array.isArray(order.items) ? order.items : [];

@@ -415,7 +415,7 @@ export default function Ventes() {
 
           {/* Grid view — cartes ventes minimalistes */}
           {(isMobile || viewMode === "grid") && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredSales.map((sale) => (
                 <div key={sale.id} className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium">
                   <div className="flex items-start gap-3">

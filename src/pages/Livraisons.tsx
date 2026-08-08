@@ -21,9 +21,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = 
 function EmptyDeliveries() {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-      <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-        <Bike className="h-8 w-8 text-primary" />
-      </div>
+      <Bike className="h-20 w-20 text-primary" strokeWidth={1.25} />
       <p className="font-semibold text-foreground">Aucune livraison</p>
       <p className="text-sm text-muted-foreground">Les livraisons apparaîtront ici dès qu'une commande sera prête.</p>
     </div>
@@ -168,7 +166,7 @@ export default function Livraisons() {
       </Card>
 
       {/* Mobile cards */}
-      <div className="md:hidden space-y-4">
+      <div className="mt-6 md:hidden space-y-3">
         {filtered.map(d => {
           const st = STATUS_MAP[d.status] || STATUS_MAP.unassigned;
           return (

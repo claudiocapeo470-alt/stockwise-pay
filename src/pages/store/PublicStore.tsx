@@ -1026,14 +1026,21 @@ export default function PublicStore() {
               </div>
 
 
-              <div className="flex items-center gap-2 mb-5">
+              <button
+                type="button"
+                onClick={() => { setTab("reviews"); }}
+                className="flex items-center gap-2 mb-5 hover:opacity-80 transition-opacity"
+              >
                 <div className="flex">
                   {[1,2,3,4,5].map(i => (
-                    <Star key={i} className={`h-4 w-4 ${i <= Math.round(avgRating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/50"}`} />
+                    <Star key={i} className={`h-4 w-4 ${i <= Math.round(avgRating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/40"}`} />
                   ))}
                 </div>
-                <span className="text-sm text-muted-foreground">({productReviews.length} avis)</span>
-              </div>
+                <span className="text-sm text-muted-foreground">
+                  {productReviews.length > 0 ? `${avgRating.toFixed(1)} · ${productReviews.length} avis` : "Donner votre avis"}
+                </span>
+              </button>
+
 
               <p className="text-3xl font-bold mb-6" style={{ color }}>{fmt(p.price)}</p>
 

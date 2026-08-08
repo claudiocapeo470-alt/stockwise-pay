@@ -259,10 +259,13 @@ export function AppLayout({ children }: AppLayoutProps) {
             )}
             </div>
           </header>
-          <div className={`flex-1 p-3 sm:p-4 md:p-6 lg:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
-            {children}
+          <div className={`flex-1 p-3 sm:p-5 md:p-6 lg:px-10 xl:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : 'pb-10'} animate-fade-in`}>
+            <div className="w-full max-w-[1440px] mx-auto min-w-0">
+              {children}
+            </div>
             <StatScrollerDots />
           </div>
+
 
         </main>
       </div>

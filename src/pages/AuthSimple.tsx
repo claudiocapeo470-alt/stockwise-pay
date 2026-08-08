@@ -530,17 +530,15 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 2 — Méthode (email ou Google) */}
         {screen === 'method' && (
-          <div className="w-full max-w-md mx-auto rounded-[28px] bg-background shadow-xl shadow-foreground/5 border border-border/50 p-6 sm:p-8 space-y-6 animate-fade-in">
+          <div className="w-full max-w-md mx-auto rounded-[28px] bg-card shadow-2xl shadow-primary/30 p-6 sm:p-8 space-y-6 animate-fade-in">
             <div className="text-center space-y-3">
-              <img src={stocknixLogo} alt="Stocknix" className="h-11 w-auto object-contain mx-auto" />
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-card-foreground">
                 {intent === 'login' ? 'Connectez-vous pour continuer' : 'Créez un compte pour continuer'}
               </h2>
             </div>
 
             <Button
-              variant="secondary"
-              className="w-full h-14 rounded-full text-base font-medium bg-muted hover:bg-muted/80"
+              className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={() => { setActiveTab(intent); setScreen('form'); }}
             >
               <Mail className="mr-2 h-5 w-5" />
@@ -559,7 +557,7 @@ export default function AuthSimple() {
                 onClick={handleGoogleAuth}
                 disabled={googleLoading}
                 aria-label="Continuer avec Google"
-                className="h-16 w-16 rounded-full bg-muted hover:bg-muted/80 transition-colors inline-flex items-center justify-center disabled:opacity-60"
+                className="h-16 w-16 rounded-full bg-background border-2 border-border hover:border-primary/40 transition-colors inline-flex items-center justify-center disabled:opacity-60 shadow-sm"
               >
                 {googleLoading ? (
                   <Loader2 className="h-6 w-6 animate-spin" />

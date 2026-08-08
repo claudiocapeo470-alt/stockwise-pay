@@ -186,15 +186,15 @@ export function AppLayout({ children }: AppLayoutProps) {
             {useCenteredHeader ? (
               <div className="relative flex items-center w-full min-w-0">
                 <div className="flex items-center flex-shrink-0">
-                  {analyticsTarget ? (
+                  {headerLeftAction ? (
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => navigate(analyticsTarget)}
+                      onClick={() => navigate(headerLeftAction.to)}
                       className="h-10 w-10 rounded-full bg-muted/40 border border-border hover:bg-muted text-foreground"
-                      title="Analyse"
+                      title={headerLeftAction.label}
                     >
-                      <BarChart3 className="h-[18px] w-[18px]" />
+                      <headerLeftAction.icon className="h-[18px] w-[18px]" />
                     </Button>
                   ) : (
                     <span className="h-10 w-10 block" aria-hidden />

@@ -1076,27 +1076,32 @@ export default function PublicStore() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
-                {productReviews.length === 0 ? (
-                  <div className="text-center py-10 text-muted-foreground/70">
-                    <Star className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">Aucun avis pour le moment</p>
-                  </div>
-                ) : productReviews.map((r: any) => (
-                  <div key={r.id} className="border-b border-border pb-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex">
-                        {[1,2,3,4,5].map(s => (
-                          <Star key={s} className={`h-3.5 w-3.5 ${s <= (r.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/50"}`} />
-                        ))}
-                      </div>
-                      <span className="text-sm font-semibold text-foreground">{r.customer_name}</span>
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  {productReviews.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground/70">
+                      <Star className="h-9 w-9 mx-auto mb-3 opacity-30" />
+                      <p className="text-sm">Aucun avis pour le moment</p>
+                      <p className="text-xs mt-1">Soyez le premier à donner votre avis</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{r.comment}</p>
-                  </div>
-                ))}
+                  ) : productReviews.map((r: any) => (
+                    <div key={r.id} className="rounded-2xl border border-border p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex">
+                          {[1,2,3,4,5].map(s => (
+                            <Star key={s} className={`h-3.5 w-3.5 ${s <= (r.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/40"}`} />
+                          ))}
+                        </div>
+                        <span className="text-sm font-semibold text-foreground">{r.customer_name}</span>
+                      </div>
+                      {r.comment && <p className="text-sm text-muted-foreground leading-relaxed">{r.comment}</p>}
+                    </div>
+                  ))}
+                </div>
+                <ReviewForm productId={p.id} />
               </div>
             )}
+
           </div>
 
           {/* Vous pourriez aussi aimer — carrousel horizontal */}

@@ -538,24 +538,17 @@ export default function PublicStore() {
             </div>
           )}
 
-          {/* Actions hover (favori + œil) */}
+          {/* Action favori */}
           <div className="lz-pcard-actions z-10">
             <button
               onClick={(e) => { e.stopPropagation(); toggleFav(product.id); }}
-              className="h-9 w-9 bg-card shadow flex items-center justify-center hover:scale-110 transition-transform"
+              className="h-9 w-9 rounded-full bg-card/95 shadow-sm flex items-center justify-center hover:scale-110 transition-transform"
               aria-label="Favori"
             >
               <Heart className={`h-4 w-4 ${isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
             </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }}
-              className="h-9 w-9 bg-card shadow flex items-center justify-center hover:scale-110 transition-transform"
-              aria-label="Ajouter au panier"
-              disabled={!isAvailable(product)}
-            >
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-            </button>
           </div>
+
 
           {/* Flèches gauche/droite */}
           {hasMultiple && (

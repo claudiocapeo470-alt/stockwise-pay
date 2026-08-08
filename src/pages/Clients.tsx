@@ -13,7 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from '@/hooks/useCompany';
 import { useCurrency } from '@/hooks/useCurrency';
 import { toast } from 'sonner';
-import { Plus, Search, Users, Phone, Mail, MapPin, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Search, Users, Phone, Mail, MapPin, Edit2, Trash2, Wallet, Star } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Client {
@@ -121,9 +121,41 @@ export default function Clients() {
 
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
-        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold">{clients.length}</p><p className="text-xs text-muted-foreground">Total clients</p></CardContent></Card>
-        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold">{formatCurrency(clients.reduce((s, c) => s + (c.total_spent || 0), 0))}</p><p className="text-xs text-muted-foreground">CA total</p></CardContent></Card>
+        <Card>
+          <CardContent className="p-5 flex items-center gap-4 min-h-[104px]">
+            <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Users className="h-6 w-6 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-2xl font-bold leading-none truncate">{clients.length}</p>
+              <p className="text-[13px] text-muted-foreground mt-1.5 leading-tight">Total clients</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5 flex items-center gap-4 min-h-[104px]">
+            <div className="h-12 w-12 rounded-xl bg-success/10 flex items-center justify-center shrink-0">
+              <Wallet className="h-6 w-6 text-success" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-2xl font-bold leading-none truncate">{formatCurrency(clients.reduce((s, c) => s + (c.total_spent || 0), 0))}</p>
+              <p className="text-[13px] text-muted-foreground mt-1.5 leading-tight">CA total</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5 flex items-center gap-4 min-h-[104px]">
+            <div className="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+              <Star className="h-6 w-6 text-accent" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-2xl font-bold leading-none truncate">{clients.reduce((s, c) => s + (c.loyalty_points || 0), 0)}</p>
+              <p className="text-[13px] text-muted-foreground mt-1.5 leading-tight">Points fidélité</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
 
       {loading ? (
         <div className="flex justify-center py-12"><div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin rounded-full" /></div>

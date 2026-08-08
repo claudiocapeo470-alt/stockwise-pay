@@ -110,16 +110,13 @@ export default function Clients() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <div className="flex items-center justify-end">
-        <Button onClick={openCreate} className="gap-1"><Plus className="h-4 w-4" /> Ajouter</Button>
-      </div>
+      <PageActionBar
+        searchValue={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Rechercher un client..."
+        primary={<Button onClick={openCreate} className="h-11 px-5 rounded-xl gap-2"><Plus className="h-4 w-4" /><span>Ajouter</span></Button>}
+      />
 
-      <div className="flex gap-3">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input placeholder="Rechercher un client..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" />
-        </div>
-      </div>
 
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>

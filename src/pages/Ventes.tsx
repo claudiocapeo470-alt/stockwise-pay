@@ -261,9 +261,6 @@ export default function Ventes() {
             {sales.length} {sales.length > 1 ? "transactions enregistrées" : "transaction enregistrée"} • {totalSales.toLocaleString()} FCFA de chiffre d'affaires
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <AddSaleDialog />
-        </div>
       </div>
 
       {/* Stats compactes */}
@@ -305,18 +302,12 @@ export default function Ventes() {
         </Card>
       </div>
 
-      {/* Toolbar — barre filtres style pills */}
-      <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between border-b border-border/60 pb-4">
-        <div className="relative flex-1 lg:max-w-md w-full">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Rechercher par client ou produit..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-10 bg-muted/40 border-border/60"
-          />
-        </div>
-        {!isMobile && (
+      {/* Toolbar */}
+      <PageActionBar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Rechercher par client ou produit..."
+        segments={!isMobile ? (
           <div className="inline-flex rounded-xl border border-border bg-card p-0.5">
             <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0 rounded-lg">
               <List className="h-4 w-4" />
@@ -325,8 +316,10 @@ export default function Ventes() {
               <Grid3x3 className="h-4 w-4" />
             </Button>
           </div>
-        )}
-      </div>
+        ) : undefined}
+        primary={<AddSaleDialog />}
+      />
+
 
       {/* Sales list */}
       {filteredSales.length === 0 ? (

@@ -18,6 +18,8 @@ import { NotificationCenter } from "./NotificationCenter";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";
 import { StatScrollerDots } from "./StatScrollerDots";
+import { StoreOpenButton } from "@/components/store/StoreOpenButton";
+
 
 import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 
@@ -108,6 +110,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   }, [location.pathname]);
 
   const isHomePage = location.pathname === '/app' || location.pathname === '/app/';
+  const isStorePage = location.pathname.includes('/boutique');
+
 
   // Pages exclues de l'en-tête centré : Accueil, Caisse, Paramètres + pages d'analyse (titre à gauche)
   const isExcludedHeader = isHomePage

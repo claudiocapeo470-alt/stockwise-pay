@@ -76,6 +76,29 @@ input, select, textarea {
 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
 .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
 
+/* En-tête d'application : ne jamais passer sous la barre d'état (PWA / iOS / Android) */
+.app-safe-header { padding-top: env(safe-area-inset-top, 0px); }
+
+/* Bouton retour standard, identique partout */
+.back-fab {
+  position: fixed;
+  left: 1rem;
+  top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 9999px;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border) / 0.6);
+  box-shadow: 0 4px 14px -6px hsl(var(--foreground) / 0.25);
+  transition: background-color 0.2s ease;
+}
+.back-fab:hover { background: hsl(var(--muted)); }
+
 /* ═══════════════════════════════════════════════════════════════
    STOCKNIX DESIGN SYSTEM
    ═══════════════════════════════════════════════════════════════ */

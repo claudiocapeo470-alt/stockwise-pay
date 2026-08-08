@@ -304,18 +304,18 @@ input, select, textarea {
    ═══════════════════════════════════════════════════ */
 .stat-scroller {
   display: flex;
-  gap: 0.625rem;
+  gap: 0.875rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   margin-inline: -1rem;
-  padding: 0 1rem 0.25rem;
+  padding: 0 1rem 0.375rem;
   max-width: 100vw;
 }
 .stat-scroller::-webkit-scrollbar { display: none; }
 .stat-scroller > * {
-  flex: 0 0 72%;
+  flex: 0 0 84%;
   min-width: 0;
   scroll-snap-align: center;
 }
@@ -323,11 +323,20 @@ input, select, textarea {
 /* ── Cartes statistiques : cycle de bleus, texte clair ── */
 .stat-scroller > * {
   border: none !important;
-  border-radius: 1.25rem !important;
-  box-shadow: 0 6px 18px -12px hsl(var(--primary) / 0.6);
+  border-radius: 1.5rem !important;
+  box-shadow: 0 10px 24px -14px hsl(var(--primary) / 0.7);
   color: hsl(var(--primary-foreground)) !important;
   background: hsl(217 91% 45%) !important;
 }
+@media (max-width: 767px) {
+  .stat-scroller > * > * { padding: 1.125rem 1.25rem !important; gap: 0.875rem !important; }
+  .stat-scroller > * .text-xl,
+  .stat-scroller > * .text-lg { font-size: 1.75rem !important; line-height: 1.1 !important; }
+  .stat-scroller > * .text-\[11px\] { font-size: 0.8125rem !important; }
+  .stat-scroller > * .rounded-xl { height: 2.75rem !important; width: 2.75rem !important; border-radius: 1rem !important; }
+}
+
+
 .stat-scroller > *:nth-child(4n + 2) { background: hsl(221 60% 25%) !important; }
 .stat-scroller > *:nth-child(4n + 3) { background: hsl(199 89% 40%) !important; }
 .stat-scroller > *:nth-child(4n + 4) { background: hsl(230 55% 38%) !important; }

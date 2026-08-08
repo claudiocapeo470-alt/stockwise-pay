@@ -14,6 +14,8 @@ import { StockMovementsDialog } from "@/components/stocks/StockMovementsDialog";
 import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { PageActionBar } from "@/components/layout/PageActionBar";
+
 
 export default function Stocks() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -102,23 +104,25 @@ export default function Stocks() {
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-col lg:flex-row gap-2 lg:gap-3 lg:items-center lg:justify-between">
-        <div className="relative flex-1 lg:max-w-md w-full">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input placeholder="Rechercher un produit..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 h-11" />
-        </div>
-        <div className="grid grid-cols-3 gap-2 lg:flex lg:items-center lg:gap-2">
-          {!isMobile && (
-            <div className="hidden lg:inline-flex rounded-lg border border-border bg-card p-0.5">
-              <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0"><List className="h-4 w-4" /></Button>
-              <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0"><Grid3x3 className="h-4 w-4" /></Button>
-            </div>
-          )}
-          <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-2 text-xs sm:text-sm lg:px-4"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
-          <ImportProductsDialog />
-          <AddProductDialog />
-        </div>
-      </div>
+      <PageActionBar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Rechercher un produit..."
+        segments={
+          <>
+            <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
+            <ImportProductsDialog />
+            {!isMobile && (
+              <div className="hidden lg:inline-flex rounded-lg border border-border bg-card p-0.5">
+                <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0"><List className="h-4 w-4" /></Button>
+                <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0"><Grid3x3 className="h-4 w-4" /></Button>
+              </div>
+            )}
+          </>
+        }
+        primary={<AddProductDialog />}
+      />
+
 
       {/* Products */}
       {filteredProducts.length === 0 ? (

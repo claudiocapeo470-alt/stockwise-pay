@@ -162,7 +162,7 @@ export default function Livraisons() {
                 </TableRow>
               );
             })}
-            {filtered.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-12 text-muted-foreground">Aucune livraison</TableCell></TableRow>}
+            {filtered.length === 0 && <TableRow><TableCell colSpan={5} className="p-0"><EmptyDeliveries /></TableCell></TableRow>}
           </TableBody>
         </Table>
       </Card>

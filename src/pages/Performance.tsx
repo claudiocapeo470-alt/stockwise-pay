@@ -189,42 +189,6 @@ export default function Performance() {
         </Card>
       </div>
 
-      {/* Toolbar / Filters */}
-      <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
-        <div className="flex flex-wrap gap-2">
-          <Select value={period} onValueChange={(v: PeriodType) => setPeriod(v)}>
-            <SelectTrigger className="w-[150px] h-11 rounded-xl"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="today">Aujourd'hui</SelectItem>
-              <SelectItem value="week">Cette semaine</SelectItem>
-              <SelectItem value="month">Ce mois</SelectItem>
-              <SelectItem value="custom">Personnalisée</SelectItem>
-            </SelectContent>
-          </Select>
-          {period === "custom" && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="h-11 gap-2">
-                  <CalendarIcon className="h-4 w-4" />
-                  {dateRange?.from && dateRange?.to ? `${format(dateRange.from, "dd/MM")} - ${format(dateRange.to, "dd/MM")}` : "Dates"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0"><Calendar mode="range" selected={dateRange} onSelect={setDateRange} locale={fr} /></PopoverContent>
-            </Popover>
-          )}
-          <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-            <SelectTrigger className="w-[170px] h-11 rounded-xl"><SelectValue placeholder="Produit" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tous les produits</SelectItem>
-              {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => handleExport('pdf')} className="h-11 rounded-xl"><Download className="h-4 w-4 mr-2" />PDF</Button>
-          <Button variant="outline" onClick={() => handleExport('excel')} className="h-11 rounded-xl"><Download className="h-4 w-4 mr-2" />Excel</Button>
-        </div>
-      </div>
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">

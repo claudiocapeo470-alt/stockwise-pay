@@ -714,12 +714,9 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 4 — Employé (PIN) */}
         {screen === 'employee' && (
-          <div className="w-full max-w-md mx-auto rounded-[28px] bg-background shadow-xl shadow-foreground/5 border border-border/50 p-6 sm:p-8 space-y-5 animate-fade-in">
+          <div className="w-full max-w-md mx-auto rounded-[28px] bg-card shadow-2xl shadow-primary/30 p-6 sm:p-8 space-y-5 animate-fade-in">
             <div className="text-center space-y-2">
-              <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <img src={stocknixLogoIcon} alt="Stocknix" className="h-9 w-9 object-contain" />
-              </div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Espace employé</h2>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-card-foreground">Espace employé</h2>
               <p className="text-sm text-muted-foreground">
                 {pinStep === 'company'
                   ? 'Saisissez le code de votre entreprise (6 chiffres)'

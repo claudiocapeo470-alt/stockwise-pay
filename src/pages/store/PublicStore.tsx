@@ -1175,21 +1175,21 @@ export default function PublicStore() {
           )}
         </div>
 
-        {/* STICKY BOTTOM CTA — mobile & tablet uniquement */}
+        {/* STICKY BOTTOM CTA — fixe sur mobile, tablette ET PC, au-dessus de la nav */}
         {isAvailable(p) && store.allow_orders && (
-          <div className="lz-sticky-cta lg:hidden fixed bottom-16 left-0 right-0 z-30 border-t border-border bg-card/95 dark:bg-background/95 backdrop-blur px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
-            <div className="container mx-auto flex items-center gap-2">
+          <div className="lz-sticky-cta fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] lg:bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 dark:bg-background/95 backdrop-blur px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+            <div className="container mx-auto flex items-center gap-2 lg:gap-4 max-w-5xl">
               <button
                 onClick={() => addToCart(p, qty)}
-                className="flex-1 py-3 px-3 border-2 border-foreground text-foreground text-xs sm:text-sm font-semibold hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-1.5 rounded-full"
+                className="flex-1 py-3.5 px-3 border-2 border-foreground text-foreground text-sm font-semibold hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-1.5 rounded-full"
               >
                 <ShoppingCart className="h-4 w-4" />
                 <span className="hidden sm:inline">Ajouter au panier</span>
-                <span className="sm:hidden">Panier</span>
+                <span className="sm:inline lg:hidden">Panier</span>
               </button>
               <button
                 onClick={handleBuyNow}
-                className="lz-btn-cta flex-1 py-3 px-3 text-white text-xs sm:text-sm font-semibold rounded-full flex items-center justify-center gap-1.5"
+                className="lz-btn-cta flex-1 py-3.5 px-3 text-white text-sm font-semibold rounded-full flex items-center justify-center gap-1.5"
                 style={{ background: color }}
               >
                 <span>Acheter maintenant</span>

@@ -580,15 +580,16 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 3 — Formulaire e-mail */}
         {screen === 'form' && (
-          <div className="w-full max-w-md mx-auto pt-14 space-y-6 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 mt-12 space-y-6 animate-fade-in">
             <div className="space-y-2">
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                 {activeTab === 'login' ? 'Heureux de vous revoir !' : 'Bienvenue sur Stocknix'}
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {activeTab === 'login' ? 'Connectez-vous pour continuer.' : 'Créez votre compte en quelques secondes.'}
               </p>
             </div>
+
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {activeTab === 'register' && (

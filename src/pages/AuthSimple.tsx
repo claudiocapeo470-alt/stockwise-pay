@@ -463,6 +463,13 @@ export default function AuthSimple() {
 
       {/* Right Side - Auth Flow */}
       <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 auth-bg relative overflow-y-auto h-full">
+        {/* Logo blanc centré en haut du fond bleu quadrillé */}
+        <img
+          src={stocknixLogoWhite}
+          alt="Stocknix"
+          className="lg:hidden absolute top-5 left-1/2 -translate-x-1/2 h-9 w-auto object-contain pointer-events-none select-none"
+        />
+
         {/* Back button — position fixe et identique partout */}
         {screen === 'welcome' ? (
           !window.matchMedia('(display-mode: standalone)').matches && (

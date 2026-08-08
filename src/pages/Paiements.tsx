@@ -67,11 +67,14 @@ export default function Paiements() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin rounded-full"></div>
+      <div className="space-y-3 animate-fade-in">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-20 rounded-2xl bg-muted/50 animate-pulse" />
+        ))}
       </div>
     )
   }
+
 
   if (payments.length === 0) {
     return (

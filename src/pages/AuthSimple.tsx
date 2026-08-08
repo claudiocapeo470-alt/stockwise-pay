@@ -556,7 +556,7 @@ export default function AuthSimple() {
                 onClick={handleGoogleAuth}
                 disabled={googleLoading}
                 aria-label="Continuer avec Google"
-                className="h-16 w-16 rounded-full bg-muted hover:bg-muted/80 transition-colors inline-flex items-center justify-center disabled:opacity-60"
+                className="h-16 w-16 rounded-full bg-card border-2 border-border hover:bg-muted shadow-soft transition-colors inline-flex items-center justify-center disabled:opacity-60"
               >
                 {googleLoading ? (
                   <Loader2 className="h-6 w-6 animate-spin" />

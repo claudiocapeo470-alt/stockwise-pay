@@ -90,7 +90,7 @@ export default function Livraisons() {
 
       {/* Toolbar pills */}
       <div className="border-b border-border/60 pb-4">
-        <div className="flex items-center gap-1 overflow-x-auto -mx-1 px-1">
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar -mx-1 px-1">
           {filters.map((f) => (
             <button
               key={f.key}

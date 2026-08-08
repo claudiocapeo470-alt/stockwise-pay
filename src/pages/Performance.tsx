@@ -104,8 +104,8 @@ export default function Performance() {
 
       {/* Stats — style Stocknix */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card>
-          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+        <Card className="border-border/60 rounded-2xl">
+          <CardContent className="p-4 flex items-center gap-3">
             <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">
               <TrendingUp className="h-5 w-5 text-primary" />
             </div>
@@ -115,8 +115,8 @@ export default function Performance() {
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+        <Card className="border-border/60 rounded-2xl">
+          <CardContent className="p-4 flex items-center gap-3">
             <div className="h-9 w-9 sm:h-10 sm:w-10 bg-success/10 flex items-center justify-center rounded-xl shrink-0">
               <ShoppingCart className="h-5 w-5 text-success" />
             </div>
@@ -126,8 +126,8 @@ export default function Performance() {
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+        <Card className="border-border/60 rounded-2xl">
+          <CardContent className="p-4 flex items-center gap-3">
             <div className="h-10 w-10 bg-secondary/30 flex items-center justify-center rounded-xl">
               <Receipt className="h-5 w-5 text-foreground" />
             </div>
@@ -137,8 +137,8 @@ export default function Performance() {
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+        <Card className="border-border/60 rounded-2xl">
+          <CardContent className="p-4 flex items-center gap-3">
             <div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0">
               <BarChart3 className="h-5 w-5 text-warning" />
             </div>
@@ -154,7 +154,7 @@ export default function Performance() {
       <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
         <div className="flex flex-wrap gap-2">
           <Select value={period} onValueChange={(v: PeriodType) => setPeriod(v)}>
-            <SelectTrigger className="w-[150px] h-11"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-[150px] h-11 rounded-xl"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="today">Aujourd'hui</SelectItem>
               <SelectItem value="week">Cette semaine</SelectItem>
@@ -174,7 +174,7 @@ export default function Performance() {
             </Popover>
           )}
           <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-            <SelectTrigger className="w-[170px] h-11"><SelectValue placeholder="Produit" /></SelectTrigger>
+            <SelectTrigger className="w-[170px] h-11 rounded-xl"><SelectValue placeholder="Produit" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tous les produits</SelectItem>
               {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
@@ -182,17 +182,17 @@ export default function Performance() {
           </Select>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => handleExport('pdf')} className="h-11"><Download className="h-4 w-4 mr-2" />PDF</Button>
-          <Button variant="outline" onClick={() => handleExport('excel')} className="h-11"><Download className="h-4 w-4 mr-2" />Excel</Button>
+          <Button variant="outline" onClick={() => handleExport('pdf')} className="h-11 rounded-xl"><Download className="h-4 w-4 mr-2" />PDF</Button>
+          <Button variant="outline" onClick={() => handleExport('excel')} className="h-11 rounded-xl"><Download className="h-4 w-4 mr-2" />Excel</Button>
         </div>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-          <TabsTrigger value="products">Produits</TabsTrigger>
-          <TabsTrigger value="customers">Clients</TabsTrigger>
+        <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex h-auto bg-transparent p-0 gap-2 sm:gap-2">
+          <TabsTrigger value="overview" className="h-11 rounded-xl border border-border bg-card shadow-soft text-[13px] font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary">Vue d'ensemble</TabsTrigger>
+          <TabsTrigger value="products" className="h-11 rounded-xl border border-border bg-card shadow-soft text-[13px] font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary">Produits</TabsTrigger>
+          <TabsTrigger value="customers" className="h-11 rounded-xl border border-border bg-card shadow-soft text-[13px] font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary">Clients</TabsTrigger>
         </TabsList>
         <TabsContent value="overview"><SalesChart sales={filteredData.sales} period={period} dateRange={getDateRange} /></TabsContent>
         <TabsContent value="products"><TopProducts sales={filteredData.sales} products={filteredData.products} /></TabsContent>

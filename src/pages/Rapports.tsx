@@ -213,7 +213,7 @@ export default function Rapports() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <p className="text-sm text-muted-foreground">Suivi de votre activité en temps réel</p>
         <Select value={period} onValueChange={(v: Period) => setPeriod(v)}>
-          <SelectTrigger className="w-full sm:w-44">
+          <SelectTrigger className="w-full sm:w-44 h-11 rounded-xl">
             <Calendar className="h-4 w-4 mr-2" />
             <SelectValue />
           </SelectTrigger>
@@ -236,7 +236,7 @@ export default function Rapports() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="border-border/60">
+        <Card className="border-border/60 rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Évolution des ventes</CardTitle>
           </CardHeader>
@@ -249,7 +249,7 @@ export default function Rapports() {
           </CardContent>
         </Card>
 
-        <Card className="border-border/60">
+        <Card className="border-border/60 rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Chiffre d'affaires</CardTitle>
           </CardHeader>
@@ -308,7 +308,7 @@ export default function Rapports() {
 
 function KPICard({ icon: Icon, label, value, sublabel }: any) {
   return (
-    <Card className="border-border/60">
+    <Card className="border-border/60 rounded-2xl">
       <CardContent className="p-4 flex items-center gap-3">
         <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
           <Icon className="h-4 w-4 text-primary" />
@@ -325,7 +325,7 @@ function KPICard({ icon: Icon, label, value, sublabel }: any) {
 
 function ReportCard({ title, icon: Icon, stats, onView, onExcel, onPDF }: any) {
   return (
-    <Card className="border-border/60">
+    <Card className="border-border/60 rounded-2xl">
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">

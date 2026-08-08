@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCompany } from "@/hooks/useCompany";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
-import { Lock, BarChart3 } from "lucide-react";
+import { Lock, BarChart3, UserSquare2 } from "lucide-react";
 import { SubscriptionAlert } from "@/components/subscription/SubscriptionAlert";
 import { useSessionWarning } from "@/hooks/useSessionWarning";
 import { useStockAlerts } from "@/hooks/useStockAlerts";
@@ -109,20 +109,26 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const isHomePage = location.pathname === '/app' || location.pathname === '/app/';
 
-  // Pages exclues de l'en-tête centré : Accueil, Tableau de bord, Caisse, Paramètres
+  // Pages exclues de l'en-tête centré : Accueil, Caisse, Paramètres + pages d'analyse (titre à gauche)
   const isExcludedHeader = isHomePage
     || location.pathname.includes('/caisse')
-    || location.pathname.includes('/settings');
+    || location.pathname.includes('/settings')
+    || location.pathname.includes('/performance')
+    || location.pathname.includes('/rapports')
+    || location.pathname.includes('/rapport-employes');
 
   const useCenteredHeader = isMobile && !isExcludedHeader;
 
-  // Bouton "Analyse" pertinent uniquement sur les pages avec données chiffrées
-  const analyticsTarget = useMemo(() => {
+  // Bouton d'action à gauche de l'en-tête (analyse / rapport employés)
+  const headerLeftAction = useMemo(() => {
     const p = location.pathname;
+    if (p.includes('/team')) {
+      return { to: '/app/rapport-employes', label: 'Rapport employés', icon: UserSquare2 };
+    }
     if (p.includes('/stocks') || p.includes('/ventes') || p.includes('/clients')
       || p.includes('/factures') || p.includes('/devis') || p.includes('/paiements')
       || p.includes('/boutique/commandes') || p.includes('/livraisons')) {
-      return '/app/rapports';
+      return { to: '/app/rapports', label: 'Analyse', icon: BarChart3 };
     }
     return null;
   }, [location.pathname]);

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowRight, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import stocknixLogo from '@/assets/stocknix-logo.png';
+import { BrandLogo } from '@/components/ui/brand-logo';
 
 const HeaderSection = () => {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ const HeaderSection = () => {
           <div className={`flex items-center justify-between transition-all duration-500 ${scrolled ? 'h-14' : 'h-16 sm:h-20'}`}>
             {/* Logo */}
             <Link to="/" className="flex-shrink-0">
-              <img src={stocknixLogo} alt="Stocknix" className={`w-auto transition-all duration-300 ${scrolled ? 'h-7 sm:h-8' : 'h-9 sm:h-10'}`} />
+              <BrandLogo className={`w-auto transition-all duration-300 ${scrolled ? 'h-7 sm:h-8' : 'h-9 sm:h-10'}`} />
             </Link>
 
             {/* Desktop Nav */}

@@ -510,16 +510,30 @@ export default function StoreProducts() {
       />
 
 
-      {/* Recherche + Créer sur la même ligne */}
+      {/* Recherche + actions sur la même ligne */}
       <div className="flex items-center gap-2 w-full">
         <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input className="pl-9 h-9" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)} />
+          <Input className="pl-9 h-11 rounded-xl" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)} />
         </div>
-        <Button size="sm" onClick={() => setShowCreateDialog(true)} className="gap-1.5 flex-shrink-0 h-9 rounded-full px-4">
-          <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Créer un produit</span><span className="sm:hidden">Créer</span>
+        {store?.slug && (
+          <Button
+            variant="outline"
+            size="icon"
+            asChild
+            aria-label="Voir la boutique en ligne"
+            className="h-11 w-11 rounded-xl shrink-0"
+          >
+            <a href={`https://www.stocknix.com/boutique/${store.slug}`} target="_blank" rel="noopener">
+              <Store className="h-[18px] w-[18px]" />
+            </a>
+          </Button>
+        )}
+        <Button size="icon" onClick={() => setShowCreateDialog(true)} aria-label="Créer un produit" className="h-11 w-11 rounded-xl shrink-0">
+          <Plus className="h-5 w-5" />
         </Button>
       </div>
+
 
       <Tabs defaultValue="online">
         <TabsList className="w-full sm:w-auto">

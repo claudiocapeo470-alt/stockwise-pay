@@ -168,7 +168,7 @@ export default function Livraisons() {
       </Card>
 
       {/* Mobile cards */}
-      <div className="md:hidden space-y-4">
+      <div className="mt-6 md:hidden space-y-3">
         {filtered.map(d => {
           const st = STATUS_MAP[d.status] || STATUS_MAP.unassigned;
           return (

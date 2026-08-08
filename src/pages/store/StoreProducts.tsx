@@ -17,7 +17,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes } from 'lucide-react';
+import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes, Store } from 'lucide-react';
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';

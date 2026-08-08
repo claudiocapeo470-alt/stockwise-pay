@@ -462,7 +462,7 @@ export default function AuthSimple() {
       </div>
 
       {/* Right Side - Auth Flow */}
-      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 bg-muted/40 relative overflow-y-auto h-full">
+      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 auth-bg relative overflow-y-auto h-full">
         {/* Back button */}
         {screen === 'welcome' ? (
           !window.matchMedia('(display-mode: standalone)').matches && (

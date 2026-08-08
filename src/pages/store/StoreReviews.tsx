@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useOnlineStore, useStoreReviews } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
 import { Star, Check, X, Trash2 } from "lucide-react";
-import { StoreHeader } from "@/components/store/StoreHeader";
+
 
 export default function StoreReviews() {
   const { store } = useOnlineStore();
@@ -39,7 +39,21 @@ export default function StoreReviews() {
 
   return (
     <div className="space-y-5 animate-fade-in max-w-5xl mx-auto w-full">
-      <StoreHeader title="Avis clients" subtitle="Modérer et publier les avis de vos clients" />
+      {reviews.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="h-20 w-20 rounded-2xl bg-warning/10 flex items-center justify-center mb-4">
+            <Star className="h-10 w-10 text-warning" fill="currentColor" />
+          </div>
+          <p className="font-semibold text-lg">Aucun avis pour le moment</p>
+          <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+            Les avis laissés par vos clients apparaîtront ici pour modération.
+          </p>
+        </div>
+      )}
+
+      {reviews.length > 0 && (
+      <>
+
 
 
       {/* Desktop table */}
@@ -115,8 +129,10 @@ export default function StoreReviews() {
             </Card>
           );
         })}
-        {reviews.length === 0 && <p className="text-center py-8 text-muted-foreground col-span-full">Aucun avis</p>}
       </div>
+      </>
+      )}
     </div>
+
   );
 }

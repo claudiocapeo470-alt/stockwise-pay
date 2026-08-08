@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { useOnlineStore } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
 import { Save, Eye, Rocket, Copy, Check, Loader2 } from "lucide-react";
@@ -48,63 +48,54 @@ export function StoreHeader({
 
 
   return (
-    <div className="w-full">
-      {/* Titre affiché dans le header global de l'app — pas de doublon ici */}
-      <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4">
-
-
-        {/* Bloc URL "En ligne" — centré, prend l'espace dispo */}
-        {store?.is_published && storeUrl && (
-          <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl px-3 py-2 flex items-center gap-2 min-w-0 lg:flex-1">
-            <Badge className="bg-emerald-600 text-white flex-shrink-0 text-[10px] px-2 py-0.5">En ligne</Badge>
-            <span className="text-xs sm:text-sm font-medium truncate flex-1 min-w-0">{storeUrl}</span>
-            <Button variant="ghost" size="sm" onClick={copyUrl} className="gap-1 flex-shrink-0 h-7 px-2 rounded-full">
-              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-              <span className="hidden sm:inline text-xs">{copied ? "Copié" : "Copier"}</span>
-            </Button>
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex items-center gap-2 flex-wrap lg:flex-nowrap lg:flex-shrink-0">
-          {onSave && (
-            <Button
-              size="sm"
-              variant="default"
-              onClick={onSave}
-              disabled={saving}
-              className="gap-1.5 rounded-full px-4 shadow-sm"
-            >
-              {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-              Enregistrer
-            </Button>
-          )}
-          {store && (
-            <Button size="sm" variant="outline" asChild className="gap-1.5 rounded-full px-4">
-              <a href={storeUrl} target="_blank" rel="noopener">
-                <Eye className="h-3.5 w-3.5" /> Voir
-              </a>
-            </Button>
-          )}
-          {store && (
-            <Button
-              size="sm"
-              onClick={handlePublish}
-              disabled={togglePublish.isPending}
-              className={`gap-1.5 rounded-full px-4 shadow-sm ${
-                store.is_published
-                  ? "bg-orange-500 hover:bg-orange-600 text-white"
-                  : "bg-emerald-600 hover:bg-emerald-700 text-white"
-              }`}
-            >
-              <Rocket className="h-3.5 w-3.5" />
-              {store.is_published ? "Dépublier" : "Publier"}
-            </Button>
-          )}
+    <div className="w-full flex items-center gap-2">
+      {/* Bloc URL "En ligne" — prend l'espace disponible */}
+      {store?.is_published && storeUrl && (
+        <div className="h-11 flex-1 min-w-0 bg-success/10 border border-success/20 rounded-xl px-3 flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-success shrink-0" />
+          <span className="text-xs sm:text-sm font-medium truncate flex-1 min-w-0">{storeUrl}</span>
+          <button
+            type="button"
+            onClick={copyUrl}
+            aria-label="Copier le lien"
+            className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground shrink-0"
+          >
+            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          </button>
         </div>
+      )}
+
+      {/* Actions — icônes rondes, même gabarit partout */}
+      <div className="flex items-center gap-2 shrink-0 ml-auto">
+        {onSave && (
+          <Button size="icon" onClick={onSave} disabled={saving} aria-label="Enregistrer" className="h-11 w-11 rounded-xl">
+            {saving ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <Save className="h-[18px] w-[18px]" />}
+          </Button>
+        )}
+        {store && (
+          <Button size="icon" variant="outline" asChild aria-label="Voir la boutique" className="h-11 w-11 rounded-xl">
+            <a href={storeUrl} target="_blank" rel="noopener"><Eye className="h-[18px] w-[18px]" /></a>
+          </Button>
+        )}
+        {store && (
+          <Button
+            size="sm"
+            onClick={handlePublish}
+            disabled={togglePublish.isPending}
+            className={`h-11 rounded-xl px-4 gap-1.5 ${
+              store.is_published
+                ? "bg-warning hover:bg-warning/90 text-warning-foreground"
+                : "bg-success hover:bg-success/90 text-success-foreground"
+            }`}
+          >
+            <Rocket className="h-[18px] w-[18px]" />
+            <span className="hidden sm:inline">{store.is_published ? "Dépublier" : "Publier"}</span>
+          </Button>
+        )}
       </div>
     </div>
   );
 }
+
 
 export default StoreHeader;

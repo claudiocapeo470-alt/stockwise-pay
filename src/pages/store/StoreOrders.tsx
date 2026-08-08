@@ -11,7 +11,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck } from "lucide-react";
 import { useOrderNotifications } from '@/hooks/useOrderNotifications';
-import { StoreHeader } from '@/components/store/StoreHeader';
+
 
 const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }> = {
   pending: { label: "En attente", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", emoji: "⏳" },
@@ -55,7 +55,7 @@ export default function StoreOrders() {
 
   return (
     <div className="space-y-5 animate-fade-in max-w-5xl mx-auto w-full">
-      <StoreHeader title="Commandes reçues" subtitle="Suivi et gestion des commandes de votre boutique" />
+      
 
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
@@ -121,45 +121,55 @@ export default function StoreOrders() {
         </Table>
       </Card>
 
-      {/* Mobile cards */}
+      {/* Mobile cards — design minimaliste */}
       <div className="md:hidden space-y-3">
         {orders.map(order => {
           const status = STATUS_MAP[order.status] || STATUS_MAP.pending;
           const items = Array.isArray(order.items) ? order.items : [];
           return (
-            <Card key={order.id} className="cursor-pointer" onClick={() => setSelectedOrder(order)}>
-              <CardContent className="p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-sm font-medium">{order.order_number}</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>{status.emoji} {status.label}</span>
+            <div
+              key={order.id}
+              onClick={() => setSelectedOrder(order)}
+              className="bg-card border border-border rounded-2xl p-4 shadow-soft active:scale-[0.99] transition-transform cursor-pointer"
+            >
+              <div className="flex items-start gap-3">
+                <div className="h-11 w-11 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+                  <Package className="h-5 w-5 text-accent" />
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-sm">{order.customer_name}</p>
-                    <p className="text-xs text-muted-foreground">{order.customer_phone}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold">{(order.total || 0).toLocaleString()} F</p>
-                    <p className="text-xs text-muted-foreground">{items.length} article{items.length > 1 ? 's' : ''}</p>
-                  </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-[15px] truncate leading-tight">{order.customer_name}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                    {order.order_number} · {items.length} article{items.length > 1 ? 's' : ''}
+                  </p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString('fr-FR')}</span>
-                  <Select value={order.status} onValueChange={v => handleStatusChange(order.id, v)}>
-                    <SelectTrigger className="w-32 h-8 text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(STATUS_MAP).map(([key, val]) => (
-                        <SelectItem key={key} value={key}>{val.emoji} {val.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
+                <p className="font-bold text-[15px] shrink-0">{(order.total || 0).toLocaleString()} <span className="text-xs font-normal text-muted-foreground">F</span></p>
+              </div>
+
+              <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-between gap-2">
+                <span className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString('fr-FR')}</span>
+                <Select value={order.status} onValueChange={v => handleStatusChange(order.id, v)}>
+                  <SelectTrigger className="w-36 h-9 rounded-xl text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(STATUS_MAP).map(([key, val]) => (
+                      <SelectItem key={key} value={key}>{val.emoji} {val.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           );
         })}
-        {orders.length === 0 && <p className="text-center py-8 text-muted-foreground">Aucune commande reçue</p>}
+        {orders.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="h-20 w-20 rounded-2xl bg-accent/10 flex items-center justify-center mb-4">
+              <Package className="h-10 w-10 text-accent" />
+            </div>
+            <p className="font-semibold text-lg">Aucune commande reçue</p>
+            <p className="text-sm text-muted-foreground mt-1 max-w-xs">Les commandes de votre boutique s'afficheront ici.</p>
+          </div>
+        )}
       </div>
+
 
       {/* Order detail modal */}
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>

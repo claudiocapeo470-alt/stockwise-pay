@@ -110,7 +110,7 @@ export default function Stocks() {
         searchPlaceholder="Rechercher un produit..."
         segments={
           <>
-            <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
+            <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm rounded-xl"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
             <ImportProductsDialog />
             {!isMobile && (
               <div className="hidden lg:inline-flex rounded-lg border border-border bg-card p-0.5">
@@ -197,62 +197,75 @@ export default function Stocks() {
             </Card>
           )}
 
-          {/* Grid view */}
+          {/* Grid view — cartes produits minimalistes */}
           {(isMobile || viewMode === "grid") && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredProducts.map((product) => {
                 const status = getStockStatus(product);
                 return (
-                  <Card key={product.id} className="hover:shadow-md transition-all">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-3 min-w-0">
-                          {product.image_url && (
-                            <img src={product.image_url} alt={product.name} loading="lazy" className="h-11 w-11 rounded-xl object-cover shrink-0 border border-border/60" />
-                          )}
+                  <div
+                    key={product.id}
+                    className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium"
+                  >
+                    <div className="flex items-center gap-3">
+                      {product.image_url ? (
+                        <img src={product.image_url} alt={product.name} loading="lazy" className="h-12 w-12 rounded-xl object-cover shrink-0 border border-border/60" />
+                      ) : (
+                        <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                          <Package className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-[15px] truncate leading-tight">{product.name}</p>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
+                          {product.category || (product.sku ? `SKU ${product.sku}` : "Sans catégorie")}
+                        </p>
+                      </div>
+                      <Badge variant={status.variant} className="shrink-0">{status.label}</Badge>
+                    </div>
 
-                          <div className="min-w-0">
-                            <CardTitle className="text-base truncate">{product.name}</CardTitle>
-                            {product.sku && <p className="text-xs text-muted-foreground mt-0.5">SKU: {product.sku}</p>}
-                          </div>
-                        </div>
-                        <Badge variant={status.variant}>{status.label}</Badge>
+                    <div className="mt-4 flex items-end justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Prix</p>
+                        <p className="text-lg font-bold leading-tight truncate">{formatCurrency(product.price)}</p>
                       </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {product.category && <Badge variant="outline">{product.category}</Badge>}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Prix unitaire</p>
-                          <p className="text-lg font-bold">{formatCurrency(product.price)}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Stock</p>
-                          <p className="text-lg font-bold">{product.quantity}<span className="text-xs font-normal text-muted-foreground"> / {product.min_quantity}</span></p>
-                        </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Stock</p>
+                        <p className="text-lg font-bold leading-tight">
+                          {product.quantity}
+                          <span className="text-xs font-normal text-muted-foreground"> / {product.min_quantity}</span>
+                        </p>
                       </div>
-                      <div className="flex gap-2 pt-2 border-t border-border">
-                        <Button variant="outline" size="sm" onClick={() => handleEditProduct(product)} className="flex-1"><Edit2 className="h-3.5 w-3.5 mr-1.5" />Modifier</Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild><Button variant="outline" size="sm" className="flex-1"><Trash2 className="h-3.5 w-3.5 mr-1.5" />Supprimer</Button></AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-                              <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer "{product.name}" ?</AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDeleteProduct(product)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+
+                    <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-end gap-1">
+                      <Button variant="ghost" size="sm" onClick={() => handleEditProduct(product)} className="h-9 px-3 rounded-lg gap-1.5 text-muted-foreground hover:text-foreground">
+                        <Edit2 className="h-4 w-4" /> Modifier
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+                            <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer "{product.name}" ?</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDeleteProduct(product)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
                 );
               })}
             </div>
           )}
+
         </>
       )}
 

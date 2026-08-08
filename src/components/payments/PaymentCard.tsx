@@ -132,129 +132,58 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
 
   return (
     <>
-      <Card className="hover:shadow-large transition-shadow hover-lift">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-surface-secondary p-2 rounded-lg">
-              <StatusIcon className={cn("h-5 w-5", status.iconColor)} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h4 className="font-semibold text-foreground text-lg">
-                  {getFullName() || 'Client inconnu'}
-                </h4>
-                {payment.sale_id && (
-                  <Badge className="bg-blue-500 hover:bg-blue-600 text-white">
-                    Vente
-                  </Badge>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className={cn("text-xs", status.className)}>
-                  {status.label}
-                </Badge>
-                {payment.payment_method && (
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MethodIcon className="h-3 w-3" />
-                    <span>{methodLabel}</span>
-                  </div>
-                )}
-              </div>
-            </div>
+      <div className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium">
+        <div className="flex items-start gap-3">
+          <div className="h-11 w-11 rounded-xl bg-muted flex items-center justify-center shrink-0">
+            <StatusIcon className={cn("h-5 w-5", status.iconColor)} />
           </div>
-
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold text-[15px] truncate leading-tight">{getFullName() || 'Client inconnu'}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5 truncate">
+              <MethodIcon className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{methodLabel}</span>
+              <span>·</span>
+              <span>{formatDate(payment.payment_date)}</span>
+            </p>
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg shrink-0 text-muted-foreground">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
-                <Edit className="mr-2 h-4 w-4" />
-                Modifier
+                <Edit className="mr-2 h-4 w-4" />Modifier
               </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={handleDelete}
-                className="text-destructive focus:text-destructive"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Supprimer
+              <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
+                <Trash2 className="mr-2 h-4 w-4" />Supprimer
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
-        <div className="space-y-3">
-          {/* Amounts */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">Montant total</p>
-              <p className="font-semibold text-foreground">
-                {formatAmount(payment.total_amount)}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">Montant payé</p>
-              <p className="font-semibold text-success">
-                {formatAmount(payment.paid_amount)}
-              </p>
-            </div>
+        <div className="mt-4 flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Payé</p>
+            <p className="text-lg font-bold leading-tight text-success truncate">{formatAmount(payment.paid_amount)}</p>
           </div>
-
-          {/* Remaining amount */}
-          {payment.remaining_amount > 0 && (
-            <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Reste à payer:</span>
-                <span className="font-semibold text-warning">
-                  {formatAmount(payment.remaining_amount)}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Dates */}
-          <div className="flex justify-between items-center text-sm text-muted-foreground">
-            <div>
-              <span>Payé le: </span>
-              <span className="text-foreground">
-                {formatDate(payment.payment_date)}
-              </span>
-            </div>
-            {payment.due_date && (
-              <div>
-                <span>Échéance: </span>
-                <span className={cn(
-                  "font-medium",
-                  new Date(payment.due_date) < new Date() && payment.status !== 'completed'
-                    ? "text-destructive"
-                    : "text-foreground"
-                )}>
-                  {formatDate(payment.due_date)}
-                </span>
-              </div>
-            )}
+          <div className="text-right shrink-0">
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Total</p>
+            <p className="text-lg font-bold leading-tight">{formatAmount(payment.total_amount)}</p>
           </div>
-
-          {/* Phone */}
-          {payment.customer_phone && (
-            <div className="text-sm text-muted-foreground">
-              <span>Tél: </span>
-              <span className="text-foreground">{payment.customer_phone}</span>
-            </div>
-          )}
-
-          {/* Notes */}
-          {payment.notes && (
-            <div className="p-3 bg-surface-secondary rounded-lg">
-              <p className="text-sm text-foreground">{payment.notes}</p>
-            </div>
-          )}
         </div>
-      </CardContent>
-      </Card>
+
+        <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-between gap-2">
+          <Badge className={cn("text-xs", status.className)}>{status.label}</Badge>
+          {payment.remaining_amount > 0 ? (
+            <span className="text-xs font-semibold text-warning">Reste {formatAmount(payment.remaining_amount)}</span>
+          ) : payment.due_date ? (
+            <span className="text-xs text-muted-foreground">Échéance {formatDate(payment.due_date)}</span>
+          ) : null}
+        </div>
+      </div>
+
 
       <EditPaymentDialog 
         payment={payment}

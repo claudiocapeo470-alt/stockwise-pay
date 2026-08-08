@@ -246,55 +246,54 @@ export default function Factures() {
             </Card>
           )}
 
-          {/* Grid view */}
+          {/* Grid view — cartes documents minimalistes */}
           {(isMobile || viewMode === "grid") && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredInvoices.map((invoice) => (
-                <Card key={invoice.id} className="border-border/60 hover:shadow-md transition-all">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0 bg-primary/10">
-                          <FileText className="h-5 w-5 text-primary" />
-                        </div>
-                        <div className="min-w-0">
-                          <CardTitle className="text-base truncate">{invoice.document_number}</CardTitle>
-                          <p className="text-xs text-muted-foreground mt-0.5 truncate">{invoice.client_name}</p>
-                        </div>
-                      </div>
-                      <Badge className={statusColors[invoice.status]}>{statusLabels[invoice.status]}</Badge>
+                <div key={invoice.id} className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium">
+                  <div className="flex items-start gap-3">
+                    <div className="h-11 w-11 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+                      <FileText className="h-5 w-5 text-accent" />
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Date</p>
-                        <p className="text-sm font-medium">{format(new Date(invoice.issue_date), 'dd/MM/yyyy', { locale: fr })}</p>
-                      </div>
-                      <div>
-                        <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Montant</p>
-                        <p className="text-lg font-bold">{invoice.total_amount.toLocaleString()} <span className="text-xs font-normal">FCFA</span></p>
-                      </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-[15px] truncate leading-tight">{invoice.document_number}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">{invoice.client_name}</p>
                     </div>
-                    <div className="flex gap-2 pt-2 border-t border-border/60">
-                      <Button variant="outline" size="sm" onClick={() => navigate(`/app/factures/${invoice.id}/preview`)} className="flex-1"><Eye className="h-3.5 w-3.5 mr-1.5" />Voir</Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="outline" size="sm"><MoreVertical className="h-3.5 w-3.5" /></Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => navigate(`/app/factures/${invoice.id}`)}><Edit className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDuplicate(invoice.id!)}><Copy className="mr-2 h-4 w-4" />Dupliquer</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDownload(invoice.id!)}><Download className="mr-2 h-4 w-4" />Télécharger</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => { setInvoiceToDelete(invoice.id!); setDeleteDialogOpen(true); }} className="text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                    <Badge className={`${statusColors[invoice.status]} shrink-0`}>{statusLabels[invoice.status]}</Badge>
+                  </div>
+
+                  <div className="mt-4 flex items-end justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Date</p>
+                      <p className="text-sm font-medium">{format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}</p>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="text-right shrink-0">
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Montant</p>
+                      <p className="text-lg font-bold leading-tight">{invoice.total_amount.toLocaleString()} <span className="text-xs font-normal text-muted-foreground">FCFA</span></p>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-end gap-1">
+                    <Button variant="ghost" size="sm" onClick={() => navigate(`/app/factures/${invoice.id}/preview`)} className="h-9 px-3 rounded-lg gap-1.5 text-muted-foreground hover:text-foreground">
+                      <Eye className="h-4 w-4" /> Voir
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground"><MoreVertical className="h-4 w-4" /></Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => navigate(`/app/factures/${invoice.id}`)}><Edit className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDuplicate(invoice.id!)}><Copy className="mr-2 h-4 w-4" />Dupliquer</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDownload(invoice.id!)}><Download className="mr-2 h-4 w-4" />Télécharger</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setInvoiceToDelete(invoice.id!); setDeleteDialogOpen(true); }} className="text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
               ))}
             </div>
           )}
+
         </>
       )}
 

@@ -159,39 +159,37 @@ export default function Paiements() {
         primary={<AddPaymentDialog />}
       />
 
-      {/* Filtres */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-end border-b border-border/60 pb-4">
-
-        <div className="flex gap-2 flex-wrap items-center">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-[150px] h-10 rounded-xl bg-muted/40 border-border/60"><SelectValue placeholder="Statut" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tous statuts</SelectItem>
-              <SelectItem value="completed">Payés</SelectItem>
-              <SelectItem value="pending">En attente</SelectItem>
-              <SelectItem value="partial">Partiels</SelectItem>
-              <SelectItem value="overdue">En retard</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={methodFilter} onValueChange={setMethodFilter}>
-            <SelectTrigger className="w-full sm:w-[150px] h-10 rounded-xl bg-muted/40 border-border/60"><SelectValue placeholder="Méthode" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes méthodes</SelectItem>
-              <SelectItem value="especes">Espèces</SelectItem>
-              <SelectItem value="orange_money">Orange Money</SelectItem>
-              <SelectItem value="mtn_money">MTN Money</SelectItem>
-              <SelectItem value="wave">Wave</SelectItem>
-              <SelectItem value="carte_bancaire">Carte</SelectItem>
-            </SelectContent>
-          </Select>
-          {!isMobile && (
-            <div className="inline-flex rounded-xl border border-border bg-card p-0.5">
-              <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0 rounded-lg"><List className="h-4 w-4" /></Button>
-              <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0 rounded-lg"><Grid3x3 className="h-4 w-4" /></Button>
-            </div>
-          )}
-        </div>
+      {/* Filtres — même disposition segmentée que la page Stocks */}
+      <div className="flex items-center gap-2">
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="flex-1 min-w-0 h-11 rounded-xl bg-card border border-border shadow-soft text-[13px] font-semibold"><SelectValue placeholder="Statut" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous statuts</SelectItem>
+            <SelectItem value="completed">Payés</SelectItem>
+            <SelectItem value="pending">En attente</SelectItem>
+            <SelectItem value="partial">Partiels</SelectItem>
+            <SelectItem value="overdue">En retard</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={methodFilter} onValueChange={setMethodFilter}>
+          <SelectTrigger className="flex-1 min-w-0 h-11 rounded-xl bg-card border border-border shadow-soft text-[13px] font-semibold"><SelectValue placeholder="Méthode" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Toutes méthodes</SelectItem>
+            <SelectItem value="especes">Espèces</SelectItem>
+            <SelectItem value="orange_money">Orange Money</SelectItem>
+            <SelectItem value="mtn_money">MTN Money</SelectItem>
+            <SelectItem value="wave">Wave</SelectItem>
+            <SelectItem value="carte_bancaire">Carte</SelectItem>
+          </SelectContent>
+        </Select>
+        {!isMobile && (
+          <div className="inline-flex rounded-xl border border-border bg-card p-0.5 shrink-0">
+            <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0 rounded-lg"><List className="h-4 w-4" /></Button>
+            <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0 rounded-lg"><Grid3x3 className="h-4 w-4" /></Button>
+          </div>
+        )}
       </div>
+
 
       {/* Content */}
       {filteredPayments.length === 0 ? (

@@ -861,7 +861,76 @@ export default function PublicStore() {
     </div>
   );
 
+  // ─── FORMULAIRE D'AVIS CLIENT ────────────────────────────────────────────────
+  const ReviewForm = ({ productId }: { productId: string }) => {
+    const [name, setName] = useState("");
+    const [rating, setRating] = useState(0);
+    const [hover, setHover] = useState(0);
+    const [comment, setComment] = useState("");
+    const [sending, setSending] = useState(false);
+    const [sent, setSent] = useState(false);
+    const [error, setError] = useState("");
+
+    if (store?.enable_reviews === false) return null;
+
+    if (sent) return (
+      <div className="rounded-2xl border border-border p-5 text-center">
+        <CheckCircle className="h-8 w-8 mx-auto mb-2" style={{ color }} />
+        <p className="text-sm font-semibold text-foreground">Merci pour votre avis !</p>
+        <p className="text-xs text-muted-foreground mt-1">Il sera publié après validation par la boutique.</p>
+      </div>
+    );
+
+    const send = async () => {
+      setSending(true); setError("");
+      const res = await submitReview({ productId, name, rating, comment });
+      setSending(false);
+      if (!res?.ok) { setError(res?.error || "Erreur"); return; }
+      setSent(true);
+    };
+
+    return (
+      <div className="rounded-2xl border border-border p-5 space-y-4">
+        <p className="text-sm font-semibold text-foreground">Laisser un avis</p>
+        <div className="flex items-center gap-1">
+          {[1,2,3,4,5].map(s => (
+            <button key={s} type="button" onMouseEnter={() => setHover(s)} onMouseLeave={() => setHover(0)} onClick={() => setRating(s)} aria-label={`${s} étoiles`}>
+              <Star className={`h-6 w-6 transition-colors ${s <= (hover || rating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/40"}`} />
+            </button>
+          ))}
+        </div>
+        <input
+          value={name}
+          onChange={e => setName(e.target.value)}
+          maxLength={60}
+          placeholder="Votre nom"
+          className="w-full h-11 px-4 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2"
+          style={{ ["--tw-ring-color" as any]: color }}
+        />
+        <textarea
+          value={comment}
+          onChange={e => setComment(e.target.value)}
+          maxLength={1000}
+          rows={3}
+          placeholder="Votre commentaire (optionnel)"
+          className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm resize-none focus:outline-none focus:ring-2"
+          style={{ ["--tw-ring-color" as any]: color }}
+        />
+        {error && <p className="text-xs text-red-500">{error}</p>}
+        <button
+          onClick={send}
+          disabled={sending}
+          className="w-full h-11 rounded-full text-white text-sm font-semibold disabled:opacity-60"
+          style={{ background: color }}
+        >
+          {sending ? "Envoi…" : "Publier mon avis"}
+        </button>
+      </div>
+    );
+  };
+
   // ─── PRODUCT DETAIL PAGE — style Capture 4-5 ────────────────────────────────
+
   const ProductDetailPage = () => {
     const p = activeProduct;
     const [imgIdx, setImgIdx] = useState(0);

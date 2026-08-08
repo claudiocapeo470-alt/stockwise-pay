@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useOnlineStore, useStoreReviews } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
 import { Star, Check, X, Trash2 } from "lucide-react";
-import { StoreHeader } from "@/components/store/StoreHeader";
+
 
 export default function StoreReviews() {
   const { store } = useOnlineStore();
@@ -129,8 +129,10 @@ export default function StoreReviews() {
             </Card>
           );
         })}
-        {reviews.length === 0 && <p className="text-center py-8 text-muted-foreground col-span-full">Aucun avis</p>}
       </div>
+      </>
+      )}
     </div>
+
   );
 }

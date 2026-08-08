@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, Download, TrendingUp, ShoppingCart, Receipt, BarChart3 } from "lucide-react";
+import { CalendarIcon, FileSpreadsheet, FileText, TrendingUp, ShoppingCart, Receipt, BarChart3 } from "lucide-react";
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, parseISO, isWithinInterval } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
@@ -84,23 +84,62 @@ export default function Performance() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin rounded-full"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-5 animate-fade-in">
-      <p className="text-sm text-muted-foreground">Suivez l'évolution de votre activité</p>
+    <div className="space-y-4 animate-fade-in max-w-7xl mx-auto pb-8">
+      {/* Barre d'outils : période + produit à gauche, exports à droite */}
+      <div className="flex flex-wrap items-center gap-2">
+        <Select value={period} onValueChange={(v: PeriodType) => setPeriod(v)}>
+          <SelectTrigger className="w-[140px] h-11 rounded-2xl bg-card border-0 shadow-sm"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="today">Aujourd'hui</SelectItem>
+            <SelectItem value="week">Cette semaine</SelectItem>
+            <SelectItem value="month">Ce mois</SelectItem>
+            <SelectItem value="custom">Personnalisée</SelectItem>
+          </SelectContent>
+        </Select>
+        {period === "custom" && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" className="h-11 gap-2 rounded-2xl bg-card shadow-sm">
+                <CalendarIcon className="h-4 w-4" />
+                {dateRange?.from && dateRange?.to ? `${format(dateRange.from, "dd/MM")} - ${format(dateRange.to, "dd/MM")}` : "Dates"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0"><Calendar mode="range" selected={dateRange} onSelect={setDateRange} locale={fr} /></PopoverContent>
+          </Popover>
+        )}
+        <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+          <SelectTrigger className="w-[160px] h-11 rounded-2xl bg-card border-0 shadow-sm"><SelectValue placeholder="Produit" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous les produits</SelectItem>
+            {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+
+        <div className="ml-auto flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => handleExport('excel')}
+            className="h-11 rounded-2xl bg-success/10 text-success hover:bg-success/20 font-semibold"
+          >
+            <FileSpreadsheet className="h-4 w-4 mr-2" /> Excel
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => handleExport('pdf')}
+            className="h-11 rounded-2xl bg-destructive/10 text-destructive hover:bg-destructive/20 font-semibold"
+          >
+            <FileText className="h-4 w-4 mr-2" /> PDF
+          </Button>
+        </div>
+      </div>
 
       {isPersonalView && (
-        <div className="bg-primary/5 border border-primary/20 rounded-lg px-3 py-2 text-xs text-primary">
+        <div className="bg-primary/5 rounded-2xl px-3 py-2 text-xs text-primary">
           📊 Vous consultez uniquement vos propres statistiques.
         </div>
       )}
+
 
       {/* Stats — style Stocknix */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -150,42 +189,6 @@ export default function Performance() {
         </Card>
       </div>
 
-      {/* Toolbar / Filters */}
-      <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
-        <div className="flex flex-wrap gap-2">
-          <Select value={period} onValueChange={(v: PeriodType) => setPeriod(v)}>
-            <SelectTrigger className="w-[150px] h-11 rounded-xl"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="today">Aujourd'hui</SelectItem>
-              <SelectItem value="week">Cette semaine</SelectItem>
-              <SelectItem value="month">Ce mois</SelectItem>
-              <SelectItem value="custom">Personnalisée</SelectItem>
-            </SelectContent>
-          </Select>
-          {period === "custom" && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="h-11 gap-2">
-                  <CalendarIcon className="h-4 w-4" />
-                  {dateRange?.from && dateRange?.to ? `${format(dateRange.from, "dd/MM")} - ${format(dateRange.to, "dd/MM")}` : "Dates"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0"><Calendar mode="range" selected={dateRange} onSelect={setDateRange} locale={fr} /></PopoverContent>
-            </Popover>
-          )}
-          <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-            <SelectTrigger className="w-[170px] h-11 rounded-xl"><SelectValue placeholder="Produit" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tous les produits</SelectItem>
-              {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => handleExport('pdf')} className="h-11 rounded-xl"><Download className="h-4 w-4 mr-2" />PDF</Button>
-          <Button variant="outline" onClick={() => handleExport('excel')} className="h-11 rounded-xl"><Download className="h-4 w-4 mr-2" />Excel</Button>
-        </div>
-      </div>
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">

@@ -277,7 +277,8 @@ export default function Rapports() {
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
           Rapports détaillés
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="-mx-4 px-4 overflow-x-auto no-scrollbar snap-x snap-mandatory">
+          <div className="flex gap-3 w-max pb-1">
           <ReportCard
             title="Ventes"
             icon={TrendingUp}
@@ -305,7 +306,9 @@ export default function Rapports() {
             onExcel={() => handleExport('excel', 'payments')}
             onPDF={() => handleExport('pdf', 'payments')}
           />
+          </div>
         </div>
+
       </div>
 
       <ReportDialog
@@ -339,12 +342,15 @@ function KPICard({ icon: Icon, label, value, sublabel, tint = 'primary' }: any) 
 
 function ReportCard({ title, icon: Icon, stats, onView, onExcel, onPDF, tint = 'primary' }: any) {
   return (
-    <div className="rounded-3xl bg-card p-4 shadow-sm space-y-3">
+    <div className="w-[268px] sm:w-[300px] shrink-0 snap-start rounded-3xl bg-card p-4 shadow-sm space-y-3">
       <div className="flex items-center gap-3">
         <div className={`h-10 w-10 rounded-full flex items-center justify-center ${TINTS[tint]}`}>
           <Icon className="h-[18px] w-[18px]" />
         </div>
-        <h3 className="font-semibold text-foreground">{title}</h3>
+        <h3 className="font-semibold text-foreground flex-1">{title}</h3>
+        <Button size="sm" variant="ghost" className="h-8 rounded-full text-xs px-3" onClick={onView}>
+          <Eye className="h-3.5 w-3.5 mr-1" /> Voir
+        </Button>
       </div>
       <div className="grid grid-cols-2 gap-2">
         {stats.map((s: any, i: number) => (
@@ -354,19 +360,27 @@ function ReportCard({ title, icon: Icon, stats, onView, onExcel, onPDF, tint = '
           </div>
         ))}
       </div>
-      <div className="flex gap-2">
-        <Button size="sm" className="flex-1 h-10 rounded-full text-xs" onClick={onView}>
-          <Eye className="h-3.5 w-3.5 mr-1" /> Voir
+      <div className="grid grid-cols-2 gap-2">
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-10 rounded-2xl text-xs font-semibold bg-success/10 text-success hover:bg-success/20"
+          onClick={onExcel}
+        >
+          <FileSpreadsheet className="h-4 w-4 mr-1.5" /> Excel
         </Button>
-        <Button size="icon" variant="outline" className="h-10 w-10 rounded-full" onClick={onExcel} title="Excel">
-          <FileSpreadsheet className="h-4 w-4" />
-        </Button>
-        <Button size="icon" variant="outline" className="h-10 w-10 rounded-full" onClick={onPDF} title="PDF">
-          <FileText className="h-4 w-4" />
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-10 rounded-2xl text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20"
+          onClick={onPDF}
+        >
+          <FileText className="h-4 w-4 mr-1.5" /> PDF
         </Button>
       </div>
     </div>
   );
 }
+
 
 

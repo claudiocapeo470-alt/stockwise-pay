@@ -14,13 +14,8 @@ export function ModuleGuard({ children }: ModuleGuardProps) {
 
   if (isEmployee) return <>{children}</>;
 
-  if (authLoading || companyLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+  if (authLoading || companyLoading) return <>{children}</>;
+
 
   if (!onboardingCompleted) {
     return <Navigate to="/onboarding" replace />;

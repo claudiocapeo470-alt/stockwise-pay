@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import { SubscriptionSuccessView } from '@/components/subscription/SubscriptionSuccessView';
 
 export default function SubscriptionCallback() {
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ export default function SubscriptionCallback() {
     setPlan(planParam);
 
     if (!paymentId) {
-      // Try to get from subscriber record
       const checkSubscriber = async () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) { setStatus('failed'); return; }
@@ -49,19 +48,13 @@ export default function SubscriptionCallback() {
         body: { payment_id: id }
       });
 
-      if (error || !data) {
-        setStatus('failed');
-        return;
-      }
+      if (error || !data) { setStatus('failed'); return; }
 
       if (data.status === 'success') {
         setStatus('success');
         if (data.plan) setPlan(data.plan);
-        // Auto-redirect after 3 seconds
-        setTimeout(() => navigate('/app'), 3000);
       } else if (data.status === 'pending') {
-        // Retry after 3 seconds
-        setTimeout(() => verifyPayment(id), 3000);
+        setTimeout(() => verifyPayment(id), 2000);
       } else {
         setStatus('failed');
       }
@@ -71,54 +64,40 @@ export default function SubscriptionCallback() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="max-w-md w-full">
-        <CardContent className="pt-8 pb-8 text-center space-y-6">
-          {status === 'loading' && (
-            <>
-              <Loader2 className="h-16 w-16 text-primary mx-auto animate-spin" />
-              <div>
-                <h2 className="text-xl font-bold">Vérification du paiement en cours...</h2>
-                <p className="text-muted-foreground text-sm mt-2">Veuillez patienter quelques instants</p>
-              </div>
-            </>
-          )}
+    <div className="h-[100dvh] overflow-hidden bg-background flex flex-col px-5 py-6">
+      <div className="mx-auto w-full max-w-md flex-1 min-h-0">
+        {status === 'loading' && (
+          <div className="h-full flex flex-col items-center justify-center gap-3 text-center">
+            <Loader2 className="h-8 w-8 text-primary animate-spin" />
+            <p className="text-sm text-muted-foreground">Confirmation du paiement…</p>
+          </div>
+        )}
 
-          {status === 'success' && (
-            <>
-              <div className="h-20 w-20 rounded-full bg-success/10 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="h-12 w-12 text-success" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">Félicitations ! 🎉</h2>
-                <p className="text-muted-foreground mt-2">
-                  Votre abonnement <span className="font-semibold text-foreground uppercase">{plan}</span> est activé.
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">Redirection automatique dans 3 secondes...</p>
-              </div>
-              <Button onClick={() => navigate('/app')} className="w-full">
-                Aller au dashboard
-              </Button>
-            </>
-          )}
+        {status === 'success' && (
+          <SubscriptionSuccessView
+            planLabel={plan?.toUpperCase()}
+            description={`Félicitations, votre abonnement ${plan ? plan.toUpperCase() : 'Premium'} est activé. Profitez de toutes les fonctionnalités de Stocknix !`}
+            onDone={() => navigate('/app')}
+            onClose={() => navigate('/app')}
+          />
+        )}
 
-          {status === 'failed' && (
-            <>
-              <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
-                <XCircle className="h-12 w-12 text-destructive" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">Paiement non abouti</h2>
-                <p className="text-muted-foreground mt-2">Aucun montant n'a été débité de votre compte.</p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Button onClick={() => navigate('/tarifs')} className="w-full">Réessayer</Button>
-                <Button variant="outline" onClick={() => navigate('/app')}>Contacter le support</Button>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+        {status === 'failed' && (
+          <div className="h-full flex flex-col items-center justify-center text-center gap-5">
+            <div className="h-24 w-24 rounded-full bg-destructive/10 flex items-center justify-center">
+              <XCircle className="h-12 w-12 text-destructive" />
+            </div>
+            <div className="space-y-1.5">
+              <h2 className="text-2xl font-extrabold">Paiement non abouti</h2>
+              <p className="text-sm text-muted-foreground">Aucun montant n'a été débité de votre compte.</p>
+            </div>
+            <div className="w-full max-w-xs space-y-2">
+              <Button onClick={() => navigate('/tarifs')} className="w-full h-12 rounded-full">Réessayer</Button>
+              <Button variant="ghost" onClick={() => navigate('/app')} className="w-full h-12 rounded-full">Retour à l'accueil</Button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

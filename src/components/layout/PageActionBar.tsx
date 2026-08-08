@@ -60,7 +60,7 @@ export function PageActionBar({
   return (
     <div className={className}>
       {segments && (
-        <div className="flex items-center gap-1 rounded-full bg-muted/70 p-1 [&>*]:flex-1 [&_button]:w-full [&_button]:h-10 [&_button]:rounded-full [&_button]:border-0 [&_button]:bg-transparent [&_button]:shadow-none [&_button]:text-[13px] [&_button]:font-semibold [&_button]:text-muted-foreground [&_button:hover]:bg-background [&_button:hover]:text-foreground [&_button]:px-2">
+        <div className="flex items-center gap-2 [&>*]:flex-1 [&_button]:w-full [&_button]:h-11 [&_button]:rounded-xl [&_button]:border [&_button]:border-border [&_button]:bg-card [&_button]:shadow-soft [&_button]:text-[13px] [&_button]:font-semibold [&_button]:text-foreground [&_button:hover]:bg-muted [&_button]:px-2 [&_svg]:text-accent">
           {segments}
         </div>
       )}
@@ -86,14 +86,14 @@ export function PageActionBar({
         </div>
       )}
 
-      {/* Actions flottantes : recherche au-dessus du bouton principal */}
-      <div className="fixed right-4 bottom-24 z-40 flex flex-col items-end gap-3">
+      {/* Actions flottantes : position identique sur toutes les pages, au-dessus de la barre de navigation */}
+      <div className="fixed right-4 bottom-[92px] z-40 flex flex-col items-end gap-3">
         {hasSearch && (
           <button
             type="button"
             aria-label="Rechercher"
             onClick={() => setSearchOpen((v) => !v)}
-            className="h-11 w-11 rounded-full bg-card border border-border shadow-md flex items-center justify-center text-foreground active:scale-95 transition-transform"
+            className="h-12 w-12 rounded-full bg-card border border-border shadow-md flex items-center justify-center text-foreground active:scale-95 transition-transform"
           >
             <Search className="h-[18px] w-[18px]" />
           </button>
@@ -107,3 +107,4 @@ export function PageActionBar({
     </div>
   );
 }
+

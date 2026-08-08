@@ -328,11 +328,14 @@ input, select, textarea {
   color: hsl(var(--primary-foreground)) !important;
   background: hsl(217 91% 45%) !important;
 }
-.stat-scroller > * > * { padding: 1.125rem 1.25rem !important; gap: 0.875rem !important; }
-.stat-scroller > * .text-xl,
-.stat-scroller > * .text-lg { font-size: 1.75rem !important; line-height: 1.1 !important; }
-.stat-scroller > * .text-\[11px\] { font-size: 0.8125rem !important; }
-.stat-scroller > * .rounded-xl { height: 2.75rem !important; width: 2.75rem !important; border-radius: 1rem !important; }
+@media (max-width: 767px) {
+  .stat-scroller > * > * { padding: 1.125rem 1.25rem !important; gap: 0.875rem !important; }
+  .stat-scroller > * .text-xl,
+  .stat-scroller > * .text-lg { font-size: 1.75rem !important; line-height: 1.1 !important; }
+  .stat-scroller > * .text-\[11px\] { font-size: 0.8125rem !important; }
+  .stat-scroller > * .rounded-xl { height: 2.75rem !important; width: 2.75rem !important; border-radius: 1rem !important; }
+}
+
 
 .stat-scroller > *:nth-child(4n + 2) { background: hsl(221 60% 25%) !important; }
 .stat-scroller > *:nth-child(4n + 3) { background: hsl(199 89% 40%) !important; }

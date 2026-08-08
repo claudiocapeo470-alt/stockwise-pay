@@ -221,7 +221,7 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
                     "font-semibold text-lg",
                     remainingAmount > 0 ? "text-warning" : "text-success"
                   )}>
-                    {new Intl.NumberFormat('fr-FR', {
+                    {new Intl.NumberFormat('de-DE', {
                       style: 'currency',
                       currency: 'XOF',
                       minimumFractionDigits: 0

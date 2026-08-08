@@ -19,17 +19,17 @@ interface ExportData {
 }
 
 const formatAmount = (amount: number, currencySymbol: string = 'FCFA'): string => {
-  const formatted = amount.toLocaleString('fr-FR', {
+  const formatted = amount.toLocaleString('de-DE', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
     useGrouping: true
-  }).replace(/\s/g, '.').replace(',', '.');
+  });
 
   return `${formatted} ${currencySymbol}`;
 };
 
 export const exportToPDF = async (data: ExportData, filename: string, currencySymbol: string = 'FCFA') => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageWidth = doc.internal.pageSize.width;
   
   // Couleurs professionnelles

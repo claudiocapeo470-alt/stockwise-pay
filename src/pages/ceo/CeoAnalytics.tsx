@@ -50,8 +50,8 @@ export default function CeoAnalytics() {
         {[
           { label: 'Total users', value: kpis.totalUsers, cls: 'text-teal-400' },
           { label: 'Abonnés actifs', value: kpis.activeSubs, cls: 'text-emerald-400' },
-          { label: 'Revenu total', value: `${kpis.totalRevenue.toLocaleString()} XOF`, cls: 'text-blue-400' },
-          { label: 'Revenu moyen/abonné', value: `${kpis.avgRevenue.toLocaleString()} XOF`, cls: 'text-purple-400' },
+          { label: 'Revenu total', value: `${kpis.totalRevenue.toLocaleString('de-DE')} XOF`, cls: 'text-blue-400' },
+          { label: 'Revenu moyen/abonné', value: `${kpis.avgRevenue.toLocaleString('de-DE')} XOF`, cls: 'text-purple-400' },
         ].map(k => (
           <div key={k.label} className="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-4">
             <p className="text-xs text-slate-500">{k.label}</p>
@@ -104,7 +104,7 @@ export default function CeoAnalytics() {
               {revenueByMonth.map((r, i) => (
                 <tr key={i} className="border-b border-slate-800/50">
                   <td className="p-3 text-slate-300">{r.month}</td>
-                  <td className="p-3 text-right text-white font-medium">{r.amount.toLocaleString()}</td>
+                  <td className="p-3 text-right text-white font-medium">{r.amount.toLocaleString('de-DE')}</td>
                 </tr>
               ))}
             </tbody>

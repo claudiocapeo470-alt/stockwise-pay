@@ -500,7 +500,7 @@ export default function Caisse() {
         thank_you_message: "Merci pour votre achat !",
       });
       setShowReceipt(true);
-      toast({ title: "✅ Vente validée", description: `Paiement ${paymentMethod} — ${total.toLocaleString()} FCFA` });
+      toast({ title: "✅ Vente validée", description: `Paiement ${paymentMethod} — ${total.toLocaleString('de-DE')} FCFA` });
     } catch {
       toast({ title: "Erreur", description: "Impossible d'enregistrer la vente", variant: "destructive" });
     }
@@ -569,7 +569,7 @@ export default function Caisse() {
     setShowOpenCashModal(false);
     setSessionSales({ total: 0, cash: 0, mobile: 0, card: 0 });
     setSessionMovements([]);
-    toast({ title: "✅ Caisse ouverte", description: `Fond de caisse: ${amount.toLocaleString()} FCFA` });
+    toast({ title: "✅ Caisse ouverte", description: `Fond de caisse: ${amount.toLocaleString('de-DE')} FCFA` });
   };
 
   const closeCashSession = async () => {
@@ -618,7 +618,7 @@ export default function Caisse() {
     if (error) { toast({ title: "Erreur", description: "Impossible d'enregistrer le mouvement", variant: "destructive" }); return; }
     setSessionMovements(prev => [...prev, { id: data.id, type: movementType, amount, category: movementCategory, description: movementDescription, created_at: data.created_at }]);
     setShowMovementModal(false); setMovementAmount(""); setMovementCategory(""); setMovementDescription("");
-    toast({ title: movementType === 'entry' ? "💰 Entrée enregistrée" : "💸 Dépense enregistrée", description: `${amount.toLocaleString()} FCFA` });
+    toast({ title: movementType === 'entry' ? "💰 Entrée enregistrée" : "💸 Dépense enregistrée", description: `${amount.toLocaleString('de-DE')} FCFA` });
   };
 
   // Discounts
@@ -644,7 +644,7 @@ export default function Caisse() {
       setCart(prev => prev.map(item => ({ ...item, discount: Math.round(item.price * item.quantity * ratio) })));
     }
     setShowDiscountAmount(false); setDiscountValue("");
-    toast({ title: "Remise appliquée", description: `${amt.toLocaleString()} FCFA de remise` });
+    toast({ title: "Remise appliquée", description: `${amt.toLocaleString('de-DE')} FCFA de remise` });
   };
 
   const removeLastItem = () => { if (cart.length === 0) return; setCart(prev => prev.slice(0, -1)); toast({ title: "Dernier article annulé" }); };
@@ -1068,11 +1068,11 @@ export default function Caisse() {
                 <div className="flex items-center gap-1.5 shrink-0">
                   {item.discount ? (
                     <div className="text-right">
-                      <span className="text-[10px] line-through block" style={{ color: '#EF4444' }}>{(item.price * item.quantity).toLocaleString()}</span>
-                      <span className="text-xs font-bold" style={{ color: '#1F2937' }}>{(item.price * item.quantity - item.discount).toLocaleString()} F</span>
+                      <span className="text-[10px] line-through block" style={{ color: '#EF4444' }}>{(item.price * item.quantity).toLocaleString('de-DE')}</span>
+                      <span className="text-xs font-bold" style={{ color: '#1F2937' }}>{(item.price * item.quantity - item.discount).toLocaleString('de-DE')} F</span>
                     </div>
                   ) : (
-                    <span className="text-xs font-bold" style={{ color: '#1F2937' }}>{(item.price * item.quantity).toLocaleString()} F</span>
+                    <span className="text-xs font-bold" style={{ color: '#1F2937' }}>{(item.price * item.quantity).toLocaleString('de-DE')} F</span>
                   )}
                   <button onClick={(e) => { e.stopPropagation(); removeFromCart(item.id); }}
                     className="h-6 w-6 rounded flex items-center justify-center min-h-[24px]" style={{ color: '#EF4444' }}>
@@ -1089,13 +1089,13 @@ export default function Caisse() {
       <div className="shrink-0 px-3 pb-3 space-y-2" style={{ borderTop: '1px solid #E8EAF0' }}>
         {totalDiscount > 0 && (
           <div className="flex justify-between text-xs pt-2" style={{ color: '#EF4444' }}>
-            <span>Remise</span><span>-{totalDiscount.toLocaleString()} F</span>
+            <span>Remise</span><span>-{totalDiscount.toLocaleString('de-DE')} F</span>
           </div>
         )}
         <div className="flex items-center justify-between pt-2">
           <span className="text-sm font-bold" style={{ color: '#6B7280' }}>TOTAL</span>
           <span className="font-black" style={{ color: '#4F46E5', fontSize: 'clamp(20px, 4vw, 32px)', fontFamily: 'Nunito, sans-serif' }}>
-            {total.toLocaleString()} F
+            {total.toLocaleString('de-DE')} F
           </span>
         </div>
 
@@ -1154,13 +1154,13 @@ export default function Caisse() {
             </div>
             <div className="rounded-xl p-4 text-center" style={{ background: '#1A1F36' }}>
               <span className="font-black text-white" style={{ fontSize: 32, fontFamily: 'Nunito, sans-serif' }}>
-                {numpadValue || total.toLocaleString()} F
+                {numpadValue || total.toLocaleString('de-DE')} F
               </span>
             </div>
             {numpadMode === 'cash' && numpadValue && parseFloat(numpadValue) >= total && (
               <div className="text-center p-2 rounded-lg" style={{ background: '#ECFDF5' }}>
                 <p className="text-[11px]" style={{ color: '#6B7280' }}>Monnaie à rendre</p>
-                <p className="text-lg font-black" style={{ color: '#10B981' }}>{(parseFloat(numpadValue) - total).toLocaleString()} F</p>
+                <p className="text-lg font-black" style={{ color: '#10B981' }}>{(parseFloat(numpadValue) - total).toLocaleString('de-DE')} F</p>
               </div>
             )}
             <div className="grid grid-cols-3 gap-2">
@@ -1297,7 +1297,7 @@ export default function Caisse() {
           <h3 className="text-lg font-bold text-center" style={{ color: '#1F2937' }}>Paiement Espèces</h3>
           <div className="text-center">
             <p className="text-sm" style={{ color: '#6B7280' }}>Total à payer</p>
-            <p className="font-black" style={{ color: '#4F46E5', fontSize: 28, fontFamily: 'Nunito, sans-serif' }}>{total.toLocaleString()} FCFA</p>
+            <p className="font-black" style={{ color: '#4F46E5', fontSize: 28, fontFamily: 'Nunito, sans-serif' }}>{total.toLocaleString('de-DE')} FCFA</p>
           </div>
           <div>
             <label className="text-sm font-medium" style={{ color: '#1F2937' }}>Montant reçu</label>
@@ -1309,7 +1309,7 @@ export default function Caisse() {
           {cashInput && parseFloat(cashInput) >= total && (
             <div className="text-center p-3 rounded-xl" style={{ background: '#ECFDF5' }}>
               <p className="text-sm" style={{ color: '#6B7280' }}>Monnaie à rendre</p>
-              <p className="text-2xl font-black" style={{ color: '#10B981' }}>{cashChange.toLocaleString()} FCFA</p>
+              <p className="text-2xl font-black" style={{ color: '#10B981' }}>{cashChange.toLocaleString('de-DE')} FCFA</p>
             </div>
           )}
           {cashInput && parseFloat(cashInput) < total && <p className="text-sm text-center font-medium" style={{ color: '#EF4444' }}>Montant insuffisant</p>}
@@ -1361,7 +1361,7 @@ export default function Caisse() {
                   className="w-full text-left p-3 rounded-xl transition-colors" style={{ background: '#F8F9FB' }}>
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-sm" style={{ color: '#1F2937' }}>{ticket.customerName}</span>
-                    <span className="font-bold text-sm" style={{ color: '#4F46E5' }}>{ticket.total.toLocaleString()} F</span>
+                    <span className="font-bold text-sm" style={{ color: '#4F46E5' }}>{ticket.total.toLocaleString('de-DE')} F</span>
                   </div>
                   <p className="text-xs mt-1" style={{ color: '#6B7280' }}>{ticket.items.length} article(s) • {ticket.tableName} • {ticket.createdAt.toLocaleTimeString('fr-FR')}</p>
                 </button>
@@ -1407,17 +1407,17 @@ export default function Caisse() {
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="p-3 rounded-xl" style={{ background: '#F8F9FB' }}>
                 <p style={{ color: '#6B7280' }}>Fond de départ</p>
-                <p className="font-bold text-lg" style={{ color: '#1F2937' }}>{(parseFloat(openingAmount) || 0).toLocaleString()} F</p>
+                <p className="font-bold text-lg" style={{ color: '#1F2937' }}>{(parseFloat(openingAmount) || 0).toLocaleString('de-DE')} F</p>
               </div>
               <div className="p-3 rounded-xl" style={{ background: '#ECFDF5' }}>
                 <p style={{ color: '#6B7280' }}>Total ventes</p>
-                <p className="font-bold text-lg" style={{ color: '#10B981' }}>{sessionSales.total.toLocaleString()} F</p>
+                <p className="font-bold text-lg" style={{ color: '#10B981' }}>{sessionSales.total.toLocaleString('de-DE')} F</p>
               </div>
             </div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex justify-between" style={{ color: '#1F2937' }}><span>Espèces</span><span>{sessionSales.cash.toLocaleString()} F</span></div>
-              <div className="flex justify-between" style={{ color: '#1F2937' }}><span>Mobile Money</span><span>{sessionSales.mobile.toLocaleString()} F</span></div>
-              <div className="flex justify-between" style={{ color: '#1F2937' }}><span>Carte bancaire</span><span>{sessionSales.card.toLocaleString()} F</span></div>
+              <div className="flex justify-between" style={{ color: '#1F2937' }}><span>Espèces</span><span>{sessionSales.cash.toLocaleString('de-DE')} F</span></div>
+              <div className="flex justify-between" style={{ color: '#1F2937' }}><span>Mobile Money</span><span>{sessionSales.mobile.toLocaleString('de-DE')} F</span></div>
+              <div className="flex justify-between" style={{ color: '#1F2937' }}><span>Carte bancaire</span><span>{sessionSales.card.toLocaleString('de-DE')} F</span></div>
             </div>
             <div>
               <label className="text-sm font-medium" style={{ color: '#1F2937' }}>Montant compté en caisse (FCFA)</label>
@@ -1436,7 +1436,7 @@ export default function Caisse() {
                 <div className="p-3 text-center rounded-xl" style={{ background: diff >= 0 ? '#ECFDF5' : '#FEF2F2' }}>
                   <p className="text-xs" style={{ color: '#6B7280' }}>Écart</p>
                   <p className="text-xl font-black" style={{ color: diff >= 0 ? '#10B981' : '#EF4444' }}>
-                    {diff >= 0 ? '+' : ''}{diff.toLocaleString()} F
+                    {diff >= 0 ? '+' : ''}{diff.toLocaleString('de-DE')} F
                   </p>
                 </div>
               );
@@ -1519,7 +1519,7 @@ export default function Caisse() {
                     {m.description && <p className="text-xs" style={{ color: '#6B7280' }}>{m.description}</p>}
                   </div>
                   <span className="font-bold text-sm" style={{ color: m.type === 'entry' ? '#10B981' : '#EF4444' }}>
-                    {m.type === 'entry' ? '+' : '-'}{m.amount.toLocaleString()} F
+                    {m.type === 'entry' ? '+' : '-'}{m.amount.toLocaleString('de-DE')} F
                   </span>
                 </div>
               ))}
@@ -1736,7 +1736,7 @@ export default function Caisse() {
                 <ShoppingCart className="h-4 w-4" />
                 <span className="text-sm font-bold">{totalItems} article(s)</span>
               </div>
-              <span className="text-sm font-black">{total.toLocaleString()} F</span>
+              <span className="text-sm font-black">{total.toLocaleString('de-DE')} F</span>
             </button>
           )}
         </>
@@ -1763,8 +1763,8 @@ export default function Caisse() {
                   </span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate" style={{ color: '#1F2937' }}>{item.name}</p>
-                    <p className="text-xs" style={{ color: '#6B7280' }}>{item.price.toLocaleString()} F × {item.quantity}</p>
-                    {item.discount && <p className="text-[10px]" style={{ color: '#EF4444' }}>Remise: -{item.discount.toLocaleString()} F</p>}
+                    <p className="text-xs" style={{ color: '#6B7280' }}>{item.price.toLocaleString('de-DE')} F × {item.quantity}</p>
+                    {item.discount && <p className="text-[10px]" style={{ color: '#EF4444' }}>Remise: -{item.discount.toLocaleString('de-DE')} F</p>}
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
@@ -1778,7 +1778,7 @@ export default function Caisse() {
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                   <span className="text-sm font-bold ml-1 w-16 text-right" style={{ color: '#1F2937' }}>
-                    {(item.price * item.quantity - (item.discount || 0)).toLocaleString()} F
+                    {(item.price * item.quantity - (item.discount || 0)).toLocaleString('de-DE')} F
                   </span>
                 </div>
               </div>
@@ -1789,7 +1789,7 @@ export default function Caisse() {
           <div className="shrink-0 px-3 py-3 space-y-2" style={{ borderTop: '1px solid #E8EAF0', background: '#FFFFFF' }}>
             <div className="flex items-center justify-between">
               <span className="font-bold" style={{ color: '#6B7280' }}>TOTAL</span>
-              <span className="font-black text-xl" style={{ color: '#4F46E5', fontFamily: 'Nunito, sans-serif' }}>{total.toLocaleString()} F</span>
+              <span className="font-black text-xl" style={{ color: '#4F46E5', fontFamily: 'Nunito, sans-serif' }}>{total.toLocaleString('de-DE')} F</span>
             </div>
             <div className="grid grid-cols-3 gap-2">
               <button onClick={() => cart.length > 0 && setShowCashModal(true)}
@@ -1896,7 +1896,7 @@ function ProductCard({ product, onClick }: { product: any; onClick: () => void }
       {/* Info */}
       <div className="p-2">
         <p className="text-xs font-bold truncate" style={{ color: '#1F2937' }}>{product.name}</p>
-        <p className="text-[13px] font-extrabold mt-0.5" style={{ color: '#4F46E5' }}>{product.price.toLocaleString()} F</p>
+        <p className="text-[13px] font-extrabold mt-0.5" style={{ color: '#4F46E5' }}>{product.price.toLocaleString('de-DE')} F</p>
       </div>
       {/* Badges */}
       {isOutOfStock && (

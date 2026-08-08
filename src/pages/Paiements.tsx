@@ -52,7 +52,7 @@ export default function Paiements() {
   }
 
   const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 }).format(amount).replace('XOF', 'CFA')
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 }).format(amount).replace('XOF', 'CFA')
   }
 
   const getStatusBadge = (status: string) => {
@@ -235,9 +235,9 @@ export default function Paiements() {
                         </div>
                       </TableCell>
                       <TableCell><Badge variant="outline">{payment.payment_method}</Badge></TableCell>
-                      <TableCell className="text-right font-medium">{payment.total_amount.toLocaleString()} FCFA</TableCell>
-                      <TableCell className="text-right">{payment.paid_amount.toLocaleString()} FCFA</TableCell>
-                      <TableCell className="text-right">{payment.remaining_amount.toLocaleString()} FCFA</TableCell>
+                      <TableCell className="text-right font-medium">{payment.total_amount.toLocaleString('de-DE')} FCFA</TableCell>
+                      <TableCell className="text-right">{payment.paid_amount.toLocaleString('de-DE')} FCFA</TableCell>
+                      <TableCell className="text-right">{payment.remaining_amount.toLocaleString('de-DE')} FCFA</TableCell>
                       <TableCell className="text-center">{getStatusBadge(payment.status)}</TableCell>
                     </TableRow>
                   ))}

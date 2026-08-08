@@ -54,7 +54,7 @@ export function GlobalSearch() {
         .limit(5);
       
       products?.forEach(p => all.push({
-        id: p.id, label: p.name, sublabel: `${p.category || ''} — ${p.price?.toLocaleString()} FCFA`,
+        id: p.id, label: p.name, sublabel: `${p.category || ''} — ${p.price?.toLocaleString('de-DE')} FCFA`,
         type: 'product', href: '/app/stocks',
       }));
 
@@ -68,7 +68,7 @@ export function GlobalSearch() {
       
       sales?.forEach(s => all.push({
         id: s.id, label: s.customer_name || 'Vente',
-        sublabel: `${s.total_amount?.toLocaleString()} FCFA`,
+        sublabel: `${s.total_amount?.toLocaleString('de-DE')} FCFA`,
         type: 'sale', href: '/app/ventes',
       }));
 

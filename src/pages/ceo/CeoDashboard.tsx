@@ -37,7 +37,7 @@ export default function CeoDashboard() {
     { label: 'Utilisateurs', value: metrics.totalUsers, sub: `+${metrics.newUsersThisWeek} cette semaine`, icon: Users, color: 'text-teal-400' },
     { label: 'Abonnés actifs', value: metrics.activeSubscriptions, sub: `${metrics.conversionRate}% conversion`, icon: CreditCard, color: 'text-emerald-400' },
     { label: 'En essai', value: metrics.trialSubscriptions, sub: `${metrics.expiredSubscriptions} expirés`, icon: TrendingUp, color: 'text-yellow-400' },
-    { label: 'Revenu estimé', value: `${metrics.totalRevenue.toLocaleString()} XOF`, sub: `${metrics.revenueThisMonth.toLocaleString()} XOF ce mois`, icon: CreditCard, color: 'text-blue-400' },
+    { label: 'Revenu estimé', value: `${metrics.totalRevenue.toLocaleString('de-DE')} XOF`, sub: `${metrics.revenueThisMonth.toLocaleString('de-DE')} XOF ce mois`, icon: CreditCard, color: 'text-blue-400' },
     { label: 'Produits', value: metrics.totalProducts, sub: `${metrics.lowStockProducts} en stock bas`, icon: Package, color: 'text-purple-400' },
     { label: 'Stock bas', value: metrics.lowStockProducts, sub: 'Alertes actives', icon: AlertTriangle, color: 'text-red-400' },
   ] : [];

@@ -26,7 +26,7 @@ interface StoreData {
   whatsapp: string | null;
 }
 
-const fmt = (n: number) => `${n.toLocaleString("fr-FR")} CFA`;
+const fmt = (n: number) => `${n.toLocaleString("de-DE")} CFA`;
 
 export default function Checkout() {
   const { slug } = useParams<{ slug: string }>();

@@ -28,7 +28,7 @@ const PRICING_FIELDS: { key: 'starter' | 'business' | 'pro'; label: string; desc
   { key: 'business', label: 'Business', description: 'PME en croissance' },
   { key: 'pro', label: 'Pro', description: 'Grandes structures' },
 ];
-const formatXof = (n: number) => Number.isFinite(n) ? n.toLocaleString('fr-FR').replace(/,/g, ' ') : '0';
+const formatXof = (n: number) => Number.isFinite(n) ? n.toLocaleString('de-DE').replace(/,/g, ' ') : '0';
 
 export default function CeoSettings() {
   const { data: settingsMap, isLoading } = useCeoSettings();

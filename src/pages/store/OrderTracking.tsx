@@ -144,13 +144,13 @@ export default function OrderTracking() {
             {items.map((item: any, i: number) => (
               <div key={i} className="flex justify-between text-sm">
                 <span>{item.icon || '📦'} {item.name} ×{item.quantity}</span>
-                <span className="font-medium">{((item.price || 0) * (item.quantity || 1)).toLocaleString()} F</span>
+                <span className="font-medium">{((item.price || 0) * (item.quantity || 1)).toLocaleString('de-DE')} F</span>
               </div>
             ))}
             <div className="border-t pt-2 mt-2 space-y-1 text-sm">
-              <div className="flex justify-between"><span>Sous-total</span><span>{(order.subtotal || 0).toLocaleString()} F</span></div>
-              {(order.delivery_fee || 0) > 0 && <div className="flex justify-between"><span>Livraison</span><span>{order.delivery_fee.toLocaleString()} F</span></div>}
-              <div className="flex justify-between font-bold text-base"><span>Total</span><span>{(order.total || 0).toLocaleString()} FCFA</span></div>
+              <div className="flex justify-between"><span>Sous-total</span><span>{(order.subtotal || 0).toLocaleString('de-DE')} F</span></div>
+              {(order.delivery_fee || 0) > 0 && <div className="flex justify-between"><span>Livraison</span><span>{order.delivery_fee.toLocaleString('de-DE')} F</span></div>}
+              <div className="flex justify-between font-bold text-base"><span>Total</span><span>{(order.total || 0).toLocaleString('de-DE')} FCFA</span></div>
             </div>
           </CardContent>
         </Card>

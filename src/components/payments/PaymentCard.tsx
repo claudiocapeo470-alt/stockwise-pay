@@ -99,7 +99,7 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
   const methodLabel = paymentMethodLabels[payment.payment_method] || payment.payment_method
 
   const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat('de-DE', {
       style: 'currency',
       currency: 'XOF',
       minimumFractionDigits: 0

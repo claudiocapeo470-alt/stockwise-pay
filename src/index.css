@@ -283,33 +283,18 @@ input, select, textarea {
 }
 
 /* ═══════════════════════════════════════════════════
-   PRINT STYLES — REÇU THERMIQUE POS 80mm
+   PRINT STYLES — DOCUMENTS A4 (factures, devis, rapports)
+   Les reçus POS 80mm sont imprimés dans une fenêtre dédiée
    ═══════════════════════════════════════════════════ */
 @media print {
   @page {
-    size: 80mm auto;
-    margin: 2mm;
+    size: A4 portrait;
+    margin: 12mm;
   }
 
-  body * {
-    visibility: hidden;
-  }
-
-  #receipt-print,
-  #receipt-print * {
-    visibility: visible;
-  }
-
-  #receipt-print {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80mm;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    line-height: 1.4;
-    color: #000;
+  body {
     background: #fff;
+    color: #000;
   }
 
   .no-print {
@@ -440,4 +425,22 @@ input, select, textarea {
   border-radius: 28px;
   border: 1px solid hsl(0 0% 100% / 0.12);
   box-shadow: 0 24px 60px -20px hsl(222 70% 6% / 0.55);
+}
+
+/* ═══════════════════════════════════════════════════
+   Listes & tableaux : aucun débordement (desktop/tablette)
+   ═══════════════════════════════════════════════════ */
+table { table-layout: auto; width: 100%; }
+table td, table th { overflow-wrap: anywhere; word-break: break-word; }
+table td > *, table th > * { min-width: 0; }
+/* Les cellules d'identité restent lisibles sans pousser le tableau */
+table td .truncate, table th .truncate { display: block; max-width: 100%; }
+
+/* Cartes de liste : le contenu ne sort jamais du bloc */
+.card, [data-slot="card"] { overflow-wrap: anywhere; }
+.list-cell-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

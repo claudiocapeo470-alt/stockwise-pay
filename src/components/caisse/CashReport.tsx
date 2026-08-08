@@ -21,7 +21,7 @@ interface CashReportData {
 }
 
 export function generateCashReportPDF(data: CashReportData) {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageWidth = doc.internal.pageSize.getWidth();
 
   // Header
@@ -49,7 +49,7 @@ export function generateCashReportPDF(data: CashReportData) {
     body: [
       ["Ouverture", data.openedAt],
       ["Fermeture", data.closedAt],
-      ["Fond de caisse", `${data.openingAmount.toLocaleString("fr-FR")} FCFA`],
+      ["Fond de caisse", `${data.openingAmount.toLocaleString("de-DE")} FCFA`],
     ],
     theme: "plain",
     styles: { fontSize: 10, cellPadding: 3 },
@@ -68,10 +68,10 @@ export function generateCashReportPDF(data: CashReportData) {
     startY: y1 + 4,
     head: [["Libellé", "Montant"]],
     body: [
-      ["Total des ventes", `${data.totalSales.toLocaleString("fr-FR")} FCFA`],
-      ["  > Espèces", `${data.totalCash.toLocaleString("fr-FR")} FCFA`],
-      ["  > Mobile Money", `${data.totalMobileMoney.toLocaleString("fr-FR")} FCFA`],
-      ["  > Carte bancaire", `${data.totalCard.toLocaleString("fr-FR")} FCFA`],
+      ["Total des ventes", `${data.totalSales.toLocaleString("de-DE")} FCFA`],
+      ["  > Espèces", `${data.totalCash.toLocaleString("de-DE")} FCFA`],
+      ["  > Mobile Money", `${data.totalMobileMoney.toLocaleString("de-DE")} FCFA`],
+      ["  > Carte bancaire", `${data.totalCard.toLocaleString("de-DE")} FCFA`],
     ],
     theme: "striped",
     styles: { fontSize: 10, cellPadding: 3 },
@@ -90,8 +90,8 @@ export function generateCashReportPDF(data: CashReportData) {
     startY: y2 + 4,
     head: [["Libellé", "Montant"]],
     body: [
-      ["Dépenses de caisse", `- ${data.totalExpenses.toLocaleString("fr-FR")} FCFA`],
-      ["Entrées d'argent", `+ ${data.totalEntries.toLocaleString("fr-FR")} FCFA`],
+      ["Dépenses de caisse", `- ${data.totalExpenses.toLocaleString("de-DE")} FCFA`],
+      ["Entrées d'argent", `+ ${data.totalEntries.toLocaleString("de-DE")} FCFA`],
     ],
     theme: "striped",
     styles: { fontSize: 10, cellPadding: 3 },
@@ -113,9 +113,9 @@ export function generateCashReportPDF(data: CashReportData) {
     startY: y3 + 4,
     head: [],
     body: [
-      ["Solde théorique", `${data.expectedAmount.toLocaleString("fr-FR")} FCFA`],
-      ["Solde compté", `${data.closingAmount.toLocaleString("fr-FR")} FCFA`],
-      ["Écart", `${diffSign}${data.difference.toLocaleString("fr-FR")} FCFA`],
+      ["Solde théorique", `${data.expectedAmount.toLocaleString("de-DE")} FCFA`],
+      ["Solde compté", `${data.closingAmount.toLocaleString("de-DE")} FCFA`],
+      ["Écart", `${diffSign}${data.difference.toLocaleString("de-DE")} FCFA`],
     ],
     theme: "plain",
     styles: { fontSize: 11, cellPadding: 4 },
@@ -145,7 +145,7 @@ export function generateCashReportPDF(data: CashReportData) {
   const finalY = (doc as any).lastAutoTable.finalY + 30;
   doc.setFontSize(8);
   doc.setTextColor(150);
-  doc.text(`Généré par Stocknix — ${new Date().toLocaleString("fr-FR")}`, pageWidth / 2, Math.min(finalY, 280), { align: "center" });
+  doc.text(`Généré par Stocknix — ${new Date().toLocaleString("de-DE")}`, pageWidth / 2, Math.min(finalY, 280), { align: "center" });
 
   doc.save(`rapport-caisse-${new Date().toISOString().split("T")[0]}.pdf`);
 }
@@ -162,21 +162,21 @@ export function CashReportPreview({ data }: { data: CashReportData }) {
       <div className="border-t border-dashed border-gray-600 my-2" />
       <Row label="Caisse ouverte" value={data.openedAt} />
       <Row label="Caisse fermée" value={data.closedAt} />
-      <Row label="Fond de départ" value={`${data.openingAmount.toLocaleString()} F`} />
+      <Row label="Fond de départ" value={`${data.openingAmount.toLocaleString('de-DE')} F`} />
       <div className="border-t border-dashed border-gray-600 my-2" />
-      <Row label="Total ventes" value={`${data.totalSales.toLocaleString()} F`} bold />
-      <Row label="  > Espèces" value={`${data.totalCash.toLocaleString()} F`} />
-      <Row label="  > Mobile Money" value={`${data.totalMobileMoney.toLocaleString()} F`} />
-      <Row label="  > CB" value={`${data.totalCard.toLocaleString()} F`} />
+      <Row label="Total ventes" value={`${data.totalSales.toLocaleString('de-DE')} F`} bold />
+      <Row label="  > Espèces" value={`${data.totalCash.toLocaleString('de-DE')} F`} />
+      <Row label="  > Mobile Money" value={`${data.totalMobileMoney.toLocaleString('de-DE')} F`} />
+      <Row label="  > CB" value={`${data.totalCard.toLocaleString('de-DE')} F`} />
       <div className="border-t border-dashed border-gray-600 my-2" />
-      <Row label="Dépenses caisse" value={`${data.totalExpenses.toLocaleString()} F`} />
-      <Row label="Entrées argent" value={`${data.totalEntries.toLocaleString()} F`} />
+      <Row label="Dépenses caisse" value={`${data.totalExpenses.toLocaleString('de-DE')} F`} />
+      <Row label="Entrées argent" value={`${data.totalEntries.toLocaleString('de-DE')} F`} />
       <div className="border-t border-dashed border-gray-600 my-2" />
-      <Row label="Solde théorique" value={`${data.expectedAmount.toLocaleString()} F`} bold />
-      <Row label="Solde compté" value={`${data.closingAmount.toLocaleString()} F`} bold />
+      <Row label="Solde théorique" value={`${data.expectedAmount.toLocaleString('de-DE')} F`} bold />
+      <Row label="Solde compté" value={`${data.closingAmount.toLocaleString('de-DE')} F`} bold />
       <div className="flex justify-between font-bold">
         <span>Écart</span>
-        <span className={diffClass}>{diffSign}{data.difference.toLocaleString()} F</span>
+        <span className={diffClass}>{diffSign}{data.difference.toLocaleString('de-DE')} F</span>
       </div>
     </div>
   );

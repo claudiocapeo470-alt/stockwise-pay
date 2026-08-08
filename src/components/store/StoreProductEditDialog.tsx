@@ -217,7 +217,7 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
               <div>
                 <Label>Prix boutique (FCFA)</Label>
                 <Input type="number" min="0" value={onlinePrice} onChange={e => setOnlinePrice(Number(e.target.value))} />
-                <p className="text-xs text-muted-foreground mt-1">Prix original: {product?.price?.toLocaleString()} FCFA</p>
+                <p className="text-xs text-muted-foreground mt-1">Prix original: {product?.price?.toLocaleString('de-DE')} FCFA</p>
               </div>
               <div className="space-y-1.5">
                 <Label>Quantité actuelle en stock</Label>

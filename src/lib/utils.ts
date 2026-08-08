@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(amount: number): string {
-  const formatted = new Intl.NumberFormat('fr-FR', {
+  const formatted = new Intl.NumberFormat('de-DE', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
     useGrouping: true

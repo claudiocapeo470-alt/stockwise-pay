@@ -138,7 +138,7 @@ export default function InvoiceEditor({ documentType }: InvoiceEditorProps) {
   const canNext = step === 0 ? !!invoice.client_name?.trim() : true;
 
   const fmtAmount = (val: number) =>
-    isMobile ? `${Math.round(val).toLocaleString()} F` : new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(val);
+    isMobile ? `${Math.round(val).toLocaleString('de-DE')} F` : new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(val);
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-4xl mx-auto px-2 sm:px-4">

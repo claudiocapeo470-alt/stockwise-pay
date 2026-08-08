@@ -201,7 +201,7 @@ function useFadeIn() {
 }
 
 // ─── Format prix ─────────────────────────────────────────────────────────────
-const fmt = (n: number) => `${n.toLocaleString("fr-FR")} CFA`;
+const fmt = (n: number) => `${n.toLocaleString("de-DE")} CFA`;
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PublicStore() {
@@ -1375,7 +1375,7 @@ export default function PublicStore() {
                   </div>
                   <div className="p-2.5">
                     <p className="text-xs font-medium text-foreground truncate">{p.name}</p>
-                    <p className="text-xs font-bold mt-0.5" style={{ color }}>{(p.online_price ?? p.price).toLocaleString('fr-FR')} F</p>
+                    <p className="text-xs font-bold mt-0.5" style={{ color }}>{(p.online_price ?? p.price).toLocaleString('de-DE')} F</p>
                   </div>
                 </button>
               ))}

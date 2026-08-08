@@ -177,6 +177,34 @@ export function AppLayout({ children }: AppLayoutProps) {
         
         <main className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden">
           <header className="sticky top-0 z-40 h-14 sm:h-16 bg-background px-4 sm:px-5 flex items-center">
+            {useCenteredHeader ? (
+              <div className="relative flex items-center w-full min-w-0">
+                <div className="flex items-center flex-shrink-0">
+                  {analyticsTarget ? (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => navigate(analyticsTarget)}
+                      className="h-10 w-10 rounded-full bg-muted/40 border border-border hover:bg-muted text-foreground"
+                      title="Analyse"
+                    >
+                      <BarChart3 className="h-[18px] w-[18px]" />
+                    </Button>
+                  ) : (
+                    <span className="h-10 w-10 block" aria-hidden />
+                  )}
+                </div>
+
+                <h1 className="absolute left-1/2 -translate-x-1/2 max-w-[55%] text-[19px] leading-none font-bold text-foreground truncate tracking-tight text-center">
+                  {pageTitle}
+                </h1>
+
+                <div className="ml-auto flex items-center flex-shrink-0 [&_button]:rounded-full [&_button]:bg-muted/40 [&_button]:border [&_button]:border-border [&_button]:hover:bg-muted">
+                  <SubscriptionAlert />
+                  <NotificationCenter />
+                </div>
+              </div>
+            ) : (
             <div className="flex items-center gap-2 sm:gap-4 w-full min-w-0">
               {!isMobile && (
                 <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0" />
@@ -211,6 +239,8 @@ export function AppLayout({ children }: AppLayoutProps) {
               </div>
 
             </div>
+            )}
+
           </header>
           <div className={`flex-1 p-3 sm:p-4 md:p-6 lg:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
             {children}

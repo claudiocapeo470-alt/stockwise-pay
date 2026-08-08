@@ -462,7 +462,11 @@ export default function AuthSimple() {
       </div>
 
       {/* Right Side - Auth Flow */}
-      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 bg-muted/40 relative overflow-y-auto h-full">
+      <div className={`flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 relative overflow-y-auto h-full ${
+        screen === 'method' || screen === 'employee'
+          ? 'bg-gradient-to-br from-primary via-primary to-secondary'
+          : 'bg-muted/40'
+      }`}>
         {/* Back button */}
         {screen === 'welcome' ? (
           !window.matchMedia('(display-mode: standalone)').matches && (

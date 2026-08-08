@@ -1,4 +1,4 @@
-import { BarChart3, Package, Scan, ShoppingCart, LogOut, User, Settings as SettingsIcon, Store, ShoppingBag, ClipboardList, Star, Users, Truck, FileText, FileCheck, CreditCard, TrendingUp, Crown } from 'lucide-react';
+import { Home, BarChart3, Package, Scan, ShoppingCart, LogOut, User, Settings as SettingsIcon, Store, ShoppingBag, ClipboardList, Star, Users, Truck, FileText, FileCheck, CreditCard, TrendingUp, Crown } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/AuthContext';

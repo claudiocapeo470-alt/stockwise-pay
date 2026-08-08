@@ -413,65 +413,67 @@ export default function Ventes() {
             </Card>
           )}
 
-          {/* Grid view */}
+          {/* Grid view — cartes ventes minimalistes */}
           {(isMobile || viewMode === "grid") && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredSales.map((sale) => (
-                <Card key={sale.id}>
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-base">{sale.products?.name || "Produit"}</CardTitle>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
-                        </p>
-                      </div>
-                      <p className="font-bold">{sale.total_amount.toLocaleString()} FCFA</p>
+                <div key={sale.id} className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium">
+                  <div className="flex items-start gap-3">
+                    <div className="h-11 w-11 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+                      <ShoppingCart className="h-5 w-5 text-accent" />
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Client</span>
-                      <span>{sale.customer_name || "—"}</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-[15px] truncate leading-tight">{sale.products?.name || "Produit"}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {format(new Date(sale.sale_date), "dd MMM yyyy · HH:mm", { locale: fr })}
+                      </p>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Quantité</span>
-                      <span>{sale.quantity}</span>
-                    </div>
-                    <div className="flex gap-2 pt-2 border-t border-border">
-                      <Button variant="outline" size="sm" className="flex-1" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
-                        <Eye className="h-3.5 w-3.5 mr-1" /> Détails
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => generateDocumentA4(sale, 'facture', 'download')}>
-                        <Download className="h-3.5 w-3.5" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Supprimer cette vente ?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Cette action est irréversible. La vente sera définitivement supprimée.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Annuler</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(sale.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                              Supprimer
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </CardContent>
-                </Card>
+                    <p className="font-bold text-[15px] shrink-0">{sale.total_amount.toLocaleString()} <span className="text-xs font-normal text-muted-foreground">FCFA</span></p>
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-2 text-xs">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-muted text-muted-foreground font-medium truncate max-w-[60%]">
+                      {sale.customer_name || "Client anonyme"}
+                    </span>
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-muted text-muted-foreground font-medium">
+                      Qté {sale.quantity}
+                    </span>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-end gap-1">
+                    <Button variant="ghost" size="sm" className="h-9 px-3 rounded-lg gap-1.5 text-muted-foreground hover:text-foreground" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
+                      <Eye className="h-4 w-4" /> Détails
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground" onClick={() => generateDocumentA4(sale, 'facture', 'download')}>
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Supprimer cette vente ?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Cette action est irréversible. La vente sera définitivement supprimée.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(sale.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Supprimer
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
               ))}
             </div>
           )}
+
         </>
       )}
 

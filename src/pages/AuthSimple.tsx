@@ -407,8 +407,8 @@ export default function AuthSimple() {
     <div className="h-screen flex overflow-hidden">
       {/* Left Side - Branding & Illustration (FIXED, no scroll) */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-primary via-blue-600 to-slate-900 p-12 flex-col justify-between overflow-hidden sticky top-0 h-screen">
-        <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-transparent to-white/10 animate-pulse"></div>
-        
+        <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-transparent to-white/10"></div>
+
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 1px)',
@@ -453,310 +453,310 @@ export default function AuthSimple() {
         </div>
       </div>
 
-      {/* Right Side - Auth Forms */}
-      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 bg-muted/40 relative overflow-hidden h-full">
-        {/* Back button hidden in PWA standalone mode */}
-        {!window.matchMedia('(display-mode: standalone)').matches && (
-          <Link
-            to="/"
+      {/* Right Side - Auth Flow */}
+      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 bg-muted/40 relative overflow-y-auto h-full">
+        {/* Back button */}
+        {screen === 'welcome' ? (
+          !window.matchMedia('(display-mode: standalone)').matches && (
+            <Link
+              to="/"
+              aria-label="Retour"
+              className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-full bg-background shadow-sm border border-border/60 text-foreground hover:bg-muted transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          )
+        ) : (
+          <button
+            type="button"
             aria-label="Retour"
-            className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-full bg-background shadow-sm border border-border/60 text-foreground hover:bg-muted transition-colors"
+            onClick={goBack}
+            className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 inline-flex items-center justify-center h-10 w-10 rounded-full bg-background shadow-sm border border-border/60 text-foreground hover:bg-muted transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-          </Link>
+          </button>
         )}
 
-        <div className="w-full max-w-md mx-auto rounded-[28px] bg-background shadow-xl shadow-foreground/5 border border-border/50 p-5 sm:p-7 space-y-4">
-          {/* Logo */}
-          <div className="text-center">
-            <img src={stocknixLogoIcon} alt="Stocknix" className="h-12 w-12 sm:h-14 sm:w-14 object-contain mx-auto mb-2" />
-          </div>
-
-          <div className="text-center space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Bienvenue</h1>
-            <p className="text-sm text-muted-foreground">
-              {authMode === 'classic' 
-                ? 'Connectez-vous ou créez un compte' 
-                : 'Connexion employé avec code PIN'
-              }
-            </p>
-          </div>
-
-
-          {/* CLASSIC AUTH MODE */}
-          {authMode === 'classic' && (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4 h-11 rounded-full bg-muted p-1">
-                <TabsTrigger value="login" className="rounded-full data-[state=active]:shadow-sm">Connexion</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-full data-[state=active]:shadow-sm">Inscription</TabsTrigger>
-              </TabsList>
-
-
-
-
-              
-              <TabsContent value="login" className="space-y-4">
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-sm">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="votre@email.com"
-                      className={`h-12 rounded-xl bg-muted/40 border-border/60 ${getFieldError('email') ? 'border-destructive' : ''}`}
-                    />
-                    {getFieldError('email') && (
-                      <p className="text-sm text-destructive">{getFieldError('email')}</p>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-1.5">
-                    <Label htmlFor="password" className="text-sm">Mot de passe</Label>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        placeholder="••••••••"
-                        className={`h-12 rounded-xl bg-muted/40 border-border/60 pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                    {getFieldError('password') && (
-                      <p className="text-sm text-destructive">{getFieldError('password')}</p>
-                    )}
-                  </div>
-                  
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full h-12 rounded-full border-border/70 bg-background font-medium"
-                    onClick={handleGoogleAuth}
-                    disabled={googleLoading || isLoading}
-                  >
-                    {googleLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" />
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.57-2.77c-.99.66-2.26 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
-                        <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z" />
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.05l3.66 2.84c.87-2.6 3.3-4.51 6.16-4.51z" />
-                      </svg>
-                    )}
-                    Continuer avec Google
-                  </Button>
-
-                  <Button type="submit" className="w-full h-12 rounded-full text-base font-semibold" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Connexion...
-                      </>
-                    ) : (
-                      'Se connecter'
-                    )}
-                  </Button>
-                </form>
-                
-                <div className="text-center space-y-1">
-                  <Button variant="link" onClick={() => setResetStep('email')} className="text-sm">
-                    Mot de passe oublié ?
-                  </Button>
-                  <Button
-                    variant="link"
-                    className="text-xs text-muted-foreground"
-                    onClick={async () => {
-                      if (!formData.email) {
-                        toast.error('Entrez votre email pour renvoyer la confirmation');
-                        return;
-                      }
-                      const { error } = await supabase.auth.resend({
-                        type: 'signup',
-                        email: formData.email,
-                        options: { emailRedirectTo: `${window.location.origin}/auth/confirm` }
-                      });
-                      if (error) {
-                        toast.error('Erreur lors du renvoi');
-                      } else {
-                        toast.success('Email de confirmation renvoyé ! Vérifiez votre boîte mail.');
-                      }
-                    }}
-                  >
-                    Renvoyer la confirmation
-                  </Button>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="register" className="space-y-4">
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="firstName" className="text-sm">Prénom (optionnel)</Label>
-                      <Input
-                        id="firstName"
-                        value={formData.firstName}
-                        onChange={(e) => handleInputChange('firstName', e.target.value)}
-                        placeholder="John"
-                        className="h-12 rounded-xl bg-muted/40 border-border/60"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="lastName" className="text-sm">Nom (optionnel)</Label>
-                      <Input
-                        id="lastName"
-                        value={formData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        placeholder="Doe"
-                        className="h-12 rounded-xl bg-muted/40 border-border/60"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-1.5">
-                    <Label htmlFor="registerEmail" className="text-sm">Email</Label>
-                    <Input
-                      id="registerEmail"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="votre@email.com"
-                      className={`h-12 rounded-xl bg-muted/40 border-border/60 ${getFieldError('email') ? 'border-destructive' : ''}`}
-                    />
-                    {getFieldError('email') && (
-                      <p className="text-sm text-destructive">{getFieldError('email')}</p>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-1.5">
-                    <Label htmlFor="registerPassword" className="text-sm">Mot de passe</Label>
-                    <div className="relative">
-                      <Input
-                        id="registerPassword"
-                        type={showPassword ? 'text' : 'password'}
-                        value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        placeholder="Minimum 8 caractères"
-                        className={`h-12 rounded-xl bg-muted/40 border-border/60 pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                    {getFieldError('password') && (
-                      <p className="text-sm text-destructive">{getFieldError('password')}</p>
-                    )}
-                  </div>
-                  
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full h-12 rounded-full border-border/70 bg-background font-medium"
-                    onClick={handleGoogleAuth}
-                    disabled={googleLoading || isLoading}
-                  >
-                    {googleLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" />
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.57-2.77c-.99.66-2.26 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
-                        <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z" />
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.05l3.66 2.84c.87-2.6 3.3-4.51 6.16-4.51z" />
-                      </svg>
-                    )}
-                    Continuer avec Google
-                  </Button>
-
-                  <Button type="submit" className="w-full h-12 rounded-full text-base font-semibold" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Inscription...
-                      </>
-                    ) : (
-                      'Créer un compte'
-                    )}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          )}
-
-          {/* EMPLOYEE PIN AUTH MODE */}
-          {authMode === 'employee' && (
-            <div className="space-y-4 py-2">
-              {pinStep === 'company' && (
-                <div className="space-y-3">
-                  <p className="text-center text-sm text-muted-foreground">
-                    Saisissez le code de votre entreprise (6 chiffres)
-                  </p>
-                  <PinKeypad
-                    length={6}
-                    onComplete={handleCompanyCodeComplete}
-                    label="Code entreprise"
-                    error={pinError}
-                  />
-                </div>
-              )}
-
-              {pinStep === 'pin' && (
-                <div className="space-y-3">
-                  <div className="text-center">
-                    <p className="text-xs text-muted-foreground mb-1">
-                      Entreprise : <span className="font-mono font-bold text-foreground">{companyCode}</span>
-                    </p>
-                    <button 
-                      type="button"
-                      onClick={() => { setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-                      className="text-xs text-primary hover:underline font-medium"
-                    >
-                      Changer
-                    </button>
-                  </div>
-                  <PinKeypad
-                    length={6}
-                    onComplete={handlePinLogin}
-                    label="Votre code PIN"
-                    isLoading={pinLoading}
-                    error={pinError}
-                  />
-                </div>
-              )}
+        {/* ÉCRAN 1 — Choix */}
+        {screen === 'welcome' && (
+          <div className="w-full max-w-md mx-auto text-center space-y-8 animate-fade-in">
+            <img src={stocknixLogo} alt="Stocknix" className="h-14 w-auto object-contain mx-auto" />
+            <div className="space-y-2">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                Gérez votre business en toute simplicité
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Stock • Ventes • Paiements • Analytics
+              </p>
             </div>
-          )}
-          {/* Employee login link - subtle, at bottom */}
-          {authMode === 'classic' && (
-            <div className="text-center pt-3 border-t border-border/40">
+
+            <div className="space-y-3">
+              <Button
+                className="w-full h-14 rounded-full text-base font-semibold"
+                onClick={() => { setIntent('login'); setScreen('method'); }}
+              >
+                Se connecter
+              </Button>
+              <Button
+                variant="secondary"
+                className="w-full h-14 rounded-full text-base font-semibold bg-muted hover:bg-muted/80"
+                onClick={() => { setIntent('register'); setScreen('method'); }}
+              >
+                Créer un compte
+              </Button>
               <button
                 type="button"
-                onClick={() => { setAuthMode('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-                className="inline-flex items-center justify-center gap-2 w-full h-11 rounded-full bg-muted/60 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                onClick={() => { setScreen('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
+                className="inline-flex items-center justify-center gap-2 w-full h-12 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Users className="h-4 w-4" />
-                Connexion employé (PIN)
+                Continuer en tant qu'employé
               </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* ÉCRAN 2 — Méthode (email ou Google) */}
+        {screen === 'method' && (
+          <div className="w-full max-w-md mx-auto rounded-[28px] bg-background shadow-xl shadow-foreground/5 border border-border/50 p-6 sm:p-8 space-y-6 animate-fade-in">
+            <div className="text-center space-y-3">
+              <img src={stocknixLogo} alt="Stocknix" className="h-11 w-auto object-contain mx-auto" />
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+                {intent === 'login' ? 'Connectez-vous pour continuer' : 'Créez un compte pour continuer'}
+              </h2>
+            </div>
+
+            <Button
+              variant="secondary"
+              className="w-full h-14 rounded-full text-base font-medium bg-muted hover:bg-muted/80"
+              onClick={() => { setActiveTab(intent); setScreen('form'); }}
+            >
+              <Mail className="mr-2 h-5 w-5" />
+              {intent === 'login' ? 'Se connecter avec l\'e-mail' : 'S\'inscrire avec l\'e-mail'}
+            </Button>
+
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-xs text-muted-foreground">ou</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={handleGoogleAuth}
+                disabled={googleLoading}
+                aria-label="Continuer avec Google"
+                className="h-16 w-16 rounded-full bg-muted hover:bg-muted/80 transition-colors inline-flex items-center justify-center disabled:opacity-60"
+              >
+                {googleLoading ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <svg className="h-7 w-7" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.57-2.77c-.99.66-2.26 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.05l3.66 2.84c.87-2.6 3.3-4.51 6.16-4.51z" />
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            <p className="text-center text-xs text-muted-foreground leading-relaxed">
+              En continuant, j'accepte les{' '}
+              <Link to="/mentions-legales" className="underline">mentions légales</Link> et la politique de confidentialité de Stocknix.
+            </p>
+          </div>
+        )}
+
+        {/* ÉCRAN 3 — Formulaire e-mail */}
+        {screen === 'form' && (
+          <div className="w-full max-w-md mx-auto pt-14 space-y-6 animate-fade-in">
+            <div className="space-y-2">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                {activeTab === 'login' ? 'Heureux de vous revoir !' : 'Bienvenue sur Stocknix'}
+              </h1>
+              <p className="text-muted-foreground">
+                {activeTab === 'login' ? 'Connectez-vous pour continuer.' : 'Créez votre compte en quelques secondes.'}
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {activeTab === 'register' && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="firstName" className="text-sm text-muted-foreground">Prénom</Label>
+                    <Input
+                      id="firstName"
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      placeholder="John"
+                      className="h-14 rounded-2xl bg-muted/60 border-transparent"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="lastName" className="text-sm text-muted-foreground">Nom</Label>
+                    <Input
+                      id="lastName"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      placeholder="Doe"
+                      className="h-14 rounded-2xl bg-muted/60 border-transparent"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-sm text-muted-foreground">Adresse e-mail</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  placeholder="vous@exemple.com"
+                  className={`h-14 rounded-2xl bg-muted/60 border-transparent ${getFieldError('email') ? 'border-destructive' : ''}`}
+                />
+                {getFieldError('email') && (
+                  <p className="text-sm text-destructive">{getFieldError('email')}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-sm text-muted-foreground">Mot de passe</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    placeholder={activeTab === 'login' ? '••••••••' : 'Minimum 8 caractères'}
+                    className={`h-14 rounded-2xl bg-muted/60 border-transparent pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label="Afficher le mot de passe"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+                {getFieldError('password') && (
+                  <p className="text-sm text-destructive">{getFieldError('password')}</p>
+                )}
+              </div>
+
+              {activeTab === 'login' && (
+                <div className="flex justify-end">
+                  <button type="button" onClick={() => setResetStep('email')} className="text-sm text-muted-foreground hover:text-foreground">
+                    Mot de passe oublié ?
+                  </button>
+                </div>
+              )}
+
+              <Button type="submit" className="w-full h-14 rounded-full text-base font-semibold" disabled={isLoading}>
+                {isLoading ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{activeTab === 'login' ? 'Connexion...' : 'Inscription...'}</>
+                ) : (
+                  activeTab === 'login' ? 'Se connecter' : 'Créer un compte'
+                )}
+              </Button>
+            </form>
+
+            <p className="text-center text-sm text-muted-foreground">
+              {activeTab === 'login' ? (
+                <>Pas encore de compte ?{' '}
+                  <button type="button" className="font-semibold text-foreground" onClick={() => { setActiveTab('register'); setIntent('register'); setErrors({}); }}>S'inscrire</button>
+                </>
+              ) : (
+                <>Déjà un compte ?{' '}
+                  <button type="button" className="font-semibold text-foreground" onClick={() => { setActiveTab('login'); setIntent('login'); setErrors({}); }}>Se connecter</button>
+                </>
+              )}
+            </p>
+
+            {activeTab === 'login' && (
+              <div className="text-center">
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:text-foreground"
+                  onClick={async () => {
+                    if (!formData.email) {
+                      toast.error('Entrez votre email pour renvoyer la confirmation');
+                      return;
+                    }
+                    const { error } = await supabase.auth.resend({
+                      type: 'signup',
+                      email: formData.email,
+                      options: { emailRedirectTo: `${window.location.origin}/auth/confirm` }
+                    });
+                    if (error) toast.error('Erreur lors du renvoi');
+                    else toast.success('Email de confirmation renvoyé !');
+                  }}
+                >
+                  Renvoyer la confirmation
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ÉCRAN 4 — Employé (PIN) */}
+        {screen === 'employee' && (
+          <div className="w-full max-w-md mx-auto rounded-[28px] bg-background shadow-xl shadow-foreground/5 border border-border/50 p-6 sm:p-8 space-y-5 animate-fade-in">
+            <div className="text-center space-y-2">
+              <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <img src={stocknixLogoIcon} alt="Stocknix" className="h-9 w-9 object-contain" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Espace employé</h2>
+              <p className="text-sm text-muted-foreground">
+                {pinStep === 'company'
+                  ? 'Saisissez le code de votre entreprise (6 chiffres)'
+                  : 'Saisissez votre code PIN personnel'}
+              </p>
+            </div>
+
+            {/* Steps indicator */}
+            <div className="flex items-center justify-center gap-2">
+              <span className={`h-1.5 w-10 rounded-full transition-colors ${pinStep === 'company' ? 'bg-primary' : 'bg-primary/30'}`} />
+              <span className={`h-1.5 w-10 rounded-full transition-colors ${pinStep === 'pin' ? 'bg-primary' : 'bg-muted'}`} />
+            </div>
+
+            {pinStep === 'company' ? (
+              <PinKeypad
+                length={6}
+                onComplete={handleCompanyCodeComplete}
+                label="Code entreprise"
+                error={pinError}
+              />
+            ) : (
+              <div className="space-y-3">
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-1">
+                    Entreprise : <span className="font-mono font-bold text-foreground">{companyCode}</span>
+                  </p>
+                  <button 
+                    type="button"
+                    onClick={() => { setPinStep('company'); setCompanyCode(''); setPinError(''); }}
+                    className="text-xs text-primary hover:underline font-medium"
+                  >
+                    Changer
+                  </button>
+                </div>
+                <PinKeypad
+                  length={6}
+                  onComplete={handlePinLogin}
+                  label="Votre code PIN"
+                  isLoading={pinLoading}
+                  error={pinError}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 }
+

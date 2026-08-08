@@ -665,7 +665,7 @@ export default function AuthSimple() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full h-14 rounded-full text-base font-semibold" disabled={isLoading}>
+              <Button type="submit" className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium" disabled={isLoading}>
                 {isLoading ? (
                   <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{activeTab === 'login' ? 'Connexion...' : 'Inscription...'}</>
                 ) : (

@@ -14,6 +14,8 @@ import { StockMovementsDialog } from "@/components/stocks/StockMovementsDialog";
 import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { PageActionBar } from "@/components/layout/PageActionBar";
+
 
 export default function Stocks() {
   const [searchQuery, setSearchQuery] = useState("");

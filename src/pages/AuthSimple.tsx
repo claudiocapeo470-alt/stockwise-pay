@@ -463,24 +463,15 @@ export default function AuthSimple() {
 
       {/* Right Side - Auth Flow */}
       <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 auth-bg relative overflow-y-auto h-full">
-        {/* Back button */}
+        {/* Back button — position fixe et identique partout */}
         {screen === 'welcome' ? (
           !window.matchMedia('(display-mode: standalone)').matches && (
-            <Link
-              to="/"
-              aria-label="Retour"
-              className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-full bg-background shadow-sm border border-border/60 text-foreground hover:bg-muted transition-colors"
-            >
+            <Link to="/" aria-label="Retour" className="back-fab lg:hidden">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           )
         ) : (
-          <button
-            type="button"
-            aria-label="Retour"
-            onClick={goBack}
-            className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 inline-flex items-center justify-center h-10 w-10 rounded-full bg-background shadow-sm border border-border/60 text-foreground hover:bg-muted transition-colors"
-          >
+          <button type="button" aria-label="Retour" onClick={goBack} className="back-fab">
             <ArrowLeft className="h-4 w-4" />
           </button>
         )}

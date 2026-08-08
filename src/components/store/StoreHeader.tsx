@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 import { useOnlineStore } from "@/hooks/useOnlineStore";
 import { toast } from "sonner";
-import { Save, Eye, Rocket, Copy, Check, Loader2 } from "lucide-react";
+import { Save, Store, Rocket, Copy, Check, Loader2 } from "lucide-react";
 
 interface StoreHeaderProps {
   title?: string;
@@ -73,8 +73,8 @@ export function StoreHeader({
           </Button>
         )}
         {store && (
-          <Button size="icon" variant="outline" asChild aria-label="Voir la boutique" className="h-11 w-11 rounded-xl">
-            <a href={storeUrl} target="_blank" rel="noopener"><Eye className="h-[18px] w-[18px]" /></a>
+          <Button size="icon" variant="outline" asChild aria-label="Ouvrir la boutique" title="Ouvrir la boutique" className="h-11 w-11 rounded-xl">
+            <a href={storeUrl} target="_blank" rel="noopener"><Store className="h-[18px] w-[18px]" /></a>
           </Button>
         )}
         {store && (

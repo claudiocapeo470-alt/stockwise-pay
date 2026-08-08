@@ -87,7 +87,10 @@ export function PageActionBar({
       )}
 
       {/* Actions flottantes : position identique sur toutes les pages, au-dessus de la barre de navigation */}
-      <div className="fixed right-4 bottom-[92px] z-40 flex flex-col items-end gap-3">
+      <div
+        className="fixed right-4 z-40 flex flex-col items-end gap-3"
+        style={{ bottom: "calc(84px + env(safe-area-inset-bottom))" }}
+      >
         {hasSearch && (
           <button
             type="button"

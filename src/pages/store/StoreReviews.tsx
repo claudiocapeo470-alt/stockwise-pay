@@ -112,9 +112,12 @@ export default function StoreReviews() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {reviews.map((r: any) => (
+            {visible.map((r: any) => (
               <TableRow key={r.id}>
-                <TableCell className="font-medium">{r.customer_name}</TableCell>
+                <TableCell className="font-medium">
+                  {r.customer_name}
+                  {r.products?.name && <span className="block text-xs text-muted-foreground">{r.products.name}</span>}
+                </TableCell>
                 <TableCell><Stars rating={r.rating} /></TableCell>
                 <TableCell className="max-w-xs truncate">{r.comment || '—'}</TableCell>
                 <TableCell><Badge variant={r.is_approved ? "default" : "secondary"}>{r.is_approved ? "Approuvé" : "En attente"}</Badge></TableCell>
@@ -126,14 +129,14 @@ export default function StoreReviews() {
                 </TableCell>
               </TableRow>
             ))}
-            {reviews.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucun avis</TableCell></TableRow>}
+            {visible.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucun avis</TableCell></TableRow>}
           </TableBody>
         </Table>
       </Card>
 
       {/* Mobile cards */}
       <div className="mt-6 md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {reviews.map((r: any) => {
+        {visible.map((r: any) => {
           const isExpanded = expandedReviews.has(r.id);
           const comment = r.comment || '';
           const isTruncatable = comment.length > 80;
@@ -141,7 +144,10 @@ export default function StoreReviews() {
             <Card key={r.id}>
               <CardContent className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="font-medium text-sm">{r.customer_name}</p>
+                  <div>
+                    <p className="font-medium text-sm">{r.customer_name}</p>
+                    {r.products?.name && <p className="text-xs text-muted-foreground">{r.products.name}</p>}
+                  </div>
                   <Badge variant={r.is_approved ? "default" : "secondary"} className="text-xs">
                     {r.is_approved ? "Approuvé" : "En attente"}
                   </Badge>

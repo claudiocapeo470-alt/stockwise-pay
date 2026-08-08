@@ -62,7 +62,7 @@ export default function StoreOrders() {
         {[
           { icon: Package, label: "Aujourd'hui", value: todayOrders.length, color: "text-primary" },
           { icon: Clock, label: "En attente", value: pendingOrders.length, color: "text-yellow-600" },
-          { icon: DollarSign, label: "Revenus du jour", value: `${todayRevenue.toLocaleString()} F`, color: "text-green-600" },
+          { icon: DollarSign, label: "Revenus du jour", value: `${todayRevenue.toLocaleString('de-DE')} F`, color: "text-green-600" },
           { icon: TrendingUp, label: "Total commandes", value: orders.length, color: "text-blue-600" },
         ].map((s, i) => (
           <Card key={i}>
@@ -100,7 +100,7 @@ export default function StoreOrders() {
                   <TableCell className="font-mono text-sm">{order.order_number}</TableCell>
                   <TableCell><div><p className="font-medium">{order.customer_name}</p><p className="text-xs text-muted-foreground">{order.customer_phone}</p></div></TableCell>
                   <TableCell>{items.length} article{items.length > 1 ? 's' : ''}</TableCell>
-                  <TableCell className="font-bold">{(order.total || 0).toLocaleString()} FCFA</TableCell>
+                  <TableCell className="font-bold">{(order.total || 0).toLocaleString('de-DE')} FCFA</TableCell>
                   <TableCell><span className={`px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>{status.emoji} {status.label}</span></TableCell>
                   <TableCell className="text-sm text-muted-foreground">{new Date(order.created_at).toLocaleDateString('fr-FR')}</TableCell>
                   <TableCell>
@@ -142,7 +142,7 @@ export default function StoreOrders() {
                     {order.order_number} · {items.length} article{items.length > 1 ? 's' : ''}
                   </p>
                 </div>
-                <p className="font-bold text-[15px] shrink-0">{(order.total || 0).toLocaleString()} <span className="text-xs font-normal text-muted-foreground">F</span></p>
+                <p className="font-bold text-[15px] shrink-0">{(order.total || 0).toLocaleString('de-DE')} <span className="text-xs font-normal text-muted-foreground">F</span></p>
               </div>
 
               <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-between gap-2">
@@ -190,13 +190,13 @@ export default function StoreOrders() {
                   {(Array.isArray(selectedOrder.items) ? selectedOrder.items : []).map((item: any, i: number) => (
                     <div key={i} className="flex justify-between text-sm">
                       <span>{item.icon || '📦'} {item.name} ×{item.quantity}</span>
-                      <span className="font-medium">{((item.price || 0) * (item.quantity || 1)).toLocaleString()} F</span>
+                      <span className="font-medium">{((item.price || 0) * (item.quantity || 1)).toLocaleString('de-DE')} F</span>
                     </div>
                   ))}
                   <div className="border-t pt-2 space-y-1 text-sm">
-                    <div className="flex justify-between"><span>Sous-total</span><span>{(selectedOrder.subtotal || 0).toLocaleString()} F</span></div>
-                    <div className="flex justify-between"><span>Livraison</span><span>{(selectedOrder.delivery_fee || 0).toLocaleString()} F</span></div>
-                    <div className="flex justify-between font-bold text-base"><span>TOTAL</span><span>{(selectedOrder.total || 0).toLocaleString()} FCFA</span></div>
+                    <div className="flex justify-between"><span>Sous-total</span><span>{(selectedOrder.subtotal || 0).toLocaleString('de-DE')} F</span></div>
+                    <div className="flex justify-between"><span>Livraison</span><span>{(selectedOrder.delivery_fee || 0).toLocaleString('de-DE')} F</span></div>
+                    <div className="flex justify-between font-bold text-base"><span>TOTAL</span><span>{(selectedOrder.total || 0).toLocaleString('de-DE')} FCFA</span></div>
                   </div>
                 </div>
                 <div className="flex gap-2 flex-wrap">

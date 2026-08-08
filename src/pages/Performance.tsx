@@ -149,7 +149,7 @@ export default function Performance() {
               <TrendingUp className="h-5 w-5 text-primary" />
             </div>
             <div className="min-w-0">
-              <p className="text-2xl font-bold truncate">{metrics.totalRevenue.toLocaleString()}</p>
+              <p className="text-2xl font-bold truncate">{metrics.totalRevenue.toLocaleString('de-DE')}</p>
               <p className="text-xs text-muted-foreground">Chiffre d'affaires (FCFA)</p>
             </div>
           </CardContent>
@@ -171,7 +171,7 @@ export default function Performance() {
               <Receipt className="h-5 w-5 text-foreground" />
             </div>
             <div className="min-w-0">
-              <p className="text-2xl font-bold truncate">{metrics.totalSales > 0 ? Math.round(metrics.totalRevenue / metrics.totalSales).toLocaleString() : 0}</p>
+              <p className="text-2xl font-bold truncate">{metrics.totalSales > 0 ? Math.round(metrics.totalRevenue / metrics.totalSales).toLocaleString('de-DE') : 0}</p>
               <p className="text-xs text-muted-foreground">Panier moyen (FCFA)</p>
             </div>
           </CardContent>
@@ -182,7 +182,7 @@ export default function Performance() {
               <BarChart3 className="h-5 w-5 text-warning" />
             </div>
             <div className="min-w-0">
-              <p className="text-2xl font-bold truncate">{Math.round(metrics.grossMargin).toLocaleString()}</p>
+              <p className="text-2xl font-bold truncate">{Math.round(metrics.grossMargin).toLocaleString('de-DE')}</p>
               <p className="text-xs text-muted-foreground">Marge estimée (FCFA)</p>
             </div>
           </CardContent>

@@ -39,7 +39,7 @@ export function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat('de-DE', {
       style: 'currency',
       currency: 'XOF',
       minimumFractionDigits: 0

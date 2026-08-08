@@ -61,7 +61,7 @@ export function SubscriptionPlansView({ onSubscribe, loadingPlan = null, ctaLabe
   const plan = PLAN_DEFS.find(p => p.id === selected)!;
   const amount = prices?.[selected] ?? 0;
 
-  const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/,/g, ' ');
+  const fmt = (n: number) => n.toLocaleString('de-DE').replace(/,/g, ' ');
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">

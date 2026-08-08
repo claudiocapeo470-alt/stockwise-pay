@@ -227,7 +227,7 @@ export default function Factures() {
                       </TableCell>
                       <TableCell className="text-foreground">{invoice.client_name}</TableCell>
                       <TableCell className="text-muted-foreground text-sm">{format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}</TableCell>
-                      <TableCell className="text-right font-bold text-foreground">{invoice.total_amount.toLocaleString()} FCFA</TableCell>
+                      <TableCell className="text-right font-bold text-foreground">{invoice.total_amount.toLocaleString('de-DE')} FCFA</TableCell>
                       <TableCell className="text-center">
                         <Badge className={`${statusColors[invoice.status]} font-medium`}>{statusLabels[invoice.status]}</Badge>
                       </TableCell>
@@ -269,7 +269,7 @@ export default function Factures() {
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Montant</p>
-                      <p className="text-lg font-bold leading-tight">{invoice.total_amount.toLocaleString()} <span className="text-xs font-normal text-muted-foreground">FCFA</span></p>
+                      <p className="text-lg font-bold leading-tight">{invoice.total_amount.toLocaleString('de-DE')} <span className="text-xs font-normal text-muted-foreground">FCFA</span></p>
                     </div>
                   </div>
 

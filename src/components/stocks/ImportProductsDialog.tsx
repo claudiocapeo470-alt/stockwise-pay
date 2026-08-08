@@ -193,7 +193,7 @@ export function ImportProductsDialog() {
                         <TableRow key={i} className={!row.valid ? 'bg-destructive/5' : ''}>
                           <TableCell className="text-sm">{row.name || '—'}</TableCell>
                           <TableCell className="text-sm">{row.sku || '—'}</TableCell>
-                          <TableCell className="text-sm">{row.price?.toLocaleString() || '0'}</TableCell>
+                          <TableCell className="text-sm">{row.price?.toLocaleString('de-DE') || '0'}</TableCell>
                           <TableCell className="text-sm">{row.quantity || 0}</TableCell>
                           <TableCell>
                             {row.valid ? (

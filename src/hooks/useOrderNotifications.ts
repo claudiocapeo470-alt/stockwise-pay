@@ -26,7 +26,7 @@ export function useOrderNotifications(storeId: string | undefined) {
         (payload) => {
           const order = payload.new as any;
           toast.success('🛍️ Nouvelle commande !', {
-            description: `Commande de ${order.customer_name || 'client'} — ${(order.total || 0).toLocaleString()} FCFA`,
+            description: `Commande de ${order.customer_name || 'client'} — ${(order.total || 0).toLocaleString('de-DE')} FCFA`,
             duration: 6000,
             action: {
               label: 'Voir',

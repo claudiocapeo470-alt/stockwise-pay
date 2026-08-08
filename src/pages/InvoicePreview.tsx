@@ -169,12 +169,12 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
                     <td className="p-3 text-sm">{item.description}</td>
                     <td className="text-center p-3 text-sm">{item.quantity}</td>
                     <td className="text-right p-3 text-sm">
-                      {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(item.unit_price)}
+                      {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(item.unit_price)}
                     </td>
                     <td className="text-center p-3 text-sm">{item.discount_rate}%</td>
                     <td className="text-center p-3 text-sm">{item.tax_rate}%</td>
                     <td className="text-right p-3 text-sm font-medium">
-                      {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(item.total_amount)}
+                      {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(item.total_amount)}
                     </td>
                   </tr>
                 ))}
@@ -195,7 +195,7 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
                   <div>
                     <span className="text-muted-foreground">Prix unit.:</span>
                     <span className="ml-1 font-medium">
-                      {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(item.unit_price)}
+                      {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(item.unit_price)}
                     </span>
                   </div>
                   <div>
@@ -210,7 +210,7 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
                 <div className="pt-2 border-t border-border flex justify-between items-center">
                   <span className="text-xs font-semibold text-muted-foreground">Total:</span>
                   <span className="text-sm font-bold">
-                    {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(item.total_amount)}
+                    {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(item.total_amount)}
                   </span>
                 </div>
               </div>
@@ -223,27 +223,27 @@ export default function InvoicePreview({ documentType }: InvoicePreviewProps) {
               <div className="flex justify-between text-xs md:text-sm">
                 <span className="text-muted-foreground">Sous-total HT:</span>
                 <span className="font-medium">
-                  {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.subtotal)}
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(invoice.subtotal)}
                 </span>
               </div>
               {invoice.discount_amount > 0 && (
                 <div className="flex justify-between text-xs md:text-sm">
                   <span className="text-muted-foreground">Remise:</span>
                   <span className="font-medium text-red-500">
-                    -{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.discount_amount)}
+                    -{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(invoice.discount_amount)}
                   </span>
                 </div>
               )}
               <div className="flex justify-between text-xs md:text-sm">
                 <span className="text-muted-foreground">TVA:</span>
                 <span className="font-medium">
-                  {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.tax_amount)}
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(invoice.tax_amount)}
                 </span>
               </div>
               <div className="flex justify-between text-base md:text-lg font-bold border-t pt-2 mt-2">
                 <span>TOTAL TTC:</span>
                 <span className="text-primary">
-                  {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(invoice.total_amount)}
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(invoice.total_amount)}
                 </span>
               </div>
             </div>

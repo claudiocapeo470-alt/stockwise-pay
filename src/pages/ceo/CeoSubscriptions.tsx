@@ -91,7 +91,7 @@ export default function CeoSubscriptions() {
           { label: 'Actifs', value: stats.active, cls: 'text-emerald-400' },
           { label: 'Essai', value: stats.trial, cls: 'text-yellow-400' },
           { label: 'Expirés', value: stats.expired, cls: 'text-red-400' },
-          { label: 'Revenu estimé', value: `${stats.revenue.toLocaleString()} XOF`, cls: 'text-blue-400' },
+          { label: 'Revenu estimé', value: `${stats.revenue.toLocaleString('de-DE')} XOF`, cls: 'text-blue-400' },
         ].map(s => (
           <div key={s.label} className="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-4">
             <p className="text-xs text-slate-500">{s.label}</p>
@@ -146,7 +146,7 @@ export default function CeoSubscriptions() {
           <div className="space-y-2">
             {PLANS.map(p => (
               <button key={p.name} onClick={async () => { if (changePlanSub) { await changePlan.mutateAsync({ id: changePlanSub.id, plan: p }); setChangePlanSub(null); } }} className="w-full p-3 rounded-xl border border-slate-700/40 hover:border-teal-500/30 text-left flex items-center justify-between transition-all">
-                <div><p className="text-sm text-white font-medium">{p.label}</p><p className="text-[11px] text-slate-500">{p.price > 0 ? `${p.price.toLocaleString()} XOF` : 'Gratuit'}</p></div>
+                <div><p className="text-sm text-white font-medium">{p.label}</p><p className="text-[11px] text-slate-500">{p.price > 0 ? `${p.price.toLocaleString('de-DE')} XOF` : 'Gratuit'}</p></div>
               </button>
             ))}
           </div>

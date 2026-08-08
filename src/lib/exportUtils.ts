@@ -19,7 +19,7 @@ interface ExportData {
 }
 
 const formatAmount = (amount: number, currencySymbol: string = 'FCFA'): string => {
-  const formatted = amount.toLocaleString('fr-FR', {
+  const formatted = amount.toLocaleString('de-DE', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
     useGrouping: true

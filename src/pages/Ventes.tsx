@@ -179,8 +179,8 @@ export default function Ventes() {
       }
       doc.text(displayName, margin + 5, y + 7);
       doc.text(item.qty.toString(), 100, y + 7, { align: 'center' });
-      doc.text(`${item.unitPrice.toLocaleString('fr-FR')} FCFA`, 135, y + 7, { align: 'center' });
-      doc.text(`${item.total.toLocaleString('fr-FR')} FCFA`, pageWidth - margin - 5, y + 7, { align: 'right' });
+      doc.text(`${item.unitPrice.toLocaleString('de-DE')} FCFA`, 135, y + 7, { align: 'center' });
+      doc.text(`${item.total.toLocaleString('de-DE')} FCFA`, pageWidth - margin - 5, y + 7, { align: 'right' });
     });
 
     y += 20;
@@ -194,7 +194,7 @@ export default function Ventes() {
     doc.setTextColor(17, 24, 39);
     doc.text("TOTAL TTC", 120, y);
     doc.setTextColor(0, 102, 204);
-    doc.text(`${sale.total_amount.toLocaleString('fr-FR')} FCFA`, pageWidth - margin, y, { align: 'right' });
+    doc.text(`${sale.total_amount.toLocaleString('de-DE')} FCFA`, pageWidth - margin, y, { align: 'right' });
 
     y = 270;
     doc.setDrawColor(0, 102, 204);
@@ -259,7 +259,7 @@ export default function Ventes() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-1">
           <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
-            {sales.length} {sales.length > 1 ? "transactions enregistrées" : "transaction enregistrée"} • {totalSales.toLocaleString()} FCFA de chiffre d'affaires
+            {sales.length} {sales.length > 1 ? "transactions enregistrées" : "transaction enregistrée"} • {totalSales.toLocaleString('de-DE')} FCFA de chiffre d'affaires
           </p>
         </div>
       </div>
@@ -285,7 +285,7 @@ export default function Ventes() {
             </div>
             <div className="min-w-0">
               <p className="text-lg sm:text-2xl font-bold leading-none truncate">{todaySales.length}</p>
-              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Aujourd'hui • {todayTotal.toLocaleString()} FCFA</p>
+              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Aujourd'hui • {todayTotal.toLocaleString('de-DE')} FCFA</p>
             </div>
           </CardContent>
         </Card>
@@ -296,7 +296,7 @@ export default function Ventes() {
               <TrendingUp className="h-5 w-5 text-secondary" />
             </div>
             <div className="min-w-0">
-              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{totalSales.toLocaleString()}</p>
+              <p className="text-lg sm:text-2xl font-bold leading-none truncate">{totalSales.toLocaleString('de-DE')}</p>
               <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Chiffre d'affaires (FCFA)</p>
             </div>
           </CardContent>
@@ -368,7 +368,7 @@ export default function Ventes() {
                       </TableCell>
                       <TableCell className="text-center">{sale.quantity}</TableCell>
                       <TableCell className="text-right font-semibold">
-                        {sale.total_amount.toLocaleString()} FCFA
+                        {sale.total_amount.toLocaleString('de-DE')} FCFA
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1 justify-end">
@@ -392,7 +392,7 @@ export default function Ventes() {
                                 <AlertDialogTitle>Supprimer cette vente ?</AlertDialogTitle>
                                 <AlertDialogDescription>
                                   Cette action est irréversible. La vente de{" "}
-                                  {sale.total_amount.toLocaleString()} FCFA{" "}
+                                  {sale.total_amount.toLocaleString('de-DE')} FCFA{" "}
                                   sera définitivement supprimée.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
@@ -428,7 +428,7 @@ export default function Ventes() {
                         {format(new Date(sale.sale_date), "dd MMM yyyy · HH:mm", { locale: fr })}
                       </p>
                     </div>
-                    <p className="font-bold text-[15px] shrink-0">{sale.total_amount.toLocaleString()} <span className="text-xs font-normal text-muted-foreground">FCFA</span></p>
+                    <p className="font-bold text-[15px] shrink-0">{sale.total_amount.toLocaleString('de-DE')} <span className="text-xs font-normal text-muted-foreground">FCFA</span></p>
                   </div>
 
                   <div className="mt-3 flex items-center gap-2 text-xs">

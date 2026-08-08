@@ -130,7 +130,7 @@ export const SalesChart = React.memo(function SalesChart({ sales, period, dateRa
               <div className="min-w-0">
                 <CardTitle className="text-sm font-semibold text-muted-foreground">Chiffre d'affaires</CardTitle>
                 <p className="text-xl sm:text-2xl font-bold text-foreground truncate">
-                  {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', notation: 'compact', compactDisplay: 'short' }).format(totalRevenue)}
+                  {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF', notation: 'compact', compactDisplay: 'short' }).format(totalRevenue)}
                 </p>
               </div>
             </div>

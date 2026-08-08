@@ -66,7 +66,7 @@ export function RecentActivity() {
         type: "sale",
         title: "Vente produit",
         description: `${product?.name || 'Produit'} - ${sale.customer_name ? `Client: ${sale.customer_name}` : 'Vente directe'}`,
-        amount: `${sale.total_amount.toLocaleString()} CFA`,
+        amount: `${sale.total_amount.toLocaleString('de-DE')} CFA`,
         time: formatDistanceToNow(new Date(sale.created_at), { addSuffix: true, locale: fr }),
         status: "completed"
       }
@@ -88,7 +88,7 @@ export function RecentActivity() {
       type: "payment",
       title: "Paiement reçu",
       description: `${payment.payment_method}${payment.customer_first_name || payment.customer_last_name ? ` - ${payment.customer_first_name} ${payment.customer_last_name}` : ''}`,
-      amount: `${payment.total_amount.toLocaleString()} CFA`,
+      amount: `${payment.total_amount.toLocaleString('de-DE')} CFA`,
       time: formatDistanceToNow(new Date(payment.created_at), { addSuffix: true, locale: fr }),
       status: payment.status === 'completed' ? 'completed' : 'pending'
     }))

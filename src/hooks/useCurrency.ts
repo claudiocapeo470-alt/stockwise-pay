@@ -55,7 +55,7 @@ export function useCurrency() {
   }, []);
 
   const formatCurrency = useCallback((amount: number): string => {
-    const formatted = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
+    const formatted = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
     if (currency.position === 'before') return `${currency.symbol}${formatted}`;
     return `${formatted} ${currency.symbol}`;
   }, [currency]);

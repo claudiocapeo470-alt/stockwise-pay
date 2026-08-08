@@ -50,7 +50,7 @@ interface Props {
   onNew?: () => void;
 }
 
-const formatXOF = (n: number) => `${Math.round(n).toLocaleString("fr-FR")} F`;
+const formatXOF = (n: number) => `${Math.round(n).toLocaleString("de-DE")} F`;
 
 export function PosReceipt({ open, data, onClose, onNew }: Props) {
   const [qrDataUrl, setQrDataUrl] = useState<string>("");

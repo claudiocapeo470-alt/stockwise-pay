@@ -61,7 +61,7 @@ export default function RapportEmployes() {
   const isManager = memberRole.includes('manager');
 
   const formatPrice = (price: number) =>
-    new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 })
+    new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 })
       .format(price).replace('XOF', 'CFA');
 
   // Allow owner + manager access

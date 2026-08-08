@@ -360,7 +360,7 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
                 <div className="p-2.5 space-y-1">
                   <p className="text-sm font-medium truncate">{form.name || 'Nom du produit'}</p>
                   <p className="text-xs text-muted-foreground truncate">{form.category || 'Catégorie'}</p>
-                  <p className="text-sm font-bold">{form.price ? Number(form.price).toLocaleString() : '0'} XOF</p>
+                  <p className="text-sm font-bold">{form.price ? Number(form.price).toLocaleString('de-DE') : '0'} XOF</p>
                 </div>
               </div>
             </div>
@@ -397,7 +397,7 @@ function OnlineProductCard({ sp, onEdit, onUnpublish, onDelete }: { sp: any; onE
           <p className="font-semibold text-sm truncate">{product?.name || '—'}</p>
           <p className="text-xs text-muted-foreground truncate">{product?.category || 'Sans catégorie'}</p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-sm font-bold tracking-tight">{sp.online_price?.toLocaleString()} XOF</span>
+            <span className="text-sm font-bold tracking-tight">{sp.online_price?.toLocaleString('de-DE')} XOF</span>
             <Badge variant={sp.is_active !== false ? 'success' : 'secondary'} className="text-[10px] px-1.5 py-0">
               {sp.is_active !== false ? 'Actif' : 'Inactif'}
             </Badge>
@@ -427,7 +427,7 @@ function StockProductCard({ product, selected, onToggle, onlinePrice, onPriceCha
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm truncate">{product.name}</p>
             <p className="text-xs text-muted-foreground">{product.category || 'Sans catégorie'}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Stock: {product.price?.toLocaleString()} XOF</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Stock: {product.price?.toLocaleString('de-DE')} XOF</p>
           </div>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive flex-shrink-0" onClick={onDelete} title="Supprimer"><Trash2 className="h-3.5 w-3.5" /></Button>
         </div>
@@ -571,7 +571,7 @@ export default function StoreProducts() {
                         <TableRow key={sp.id}>
                           <TableCell><div className="flex items-center gap-3">{product && <ProductIcon product={product} />}<span className="font-medium text-sm">{product?.name || '—'}</span></div></TableCell>
                           <TableCell className="text-muted-foreground text-sm">{product?.category || '—'}</TableCell>
-                          <TableCell className="font-semibold">{sp.online_price?.toLocaleString()} XOF</TableCell>
+                          <TableCell className="font-semibold">{sp.online_price?.toLocaleString('de-DE')} XOF</TableCell>
                           <TableCell><Badge variant={sp.is_active !== false ? 'default' : 'secondary'} className="text-xs">{sp.is_active !== false ? 'Actif' : 'Inactif'}</Badge></TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-1">
@@ -634,7 +634,7 @@ export default function StoreProducts() {
                         <TableCell><Checkbox checked={selected.has(p.id)} onCheckedChange={() => toggleSelect(p.id)} /></TableCell>
                         <TableCell><div className="flex items-center gap-3"><ProductIcon product={p} /><span className="font-medium text-sm">{p.name}</span></div></TableCell>
                         <TableCell className="text-muted-foreground text-sm">{p.category || '—'}</TableCell>
-                        <TableCell className="text-sm">{p.price?.toLocaleString()} XOF</TableCell>
+                        <TableCell className="text-sm">{p.price?.toLocaleString('de-DE')} XOF</TableCell>
                         <TableCell>
                           <Input type="number" className="w-28 h-8 text-sm" value={onlinePrices[p.id] ?? p.price} onChange={e => setOnlinePrices(prev => ({ ...prev, [p.id]: Number(e.target.value) }))} onClick={e => e.stopPropagation()} />
                         </TableCell>

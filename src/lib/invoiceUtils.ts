@@ -5,7 +5,7 @@ import { fr } from 'date-fns/locale';
 import { Invoice, InvoiceItem } from '@/hooks/useInvoices';
 
 const formatAmount = (amount: number, currencySymbol: string = 'FCFA'): string => {
-  const formatted = new Intl.NumberFormat('fr-FR', {
+  const formatted = new Intl.NumberFormat('de-DE', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
     useGrouping: true

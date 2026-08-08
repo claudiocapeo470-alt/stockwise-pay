@@ -111,11 +111,11 @@ export default function LivreurDashboard() {
             {(Array.isArray(d.order.items) ? d.order.items : []).map((item: any, i: number) => (
               <div key={i} className="flex justify-between">
                 <span>{item.icon || '📦'} {item.name} ×{item.quantity}</span>
-                <span className="font-medium">{((item.price || 0) * (item.quantity || 1)).toLocaleString()} F</span>
+                <span className="font-medium">{((item.price || 0) * (item.quantity || 1)).toLocaleString('de-DE')} F</span>
               </div>
             ))}
             <div className="border-t pt-1 font-bold flex justify-between">
-              <span>Total</span><span>{(d.order?.total || 0).toLocaleString()} FCFA</span>
+              <span>Total</span><span>{(d.order?.total || 0).toLocaleString('de-DE')} FCFA</span>
             </div>
           </div>
         )}

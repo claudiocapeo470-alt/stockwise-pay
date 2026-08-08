@@ -146,7 +146,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(stats?.revenueThisMonth || 0)}
+              {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF' }).format(stats?.revenueThisMonth || 0)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Ventes ce mois-ci

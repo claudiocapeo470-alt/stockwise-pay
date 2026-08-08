@@ -73,7 +73,7 @@ export default function AdminSubscriptions() {
         <Card><CardContent className="p-4 flex items-center gap-3"><Users className="h-8 w-8 text-success" /><div><p className="text-2xl font-bold">{stats.active}</p><p className="text-xs text-muted-foreground">Actifs</p></div></CardContent></Card>
         <Card><CardContent className="p-4 flex items-center gap-3"><Clock className="h-8 w-8 text-primary" /><div><p className="text-2xl font-bold">{stats.trial}</p><p className="text-xs text-muted-foreground">En essai</p></div></CardContent></Card>
         <Card><CardContent className="p-4 flex items-center gap-3"><AlertTriangle className="h-8 w-8 text-destructive" /><div><p className="text-2xl font-bold">{stats.expired}</p><p className="text-xs text-muted-foreground">Expirés</p></div></CardContent></Card>
-        <Card><CardContent className="p-4 flex items-center gap-3"><DollarSign className="h-8 w-8 text-warning" /><div><p className="text-2xl font-bold">{stats.revenue.toLocaleString()}</p><p className="text-xs text-muted-foreground">XOF/mois</p></div></CardContent></Card>
+        <Card><CardContent className="p-4 flex items-center gap-3"><DollarSign className="h-8 w-8 text-warning" /><div><p className="text-2xl font-bold">{stats.revenue.toLocaleString('de-DE')}</p><p className="text-xs text-muted-foreground">XOF/mois</p></div></CardContent></Card>
       </div>
 
       <div className="flex gap-3">
@@ -121,7 +121,7 @@ export default function AdminSubscriptions() {
                   <TableCell>{getStatusBadge(sub)}</TableCell>
                   <TableCell>{getDaysLeft(sub)}j</TableCell>
                   <TableCell className="capitalize">{sub.billing_cycle === 'annual' ? 'Annuel' : 'Mensuel'}</TableCell>
-                  <TableCell>{(sub.plan_price || sub.amount || 0).toLocaleString()} {sub.currency}</TableCell>
+                  <TableCell>{(sub.plan_price || sub.amount || 0).toLocaleString('de-DE')} {sub.currency}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
                       <Button size="sm" variant="ghost" onClick={() => setHistoryUserId(sub.user_id)} title="Historique"><Eye className="h-4 w-4" /></Button>
@@ -160,7 +160,7 @@ export default function AdminSubscriptions() {
                   <TableRow key={h.id}>
                     <TableCell>{new Date(h.paid_at).toLocaleDateString('fr-FR')}</TableCell>
                     <TableCell className="capitalize">{h.plan_name}</TableCell>
-                    <TableCell>{h.amount?.toLocaleString()} {h.currency}</TableCell>
+                    <TableCell>{h.amount?.toLocaleString('de-DE')} {h.currency}</TableCell>
                     <TableCell>
                       <Badge variant={h.status === 'success' ? 'default' : 'destructive'}>{h.status === 'success' ? 'Payé' : 'Échoué'}</Badge>
                     </TableCell>

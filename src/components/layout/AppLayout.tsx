@@ -182,7 +182,9 @@ export function AppLayout({ children }: AppLayoutProps) {
         {!isMobile && <AppSidebar />}
         
         <main className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden">
-          <header className="sticky top-0 z-40 h-14 sm:h-16 bg-background px-4 sm:px-5 flex items-center">
+          <header className="app-safe-header sticky top-0 z-40 min-h-14 sm:min-h-16 bg-background/95 backdrop-blur-xl px-4 sm:px-5 flex items-center">
+            <div className="w-full flex items-center h-14 sm:h-16">
+
             {useCenteredHeader ? (
               <div className="relative flex items-center w-full min-w-0">
                 <div className="flex items-center flex-shrink-0">
@@ -246,7 +248,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
             </div>
             )}
-
+            </div>
           </header>
           <div className={`flex-1 p-3 sm:p-4 md:p-6 lg:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : ''} animate-fade-in`}>
             {children}

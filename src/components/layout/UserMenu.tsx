@@ -96,21 +96,24 @@ export function UserMenu() {
               <span>Déconnexion</span>
             </DropdownMenuItem>
           </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Se déconnecter ?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Êtes-vous sûr de vouloir vous déconnecter ? Toute vente en cours à la caisse sera perdue.
+          <AlertDialogContent className="max-w-[340px] rounded-3xl p-6 text-center border-0">
+            <AlertDialogHeader className="items-center space-y-3">
+              <div className="h-14 w-14 rounded-full bg-destructive/10 flex items-center justify-center">
+                <LogOut className="h-6 w-6 text-destructive" />
+              </div>
+              <AlertDialogTitle className="text-lg font-bold">Se déconnecter ?</AlertDialogTitle>
+              <AlertDialogDescription className="text-sm text-muted-foreground">
+                Toute vente en cours à la caisse sera perdue.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogFooter className="flex-col gap-2 sm:flex-col sm:space-x-0 mt-4">
               <AlertDialogAction
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                className="w-full h-11 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 onClick={() => signOut()}
               >
                 Se déconnecter
               </AlertDialogAction>
+              <AlertDialogCancel className="w-full h-11 rounded-xl mt-0">Annuler</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

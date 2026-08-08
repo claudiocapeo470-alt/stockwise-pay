@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { PinKeypad } from "@/components/auth/PinKeypad";
 import stocknixLogo from '@/assets/stocknix-logo.png';
-import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 import entrepreneursImage from "@/assets/african-entrepreneur-tablet.png";
 
 // Schémas de validation

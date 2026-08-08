@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDeliveries } from "@/hooks/useDeliveries";
 import { useTeam } from "@/hooks/useTeam";
 import { toast } from "sonner";
-import { Truck, Package, CheckCircle, AlertTriangle, UserPlus } from "lucide-react";
+import { Truck, Package, CheckCircle, AlertTriangle, UserPlus, Bike } from "lucide-react";
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
   unassigned: { label: "Non assignée", color: "bg-muted text-muted-foreground", icon: Package },
@@ -17,6 +17,18 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = 
   delivered: { label: "Livrée", color: "bg-success/10 text-success", icon: CheckCircle },
   problem: { label: "Problème", color: "bg-destructive/10 text-destructive", icon: AlertTriangle },
 };
+
+function EmptyDeliveries() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+      <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+        <Bike className="h-8 w-8 text-primary" />
+      </div>
+      <p className="font-semibold text-foreground">Aucune livraison</p>
+      <p className="text-sm text-muted-foreground">Les livraisons apparaîtront ici dès qu'une commande sera prête.</p>
+    </div>
+  );
+}
 
 export default function Livraisons() {
   const { deliveries, assignDriver } = useDeliveries();
@@ -150,13 +162,13 @@ export default function Livraisons() {
                 </TableRow>
               );
             })}
-            {filtered.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-12 text-muted-foreground">Aucune livraison</TableCell></TableRow>}
+            {filtered.length === 0 && <TableRow><TableCell colSpan={5} className="p-0"><EmptyDeliveries /></TableCell></TableRow>}
           </TableBody>
         </Table>
       </Card>
 
       {/* Mobile cards */}
-      <div className="md:hidden space-y-3">
+      <div className="md:hidden space-y-4">
         {filtered.map(d => {
           const st = STATUS_MAP[d.status] || STATUS_MAP.unassigned;
           return (
@@ -177,7 +189,7 @@ export default function Livraisons() {
             </Card>
           );
         })}
-        {filtered.length === 0 && <p className="text-center text-muted-foreground py-8">Aucune livraison</p>}
+        {filtered.length === 0 && <EmptyDeliveries />}
       </div>
 
       {/* Assign dialog */}

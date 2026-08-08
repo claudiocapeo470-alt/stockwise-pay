@@ -546,7 +546,7 @@ export default function StoreProducts() {
               </Button>
             </CardContent></Card>
           ) : isMobile ? (
-            <div className="space-y-2">
+            <div className="space-y-4">
               {filteredOnline.map((sp: any) => (
                 <OnlineProductCard
                   key={sp.id}
@@ -606,7 +606,7 @@ export default function StoreProducts() {
               <p className="text-muted-foreground text-sm">{unpublished.length === 0 ? 'Tous les produits sont publiés' : 'Aucun résultat'}</p>
             </CardContent></Card>
           ) : isMobile ? (
-            <div className="space-y-2">
+            <div className="space-y-4">
               {filteredUnpublished.map(p => (
                 <StockProductCard
                   key={p.id}

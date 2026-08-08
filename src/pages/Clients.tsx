@@ -162,7 +162,7 @@ export default function Clients() {
       ) : filtered.length === 0 ? (
         <Card><CardContent className="py-12 text-center"><Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" /><h3 className="font-semibold mb-1">{clients.length === 0 ? 'Aucun client' : 'Aucun résultat'}</h3><p className="text-sm text-muted-foreground">{clients.length === 0 ? 'Ajoutez votre premier client' : ''}</p></CardContent></Card>
       ) : isMobile ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {filtered.map(c => (
             <Card key={c.id} className="cursor-pointer" onClick={() => openEdit(c)}>
               <CardContent className="p-4 flex items-center gap-3">

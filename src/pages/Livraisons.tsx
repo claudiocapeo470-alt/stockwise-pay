@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDeliveries } from "@/hooks/useDeliveries";
 import { useTeam } from "@/hooks/useTeam";
 import { toast } from "sonner";
-import { Truck, Package, CheckCircle, AlertTriangle, UserPlus } from "lucide-react";
+import { Truck, Package, CheckCircle, AlertTriangle, UserPlus, Bike } from "lucide-react";
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
   unassigned: { label: "Non assignée", color: "bg-muted text-muted-foreground", icon: Package },
@@ -17,6 +17,18 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = 
   delivered: { label: "Livrée", color: "bg-success/10 text-success", icon: CheckCircle },
   problem: { label: "Problème", color: "bg-destructive/10 text-destructive", icon: AlertTriangle },
 };
+
+function EmptyDeliveries() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+      <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+        <Bike className="h-8 w-8 text-primary" />
+      </div>
+      <p className="font-semibold text-foreground">Aucune livraison</p>
+      <p className="text-sm text-muted-foreground">Les livraisons apparaîtront ici dès qu'une commande sera prête.</p>
+    </div>
+  );
+}
 
 export default function Livraisons() {
   const { deliveries, assignDriver } = useDeliveries();

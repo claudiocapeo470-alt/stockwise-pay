@@ -207,72 +207,81 @@ export default function Rapports() {
     );
   };
 
+  const PERIODS: { v: Period; l: string }[] = [
+    { v: '7', l: '7 j' }, { v: '30', l: '30 j' }, { v: '90', l: '90 j' }, { v: 'all', l: 'Tout' },
+  ];
+
   return (
     <div className="space-y-5 max-w-7xl mx-auto pb-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <p className="text-sm text-muted-foreground">Suivi de votre activité en temps réel</p>
-        <Select value={period} onValueChange={(v: Period) => setPeriod(v)}>
-          <SelectTrigger className="w-full sm:w-44 h-11 rounded-xl">
-            <Calendar className="h-4 w-4 mr-2" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7">7 derniers jours</SelectItem>
-            <SelectItem value="30">30 derniers jours</SelectItem>
-            <SelectItem value="90">90 derniers jours</SelectItem>
-            <SelectItem value="all">Toute la période</SelectItem>
-          </SelectContent>
-        </Select>
+      {/* Sélecteur de période — pilule segmentée */}
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <div className="inline-flex items-center gap-1 p-1 rounded-full bg-muted/60 shrink-0">
+          {PERIODS.map(p => (
+            <button
+              key={p.v}
+              onClick={() => setPeriod(p.v)}
+              className={`h-9 px-4 rounded-full text-sm font-medium transition-colors ${
+                period === p.v ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground'
+              }`}
+            >
+              {p.l}
+            </button>
+          ))}
+        </div>
+        <span className="hidden sm:block text-sm text-muted-foreground ml-2 truncate">
+          Suivi de votre activité en temps réel
+        </span>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <KPICard icon={TrendingUp} label="Chiffre d'affaires" value={formatCurrency(metrics.totalRevenue)} sublabel={`${metrics.totalSales} ventes`} />
-        <KPICard icon={Wallet} label="Encaissé" value={formatCurrency(metrics.totalPaid)} sublabel={`${metrics.paymentRate}% recouvré`} />
-        <KPICard icon={Package} label="Valeur stock" value={formatCurrency(metrics.stockValue)} sublabel={`${metrics.totalProducts} produits`} />
-        <KPICard icon={Activity} label="Panier moyen" value={formatCurrency(metrics.avgSale)} sublabel="par transaction" />
+        <KPICard icon={TrendingUp} tint="primary" label="Chiffre d'affaires" value={formatCurrency(metrics.totalRevenue)} sublabel={`${metrics.totalSales} ventes`} />
+        <KPICard icon={Wallet} tint="success" label="Encaissé" value={formatCurrency(metrics.totalPaid)} sublabel={`${metrics.paymentRate}% recouvré`} />
+        <KPICard icon={Package} tint="warning" label="Valeur stock" value={formatCurrency(metrics.stockValue)} sublabel={`${metrics.totalProducts} produits`} />
+        <KPICard icon={Activity} tint="accent" label="Panier moyen" value={formatCurrency(metrics.avgSale)} sublabel="par transaction" />
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="border-border/60 rounded-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Évolution des ventes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[190px] sm:h-[230px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                {renderChart('area', 'ventes', 'hsl(var(--primary))')}
-              </ResponsiveContainer>
+        <div className="rounded-3xl bg-card p-4 sm:p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+              <BarChart3 className="h-4 w-4 text-primary" />
             </div>
-          </CardContent>
-        </Card>
+            <h3 className="text-sm font-semibold">Évolution des ventes</h3>
+          </div>
+          <div className="h-[190px] sm:h-[230px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              {renderChart('area', 'ventes', 'hsl(var(--primary))')}
+            </ResponsiveContainer>
+          </div>
+        </div>
 
-        <Card className="border-border/60 rounded-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Chiffre d'affaires</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[190px] sm:h-[230px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                {renderChart('bar', 'revenu', 'hsl(var(--primary))')}
-              </ResponsiveContainer>
+        <div className="rounded-3xl bg-card p-4 sm:p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-8 w-8 rounded-full bg-success/10 flex items-center justify-center">
+              <TrendingUp className="h-4 w-4 text-success" />
             </div>
-          </CardContent>
-        </Card>
+            <h3 className="text-sm font-semibold">Chiffre d'affaires</h3>
+          </div>
+          <div className="h-[190px] sm:h-[230px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              {renderChart('bar', 'revenu', 'hsl(var(--primary))')}
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
-
       {/* Reports Grid */}
-      <div>
-        <h2 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-          <FileText className="h-4 w-4" /> Rapports détaillés
+      <div className="space-y-3">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          Rapports détaillés
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <ReportCard
             title="Ventes"
             icon={TrendingUp}
+            tint="primary"
             stats={[{ label: 'Total', value: metrics.totalSales }, { label: 'CA', value: formatCurrency(metrics.totalRevenue) }]}
             onView={() => { setSelectedReportType('sales'); setShowReportDialog(true); }}
             onExcel={() => handleExport('excel', 'sales')}
@@ -281,6 +290,7 @@ export default function Rapports() {
           <ReportCard
             title="Stocks"
             icon={Package}
+            tint="warning"
             stats={[{ label: 'Produits', value: metrics.totalProducts }, { label: 'Stock bas', value: metrics.lowStockProducts }]}
             onView={() => { setSelectedReportType('inventory'); setShowReportDialog(true); }}
             onExcel={() => handleExport('excel', 'products')}
@@ -289,6 +299,7 @@ export default function Rapports() {
           <ReportCard
             title="Paiements"
             icon={Wallet}
+            tint="success"
             stats={[{ label: 'Recouvrés', value: `${metrics.paymentRate}%` }, { label: 'Encaissé', value: formatCurrency(metrics.totalPaid) }]}
             onView={() => { setSelectedReportType('payments'); setShowReportDialog(true); }}
             onExcel={() => handleExport('excel', 'payments')}
@@ -306,54 +317,56 @@ export default function Rapports() {
   );
 }
 
-function KPICard({ icon: Icon, label, value, sublabel }: any) {
+const TINTS: Record<string, string> = {
+  primary: 'bg-primary/10 text-primary',
+  success: 'bg-success/10 text-success',
+  warning: 'bg-warning/10 text-warning',
+  accent: 'bg-accent/10 text-accent-foreground',
+};
+
+function KPICard({ icon: Icon, label, value, sublabel, tint = 'primary' }: any) {
   return (
-    <Card className="border-border/60 rounded-2xl">
-      <CardContent className="p-4 flex items-center gap-3">
-        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-          <Icon className="h-4 w-4 text-primary" />
-        </div>
-        <div className="min-w-0">
-          <p className="text-base sm:text-lg font-bold text-foreground truncate">{value}</p>
-          <p className="text-xs text-muted-foreground truncate">{label}</p>
-          <p className="text-[11px] text-muted-foreground/80 truncate">{sublabel}</p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="rounded-3xl bg-card p-4 shadow-sm">
+      <div className={`h-10 w-10 rounded-full flex items-center justify-center mb-3 ${TINTS[tint]}`}>
+        <Icon className="h-[18px] w-[18px]" />
+      </div>
+      <p className="text-lg sm:text-xl font-bold text-foreground truncate">{value}</p>
+      <p className="text-xs text-muted-foreground truncate">{label}</p>
+      <p className="text-[11px] text-muted-foreground/70 truncate">{sublabel}</p>
+    </div>
   );
 }
 
-function ReportCard({ title, icon: Icon, stats, onView, onExcel, onPDF }: any) {
+function ReportCard({ title, icon: Icon, stats, onView, onExcel, onPDF, tint = 'primary' }: any) {
   return (
-    <Card className="border-border/60 rounded-2xl">
-      <CardContent className="p-4 space-y-3">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Icon className="h-4 w-4 text-primary" />
+    <div className="rounded-3xl bg-card p-4 shadow-sm space-y-3">
+      <div className="flex items-center gap-3">
+        <div className={`h-10 w-10 rounded-full flex items-center justify-center ${TINTS[tint]}`}>
+          <Icon className="h-[18px] w-[18px]" />
+        </div>
+        <h3 className="font-semibold text-foreground">{title}</h3>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {stats.map((s: any, i: number) => (
+          <div key={i} className="min-w-0 rounded-2xl bg-muted/50 px-3 py-2">
+            <p className="text-[11px] text-muted-foreground truncate">{s.label}</p>
+            <p className="text-sm font-semibold text-foreground truncate">{s.value}</p>
           </div>
-          <h3 className="font-semibold text-foreground">{title}</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/60">
-          {stats.map((s: any, i: number) => (
-            <div key={i} className="min-w-0">
-              <p className="text-[11px] text-muted-foreground">{s.label}</p>
-              <p className="text-sm font-semibold text-foreground truncate">{s.value}</p>
-            </div>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <Button size="sm" className="flex-1 h-9 text-xs" onClick={onView}>
-            <Eye className="h-3.5 w-3.5 mr-1" /> Voir
-          </Button>
-          <Button size="sm" variant="outline" className="h-9 px-3" onClick={onExcel} title="Excel">
-            <FileSpreadsheet className="h-3.5 w-3.5" />
-          </Button>
-          <Button size="sm" variant="outline" className="h-9 px-3" onClick={onPDF} title="PDF">
-            <FileText className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <Button size="sm" className="flex-1 h-10 rounded-full text-xs" onClick={onView}>
+          <Eye className="h-3.5 w-3.5 mr-1" /> Voir
+        </Button>
+        <Button size="icon" variant="outline" className="h-10 w-10 rounded-full" onClick={onExcel} title="Excel">
+          <FileSpreadsheet className="h-4 w-4" />
+        </Button>
+        <Button size="icon" variant="outline" className="h-10 w-10 rounded-full" onClick={onPDF} title="PDF">
+          <FileText className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
   );
 }
+
 

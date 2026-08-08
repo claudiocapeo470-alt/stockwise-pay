@@ -1766,7 +1766,6 @@ export default function PublicStore() {
           {[
             { page: "home" as StorePage,       label: "Accueil",    icon: Package },
             { page: "shop" as StorePage,       label: "Boutique",   icon: ShoppingCart },
-            { page: "categories" as StorePage, label: "Catégories", icon: SlidersHorizontal },
             { page: "search" as StorePage,     label: "Recherche",  icon: Search },
             { page: "account" as StorePage,    label: "Compte",     icon: User },
           ].map(item => {
@@ -1782,7 +1781,25 @@ export default function PublicStore() {
               </button>
             );
           })}
+          {store.allow_orders && (
+            <button
+              onClick={() => setShowCart(true)}
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative"
+              aria-label="Panier"
+            >
+              <span className="relative">
+                <ShoppingCart className="h-5 w-5" style={{ color: "#9ca3af" }} />
+                {totalItems > 0 && (
+                  <span className="absolute -top-1.5 -right-2 h-4 min-w-4 px-1 rounded-full text-[9px] flex items-center justify-center text-white font-bold" style={{ background: color }}>
+                    {totalItems}
+                  </span>
+                )}
+              </span>
+              <span className="text-[10px] font-medium" style={{ color: "#9ca3af" }}>Panier</span>
+            </button>
+          )}
         </div>
+
       </nav>
 
       {/* DRAWERS */}

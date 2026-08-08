@@ -109,6 +109,25 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const isHomePage = location.pathname === '/app' || location.pathname === '/app/';
 
+  // Pages exclues de l'en-tête centré : Accueil, Tableau de bord, Caisse, Paramètres
+  const isExcludedHeader = isHomePage
+    || location.pathname.includes('/caisse')
+    || location.pathname.includes('/settings');
+
+  const useCenteredHeader = isMobile && !isExcludedHeader;
+
+  // Bouton "Analyse" pertinent uniquement sur les pages avec données chiffrées
+  const analyticsTarget = useMemo(() => {
+    const p = location.pathname;
+    if (p.includes('/stocks') || p.includes('/ventes') || p.includes('/clients')
+      || p.includes('/factures') || p.includes('/devis') || p.includes('/paiements')
+      || p.includes('/boutique/commandes') || p.includes('/livraisons')) {
+      return '/app/rapports';
+    }
+    return null;
+  }, [location.pathname]);
+
+
   useEffect(() => {
     if (!loading && !user && location.pathname !== '/auth') {
       navigate('/auth');

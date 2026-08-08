@@ -277,7 +277,8 @@ export default function Rapports() {
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
           Rapports détaillés
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="-mx-4 px-4 overflow-x-auto no-scrollbar snap-x snap-mandatory">
+          <div className="flex gap-3 w-max pb-1">
           <ReportCard
             title="Ventes"
             icon={TrendingUp}
@@ -305,7 +306,9 @@ export default function Rapports() {
             onExcel={() => handleExport('excel', 'payments')}
             onPDF={() => handleExport('pdf', 'payments')}
           />
+          </div>
         </div>
+
       </div>
 
       <ReportDialog

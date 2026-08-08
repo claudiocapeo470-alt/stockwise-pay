@@ -1680,15 +1680,7 @@ export default function PublicStore() {
               >
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
-              {/* Compte - mobile/tablette */}
-              <button
-                onClick={() => setActivePage("account")}
-                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-foreground"
-                aria-label="Compte"
-              >
-                <User className="h-5 w-5" />
-              </button>
-              {/* Favoris - mobile/tablette, à côté du panier */}
+              {/* Favoris - mobile/tablette */}
               <button
                 onClick={() => setActivePage("account")}
                 className="lg:hidden relative h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-foreground"
@@ -1704,7 +1696,7 @@ export default function PublicStore() {
               {store.allow_orders && (
                 <button
                   onClick={() => setShowCart(true)}
-                  className="relative h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-foreground"
+                  className="hidden lg:flex relative h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
                   aria-label="Panier"
                 >
                   <ShoppingCart className="h-5 w-5" />
@@ -1715,6 +1707,7 @@ export default function PublicStore() {
                   )}
                 </button>
               )}
+
               <button
                 onClick={() => setActivePage("shop")}
                 className="lz-btn-cta hidden lg:inline-flex items-center px-5 md:px-7 py-2.5 md:py-3 rounded-full text-white text-sm font-semibold"

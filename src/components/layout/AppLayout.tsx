@@ -224,6 +224,8 @@ export function AppLayout({ children }: AppLayoutProps) {
               {!isMobile && (
                 <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0" />
               )}
+              {isStorePage && <StoreOpenButton />}
+
 
               <div className="flex-1 min-w-0">
                 {isMobile && isHomePage ? (

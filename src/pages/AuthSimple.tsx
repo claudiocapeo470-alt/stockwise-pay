@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { PinKeypad } from "@/components/auth/PinKeypad";
-import stocknixLogo from '@/assets/stocknix-logo.png';
+import { BrandLogo, stocknixLogoWhite } from '@/components/ui/brand-logo';
 import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 import entrepreneursImage from "@/assets/african-entrepreneur-tablet.png";
 
@@ -434,7 +434,7 @@ export default function AuthSimple() {
             </div>
             <span className="font-medium">Retour</span>
           </Link>
-          <img src={stocknixLogo} alt="Stocknix" className="h-10 w-auto object-contain brightness-0 invert" />
+          <img src={stocknixLogoWhite} alt="Stocknix" className="h-10 w-auto object-contain" />
         </div>
 
         <div className="relative z-10 space-y-6">
@@ -479,7 +479,7 @@ export default function AuthSimple() {
         {/* ÉCRAN 1 — Choix */}
         {screen === 'welcome' && (
           <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 text-center space-y-7 animate-fade-in">
-            <img src={stocknixLogo} alt="Stocknix" className="h-14 w-auto object-contain mx-auto" />
+            <BrandLogo className="h-14 w-auto mx-auto" />
             <div className="space-y-2">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                 Gérez votre business en toute simplicité
@@ -520,7 +520,7 @@ export default function AuthSimple() {
         {screen === 'method' && (
           <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 space-y-6 animate-fade-in">
             <div className="text-center space-y-3">
-              <img src={stocknixLogo} alt="Stocknix" className="h-11 w-auto object-contain mx-auto" />
+              <BrandLogo className="h-11 w-auto mx-auto" />
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                 {intent === 'login' ? 'Connectez-vous pour continuer' : 'Créez un compte pour continuer'}
               </h2>

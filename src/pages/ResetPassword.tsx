@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import stocknixLogo from '@/assets/stocknix-logo.png';
+import { BrandLogo } from '@/components/ui/brand-logo';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -89,7 +89,7 @@ export default function ResetPassword() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a1628] via-[#0d1f3c] to-[#081020] p-4">
       <div className="w-full max-w-md bg-[#0f2440]/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8 space-y-6">
         <div className="text-center">
-          <img src={stocknixLogo} alt="Stocknix" className="h-10 mx-auto object-contain" />
+          <BrandLogo className="h-10 mx-auto" />
         </div>
 
         {status === 'loading' && (

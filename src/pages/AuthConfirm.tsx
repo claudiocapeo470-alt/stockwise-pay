@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import stocknixLogo from '@/assets/stocknix-logo.png';
+import { BrandLogo } from '@/components/ui/brand-logo';
 
 export default function AuthConfirm() {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ export default function AuthConfirm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a1628] via-[#0d1f3c] to-[#081020] p-4">
       <div className="w-full max-w-md bg-[#0f2440]/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8 text-center space-y-6">
-        <img src={stocknixLogo} alt="Stocknix" className="h-10 mx-auto object-contain" />
+        <BrandLogo className="h-10 mx-auto" />
         
         {status === 'loading' && (
           <div className="space-y-4 py-6">

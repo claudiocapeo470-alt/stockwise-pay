@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import stocknixLogo from '@/assets/stocknix-logo.png';
+import { BrandLogo } from '@/components/ui/brand-logo';
 
 const FooterSection = () => {
   return (
@@ -9,7 +9,7 @@ const FooterSection = () => {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-4">
-              <img src={stocknixLogo} alt="Stocknix" className="h-10" />
+              <BrandLogo className="h-10" />
             </Link>
             <p className="text-sm text-muted-foreground mb-4 max-w-xs">
               La solution complète de gestion commerciale pour les PME et TPE en Côte d'Ivoire.

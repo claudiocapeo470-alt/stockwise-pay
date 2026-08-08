@@ -248,7 +248,7 @@ export default function Factures() {
 
           {/* Grid view — cartes documents minimalistes */}
           {(isMobile || viewMode === "grid") && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredInvoices.map((invoice) => (
                 <div key={invoice.id} className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium">
                   <div className="flex items-start gap-3">

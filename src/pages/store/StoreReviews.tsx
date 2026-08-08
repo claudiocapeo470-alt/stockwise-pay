@@ -89,7 +89,7 @@ export default function StoreReviews() {
       </Card>
 
       {/* Mobile cards */}
-      <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
         {reviews.map((r: any) => {
           const isExpanded = expandedReviews.has(r.id);
           const comment = r.comment || '';

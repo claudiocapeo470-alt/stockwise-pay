@@ -134,7 +134,7 @@ export default function Rapports() {
   };
 
   const handlePDF = (data: string) => {
-    const doc = new jsPDF();
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     doc.setFontSize(18);
     doc.text(`Rapport ${data}`, 14, 20);
     doc.setFontSize(10);

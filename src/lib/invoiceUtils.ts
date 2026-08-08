@@ -61,7 +61,7 @@ export const exportInvoiceToPDF = async (
   items: InvoiceItem[],
   currencySymbol: string = 'FCFA'
 ) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageWidth = doc.internal.pageSize.width;
 
   // Couleurs professionnelles

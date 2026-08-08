@@ -429,6 +429,27 @@ export default function PublicStore() {
   const toggleFav = (id: string) =>
     setFavorites(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
+  // Envoi d'un avis client (modéré côté vendeur)
+  const submitReview = async (payload: { productId: string; name: string; rating: number; comment: string }) => {
+    if (!store) return { ok: false, error: "Boutique indisponible" };
+    const name = payload.name.trim().slice(0, 60);
+    const comment = payload.comment.trim().slice(0, 1000);
+    if (name.length < 2) return { ok: false, error: "Entrez votre nom" };
+    if (payload.rating < 1 || payload.rating > 5) return { ok: false, error: "Choisissez une note" };
+    const { error } = await supabase.from("store_reviews").insert({
+      store_id: store.id,
+      product_id: payload.productId,
+      customer_name: name,
+      rating: payload.rating,
+      comment: comment || null,
+      is_approved: false,
+    });
+    if (error) return { ok: false, error: "Envoi impossible pour le moment" };
+    return { ok: true as const, error: "" };
+  };
+
+
+
   const subtotal    = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const deliveryFee = store?.free_delivery_minimum && subtotal >= store.free_delivery_minimum
     ? 0 : (store?.delivery_fee || 0);

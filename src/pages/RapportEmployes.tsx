@@ -76,9 +76,9 @@ export default function RapportEmployes() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4 flex items-center gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <Card className="border-border/60 rounded-2xl">
+          <CardContent className="p-4 flex items-center gap-3">
             <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
               <Users className="h-5 w-5 text-primary" />
             </div>
@@ -88,8 +88,8 @@ export default function RapportEmployes() {
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center gap-4">
+        <Card className="border-border/60 rounded-2xl">
+          <CardContent className="p-4 flex items-center gap-3">
             <div className="h-10 w-10 bg-green-500/10 flex items-center justify-center rounded-xl">
               <ShoppingCart className="h-5 w-5 text-green-600" />
             </div>
@@ -99,8 +99,8 @@ export default function RapportEmployes() {
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center gap-4">
+        <Card className="border-border/60 rounded-2xl">
+          <CardContent className="p-4 flex items-center gap-3">
             <div className="h-10 w-10 bg-amber-500/10 flex items-center justify-center rounded-xl">
               <TrendingUp className="h-5 w-5 text-amber-600" />
             </div>
@@ -110,8 +110,8 @@ export default function RapportEmployes() {
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center gap-4">
+        <Card className="border-border/60 rounded-2xl">
+          <CardContent className="p-4 flex items-center gap-3">
             <div className="h-10 w-10 bg-secondary/10 flex items-center justify-center rounded-xl">
               <Award className="h-5 w-5 text-secondary-foreground" />
             </div>
@@ -127,7 +127,7 @@ export default function RapportEmployes() {
       <div className="space-y-1">
         <label className="text-xs font-medium text-muted-foreground">Sélectionner un employé</label>
         <Select value={selectedMemberId} onValueChange={setSelectedMemberId}>
-          <SelectTrigger className="max-w-sm"><SelectValue placeholder="Choisir un membre" /></SelectTrigger>
+          <SelectTrigger className="max-w-sm h-11 rounded-xl"><SelectValue placeholder="Choisir un membre" /></SelectTrigger>
           <SelectContent>
             {activeMembers.map(m => (
               <SelectItem key={m.id} value={m.id}>{m.first_name} {m.last_name || ''} — {m.role?.name || 'Sans rôle'}</SelectItem>
@@ -167,7 +167,7 @@ export default function RapportEmployes() {
                 { label: "Ce mois", data: memberStats.month, icon: "🗓️" },
                 { label: "Cette année", data: memberStats.year, icon: "📊" },
               ].map(({ label, data, icon }) => (
-                <Card key={label}>
+                <Card key={label} className="border-border/60 rounded-2xl">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-lg">{icon}</span>

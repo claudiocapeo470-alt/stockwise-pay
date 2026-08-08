@@ -510,8 +510,8 @@ export default function AuthSimple() {
                 Se connecter
               </Button>
               <Button
-                variant="secondary"
-                className="w-full h-14 rounded-full text-base font-semibold bg-muted hover:bg-muted/80"
+                variant="outline"
+                className="w-full h-14 rounded-full text-base font-semibold border-2 border-primary bg-background text-primary hover:bg-primary/5"
                 onClick={() => { setIntent('register'); setScreen('method'); }}
               >
                 Créer un compte

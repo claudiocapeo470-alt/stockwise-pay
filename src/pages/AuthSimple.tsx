@@ -342,7 +342,7 @@ export default function AuthSimple() {
   if (resetStep) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-blue-600 to-slate-900 p-4">
-        <div className="w-full max-w-md bg-background/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-primary/20">
+        <div className="w-full max-w-md bg-background rounded-[28px] shadow-2xl p-7 sm:p-8 border border-border/50">
           <div className="text-center space-y-6">
             <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
               {resetStep === 'success' ? (
@@ -378,7 +378,7 @@ export default function AuthSimple() {
                     <p className="text-sm text-destructive mt-1">{getFieldError('resetEmail')}</p>
                   )}
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full h-12 rounded-full text-base font-semibold" disabled={isLoading}>
                   {isLoading ? 'Envoi...' : 'Envoyer le lien'}
                 </Button>
               </form>
@@ -393,7 +393,7 @@ export default function AuthSimple() {
               </div>
             )}
             
-            <Button variant="outline" onClick={() => setResetStep(null)} className="w-full">
+            <Button variant="outline" onClick={() => setResetStep(null)} className="w-full h-12 rounded-full">
               Retour à la connexion
             </Button>
           </div>
@@ -454,27 +454,27 @@ export default function AuthSimple() {
       </div>
 
       {/* Right Side - Auth Forms */}
-      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 bg-background relative overflow-hidden h-full">
+      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 bg-muted/40 relative overflow-hidden h-full">
         {/* Back button hidden in PWA standalone mode */}
         {!window.matchMedia('(display-mode: standalone)').matches && (
-          <Link 
-            to="/" 
-            className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:hidden inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          <Link
+            to="/"
+            aria-label="Retour"
+            className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-full bg-background shadow-sm border border-border/60 text-foreground hover:bg-muted transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Retour
           </Link>
         )}
 
-        <div className="w-full max-w-md mx-auto space-y-3 sm:space-y-4">
-          {/* Mobile logo — icon version */}
-          <div className="lg:hidden text-center">
-            <img src={stocknixLogoIcon} alt="Stocknix" className="h-14 w-14 sm:h-16 sm:w-16 object-contain mx-auto mb-2" />
+        <div className="w-full max-w-md mx-auto rounded-[28px] bg-background shadow-xl shadow-foreground/5 border border-border/50 p-5 sm:p-7 space-y-4">
+          {/* Logo */}
+          <div className="text-center">
+            <img src={stocknixLogoIcon} alt="Stocknix" className="h-12 w-12 sm:h-14 sm:w-14 object-contain mx-auto mb-2" />
           </div>
 
-          <div className="text-center space-y-1 sm:space-y-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">Bienvenue</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">
+          <div className="text-center space-y-1">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Bienvenue</h1>
+            <p className="text-sm text-muted-foreground">
               {authMode === 'classic' 
                 ? 'Connectez-vous ou créez un compte' 
                 : 'Connexion employé avec code PIN'
@@ -486,10 +486,11 @@ export default function AuthSimple() {
           {/* CLASSIC AUTH MODE */}
           {authMode === 'classic' && (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="login">Connexion</TabsTrigger>
-                <TabsTrigger value="register">Inscription</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-4 h-11 rounded-full bg-muted p-1">
+                <TabsTrigger value="login" className="rounded-full data-[state=active]:shadow-sm">Connexion</TabsTrigger>
+                <TabsTrigger value="register" className="rounded-full data-[state=active]:shadow-sm">Inscription</TabsTrigger>
               </TabsList>
+
 
 
 
@@ -504,7 +505,7 @@ export default function AuthSimple() {
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="votre@email.com"
-                      className={getFieldError('email') ? 'border-destructive' : ''}
+                      className={`h-12 rounded-xl bg-muted/40 border-border/60 ${getFieldError('email') ? 'border-destructive' : ''}`}
                     />
                     {getFieldError('email') && (
                       <p className="text-sm text-destructive">{getFieldError('email')}</p>
@@ -520,7 +521,7 @@ export default function AuthSimple() {
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         placeholder="••••••••"
-                        className={getFieldError('password') ? 'border-destructive' : ''}
+                        className={`h-12 rounded-xl bg-muted/40 border-border/60 pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
                       />
                       <Button
                         type="button"
@@ -540,7 +541,7 @@ export default function AuthSimple() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full"
+                    className="w-full h-12 rounded-full border-border/70 bg-background font-medium"
                     onClick={handleGoogleAuth}
                     disabled={googleLoading || isLoading}
                   >
@@ -557,7 +558,7 @@ export default function AuthSimple() {
                     Continuer avec Google
                   </Button>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full h-12 rounded-full text-base font-semibold" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -608,6 +609,7 @@ export default function AuthSimple() {
                         value={formData.firstName}
                         onChange={(e) => handleInputChange('firstName', e.target.value)}
                         placeholder="John"
+                        className="h-12 rounded-xl bg-muted/40 border-border/60"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -617,6 +619,7 @@ export default function AuthSimple() {
                         value={formData.lastName}
                         onChange={(e) => handleInputChange('lastName', e.target.value)}
                         placeholder="Doe"
+                        className="h-12 rounded-xl bg-muted/40 border-border/60"
                       />
                     </div>
                   </div>
@@ -629,7 +632,7 @@ export default function AuthSimple() {
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="votre@email.com"
-                      className={getFieldError('email') ? 'border-destructive' : ''}
+                      className={`h-12 rounded-xl bg-muted/40 border-border/60 ${getFieldError('email') ? 'border-destructive' : ''}`}
                     />
                     {getFieldError('email') && (
                       <p className="text-sm text-destructive">{getFieldError('email')}</p>
@@ -645,7 +648,7 @@ export default function AuthSimple() {
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         placeholder="Minimum 8 caractères"
-                        className={getFieldError('password') ? 'border-destructive' : ''}
+                        className={`h-12 rounded-xl bg-muted/40 border-border/60 pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
                       />
                       <Button
                         type="button"
@@ -665,7 +668,7 @@ export default function AuthSimple() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full"
+                    className="w-full h-12 rounded-full border-border/70 bg-background font-medium"
                     onClick={handleGoogleAuth}
                     disabled={googleLoading || isLoading}
                   >
@@ -682,7 +685,7 @@ export default function AuthSimple() {
                     Continuer avec Google
                   </Button>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full h-12 rounded-full text-base font-semibold" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -741,13 +744,13 @@ export default function AuthSimple() {
           )}
           {/* Employee login link - subtle, at bottom */}
           {authMode === 'classic' && (
-            <div className="text-center pt-2 border-t border-border/40">
+            <div className="text-center pt-3 border-t border-border/40">
               <button
                 type="button"
                 onClick={() => { setAuthMode('employee'); setPinStep('company'); setCompanyCode(''); setPinError(''); }}
-                className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center justify-center gap-2 w-full h-11 rounded-full bg-muted/60 text-sm font-medium text-foreground hover:bg-muted transition-colors"
               >
-                <Users className="h-3.5 w-3.5" />
+                <Users className="h-4 w-4" />
                 Connexion employé (PIN)
               </button>
             </div>

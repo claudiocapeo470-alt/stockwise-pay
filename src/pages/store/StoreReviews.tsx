@@ -12,6 +12,8 @@ export default function StoreReviews() {
   const { store } = useOnlineStore();
   const { reviews, toggleApproval, deleteReview } = useStoreReviews(store?.id);
   const [expandedReviews, setExpandedReviews] = useState<Set<string>>(new Set());
+  const [filter, setFilter] = useState<"all" | "pending" | "approved">("all");
+  const [sort, setSort] = useState<"recent" | "best" | "worst">("recent");
 
   const handleApprove = async (id: string, approved: boolean) => {
     try { await toggleApproval.mutateAsync({ reviewId: id, approved }); toast.success(approved ? "Avis approuvé" : "Avis masqué"); } catch { toast.error("Erreur"); }
@@ -33,17 +35,25 @@ export default function StoreReviews() {
 
   const Stars = ({ rating }: { rating: number }) => (
     <div className="flex gap-0.5">
-      {[1,2,3,4,5].map(i => <Star key={i} className={`h-4 w-4 ${i <= rating ? 'text-yellow-500 fill-yellow-500' : 'text-muted'}`} />)}
+      {[1,2,3,4,5].map(i => <Star key={i} className={`h-4 w-4 ${i <= rating ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground/30'}`} />)}
     </div>
   );
+
+  const visible = reviews
+    .filter((r: any) => filter === "all" ? true : filter === "pending" ? !r.is_approved : !!r.is_approved)
+    .sort((a: any, b: any) => {
+      if (sort === "best") return (b.rating || 0) - (a.rating || 0);
+      if (sort === "worst") return (a.rating || 0) - (b.rating || 0);
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
+  const pendingCount = reviews.filter((r: any) => !r.is_approved).length;
 
   return (
     <div className="space-y-5 animate-fade-in max-w-5xl mx-auto w-full">
       {reviews.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="h-20 w-20 rounded-2xl bg-warning/10 flex items-center justify-center mb-4">
-            <Star className="h-10 w-10 text-warning" fill="currentColor" />
-          </div>
+          <Star className="h-16 w-16 text-warning mb-4" fill="currentColor" />
           <p className="font-semibold text-lg">Aucun avis pour le moment</p>
           <p className="text-sm text-muted-foreground mt-1 max-w-xs">
             Les avis laissés par vos clients apparaîtront ici pour modération.
@@ -53,6 +63,39 @@ export default function StoreReviews() {
 
       {reviews.length > 0 && (
       <>
+      {/* Filtres et tri */}
+      <div className="flex flex-wrap items-center gap-2">
+        {([
+          { key: "all", label: `Tous (${reviews.length})` },
+          { key: "pending", label: `En attente (${pendingCount})` },
+          { key: "approved", label: `Approuvés (${reviews.length - pendingCount})` },
+        ] as const).map(f => (
+          <button
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            className={`px-3.5 h-9 rounded-full text-xs font-semibold transition-colors ${filter === f.key ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/70'}`}
+          >
+            {f.label}
+          </button>
+        ))}
+        <div className="ml-auto flex gap-1">
+          {([
+            { key: "recent", label: "Récents" },
+            { key: "best", label: "Meilleures notes" },
+            { key: "worst", label: "Notes basses" },
+          ] as const).map(s => (
+            <button
+              key={s.key}
+              onClick={() => setSort(s.key)}
+              className={`px-3 h-9 rounded-full text-xs font-medium transition-colors ${sort === s.key ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-muted'}`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+
 
 
 
@@ -69,9 +112,12 @@ export default function StoreReviews() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {reviews.map((r: any) => (
+            {visible.map((r: any) => (
               <TableRow key={r.id}>
-                <TableCell className="font-medium">{r.customer_name}</TableCell>
+                <TableCell className="font-medium">
+                  {r.customer_name}
+                  {r.products?.name && <span className="block text-xs text-muted-foreground">{r.products.name}</span>}
+                </TableCell>
                 <TableCell><Stars rating={r.rating} /></TableCell>
                 <TableCell className="max-w-xs truncate">{r.comment || '—'}</TableCell>
                 <TableCell><Badge variant={r.is_approved ? "default" : "secondary"}>{r.is_approved ? "Approuvé" : "En attente"}</Badge></TableCell>
@@ -83,14 +129,14 @@ export default function StoreReviews() {
                 </TableCell>
               </TableRow>
             ))}
-            {reviews.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucun avis</TableCell></TableRow>}
+            {visible.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucun avis</TableCell></TableRow>}
           </TableBody>
         </Table>
       </Card>
 
       {/* Mobile cards */}
       <div className="mt-6 md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {reviews.map((r: any) => {
+        {visible.map((r: any) => {
           const isExpanded = expandedReviews.has(r.id);
           const comment = r.comment || '';
           const isTruncatable = comment.length > 80;
@@ -98,7 +144,10 @@ export default function StoreReviews() {
             <Card key={r.id}>
               <CardContent className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="font-medium text-sm">{r.customer_name}</p>
+                  <div>
+                    <p className="font-medium text-sm">{r.customer_name}</p>
+                    {r.products?.name && <p className="text-xs text-muted-foreground">{r.products.name}</p>}
+                  </div>
                   <Badge variant={r.is_approved ? "default" : "secondary"} className="text-xs">
                     {r.is_approved ? "Approuvé" : "En attente"}
                   </Badge>

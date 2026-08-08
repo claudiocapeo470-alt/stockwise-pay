@@ -38,7 +38,7 @@ interface StoreData {
   primary_color: string; logo_url: string | null; banner_url: string | null;
   show_stock: boolean; allow_orders: boolean; delivery_fee: number;
   free_delivery_minimum: number; whatsapp: string | null; phone: string | null;
-  email: string | null; address: string | null;
+  email: string | null; address: string | null; enable_reviews?: boolean;
 }
 interface ProductData {
   id: string; name: string; price: number; quantity: number;
@@ -429,6 +429,27 @@ export default function PublicStore() {
   const toggleFav = (id: string) =>
     setFavorites(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
+  // Envoi d'un avis client (modéré côté vendeur)
+  const submitReview = async (payload: { productId: string; name: string; rating: number; comment: string }) => {
+    if (!store) return { ok: false, error: "Boutique indisponible" };
+    const name = payload.name.trim().slice(0, 60);
+    const comment = payload.comment.trim().slice(0, 1000);
+    if (name.length < 2) return { ok: false, error: "Entrez votre nom" };
+    if (payload.rating < 1 || payload.rating > 5) return { ok: false, error: "Choisissez une note" };
+    const { error } = await supabase.from("store_reviews").insert({
+      store_id: store.id,
+      product_id: payload.productId,
+      customer_name: name,
+      rating: payload.rating,
+      comment: comment || null,
+      is_approved: false,
+    });
+    if (error) return { ok: false, error: "Envoi impossible pour le moment" };
+    return { ok: true as const, error: "" };
+  };
+
+
+
   const subtotal    = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const deliveryFee = store?.free_delivery_minimum && subtotal >= store.free_delivery_minimum
     ? 0 : (store?.delivery_fee || 0);
@@ -538,24 +559,17 @@ export default function PublicStore() {
             </div>
           )}
 
-          {/* Actions hover (favori + œil) */}
+          {/* Action favori */}
           <div className="lz-pcard-actions z-10">
             <button
               onClick={(e) => { e.stopPropagation(); toggleFav(product.id); }}
-              className="h-9 w-9 bg-card shadow flex items-center justify-center hover:scale-110 transition-transform"
+              className="h-9 w-9 rounded-full bg-card/95 shadow-sm flex items-center justify-center hover:scale-110 transition-transform"
               aria-label="Favori"
             >
               <Heart className={`h-4 w-4 ${isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
             </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }}
-              className="h-9 w-9 bg-card shadow flex items-center justify-center hover:scale-110 transition-transform"
-              aria-label="Ajouter au panier"
-              disabled={!isAvailable(product)}
-            >
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-            </button>
           </div>
+
 
           {/* Flèches gauche/droite */}
           {hasMultiple && (
@@ -661,11 +675,12 @@ export default function PublicStore() {
             <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${color}33 0%, #111827 100%)` }} />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70" />
-          <div className="relative z-10 container mx-auto px-4 text-center text-white">
-            <p className="lz-hero-sub text-xs uppercase tracking-[0.3em] text-white/60 mb-4">Boutique en ligne</p>
-            <h1 className="lz-heading lz-hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
+          <div className="relative z-10 container mx-auto px-4 text-center text-white max-w-2xl">
+            <p className="lz-hero-sub text-[10px] uppercase tracking-[0.3em] text-white/60 mb-3">Boutique en ligne</p>
+            <h1 className="lz-heading lz-hero-title text-lg sm:text-xl md:text-2xl lg:text-3xl mb-6 leading-snug font-medium text-white/95 line-clamp-4">
               {store.description || HERO_TAGLINE}
             </h1>
+
             <div className="lz-hero-btn">
               <button
                 onClick={() => setActivePage("shop")}
@@ -846,7 +861,76 @@ export default function PublicStore() {
     </div>
   );
 
+  // ─── FORMULAIRE D'AVIS CLIENT ────────────────────────────────────────────────
+  const ReviewForm = ({ productId }: { productId: string }) => {
+    const [name, setName] = useState("");
+    const [rating, setRating] = useState(0);
+    const [hover, setHover] = useState(0);
+    const [comment, setComment] = useState("");
+    const [sending, setSending] = useState(false);
+    const [sent, setSent] = useState(false);
+    const [error, setError] = useState("");
+
+    if (store?.enable_reviews === false) return null;
+
+    if (sent) return (
+      <div className="rounded-2xl border border-border p-5 text-center">
+        <CheckCircle className="h-8 w-8 mx-auto mb-2" style={{ color }} />
+        <p className="text-sm font-semibold text-foreground">Merci pour votre avis !</p>
+        <p className="text-xs text-muted-foreground mt-1">Il sera publié après validation par la boutique.</p>
+      </div>
+    );
+
+    const send = async () => {
+      setSending(true); setError("");
+      const res = await submitReview({ productId, name, rating, comment });
+      setSending(false);
+      if (!res?.ok) { setError(res?.error || "Erreur"); return; }
+      setSent(true);
+    };
+
+    return (
+      <div className="rounded-2xl border border-border p-5 space-y-4">
+        <p className="text-sm font-semibold text-foreground">Laisser un avis</p>
+        <div className="flex items-center gap-1">
+          {[1,2,3,4,5].map(s => (
+            <button key={s} type="button" onMouseEnter={() => setHover(s)} onMouseLeave={() => setHover(0)} onClick={() => setRating(s)} aria-label={`${s} étoiles`}>
+              <Star className={`h-6 w-6 transition-colors ${s <= (hover || rating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/40"}`} />
+            </button>
+          ))}
+        </div>
+        <input
+          value={name}
+          onChange={e => setName(e.target.value)}
+          maxLength={60}
+          placeholder="Votre nom"
+          className="w-full h-11 px-4 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2"
+          style={{ ["--tw-ring-color" as any]: color }}
+        />
+        <textarea
+          value={comment}
+          onChange={e => setComment(e.target.value)}
+          maxLength={1000}
+          rows={3}
+          placeholder="Votre commentaire (optionnel)"
+          className="w-full px-4 py-3 rounded-xl border border-border bg-card text-sm resize-none focus:outline-none focus:ring-2"
+          style={{ ["--tw-ring-color" as any]: color }}
+        />
+        {error && <p className="text-xs text-red-500">{error}</p>}
+        <button
+          onClick={send}
+          disabled={sending}
+          className="w-full h-11 rounded-full text-white text-sm font-semibold disabled:opacity-60"
+          style={{ background: color }}
+        >
+          {sending ? "Envoi…" : "Publier mon avis"}
+        </button>
+      </div>
+    );
+  };
+
   // ─── PRODUCT DETAIL PAGE — style Capture 4-5 ────────────────────────────────
+
   const ProductDetailPage = () => {
     const p = activeProduct;
     const [imgIdx, setImgIdx] = useState(0);
@@ -942,14 +1026,21 @@ export default function PublicStore() {
               </div>
 
 
-              <div className="flex items-center gap-2 mb-5">
+              <button
+                type="button"
+                onClick={() => { setTab("reviews"); }}
+                className="flex items-center gap-2 mb-5 hover:opacity-80 transition-opacity"
+              >
                 <div className="flex">
                   {[1,2,3,4,5].map(i => (
-                    <Star key={i} className={`h-4 w-4 ${i <= Math.round(avgRating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/50"}`} />
+                    <Star key={i} className={`h-4 w-4 ${i <= Math.round(avgRating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/40"}`} />
                   ))}
                 </div>
-                <span className="text-sm text-muted-foreground">({productReviews.length} avis)</span>
-              </div>
+                <span className="text-sm text-muted-foreground">
+                  {productReviews.length > 0 ? `${avgRating.toFixed(1)} · ${productReviews.length} avis` : "Donner votre avis"}
+                </span>
+              </button>
+
 
               <p className="text-3xl font-bold mb-6" style={{ color }}>{fmt(p.price)}</p>
 
@@ -1061,27 +1152,32 @@ export default function PublicStore() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
-                {productReviews.length === 0 ? (
-                  <div className="text-center py-10 text-muted-foreground/70">
-                    <Star className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">Aucun avis pour le moment</p>
-                  </div>
-                ) : productReviews.map((r: any) => (
-                  <div key={r.id} className="border-b border-border pb-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex">
-                        {[1,2,3,4,5].map(s => (
-                          <Star key={s} className={`h-3.5 w-3.5 ${s <= (r.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/50"}`} />
-                        ))}
-                      </div>
-                      <span className="text-sm font-semibold text-foreground">{r.customer_name}</span>
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  {productReviews.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground/70">
+                      <Star className="h-9 w-9 mx-auto mb-3 opacity-30" />
+                      <p className="text-sm">Aucun avis pour le moment</p>
+                      <p className="text-xs mt-1">Soyez le premier à donner votre avis</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{r.comment}</p>
-                  </div>
-                ))}
+                  ) : productReviews.map((r: any) => (
+                    <div key={r.id} className="rounded-2xl border border-border p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex">
+                          {[1,2,3,4,5].map(s => (
+                            <Star key={s} className={`h-3.5 w-3.5 ${s <= (r.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/40"}`} />
+                          ))}
+                        </div>
+                        <span className="text-sm font-semibold text-foreground">{r.customer_name}</span>
+                      </div>
+                      {r.comment && <p className="text-sm text-muted-foreground leading-relaxed">{r.comment}</p>}
+                    </div>
+                  ))}
+                </div>
+                <ReviewForm productId={p.id} />
               </div>
             )}
+
           </div>
 
           {/* Vous pourriez aussi aimer — carrousel horizontal */}
@@ -1584,15 +1680,7 @@ export default function PublicStore() {
               >
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
-              {/* Compte - mobile/tablette */}
-              <button
-                onClick={() => setActivePage("account")}
-                className="lg:hidden relative h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-foreground"
-                aria-label="Compte"
-              >
-                <User className="h-5 w-5" />
-              </button>
-              {/* Favoris - mobile/tablette, à côté du panier */}
+              {/* Favoris - mobile/tablette */}
               <button
                 onClick={() => setActivePage("account")}
                 className="lg:hidden relative h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-foreground"
@@ -1608,7 +1696,7 @@ export default function PublicStore() {
               {store.allow_orders && (
                 <button
                   onClick={() => setShowCart(true)}
-                  className="relative h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-foreground"
+                  className="hidden lg:flex relative h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
                   aria-label="Panier"
                 >
                   <ShoppingCart className="h-5 w-5" />
@@ -1619,6 +1707,7 @@ export default function PublicStore() {
                   )}
                 </button>
               )}
+
               <button
                 onClick={() => setActivePage("shop")}
                 className="lz-btn-cta hidden lg:inline-flex items-center px-5 md:px-7 py-2.5 md:py-3 rounded-full text-white text-sm font-semibold"
@@ -1677,7 +1766,6 @@ export default function PublicStore() {
           {[
             { page: "home" as StorePage,       label: "Accueil",    icon: Package },
             { page: "shop" as StorePage,       label: "Boutique",   icon: ShoppingCart },
-            { page: "categories" as StorePage, label: "Catégories", icon: SlidersHorizontal },
             { page: "search" as StorePage,     label: "Recherche",  icon: Search },
             { page: "account" as StorePage,    label: "Compte",     icon: User },
           ].map(item => {
@@ -1693,7 +1781,25 @@ export default function PublicStore() {
               </button>
             );
           })}
+          {store.allow_orders && (
+            <button
+              onClick={() => setShowCart(true)}
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 relative"
+              aria-label="Panier"
+            >
+              <span className="relative">
+                <ShoppingCart className="h-5 w-5" style={{ color: "#9ca3af" }} />
+                {totalItems > 0 && (
+                  <span className="absolute -top-1.5 -right-2 h-4 min-w-4 px-1 rounded-full text-[9px] flex items-center justify-center text-white font-bold" style={{ background: color }}>
+                    {totalItems}
+                  </span>
+                )}
+              </span>
+              <span className="text-[10px] font-medium" style={{ color: "#9ca3af" }}>Panier</span>
+            </button>
+          )}
         </div>
+
       </nav>
 
       {/* DRAWERS */}

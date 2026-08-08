@@ -601,7 +601,7 @@ export default function AuthSimple() {
                       value={formData.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
                       placeholder="John"
-                      className="h-14 rounded-2xl bg-muted/60 border-transparent"
+                      className="h-14 rounded-2xl bg-muted/40 border border-border"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -611,7 +611,7 @@ export default function AuthSimple() {
                       value={formData.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
                       placeholder="Doe"
-                      className="h-14 rounded-2xl bg-muted/60 border-transparent"
+                      className="h-14 rounded-2xl bg-muted/40 border border-border"
                     />
                   </div>
                 </div>
@@ -625,7 +625,7 @@ export default function AuthSimple() {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="vous@exemple.com"
-                  className={`h-14 rounded-2xl bg-muted/60 border-transparent ${getFieldError('email') ? 'border-destructive' : ''}`}
+                  className={`h-14 rounded-2xl bg-muted/40 border border-border ${getFieldError('email') ? 'border-destructive' : ''}`}
                 />
                 {getFieldError('email') && (
                   <p className="text-sm text-destructive">{getFieldError('email')}</p>
@@ -641,7 +641,7 @@ export default function AuthSimple() {
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
                     placeholder={activeTab === 'login' ? '••••••••' : 'Minimum 8 caractères'}
-                    className={`h-14 rounded-2xl bg-muted/60 border-transparent pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
+                    className={`h-14 rounded-2xl bg-muted/40 border border-border pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
                   />
                   <button
                     type="button"
@@ -714,7 +714,7 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 4 — Employé (PIN) */}
         {screen === 'employee' && (
-          <div className="w-full max-w-md mx-auto rounded-[28px] bg-background shadow-xl shadow-foreground/5 border border-border/50 p-6 sm:p-8 space-y-5 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 space-y-5 animate-fade-in">
             <div className="text-center space-y-2">
               <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <img src={stocknixLogoIcon} alt="Stocknix" className="h-9 w-9 object-contain" />

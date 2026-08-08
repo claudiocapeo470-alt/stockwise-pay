@@ -36,8 +36,16 @@ export default function AuthSimple() {
   const [searchParams] = useSearchParams();
   const { user, signIn, signUp, loading, setMemberInfo } = useAuth();
   
-  const [authMode, setAuthMode] = useState<'classic' | 'employee'>('classic');
-  const [activeTab, setActiveTab] = useState('login');
+  const [screen, setScreen] = useState<'welcome' | 'method' | 'form' | 'employee'>('welcome');
+  const [intent, setIntent] = useState<'login' | 'register'>('login');
+  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+
+  const goBack = () => {
+    if (screen === 'form') setScreen('method');
+    else setScreen('welcome');
+    setPinError('');
+    setErrors({});
+  };
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'success' | null>(null);

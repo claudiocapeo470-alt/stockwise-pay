@@ -15,7 +15,7 @@ interface NavGroup { label: string; items: NavItem[]; modules?: ('boutique' | 'p
 const ALL_GROUPS: NavGroup[] = [
   {
     label: 'PRINCIPAL',
-    items: [{ name: 'Tableau de bord', href: '/app', icon: BarChart3 }],
+    items: [{ name: 'Tableau de bord', href: '/app', icon: Home }],
   },
   {
     label: 'CAISSE & VENTES',

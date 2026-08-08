@@ -78,28 +78,28 @@ const livreurNav: NavItem[] = [
 ];
 
 const stockManagerNav: NavItem[] = [
-  { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Accueil", href: "/app", icon: Home, label: "Accueil" },
   { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock", module: "stock" },
   { name: "Clients", href: "/app/clients", icon: Users, label: "Clients", permission: "customers" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
 ];
 
 const commandesNav: NavItem[] = [
-  { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Accueil", href: "/app", icon: Home, label: "Accueil" },
   { name: "Commandes", href: "/app/boutique/commandes", icon: ClipboardList, label: "Commandes", permission: "boutique_orders", module: "boutique" },
   { name: "Clients", href: "/app/clients", icon: Users, label: "Clients", permission: "customers" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
 ];
 
 const managerNav: NavItem[] = [
-  { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Accueil", href: "/app", icon: Home, label: "Accueil" },
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes", permission: "sales", module: "pos" },
   { name: "Stats", href: "/app/performance", icon: TrendingUp, label: "Stats", permission: "reports" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
 ];
 
 const fusionneNav: NavItem[] = [
-  { name: "Accueil", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Accueil", href: "/app", icon: Home, label: "Accueil" },
   { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock", module: "stock" },
   { name: "Boutique", href: "/app/boutique/commandes", icon: Store, label: "Boutique", permission: "boutique_orders", module: "boutique" },
   { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },

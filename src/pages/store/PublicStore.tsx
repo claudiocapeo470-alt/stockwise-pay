@@ -1184,8 +1184,8 @@ export default function PublicStore() {
                 className="flex-1 py-3.5 px-3 border-2 border-foreground text-foreground text-sm font-semibold hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-1.5 rounded-full"
               >
                 <ShoppingCart className="h-4 w-4" />
+                <span className="inline sm:hidden">Panier</span>
                 <span className="hidden sm:inline">Ajouter au panier</span>
-                <span className="sm:inline lg:hidden">Panier</span>
               </button>
               <button
                 onClick={handleBuyNow}

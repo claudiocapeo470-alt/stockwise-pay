@@ -601,7 +601,7 @@ export default function AuthSimple() {
                       value={formData.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
                       placeholder="John"
-                      className="h-14 rounded-2xl bg-muted/60 border-transparent"
+                      className="h-14 rounded-2xl bg-background border border-border"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -611,7 +611,7 @@ export default function AuthSimple() {
                       value={formData.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
                       placeholder="Doe"
-                      className="h-14 rounded-2xl bg-muted/60 border-transparent"
+                      className="h-14 rounded-2xl bg-background border border-border"
                     />
                   </div>
                 </div>
@@ -625,7 +625,7 @@ export default function AuthSimple() {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="vous@exemple.com"
-                  className={`h-14 rounded-2xl bg-muted/60 border-transparent ${getFieldError('email') ? 'border-destructive' : ''}`}
+                  className={`h-14 rounded-2xl bg-background border border-border ${getFieldError('email') ? 'border-destructive' : ''}`}
                 />
                 {getFieldError('email') && (
                   <p className="text-sm text-destructive">{getFieldError('email')}</p>
@@ -641,7 +641,7 @@ export default function AuthSimple() {
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
                     placeholder={activeTab === 'login' ? '••••••••' : 'Minimum 8 caractères'}
-                    className={`h-14 rounded-2xl bg-muted/60 border-transparent pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
+                    className={`h-14 rounded-2xl bg-background border border-border pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
                   />
                   <button
                     type="button"

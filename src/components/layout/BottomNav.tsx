@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { BarChart3, Package, Scan, ShoppingCart, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X, Users, Truck, FileText, FileCheck, CreditCard } from "lucide-react";
+import { Home, BarChart3, Package, Scan, ShoppingCart, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X, Users, Truck, FileText, FileCheck, CreditCard } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,7 +28,7 @@ const getRouteModule = (href: string): ModuleKey | undefined => {
 };
 
 const allBottomNav: NavItem[] = [
-  { name: "Dashboard", href: "/app", icon: BarChart3, label: "Accueil" },
+  { name: "Dashboard", href: "/app", icon: Home, label: "Accueil" },
   { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock", module: "stock" },
   { name: "Caisse", href: "/app/caisse", icon: Scan, label: "Caisse", permission: "pos", module: "pos" },
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes", permission: "sales", module: "pos" },
@@ -36,7 +36,7 @@ const allBottomNav: NavItem[] = [
 
 const allDrawerNavigation: NavSection[] = [
   { section: "PRINCIPAL", items: [
-    { name: "Tableau de bord", href: "/app", icon: BarChart3 },
+    { name: "Tableau de bord", href: "/app", icon: Home },
   ]},
   { section: "MAGASIN", items: [
     { name: "Gestion des stocks", href: "/app/stocks", icon: Package, permission: "stock", module: "stock" },

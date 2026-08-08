@@ -18,7 +18,6 @@ import {
 import CategoryManager from "@/components/store/CategoryManager";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import boutique3D from "@/assets/boutique-3d.png";
 
 const COLOR_PALETTE = [
   { name: "Indigo", value: "#4f46e5" }, { name: "Violet", value: "#7c3aed" },
@@ -187,15 +186,11 @@ export default function StoreConfig() {
 
         <div className="relative flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
           <div className="flex-shrink-0">
-            <img
-              src={boutique3D}
-              alt="Boutique 3D"
-              loading="lazy"
-              width={1024}
-              height={1024}
-              className="h-40 w-40 sm:h-52 sm:w-52 object-contain drop-shadow-2xl animate-fade-in"
-            />
+            <div className="h-32 w-32 sm:h-40 sm:w-40 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg">
+              <Store className="h-16 w-16 sm:h-20 sm:w-20 text-primary" strokeWidth={1.5} />
+            </div>
           </div>
+
           <div className="flex-1 text-center sm:text-left space-y-3">
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
               {store ? "Votre boutique en ligne" : "Lancez votre boutique en ligne"}

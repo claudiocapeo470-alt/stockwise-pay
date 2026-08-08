@@ -18,6 +18,8 @@ import { NotificationCenter } from "./NotificationCenter";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";
 import { StatScrollerDots } from "./StatScrollerDots";
+import { StoreOpenButton } from "@/components/store/StoreOpenButton";
+
 
 import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 
@@ -108,6 +110,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   }, [location.pathname]);
 
   const isHomePage = location.pathname === '/app' || location.pathname === '/app/';
+  const isStorePage = location.pathname.includes('/boutique');
+
 
   // Pages exclues de l'en-tête centré : Accueil, Caisse, Paramètres + pages d'analyse (titre à gauche)
   const isExcludedHeader = isHomePage
@@ -188,7 +192,9 @@ export function AppLayout({ children }: AppLayoutProps) {
             {useCenteredHeader ? (
               <div className="relative flex items-center w-full min-w-0">
                 <div className="flex items-center flex-shrink-0">
-                  {headerLeftAction ? (
+                  {isStorePage ? (
+                    <StoreOpenButton />
+                  ) : headerLeftAction ? (
                     <Button
                       variant="ghost"
                       size="icon"
@@ -202,6 +208,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                     <span className="h-10 w-10 block" aria-hidden />
                   )}
                 </div>
+
 
                 <h1 className="absolute left-1/2 -translate-x-1/2 max-w-[55%] text-[19px] leading-none font-bold text-foreground truncate tracking-tight text-center">
                   {pageTitle}
@@ -217,6 +224,8 @@ export function AppLayout({ children }: AppLayoutProps) {
               {!isMobile && (
                 <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0" />
               )}
+              {isStorePage && <StoreOpenButton />}
+
 
               <div className="flex-1 min-w-0">
                 {isMobile && isHomePage ? (

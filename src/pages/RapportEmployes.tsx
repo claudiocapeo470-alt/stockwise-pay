@@ -74,63 +74,39 @@ export default function RapportEmployes() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Stats */}
+    <div className="space-y-5 animate-fade-in max-w-6xl mx-auto pb-8">
+      {/* Stats globales */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="border-border/60 rounded-2xl">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-xl">
-              <Users className="h-5 w-5 text-primary" />
+        {[
+          { icon: Users, tint: 'bg-primary/10 text-primary', value: String(stats.totalMembers), label: 'Employés actifs' },
+          { icon: ShoppingCart, tint: 'bg-success/10 text-success', value: String(stats.totalSales), label: 'Ventes totales' },
+          { icon: TrendingUp, tint: 'bg-warning/10 text-warning', value: formatPrice(stats.totalRevenue), label: "Chiffre d'affaires" },
+          { icon: Award, tint: 'bg-accent/10 text-accent-foreground', value: formatPrice(stats.totalPaid), label: 'Encaissé' },
+        ].map(({ icon: Icon, tint, value, label }) => (
+          <div key={label} className="rounded-3xl bg-card p-4 shadow-sm">
+            <div className={`h-10 w-10 rounded-full flex items-center justify-center mb-3 ${tint}`}>
+              <Icon className="h-[18px] w-[18px]" />
             </div>
-            <div>
-              <p className="text-2xl font-bold">{stats.totalMembers}</p>
-              <p className="text-sm text-muted-foreground">Employés actifs</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border/60 rounded-2xl">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-10 w-10 bg-green-500/10 flex items-center justify-center rounded-xl">
-              <ShoppingCart className="h-5 w-5 text-green-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{stats.totalSales}</p>
-              <p className="text-sm text-muted-foreground">Ventes totales</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border/60 rounded-2xl">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-10 w-10 bg-amber-500/10 flex items-center justify-center rounded-xl">
-              <TrendingUp className="h-5 w-5 text-amber-600" />
-            </div>
-            <div>
-              <p className="text-lg font-bold">{formatPrice(stats.totalRevenue)}</p>
-              <p className="text-sm text-muted-foreground">Chiffre d'affaires</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border/60 rounded-2xl">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-10 w-10 bg-secondary/10 flex items-center justify-center rounded-xl">
-              <Award className="h-5 w-5 text-secondary-foreground" />
-            </div>
-            <div>
-              <p className="text-lg font-bold">{formatPrice(stats.totalPaid)}</p>
-              <p className="text-sm text-muted-foreground">Encaissé</p>
-            </div>
-          </CardContent>
-        </Card>
+            <p className="text-lg sm:text-xl font-bold truncate">{value}</p>
+            <p className="text-xs text-muted-foreground truncate">{label}</p>
+          </div>
+        ))}
       </div>
 
       {/* Sélecteur */}
-      <div className="space-y-1">
-        <label className="text-xs font-medium text-muted-foreground">Sélectionner un employé</label>
+      <div className="rounded-3xl bg-card p-4 shadow-sm space-y-2">
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          Sélectionner un employé
+        </label>
         <Select value={selectedMemberId} onValueChange={setSelectedMemberId}>
-          <SelectTrigger className="max-w-sm h-11 rounded-xl"><SelectValue placeholder="Choisir un membre" /></SelectTrigger>
+          <SelectTrigger className="h-12 rounded-2xl bg-muted/50 border-0">
+            <SelectValue placeholder="Choisir un membre" />
+          </SelectTrigger>
           <SelectContent>
             {activeMembers.map(m => (
-              <SelectItem key={m.id} value={m.id}>{m.first_name} {m.last_name || ''} — {m.role?.name || 'Sans rôle'}</SelectItem>
+              <SelectItem key={m.id} value={m.id}>
+                {m.first_name} {m.last_name || ''} — {m.role?.name || 'Sans rôle'}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -139,55 +115,64 @@ export default function RapportEmployes() {
       {/* Fiche employé */}
       {selectedMember ? (
         <div className="space-y-4">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                  {selectedMember.first_name[0]}{(selectedMember.last_name || '')[0] || ''}
-                </div>
-                <div>
-                  <p className="font-semibold text-lg">{selectedMember.first_name} {selectedMember.last_name || ''}</p>
-                  <Badge variant="secondary">{selectedMember.role?.name || 'Sans rôle'}</Badge>
-                </div>
+          <div className="rounded-3xl bg-gradient-to-br from-primary/10 via-card to-card p-5 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-full bg-primary/15 flex items-center justify-center text-primary font-bold text-lg shrink-0">
+                {selectedMember.first_name[0]}{(selectedMember.last_name || '')[0] || ''}
+              </div>
+              <div className="min-w-0">
+                <p className="font-bold text-lg truncate">
+                  {selectedMember.first_name} {selectedMember.last_name || ''}
+                </p>
+                <Badge variant="secondary" className="rounded-full mt-1">
+                  {selectedMember.role?.name || 'Sans rôle'}
+                </Badge>
               </div>
               {memberStats && (
-                <div className="text-sm text-muted-foreground">
-                  <p>Total : <span className="font-semibold text-foreground">{memberStats.total} ventes</span> — {formatPrice(memberStats.totalRevenue)}</p>
+                <div className="ml-auto text-right shrink-0">
+                  <p className="text-xl font-bold">{memberStats.total}</p>
+                  <p className="text-[11px] text-muted-foreground">ventes</p>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+            {memberStats && (
+              <div className="mt-4 rounded-2xl bg-background/70 px-4 py-3">
+                <p className="text-[11px] text-muted-foreground">Chiffre d'affaires cumulé</p>
+                <p className="text-lg font-bold text-primary">{formatPrice(memberStats.totalRevenue)}</p>
+              </div>
+            )}
+          </div>
 
           {/* Stats par période */}
           {memberStats && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {[
-                { label: "Aujourd'hui", data: memberStats.today, icon: "📅" },
-                { label: "Cette semaine", data: memberStats.week, icon: "📆" },
-                { label: "Ce mois", data: memberStats.month, icon: "🗓️" },
-                { label: "Cette année", data: memberStats.year, icon: "📊" },
-              ].map(({ label, data, icon }) => (
-                <Card key={label} className="border-border/60 rounded-2xl">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg">{icon}</span>
-                      <p className="text-sm font-medium text-muted-foreground">{label}</p>
+                { label: "Aujourd'hui", data: memberStats.today },
+                { label: 'Cette semaine', data: memberStats.week },
+                { label: 'Ce mois', data: memberStats.month },
+                { label: 'Cette année', data: memberStats.year },
+              ].map(({ label, data }) => (
+                <div key={label} className="rounded-3xl bg-card p-4 shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Calendar className="h-4 w-4 text-primary" />
                     </div>
-                    <p className="text-2xl font-bold">{data.count} <span className="text-sm font-normal text-muted-foreground">ventes</span></p>
-                    <p className="text-sm font-semibold text-primary">{formatPrice(data.revenue)}</p>
-                  </CardContent>
-                </Card>
+                    <p className="text-xs font-medium text-muted-foreground truncate">{label}</p>
+                  </div>
+                  <p className="text-xl font-bold">
+                    {data.count} <span className="text-xs font-normal text-muted-foreground">ventes</span>
+                  </p>
+                  <p className="text-sm font-semibold text-primary truncate">{formatPrice(data.revenue)}</p>
+                </div>
               ))}
             </div>
           )}
         </div>
       ) : (
-        <Card>
-          <CardContent className="p-8 text-center text-muted-foreground">
-            <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
-            <p>Sélectionnez un employé pour voir ses statistiques</p>
-          </CardContent>
-        </Card>
+        <div className="rounded-3xl bg-card p-10 text-center text-muted-foreground shadow-sm">
+          <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
+          <p className="text-sm">Sélectionnez un employé pour voir ses statistiques</p>
+        </div>
       )}
     </div>
   );

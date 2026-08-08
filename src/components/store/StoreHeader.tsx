@@ -72,11 +72,8 @@ export function StoreHeader({
             {saving ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <Save className="h-[18px] w-[18px]" />}
           </Button>
         )}
-        {store && (
-          <Button size="icon" variant="outline" asChild aria-label="Ouvrir la boutique" title="Ouvrir la boutique" className="h-11 w-11 rounded-xl">
-            <a href={storeUrl} target="_blank" rel="noopener"><Store className="h-[18px] w-[18px]" /></a>
-          </Button>
-        )}
+        {/* Le bouton "Ouvrir la boutique" est désormais en haut à gauche de l'en-tête global */}
+
         {store && (
           <Button
             size="sm"

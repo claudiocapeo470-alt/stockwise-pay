@@ -76,8 +76,16 @@ input, select, textarea {
 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
 .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
 
-/* En-tête d'application : ne jamais passer sous la barre d'état (PWA / iOS / Android) */
-.app-safe-header { padding-top: env(safe-area-inset-top, 0px); }
+/* En-tête d'application : compenser la barre d'état uniquement en mode PWA
+   (en navigateur, le navigateur gère déjà l'espace → sinon l'en-tête descend trop). */
+.app-safe-header { padding-top: 0; }
+@media (display-mode: standalone) {
+  .app-safe-header { padding-top: env(safe-area-inset-top, 0px); }
+}
+@media (display-mode: fullscreen) {
+  .app-safe-header { padding-top: env(safe-area-inset-top, 0px); }
+}
+
 
 /* Bouton retour standard, identique partout */
 .back-fab {

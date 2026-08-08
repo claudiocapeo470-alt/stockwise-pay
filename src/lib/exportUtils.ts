@@ -23,7 +23,7 @@ const formatAmount = (amount: number, currencySymbol: string = 'FCFA'): string =
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
     useGrouping: true
-  }).replace(/\s/g, '.').replace(',', '.');
+  });
 
   return `${formatted} ${currencySymbol}`;
 };

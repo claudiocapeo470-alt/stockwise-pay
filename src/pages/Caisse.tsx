@@ -588,7 +588,7 @@ export default function Caisse() {
     if (error) { toast({ title: "Erreur", description: "Impossible de fermer la caisse", variant: "destructive" }); return; }
     setCloseReportData({
       companyName, cashierName: isEmployee ? (memberInfo?.member_first_name || 'Caissier') : (profile?.first_name || 'Patron'),
-      openedAt: new Date().toLocaleString('de-DE'), closedAt: new Date().toLocaleString('de-DE'),
+      openedAt: new Date().toLocaleString('fr-FR'), closedAt: new Date().toLocaleString('fr-FR'),
       openingAmount: opening, totalSales: sessionSales.total, totalCash: sessionSales.cash,
       totalMobileMoney: sessionSales.mobile, totalCard: sessionSales.card,
       totalExpenses, totalEntries, expectedAmount, closingAmount: realAmount,

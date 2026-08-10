@@ -671,42 +671,6 @@ export default function AuthSimple() {
               </Button>
             </form>
 
-            <p className="text-center text-sm text-muted-foreground">
-              {activeTab === 'login' ? (
-                <>Pas encore de compte ?{' '}
-                  <button type="button" className="font-semibold text-foreground" onClick={() => { setActiveTab('register'); setIntent('register'); setErrors({}); }}>S'inscrire</button>
-                </>
-              ) : (
-                <>Déjà un compte ?{' '}
-                  <button type="button" className="font-semibold text-foreground" onClick={() => { setActiveTab('login'); setIntent('login'); setErrors({}); }}>Se connecter</button>
-                </>
-              )}
-            </p>
-
-            {activeTab === 'login' && (
-              <div className="text-center">
-                <button
-                  type="button"
-                  className="text-xs text-muted-foreground hover:text-foreground"
-                  onClick={async () => {
-                    if (!formData.email) {
-                      toast.error('Entrez votre email pour renvoyer la confirmation');
-                      return;
-                    }
-                    const { error } = await supabase.auth.resend({
-                      type: 'signup',
-                      email: formData.email,
-                      options: { emailRedirectTo: `${window.location.origin}/auth/confirm` }
-                    });
-                    if (error) toast.error('Erreur lors du renvoi');
-                    else toast.success('Email de confirmation renvoyé !');
-                  }}
-                >
-                  Renvoyer la confirmation
-                </button>
-              </div>
-            )}
-
             <div className="flex items-center gap-3">
               <div className="h-px flex-1 bg-border" />
               <span className="text-xs text-muted-foreground">ou</span>
@@ -732,6 +696,44 @@ export default function AuthSimple() {
                   </svg>
                 )}
               </button>
+            </div>
+
+            <div className="space-y-3 pt-1">
+              <p className="text-center text-sm text-muted-foreground">
+                {activeTab === 'login' ? (
+                  <>Pas encore de compte ?{' '}
+                    <button type="button" className="font-semibold text-foreground" onClick={() => { setActiveTab('register'); setIntent('register'); setErrors({}); }}>S'inscrire</button>
+                  </>
+                ) : (
+                  <>Déjà un compte ?{' '}
+                    <button type="button" className="font-semibold text-foreground" onClick={() => { setActiveTab('login'); setIntent('login'); setErrors({}); }}>Se connecter</button>
+                  </>
+                )}
+              </p>
+
+              {activeTab === 'login' && (
+                <div className="text-center">
+                  <button
+                    type="button"
+                    className="text-xs text-muted-foreground hover:text-foreground"
+                    onClick={async () => {
+                      if (!formData.email) {
+                        toast.error('Entrez votre email pour renvoyer la confirmation');
+                        return;
+                      }
+                      const { error } = await supabase.auth.resend({
+                        type: 'signup',
+                        email: formData.email,
+                        options: { emailRedirectTo: `${window.location.origin}/auth/confirm` }
+                      });
+                      if (error) toast.error('Erreur lors du renvoi');
+                      else toast.success('Email de confirmation renvoyé !');
+                    }}
+                  >
+                    Renvoyer la confirmation
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

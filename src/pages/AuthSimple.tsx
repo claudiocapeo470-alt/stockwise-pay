@@ -41,8 +41,7 @@ export default function AuthSimple() {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
 
   const goBack = () => {
-    if (screen === 'form') setScreen('method');
-    else setScreen('welcome');
+    setScreen('welcome');
     setPinError('');
     setErrors({});
   };
@@ -499,14 +498,14 @@ export default function AuthSimple() {
             <div className="space-y-3">
               <Button
                 className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium"
-                onClick={() => { setIntent('login'); setScreen('method'); }}
+                onClick={() => { setIntent('login'); setActiveTab('login'); setErrors({}); setScreen('form'); }}
               >
                 Se connecter
               </Button>
               <Button
                 variant="outline"
                 className="w-full h-14 rounded-full text-base font-semibold border-2 border-primary/25 bg-card text-primary hover:bg-primary/5"
-                onClick={() => { setIntent('register'); setScreen('method'); }}
+                onClick={() => { setIntent('register'); setActiveTab('register'); setErrors({}); setScreen('form'); }}
               >
                 Créer un compte
               </Button>

@@ -36,6 +36,7 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col gap-4 h-[calc(100dvh-10.25rem)] min-h-0 overflow-hidden">
         <div className="shrink-0 rounded-3xl bg-primary text-primary-foreground px-5 py-5 shadow-sm">
+          <p className="text-sm opacity-80 leading-none">Bienvenue</p>
           <h2 className="text-2xl font-bold leading-tight truncate mt-1">
             {companyName}
           </h2>

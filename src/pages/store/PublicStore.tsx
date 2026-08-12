@@ -1608,7 +1608,7 @@ export default function PublicStore() {
       <style>{ZONE_STYLES}</style>
 
       {/* HEADER — style Capture 1 */}
-      <header className="sticky top-0 z-40 bg-background border-b border-border">
+      <header className="sticky top-0 z-40 bg-background border-b border-border app-safe-header">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between h-16 md:h-20 gap-4">
             {/* Logo */}

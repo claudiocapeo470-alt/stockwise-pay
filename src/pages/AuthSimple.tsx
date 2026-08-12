@@ -461,7 +461,7 @@ export default function AuthSimple() {
       </div>
 
       {/* Right Side - Auth Flow */}
-      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 auth-bg relative overflow-y-auto h-full">
+      <div className="flex-1 flex flex-col justify-center p-4 sm:p-6 lg:p-8 auth-bg relative overflow-y-auto h-full pt-[calc(env(safe-area-inset-top)+4.5rem)] lg:pt-8">
         {/* Logo blanc centré en haut du fond bleu quadrillé */}
         <img
           src={stocknixLogoWhite}
@@ -471,11 +471,9 @@ export default function AuthSimple() {
 
         {/* Back button — position fixe et identique partout */}
         {screen === 'welcome' ? (
-          !window.matchMedia('(display-mode: standalone)').matches && (
-            <Link to="/" aria-label="Retour" className="back-fab lg:hidden">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          )
+          <Link to="/" aria-label="Retour" className="back-fab">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
         ) : (
           <button type="button" aria-label="Retour" onClick={goBack} className="back-fab">
             <ArrowLeft className="h-4 w-4" />
@@ -484,10 +482,10 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 1 — Choix */}
         {screen === 'welcome' && (
-          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 text-center space-y-7 animate-fade-in">
-            <BrandLogo className="h-14 w-auto mx-auto" />
+          <div className="w-full max-w-md mx-auto auth-card p-5 sm:p-7 text-center space-y-5 animate-fade-in">
+            <BrandLogo className="h-11 w-auto mx-auto" />
             <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                 Gérez votre business en toute simplicité
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -497,14 +495,14 @@ export default function AuthSimple() {
 
             <div className="space-y-3">
               <Button
-                className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium"
+                className="w-full h-12 rounded-full text-[15px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium"
                 onClick={() => { setIntent('login'); setActiveTab('login'); setErrors({}); setScreen('form'); }}
               >
                 Se connecter
               </Button>
               <Button
                 variant="outline"
-                className="w-full h-14 rounded-full text-base font-semibold border-2 border-primary/25 bg-card text-primary hover:bg-primary/5"
+                className="w-full h-12 rounded-full text-[15px] font-semibold border-2 border-primary/25 bg-card text-primary hover:bg-primary/5"
                 onClick={() => { setIntent('register'); setActiveTab('register'); setErrors({}); setScreen('form'); }}
               >
                 Créer un compte
@@ -524,7 +522,7 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 2 — Méthode (email ou Google) */}
         {screen === 'method' && (
-          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 space-y-6 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-5 sm:p-7 space-y-5 animate-fade-in">
             <div className="text-center space-y-3">
               <BrandLogo className="h-11 w-auto mx-auto" />
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
@@ -533,7 +531,7 @@ export default function AuthSimple() {
             </div>
 
             <Button
-              className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium"
+              className="w-full h-12 rounded-full text-[15px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium"
               onClick={() => { setActiveTab(intent); setScreen('form'); }}
             >
               <Mail className="mr-2 h-5 w-5" />
@@ -553,7 +551,7 @@ export default function AuthSimple() {
                 onClick={handleGoogleAuth}
                 disabled={googleLoading}
                 aria-label="Continuer avec Google"
-                className="h-16 w-16 rounded-full bg-card border-2 border-border hover:bg-muted shadow-soft transition-colors inline-flex items-center justify-center disabled:opacity-60"
+                className="h-12 w-12 rounded-full bg-card border-2 border-border hover:bg-muted shadow-soft transition-colors inline-flex items-center justify-center disabled:opacity-60"
               >
                 {googleLoading ? (
                   <Loader2 className="h-6 w-6 animate-spin" />
@@ -577,9 +575,9 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 3 — Formulaire e-mail */}
         {screen === 'form' && (
-          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 mt-12 space-y-6 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-5 sm:p-7 space-y-4 animate-fade-in">
             <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                 {activeTab === 'login' ? 'Heureux de vous revoir !' : 'Bienvenue sur Stocknix'}
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -598,7 +596,7 @@ export default function AuthSimple() {
                       value={formData.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
                       placeholder="John"
-                      className="h-14 rounded-2xl bg-muted/40 border border-border"
+                      className="h-12 rounded-2xl bg-muted/40 border border-border"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -608,7 +606,7 @@ export default function AuthSimple() {
                       value={formData.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
                       placeholder="Doe"
-                      className="h-14 rounded-2xl bg-muted/40 border border-border"
+                      className="h-12 rounded-2xl bg-muted/40 border border-border"
                     />
                   </div>
                 </div>
@@ -622,7 +620,7 @@ export default function AuthSimple() {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="vous@exemple.com"
-                  className={`h-14 rounded-2xl bg-muted/40 border border-border ${getFieldError('email') ? 'border-destructive' : ''}`}
+                  className={`h-12 rounded-2xl bg-muted/40 border border-border ${getFieldError('email') ? 'border-destructive' : ''}`}
                 />
                 {getFieldError('email') && (
                   <p className="text-sm text-destructive">{getFieldError('email')}</p>
@@ -638,7 +636,7 @@ export default function AuthSimple() {
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
                     placeholder={activeTab === 'login' ? '••••••••' : 'Minimum 8 caractères'}
-                    className={`h-14 rounded-2xl bg-muted/40 border border-border pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
+                    className={`h-12 rounded-2xl bg-muted/40 border border-border pr-12 ${getFieldError('password') ? 'border-destructive' : ''}`}
                   />
                   <button
                     type="button"
@@ -662,7 +660,7 @@ export default function AuthSimple() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full h-14 rounded-full text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium" disabled={isLoading}>
+              <Button type="submit" className="w-full h-12 rounded-full text-[15px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-medium" disabled={isLoading}>
                 {isLoading ? (
                   <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{activeTab === 'login' ? 'Connexion...' : 'Inscription...'}</>
                 ) : (
@@ -683,7 +681,7 @@ export default function AuthSimple() {
                 onClick={handleGoogleAuth}
                 disabled={googleLoading}
                 aria-label="Continuer avec Google"
-                className="h-14 w-14 rounded-full bg-card border-2 border-border hover:bg-muted shadow-soft transition-colors inline-flex items-center justify-center disabled:opacity-60"
+                className="h-12 w-12 rounded-full bg-card border-2 border-border hover:bg-muted shadow-soft transition-colors inline-flex items-center justify-center disabled:opacity-60"
               >
                 {googleLoading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -740,7 +738,7 @@ export default function AuthSimple() {
 
         {/* ÉCRAN 4 — Employé (PIN) */}
         {screen === 'employee' && (
-          <div className="w-full max-w-md mx-auto auth-card p-6 sm:p-8 space-y-5 animate-fade-in">
+          <div className="w-full max-w-md mx-auto auth-card p-5 sm:p-7 space-y-4 animate-fade-in">
             <div className="text-center space-y-2">
               <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <img src={stocknixLogoIcon} alt="Stocknix" className="h-9 w-9 object-contain" />

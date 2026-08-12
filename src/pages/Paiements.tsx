@@ -1,4 +1,5 @@
 import { PageActionBar } from "@/components/layout/PageActionBar";
+import { SectionHeading } from "@/components/layout/PageShell";
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -206,6 +207,11 @@ export default function Paiements() {
         </Card>
       ) : (
         <>
+          <SectionHeading
+            title="Opérations"
+            count={filteredPayments.length}
+            description="Détail des paiements enregistrés"
+          />
           {/* List view */}
           {!isMobile && viewMode === "list" && (
             <Card>
@@ -248,7 +254,7 @@ export default function Paiements() {
 
           {/* Grid view */}
           {(isMobile || viewMode === "grid") && (
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredPayments.map((payment) => (
                 <PaymentCard
                   key={payment.id}

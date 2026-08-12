@@ -67,42 +67,41 @@ const allDrawerNavigation: NavSection[] = [
   ]},
   { section: "ÉQUIPE & COMPTE", items: [
     { name: "Mon équipe", href: "/app/team", icon: Users, permission: "settings" },
-    { name: "Profil", href: "/app/profile", icon: User },
     { name: "Paramètres", href: "/app/settings", icon: Settings },
   ]},
 ];
 
 const livreurNav: NavItem[] = [
   { name: "Livraisons", href: "/app/livreur", icon: Truck, label: "Livraisons" },
-  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+  { name: "Réglages", href: "/app/settings", icon: Settings, label: "Réglages" },
 ];
 
 const stockManagerNav: NavItem[] = [
   { name: "Accueil", href: "/app", icon: Home, label: "Accueil" },
   { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock", module: "stock" },
   { name: "Clients", href: "/app/clients", icon: Users, label: "Clients", permission: "customers" },
-  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+  { name: "Réglages", href: "/app/settings", icon: Settings, label: "Réglages" },
 ];
 
 const commandesNav: NavItem[] = [
   { name: "Accueil", href: "/app", icon: Home, label: "Accueil" },
   { name: "Commandes", href: "/app/boutique/commandes", icon: ClipboardList, label: "Commandes", permission: "boutique_orders", module: "boutique" },
   { name: "Clients", href: "/app/clients", icon: Users, label: "Clients", permission: "customers" },
-  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+  { name: "Réglages", href: "/app/settings", icon: Settings, label: "Réglages" },
 ];
 
 const managerNav: NavItem[] = [
   { name: "Accueil", href: "/app", icon: Home, label: "Accueil" },
   { name: "Ventes", href: "/app/ventes", icon: ShoppingCart, label: "Ventes", permission: "sales", module: "pos" },
   { name: "Stats", href: "/app/performance", icon: TrendingUp, label: "Stats", permission: "reports" },
-  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+  { name: "Réglages", href: "/app/settings", icon: Settings, label: "Réglages" },
 ];
 
 const fusionneNav: NavItem[] = [
   { name: "Accueil", href: "/app", icon: Home, label: "Accueil" },
   { name: "Stocks", href: "/app/stocks", icon: Package, label: "Stocks", permission: "stock", module: "stock" },
   { name: "Boutique", href: "/app/boutique/commandes", icon: Store, label: "Boutique", permission: "boutique_orders", module: "boutique" },
-  { name: "Profil", href: "/app/profile", icon: User, label: "Profil" },
+  { name: "Réglages", href: "/app/settings", icon: Settings, label: "Réglages" },
 ];
 
 export function BottomNav() {

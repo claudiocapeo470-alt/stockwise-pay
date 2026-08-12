@@ -7,6 +7,7 @@ import { MobileHomeGrid } from '@/components/layout/MobileHomeGrid';
 import { useSales } from '@/hooks/useSales';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useCompany } from '@/hooks/useCompany';
+import { useCompanySettings } from '@/hooks/useCompanySettings';
 
 export default function Dashboard() {
   useRoleRedirect();
@@ -15,7 +16,8 @@ export default function Dashboard() {
   const { sales } = useSales();
   const { formatCurrency } = useCurrency();
   const { company } = useCompany();
-  const companyName = company?.name?.trim() || 'Votre entreprise';
+  const { settings } = useCompanySettings();
+  const companyName = settings?.company_name?.trim() || company?.name?.trim() || 'Votre entreprise';
 
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -34,7 +36,6 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col gap-4 h-[calc(100dvh-10.25rem)] min-h-0 overflow-hidden">
         <div className="shrink-0 rounded-3xl bg-primary text-primary-foreground px-5 py-5 shadow-sm">
-          <p className="text-xs uppercase tracking-wide opacity-70">Bienvenue !</p>
           <h2 className="text-2xl font-bold leading-tight truncate mt-1">
             {companyName}
           </h2>

@@ -108,8 +108,31 @@ export default function Settings() {
     { title: "Système", ids: ["system"] },
   ];
 
+  const avatarUrl = isEmployee ? memberInfo?.member_photo_url : profile?.avatar_url;
+  const phone = settings?.company_phone || '';
+
   return (
     <div className="space-y-6 max-w-2xl mx-auto animate-fade-in pb-4">
+      {/* Carte profil */}
+      <button
+        type="button"
+        onClick={() => navigate('/app/profile')}
+        className="w-full flex items-center gap-4 rounded-2xl bg-card border border-border/60 px-4 py-4 text-left shadow-soft transition-colors hover:bg-muted/50"
+      >
+        <div className="h-16 w-16 rounded-full overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+          ) : (
+            <User className="h-7 w-7 text-muted-foreground" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-lg font-bold uppercase truncate">{displayName}</p>
+          <p className="text-sm text-muted-foreground truncate">{phone || user?.email}</p>
+        </div>
+        <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+      </button>
+
       {groups.map((group) => {
         const cards = visibleCards.filter((c) => group.ids.includes(c.id));
         if (cards.length === 0) return null;

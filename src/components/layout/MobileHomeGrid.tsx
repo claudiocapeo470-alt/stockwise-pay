@@ -45,7 +45,6 @@ const ALL_TILES: Tile[] = [
   { id: 'performance', label: 'Performance', icon: TrendingUp, color: '#1B5E20', href: '/app/performance', permission: 'reports' },
   { id: 'team', label: 'Mon équipe', icon: Users, color: '#0D47A1', href: '/app/team', permission: 'settings' },
   { id: 'settings', label: 'Paramètres', icon: Settings, color: '#455A64', href: '/app/settings', permission: null },
-  { id: 'profile', label: 'Mon profil', icon: User, color: '#880E4F', href: '/app/profile', permission: null },
 ];
 
 export function MobileHomeGrid() {

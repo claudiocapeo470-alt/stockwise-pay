@@ -16,6 +16,7 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
@@ -46,6 +47,7 @@ export default function Settings() {
   const { user, profile, isAdmin, isEmployee, memberInfo, signOut } = useAuth();
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState<SettingsPage>("main");
+  const { settings } = useCompanySettings();
 
   // Guard: employees cannot access company or subscription settings directly
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { PageActionBar } from "@/components/layout/PageActionBar";
+import { SectionHeading } from "@/components/layout/PageShell";
 import { useState } from "react";
 import { useInvoices } from "@/hooks/useInvoices";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -200,6 +201,11 @@ export default function Factures() {
         </Card>
       ) : (
         <>
+          <SectionHeading
+            title="Factures"
+            count={filteredInvoices.length}
+            description="Détail des documents émis"
+          />
           {/* Table view */}
           {!isMobile && viewMode === "list" && (
             <Card className="border-border/60 overflow-hidden">
@@ -248,7 +254,7 @@ export default function Factures() {
 
           {/* Grid view — cartes documents minimalistes */}
           {(isMobile || viewMode === "grid") && (
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredInvoices.map((invoice) => (
                 <div key={invoice.id} className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium">
                   <div className="flex items-start gap-3">

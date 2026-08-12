@@ -43,6 +43,41 @@ export function StatGrid({ children, cols = 3, className }: { children: ReactNod
   return <div className={cn("grid gap-2 sm:gap-4", map[cols], className)}>{children}</div>;
 }
 
+/**
+ * Titre de section aligné à gauche, placé juste au-dessus d'une liste / grille de cartes.
+ * Sépare visuellement le contenu du haut (KPI, filtres) des détails en dessous.
+ */
+export function SectionHeading({
+  title,
+  count,
+  description,
+  action,
+  className,
+}: {
+  title: string;
+  count?: number;
+  description?: ReactNode;
+  action?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn("mt-8 mb-3 flex items-end justify-between gap-3", className)}>
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <h2 className="text-[15px] sm:text-base font-semibold tracking-tight leading-none truncate">{title}</h2>
+          {count !== undefined && (
+            <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground leading-none">
+              {count}
+            </span>
+          )}
+        </div>
+        {description && <p className="text-xs text-muted-foreground mt-1.5 leading-tight truncate">{description}</p>}
+      </div>
+      {action && <div className="shrink-0 flex items-center gap-2">{action}</div>}
+    </div>
+  );
+}
+
 type Tone = "primary" | "success" | "warning" | "destructive" | "accent";
 
 const TONES: Record<Tone, { bg: string; fg: string; ring: string }> = {

@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { SectionHeading } from "@/components/layout/PageShell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -189,6 +190,11 @@ export default function Performance() {
         </Card>
       </div>
 
+
+      <SectionHeading
+        title="Détails de la performance"
+        description="Analyse des ventes, produits et clients"
+      />
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">

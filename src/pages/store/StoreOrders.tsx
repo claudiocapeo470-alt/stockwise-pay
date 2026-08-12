@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SectionHeading } from "@/components/layout/PageShell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -77,6 +78,12 @@ export default function StoreOrders() {
         ))}
       </div>
 
+      <SectionHeading
+        title="Détails des commandes"
+        count={orders.length}
+        description="Historique complet des commandes reçues"
+      />
+
       {/* Desktop table */}
       <Card className="hidden md:block">
         <Table>
@@ -122,7 +129,7 @@ export default function StoreOrders() {
       </Card>
 
       {/* Mobile cards — design minimaliste */}
-      <div className="mt-6 md:hidden space-y-3">
+      <div className="md:hidden space-y-3">
         {orders.map(order => {
           const status = STATUS_MAP[order.status] || STATUS_MAP.pending;
           const items = Array.isArray(order.items) ? order.items : [];

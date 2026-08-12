@@ -15,6 +15,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PageActionBar } from "@/components/layout/PageActionBar";
+import { SectionHeading } from "@/components/layout/PageShell";
 
 
 export default function Stocks() {
@@ -139,6 +140,11 @@ export default function Stocks() {
         </Card>
       ) : (
         <>
+          <SectionHeading
+            title="Produits en stock"
+            count={filteredProducts.length}
+            description="Détail de votre inventaire"
+          />
           {/* Table view */}
           {!isMobile && viewMode === "list" && (
             <Card>
@@ -202,7 +208,7 @@ export default function Stocks() {
 
           {/* Grid view — cartes produits minimalistes */}
           {(isMobile || viewMode === "grid") && (
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredProducts.map((product) => {
                 const status = getStockStatus(product);
                 return (

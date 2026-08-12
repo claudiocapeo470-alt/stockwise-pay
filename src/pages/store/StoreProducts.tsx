@@ -22,6 +22,7 @@ import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialo
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
 import { PageActionBar } from '@/components/layout/PageActionBar';
+import { SectionHeading } from '@/components/layout/PageShell';
 
 function ProductIcon({ product }: { product: any }) {
   if (product.image_url) return <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover" />;
@@ -537,6 +538,11 @@ export default function StoreProducts() {
         </TabsList>
 
         <TabsContent value="online" className="mt-3">
+          <SectionHeading
+            title="Produits en ligne"
+            count={filteredOnline.length}
+            description="Détail des produits publiés dans votre boutique"
+          />
           {filteredOnline.length === 0 ? (
             <Card><CardContent className="py-10 sm:py-14 text-center space-y-3">
               <Globe className="h-10 w-10 mx-auto text-muted-foreground/30" />
@@ -600,6 +606,11 @@ export default function StoreProducts() {
               </div>
             </div>
           )}
+          <SectionHeading
+            title="Produits en stock"
+            count={filteredUnpublished.length}
+            description="Détail des produits non encore publiés"
+          />
           {filteredUnpublished.length === 0 ? (
             <Card><CardContent className="py-10 sm:py-14 text-center space-y-2">
               <Package className="h-10 w-10 mx-auto text-muted-foreground/30" />

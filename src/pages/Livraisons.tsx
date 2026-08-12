@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SectionHeading } from "@/components/layout/PageShell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -117,6 +118,12 @@ export default function Livraisons() {
         </div>
       </div>
 
+      <SectionHeading
+        title="Détails des livraisons"
+        count={filtered.length}
+        description="Suivi des courses et livreurs assignés"
+      />
+
       {/* Table desktop */}
       <Card className="hidden md:block border-border/60 overflow-hidden">
         <Table>
@@ -166,7 +173,7 @@ export default function Livraisons() {
       </Card>
 
       {/* Mobile cards */}
-      <div className="mt-6 md:hidden space-y-3">
+      <div className="md:hidden space-y-3">
         {filtered.map(d => {
           const st = STATUS_MAP[d.status] || STATUS_MAP.unassigned;
           return (

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SectionHeading } from "@/components/layout/PageShell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -96,8 +97,11 @@ export default function StoreReviews() {
       </div>
 
 
-
-
+      <SectionHeading
+        title="Détails des avis"
+        count={visible.length}
+        description="Avis laissés par vos clients"
+      />
 
       {/* Desktop table */}
       <Card className="hidden md:block">
@@ -135,7 +139,7 @@ export default function StoreReviews() {
       </Card>
 
       {/* Mobile cards */}
-      <div className="mt-6 md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
         {visible.map((r: any) => {
           const isExpanded = expandedReviews.has(r.id);
           const comment = r.comment || '';

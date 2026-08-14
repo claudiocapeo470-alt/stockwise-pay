@@ -507,7 +507,6 @@ export default function StoreProducts() {
     <div className="space-y-4 sm:space-y-5 max-w-5xl mx-auto w-full overflow-x-hidden px-1">
       <StoreHeader
         title="Produits en ligne"
-        subtitle={`${storeProducts.length} en ligne · ${unpublished.length} non publiés`}
         onSave={async () => { refreshAll(); toast.success('Modifications enregistrées'); }}
       />
 
@@ -541,6 +540,7 @@ export default function StoreProducts() {
           <SectionHeading
             title="Produits en ligne"
             count={filteredOnline.length}
+            centered
           />
           {filteredOnline.length === 0 ? (
             <Card><CardContent className="py-10 sm:py-14 text-center space-y-3">
@@ -551,7 +551,7 @@ export default function StoreProducts() {
               </Button>
             </CardContent></Card>
           ) : isMobile ? (
-            <div className="space-y-4">
+            <div className="space-y-2.5">
               {filteredOnline.map((sp: any) => (
                 <OnlineProductCard
                   key={sp.id}

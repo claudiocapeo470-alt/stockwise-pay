@@ -143,7 +143,6 @@ export default function Stocks() {
           <SectionHeading
             title="Produits en stock"
             count={filteredProducts.length}
-            description="Détail de votre inventaire"
           />
           {/* Table view */}
           {!isMobile && viewMode === "list" && (

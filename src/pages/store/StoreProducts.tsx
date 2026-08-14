@@ -541,7 +541,6 @@ export default function StoreProducts() {
           <SectionHeading
             title="Produits en ligne"
             count={filteredOnline.length}
-            description="Détail des produits publiés dans votre boutique"
           />
           {filteredOnline.length === 0 ? (
             <Card><CardContent className="py-10 sm:py-14 text-center space-y-3">
@@ -609,7 +608,6 @@ export default function StoreProducts() {
           <SectionHeading
             title="Produits en stock"
             count={filteredUnpublished.length}
-            description="Détail des produits non encore publiés"
           />
           {filteredUnpublished.length === 0 ? (
             <Card><CardContent className="py-10 sm:py-14 text-center space-y-2">

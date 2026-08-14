@@ -100,7 +100,6 @@ export default function StoreReviews() {
       <SectionHeading
         title="Détails des avis"
         count={visible.length}
-        description="Avis laissés par vos clients"
       />
 
       {/* Desktop table */}

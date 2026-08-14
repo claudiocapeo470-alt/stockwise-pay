@@ -161,7 +161,6 @@ export default function Clients() {
       <SectionHeading
         title="Détails des clients"
         count={filtered.length}
-        description="Liste complète de votre clientèle"
       />
 
       {loading ? (

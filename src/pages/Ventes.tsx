@@ -344,7 +344,6 @@ export default function Ventes() {
           <SectionHeading
             title="Transactions"
             count={filteredSales.length}
-            description="Détail des ventes enregistrées"
           />
           {/* Table view */}
           {!isMobile && viewMode === "list" && (

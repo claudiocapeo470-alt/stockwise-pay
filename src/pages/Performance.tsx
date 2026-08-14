@@ -193,7 +193,6 @@ export default function Performance() {
 
       <SectionHeading
         title="Détails de la performance"
-        description="Analyse des ventes, produits et clients"
       />
 
       {/* Tabs */}

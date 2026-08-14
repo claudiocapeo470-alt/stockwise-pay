@@ -81,7 +81,6 @@ export default function StoreOrders() {
       <SectionHeading
         title="Détails des commandes"
         count={orders.length}
-        description="Historique complet des commandes reçues"
       />
 
       {/* Desktop table */}

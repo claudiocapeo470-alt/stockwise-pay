@@ -210,7 +210,6 @@ export default function Paiements() {
           <SectionHeading
             title="Opérations"
             count={filteredPayments.length}
-            description="Détail des paiements enregistrés"
           />
           {/* List view */}
           {!isMobile && viewMode === "list" && (

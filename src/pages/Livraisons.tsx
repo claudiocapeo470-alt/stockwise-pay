@@ -121,7 +121,6 @@ export default function Livraisons() {
       <SectionHeading
         title="Détails des livraisons"
         count={filtered.length}
-        description="Suivi des courses et livreurs assignés"
       />
 
       {/* Table desktop */}

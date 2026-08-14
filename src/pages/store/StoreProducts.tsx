@@ -391,28 +391,28 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
 function OnlineProductCard({ sp, onEdit, onUnpublish, onDelete }: { sp: any; onEdit: () => void; onUnpublish: () => void; onDelete: () => void }) {
   const product = sp.products;
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-3 flex items-center gap-3">
-        {product && <ProductIcon product={product} />}
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-sm truncate">{product?.name || '—'}</p>
-          <p className="text-xs text-muted-foreground truncate">{product?.category || 'Sans catégorie'}</p>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-sm font-bold tracking-tight">{sp.online_price?.toLocaleString('de-DE')} XOF</span>
-            <Badge variant={sp.is_active !== false ? 'success' : 'secondary'} className="text-[10px] px-1.5 py-0">
-              {sp.is_active !== false ? 'Actif' : 'Inactif'}
-            </Badge>
-          </div>
+    <div className="flex items-center gap-3 rounded-full bg-muted/50 border border-border/60 p-2 pr-3 transition-colors hover:bg-muted">
+      {product?.image_url ? (
+        <img src={product.image_url} alt={product.name} loading="lazy" className="h-14 w-14 rounded-full object-cover shrink-0" />
+      ) : (
+        <div className="h-14 w-14 rounded-full bg-background flex items-center justify-center text-xl shrink-0">
+          {product?.icon_emoji || '📦'}
         </div>
-        <div className="flex items-center gap-0.5 flex-shrink-0">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onEdit} title="Modifier"><Edit2 className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-orange-500" onClick={onUnpublish} title="Retirer"><Globe className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={onDelete} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
-        </div>
-      </CardContent>
-    </Card>
+      )}
+      <div className="flex-1 min-w-0">
+        <p className="font-bold text-sm truncate">{product?.name || '—'}</p>
+        <p className="text-xs text-muted-foreground truncate">{product?.category || 'Sans catégorie'}</p>
+        <p className="text-sm font-semibold mt-0.5">{sp.online_price?.toLocaleString('de-DE')} XOF</p>
+      </div>
+      <div className="flex items-center gap-0.5 shrink-0">
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" onClick={onEdit} title="Modifier"><Edit2 className="h-4 w-4" /></Button>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-orange-500" onClick={onUnpublish} title="Retirer"><Globe className="h-4 w-4" /></Button>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive" onClick={onDelete} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
+      </div>
+    </div>
   );
 }
+
 
 
 // Mobile card for stock products
@@ -420,26 +420,29 @@ function StockProductCard({ product, selected, onToggle, onlinePrice, onPriceCha
   product: any; selected: boolean; onToggle: () => void; onlinePrice: number; onPriceChange: (v: number) => void; onPublish: () => void; onDelete: () => void;
 }) {
   return (
-    <Card className={`overflow-hidden ${selected ? 'ring-2 ring-primary' : ''}`}>
-      <CardContent className="p-3">
-        <div className="flex items-start gap-3">
-          <Checkbox checked={selected} onCheckedChange={onToggle} className="mt-1" />
-          <ProductIcon product={product} />
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm truncate">{product.name}</p>
-            <p className="text-xs text-muted-foreground">{product.category || 'Sans catégorie'}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Stock: {product.price?.toLocaleString('de-DE')} XOF</p>
-          </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive flex-shrink-0" onClick={onDelete} title="Supprimer"><Trash2 className="h-3.5 w-3.5" /></Button>
+    <div className={`rounded-2xl border bg-card p-4 transition-colors ${selected ? 'border-primary bg-primary/5' : 'border-border'}`}>
+      <div className="flex items-center gap-3">
+        <Checkbox checked={selected} onCheckedChange={onToggle} />
+        {product.image_url ? (
+          <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0" />
+        ) : (
+          <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center text-xl shrink-0">{product.icon_emoji || '📦'}</div>
+        )}
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground truncate">{product.category || 'Sans catégorie'}</p>
+          <p className="font-bold text-[15px] leading-tight truncate mt-0.5">{product.name}</p>
+          <p className="text-sm font-semibold mt-1">{product.price?.toLocaleString('de-DE')} XOF</p>
         </div>
-        <div className="flex items-center gap-2 mt-2 pt-2 border-t">
-          <Input type="number" className="h-8 text-sm flex-1" value={onlinePrice} onChange={e => onPriceChange(Number(e.target.value))} placeholder="Prix en ligne" />
-          <Button size="sm" variant="outline" className="gap-1 flex-shrink-0 text-xs" onClick={onPublish}>
-            <Globe className="h-3 w-3" /> Publier
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive shrink-0" onClick={onDelete} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
+      </div>
+      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/60">
+        <Input type="number" className="h-9 text-sm flex-1 rounded-xl" value={onlinePrice} onChange={e => onPriceChange(Number(e.target.value))} placeholder="Prix en ligne" />
+        <Button size="sm" variant="outline" className="gap-1 shrink-0 h-9 rounded-xl" onClick={onPublish}>
+          <Globe className="h-3.5 w-3.5" /> Publier
+        </Button>
+      </div>
+    </div>
+
   );
 }
 
@@ -507,7 +510,6 @@ export default function StoreProducts() {
     <div className="space-y-4 sm:space-y-5 max-w-5xl mx-auto w-full overflow-x-hidden px-1">
       <StoreHeader
         title="Produits en ligne"
-        subtitle={`${storeProducts.length} en ligne · ${unpublished.length} non publiés`}
         onSave={async () => { refreshAll(); toast.success('Modifications enregistrées'); }}
       />
 
@@ -541,7 +543,7 @@ export default function StoreProducts() {
           <SectionHeading
             title="Produits en ligne"
             count={filteredOnline.length}
-            description="Détail des produits publiés dans votre boutique"
+            centered
           />
           {filteredOnline.length === 0 ? (
             <Card><CardContent className="py-10 sm:py-14 text-center space-y-3">
@@ -552,7 +554,7 @@ export default function StoreProducts() {
               </Button>
             </CardContent></Card>
           ) : isMobile ? (
-            <div className="space-y-4">
+            <div className="space-y-2.5">
               {filteredOnline.map((sp: any) => (
                 <OnlineProductCard
                   key={sp.id}
@@ -609,7 +611,6 @@ export default function StoreProducts() {
           <SectionHeading
             title="Produits en stock"
             count={filteredUnpublished.length}
-            description="Détail des produits non encore publiés"
           />
           {filteredUnpublished.length === 0 ? (
             <Card><CardContent className="py-10 sm:py-14 text-center space-y-2">

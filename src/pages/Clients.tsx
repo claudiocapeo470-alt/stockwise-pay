@@ -161,7 +161,6 @@ export default function Clients() {
       <SectionHeading
         title="Détails des clients"
         count={filtered.length}
-        description="Liste complète de votre clientèle"
       />
 
       {loading ? (
@@ -169,20 +168,20 @@ export default function Clients() {
       ) : filtered.length === 0 ? (
         <Card><CardContent className="py-12 text-center"><Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" /><h3 className="font-semibold mb-1">{clients.length === 0 ? 'Aucun client' : 'Aucun résultat'}</h3><p className="text-sm text-muted-foreground">{clients.length === 0 ? 'Ajoutez votre premier client' : ''}</p></CardContent></Card>
       ) : isMobile ? (
-        <div className="space-y-3">
+        <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
           {filtered.map(c => (
-            <Card key={c.id} className="cursor-pointer" onClick={() => openEdit(c)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <Avatar className="h-10 w-10"><AvatarFallback className="bg-primary/10 text-primary text-sm">{c.first_name[0]}{(c.last_name || '')[0] || ''}</AvatarFallback></Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate">{c.first_name} {c.last_name || ''}</p>
-                  <p className="text-xs text-muted-foreground">{c.phone || c.email || '—'}</p>
-                </div>
-                <p className="text-sm font-semibold">{formatCurrency(c.total_spent || 0)}</p>
-              </CardContent>
-            </Card>
+            <div key={c.id} className="flex items-center gap-4 px-4 py-4 cursor-pointer transition-colors hover:bg-muted/40" onClick={() => openEdit(c)}>
+              <Avatar className="h-14 w-14"><AvatarFallback className="bg-primary/10 text-primary text-base font-semibold">{c.first_name[0]}{(c.last_name || '')[0] || ''}</AvatarFallback></Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground truncate">Client</p>
+                <p className="font-bold text-[15px] leading-tight truncate mt-0.5">{c.first_name} {c.last_name || ''}</p>
+                <p className="text-xs text-muted-foreground truncate mt-1">{c.phone || c.email || '—'}</p>
+              </div>
+              <p className="text-sm font-bold shrink-0 tabular-nums">{formatCurrency(c.total_spent || 0)}</p>
+            </div>
           ))}
         </div>
+
       ) : (
         <Card>
           <Table>

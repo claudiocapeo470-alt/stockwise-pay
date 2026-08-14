@@ -203,7 +203,6 @@ export default function Devis() {
           <SectionHeading
             title="Devis"
             count={filteredInvoices.length}
-            description="Détail des devis émis"
           />
           {/* Table view */}
           {!isMobile && viewMode === "list" && (

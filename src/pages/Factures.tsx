@@ -204,7 +204,6 @@ export default function Factures() {
           <SectionHeading
             title="Factures"
             count={filteredInvoices.length}
-            description="Détail des documents émis"
           />
           {/* Table view */}
           {!isMobile && viewMode === "list" && (

@@ -418,8 +418,8 @@ export default function Ventes() {
               {filteredSales.map((sale) => (
                 <div key={sale.id} className="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40">
                   <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center shrink-0 overflow-hidden">
-                    {sale.products?.image_url ? (
-                      <img src={sale.products.image_url} alt={sale.products?.name || "Produit"} loading="lazy" className="h-full w-full object-cover" />
+                    {(sale.products as any)?.image_url ? (
+                      <img src={(sale.products as any).image_url} alt={sale.products?.name || "Produit"} loading="lazy" className="h-full w-full object-cover" />
                     ) : (
                       <ShoppingCart className="h-5 w-5 text-muted-foreground" />
                     )}

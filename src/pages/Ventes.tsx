@@ -412,43 +412,41 @@ export default function Ventes() {
             </Card>
           )}
 
-          {/* Grid view — cartes ventes minimalistes */}
+          {/* Liste transactions — style minimaliste */}
           {(isMobile || viewMode === "grid") && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
               {filteredSales.map((sale) => (
-                <div key={sale.id} className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium">
-                  <div className="flex items-start gap-3">
-                    <div className="h-11 w-11 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
-                      <ShoppingCart className="h-5 w-5 text-accent" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-[15px] truncate leading-tight">{sale.products?.name || "Produit"}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {format(new Date(sale.sale_date), "dd MMM yyyy · HH:mm", { locale: fr })}
-                      </p>
-                    </div>
-                    <p className="font-bold text-[15px] shrink-0">{sale.total_amount.toLocaleString('de-DE')} <span className="text-xs font-normal text-muted-foreground">FCFA</span></p>
+                <div key={sale.id} className="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40">
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center shrink-0 overflow-hidden">
+                    {sale.products?.image_url ? (
+                      <img src={sale.products.image_url} alt={sale.products?.name || "Produit"} loading="lazy" className="h-full w-full object-cover" />
+                    ) : (
+                      <ShoppingCart className="h-5 w-5 text-muted-foreground" />
+                    )}
                   </div>
 
-                  <div className="mt-3 flex items-center gap-2 text-xs">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-muted text-muted-foreground font-medium truncate max-w-[60%]">
-                      {sale.customer_name || "Client anonyme"}
-                    </span>
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-muted text-muted-foreground font-medium">
-                      Qté {sale.quantity}
-                    </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-[15px] truncate leading-tight">{sale.products?.name || "Produit"}</p>
+                    <p className="text-xs text-muted-foreground truncate mt-0.5">
+                      {format(new Date(sale.sale_date), "dd MMM yyyy", { locale: fr })} · {sale.customer_name || "Client anonyme"} · Qté {sale.quantity}
+                    </p>
                   </div>
 
-                  <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="sm" className="h-9 px-3 rounded-lg gap-1.5 text-muted-foreground hover:text-foreground" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
-                      <Eye className="h-4 w-4" /> Détails
+                  <p className="text-[15px] font-bold shrink-0 tabular-nums">
+                    {sale.total_amount.toLocaleString('de-DE')}
+                    <span className="text-[11px] font-normal text-muted-foreground ml-1">FCFA</span>
+                  </p>
+
+                  <div className="flex items-center shrink-0">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
+                      <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground" onClick={() => generateDocumentA4(sale, 'facture', 'download')}>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground" onClick={() => generateDocumentA4(sale, 'facture', 'download')}>
                       <Download className="h-4 w-4" />
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10">
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </AlertDialogTrigger>
@@ -472,6 +470,7 @@ export default function Ventes() {
               ))}
             </div>
           )}
+
 
         </>
       )}

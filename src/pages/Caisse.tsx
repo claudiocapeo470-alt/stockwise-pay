@@ -105,6 +105,7 @@ export default function Caisse() {
 
   // Cash session
   const [cashSessionOpen, setCashSessionOpen] = useState(false);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [showOpenCashModal, setShowOpenCashModal] = useState(false);
   const [openingAmount, setOpeningAmount] = useState("");
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -241,6 +242,7 @@ export default function Caisse() {
         setCashSessionOpen(false);
         setShowOpenCashModal(false);
       }
+      setSessionChecked(true);
     };
     fetchActiveSession();
   }, [effectiveUserId, user]);
@@ -1587,7 +1589,7 @@ export default function Caisse() {
   // ═══════════════════════════════════════════════════════
   // Bannière "Caisse fermée" non bloquante
   const renderClosedBanner = () => {
-    if (cashSessionOpen) return null;
+    if (cashSessionOpen || !sessionChecked) return null;
     return (
       <div className="flex items-center justify-between gap-3 px-4 py-2.5 shrink-0" style={{ background: '#FEF3C7', borderBottom: '1px solid #FDE68A' }}>
         <div className="flex items-center gap-2 min-w-0">
@@ -1641,8 +1643,8 @@ export default function Caisse() {
             </button>
           )}
           <span className="text-white font-black text-sm" style={{ fontFamily: 'Nunito, sans-serif' }}>POS</span>
-          {cashSessionOpen ? (
-            <span className="h-2 w-2 rounded-full bg-[#10B981] animate-pulse" />
+          {cashSessionOpen || !sessionChecked ? (
+            <span className={`h-2 w-2 rounded-full ${cashSessionOpen ? 'bg-[#10B981] animate-pulse' : 'bg-white/20'}`} />
           ) : (
             <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: 'rgba(245,158,11,0.2)', color: '#F59E0B' }}>FERMÉE</span>
           )}

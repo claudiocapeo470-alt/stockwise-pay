@@ -132,58 +132,47 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
 
   return (
     <>
-      <div className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium">
-        <div className="flex items-start gap-3">
-          <div className="h-11 w-11 rounded-xl bg-muted flex items-center justify-center shrink-0">
-            <StatusIcon className={cn("h-5 w-5", status.iconColor)} />
-          </div>
-          <div className="min-w-0 flex-1">
+      <div className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40">
+        <div className="h-11 w-11 rounded-full bg-muted flex items-center justify-center shrink-0">
+          <StatusIcon className={cn("h-5 w-5", status.iconColor)} />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 min-w-0">
             <p className="font-semibold text-[15px] truncate leading-tight">{getFullName() || 'Client inconnu'}</p>
-            <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5 truncate">
-              <MethodIcon className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">{methodLabel}</span>
-              <span>·</span>
-              <span>{formatDate(payment.payment_date)}</span>
-            </p>
+            <Badge className={cn("shrink-0 text-[10px] px-2 py-0.5 font-medium", status.className)}>{status.label}</Badge>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg shrink-0 text-muted-foreground">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
-                <Edit className="mr-2 h-4 w-4" />Modifier
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
-                <Trash2 className="mr-2 h-4 w-4" />Supprimer
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <p className="text-xs text-muted-foreground truncate mt-0.5 flex items-center gap-1.5">
+            <MethodIcon className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{methodLabel} · {formatDate(payment.payment_date)}</span>
+          </p>
         </div>
 
-        <div className="mt-4 flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Payé</p>
-            <p className="text-lg font-bold leading-tight text-success truncate">{formatAmount(payment.paid_amount)}</p>
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Total</p>
-            <p className="text-lg font-bold leading-tight">{formatAmount(payment.total_amount)}</p>
-          </div>
-        </div>
-
-        <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-between gap-2">
-          <Badge className={cn("text-xs", status.className)}>{status.label}</Badge>
+        <div className="shrink-0 text-right">
+          <p className="text-[15px] font-bold leading-tight tabular-nums">{formatAmount(payment.paid_amount)}</p>
           {payment.remaining_amount > 0 ? (
-            <span className="text-xs font-semibold text-warning">Reste {formatAmount(payment.remaining_amount)}</span>
-          ) : payment.due_date ? (
-            <span className="text-xs text-muted-foreground">Échéance {formatDate(payment.due_date)}</span>
-          ) : null}
+            <p className="text-[11px] text-warning mt-0.5">Reste {formatAmount(payment.remaining_amount)}</p>
+          ) : (
+            <p className="text-[11px] text-muted-foreground mt-0.5">Soldé</p>
+          )}
         </div>
-      </div>
 
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full shrink-0 text-muted-foreground hover:text-foreground">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+              <Edit className="mr-2 h-4 w-4" />Modifier
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
+              <Trash2 className="mr-2 h-4 w-4" />Supprimer
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <EditPaymentDialog 
         payment={payment}

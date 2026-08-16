@@ -99,15 +99,6 @@ export default function Paiements() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      {/* Header large inspiré */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="space-y-1">
-          <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
-            {paymentStats.totalPayments} encaissements • {formatAmount(paymentStats.remainingAmount)} restants à recevoir
-          </p>
-        </div>
-      </div>
-
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
         <Card>
@@ -253,7 +244,7 @@ export default function Paiements() {
 
           {/* Grid view */}
           {(isMobile || viewMode === "grid") && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
               {filteredPayments.map((payment) => (
                 <PaymentCard
                   key={payment.id}

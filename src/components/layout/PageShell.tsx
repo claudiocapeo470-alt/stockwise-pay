@@ -65,7 +65,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "mt-10 sm:mt-14 mb-4 flex items-center gap-3",
+        "mt-12 sm:mt-16 mb-5 flex items-center gap-3",
         centered ? "justify-center" : "justify-between",
         className,
       )}

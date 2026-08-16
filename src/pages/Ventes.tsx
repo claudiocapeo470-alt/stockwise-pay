@@ -1,5 +1,7 @@
 import { PageActionBar } from "@/components/layout/PageActionBar";
 import { SectionHeading } from "@/components/layout/PageShell";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -428,43 +430,31 @@ export default function Ventes() {
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-[15px] truncate leading-tight">{sale.products?.name || "Produit"}</p>
                     <p className="text-xs text-muted-foreground truncate mt-0.5">
-                      {format(new Date(sale.sale_date), "dd MMM yyyy", { locale: fr })} · {sale.customer_name || "Client anonyme"} · Qté {sale.quantity}
+                      {format(new Date(sale.sale_date), "dd MMM yyyy", { locale: fr })} · {sale.customer_name || "Client anonyme"}
                     </p>
                   </div>
 
-                  <p className="text-[15px] font-bold shrink-0 tabular-nums">
-                    {sale.total_amount.toLocaleString('de-DE')}
-                    <span className="text-[11px] font-normal text-muted-foreground ml-1">FCFA</span>
-                  </p>
+                  <div className="shrink-0 text-right">
+                    <p className="text-[15px] font-bold leading-tight tabular-nums">
+                      {sale.total_amount.toLocaleString('de-DE')}
+                      <span className="text-[11px] font-normal text-muted-foreground ml-1">FCFA</span>
+                    </p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Qté {sale.quantity}</p>
+                  </div>
 
-                  <div className="flex items-center shrink-0">
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground" onClick={() => generateDocumentA4(sale, 'facture', 'download')}>
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Supprimer cette vente ?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Cette action est irréversible. La vente sera définitivement supprimée.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Annuler</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(sale.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                            Supprimer
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:text-foreground">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}><Eye className="mr-2 h-4 w-4" />Détails</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => generateDocumentA4(sale, 'facture', 'download')}><Download className="mr-2 h-4 w-4" />Télécharger</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => generateDocumentA4(sale, 'facture', 'print')}><Printer className="mr-2 h-4 w-4" />Imprimer</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(sale.id)} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   </div>
                 </div>
               ))}

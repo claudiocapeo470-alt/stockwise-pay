@@ -99,15 +99,6 @@ export default function Paiements() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      {/* Header large inspiré */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="space-y-1">
-          <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
-            {paymentStats.totalPayments} encaissements • {formatAmount(paymentStats.remainingAmount)} restants à recevoir
-          </p>
-        </div>
-      </div>
-
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
         <Card>

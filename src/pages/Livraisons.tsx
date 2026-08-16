@@ -9,7 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDeliveries } from "@/hooks/useDeliveries";
 import { useTeam } from "@/hooks/useTeam";
 import { toast } from "sonner";
-import { Truck, Package, CheckCircle, AlertTriangle, UserPlus, Bike } from "lucide-react";
+import { Truck, Package, CheckCircle, AlertTriangle, UserPlus } from "lucide-react";
+import { DeliveryRiderIcon } from "@/components/icons/DeliveryRiderIcon";
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
   unassigned: { label: "Non assignée", color: "bg-muted text-muted-foreground", icon: Package },
@@ -22,7 +23,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = 
 function EmptyDeliveries() {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-      <Bike className="h-20 w-20 text-primary" strokeWidth={1.25} />
+      <DeliveryRiderIcon className="h-24 w-24 text-primary" />
       <p className="font-semibold text-foreground">Aucune livraison</p>
       <p className="text-sm text-muted-foreground">Les livraisons apparaîtront ici dès qu'une commande sera prête.</p>
     </div>
@@ -68,15 +69,6 @@ export default function Livraisons() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      {/* Header large */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="space-y-1.5">
-          <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
-            {deliveries.length} commande{deliveries.length > 1 ? 's' : ''} suivie{deliveries.length > 1 ? 's' : ''} · {drivers.length} livreur{drivers.length > 1 ? 's' : ''} actif{drivers.length > 1 ? 's' : ''}
-          </p>
-        </div>
-      </div>
-
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
         {[

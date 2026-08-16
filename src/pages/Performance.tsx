@@ -118,6 +118,7 @@ export default function Performance() {
         </Select>
 
         <div className="ml-auto flex items-center gap-2">
+          <span className="text-xs font-semibold text-muted-foreground hidden sm:inline">Exporter</span>
           <Button
             variant="ghost"
             onClick={() => handleExport('excel')}

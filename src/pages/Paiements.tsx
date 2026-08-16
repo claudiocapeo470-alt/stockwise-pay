@@ -244,7 +244,7 @@ export default function Paiements() {
 
           {/* Grid view */}
           {(isMobile || viewMode === "grid") && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
               {filteredPayments.map((payment) => (
                 <PaymentCard
                   key={payment.id}

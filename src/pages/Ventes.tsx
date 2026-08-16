@@ -455,7 +455,6 @@ export default function Ventes() {
                       <DropdownMenuItem onClick={() => handleDelete(sale.id)} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  </div>
                 </div>
               ))}
             </div>

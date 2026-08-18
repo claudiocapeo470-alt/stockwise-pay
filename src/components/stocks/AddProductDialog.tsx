@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, Package, Tag, Image as ImageIcon } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { EmojiPicker, IconColorPicker, getIconBgStyle } from "./EmojiPicker";
 import { MultiImageUpload } from "./MultiImageUpload";
+import { DialogHead } from "@/components/ui/dialog-head";
 
 const UNITS = ["pièce", "kg", "L", "m"];
 

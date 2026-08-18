@@ -51,21 +51,6 @@ export function AddProductDialog() {
     return true;
   };
 
-  const StepIndicator = () => (
-    <div className="flex items-center justify-center gap-2 mb-4">
-      {[1, 2, 3].map(s => (
-        <div key={s} className="flex items-center gap-2">
-          <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-            s < step ? "bg-success text-success-foreground" : s === step ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-          }`}>
-            {s < step ? <Check className="h-4 w-4" /> : s}
-          </div>
-          {s < 3 && <div className={`w-8 h-0.5 ${s < step ? "bg-success" : "bg-muted"}`} />}
-        </div>
-      ))}
-    </div>
-  );
-
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setStep(1); setShowPicker(false); } }}>
       <DialogTrigger asChild>
@@ -74,16 +59,15 @@ export function AddProductDialog() {
           <span className="font-semibold text-sm">Ajouter produit</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-sm sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-lg flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={getIconBgStyle(formData.icon_bg_color)}>
-              <span className="text-2xl">{formData.icon_emoji}</span>
-            </div>
-            {step === 1 ? "Identité du produit" : step === 2 ? "Prix & Stock" : "Média & Détails"}
-          </DialogTitle>
-        </DialogHeader>
-        <StepIndicator />
+      <DialogContent className="max-w-sm sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl">
+        <DialogHead
+          icon={step === 1 ? Package : step === 2 ? Tag : ImageIcon}
+          title={step === 1 ? "Nouveau produit · Identité" : step === 2 ? "Nouveau produit · Prix & stock" : "Nouveau produit · Média"}
+          subtitle={step === 1 ? "Nom, catégorie et référence" : step === 2 ? "Prix, quantités et unité" : "Photos et description"}
+          step={step}
+          totalSteps={3}
+        />
+
         <div className="space-y-3">
           {step === 1 && (
             <>

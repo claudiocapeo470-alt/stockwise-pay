@@ -349,6 +349,9 @@ export default function AuthSimple() {
   if (resetStep) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-blue-600 to-slate-900 p-4">
+        <button type="button" aria-label="Retour" onClick={() => setResetStep(null)} className="back-fab">
+          <ArrowLeft className="h-4 w-4" />
+        </button>
         <div className="w-full max-w-md bg-background rounded-[28px] shadow-2xl p-7 sm:p-8 border border-border/50">
           <div className="text-center space-y-6">
             <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">

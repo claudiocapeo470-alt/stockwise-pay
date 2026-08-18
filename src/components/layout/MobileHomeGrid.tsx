@@ -5,8 +5,12 @@ import { useCompanyModules, type ModuleKey } from '@/hooks/useCompanyModules';
 import {
   BarChart3, Package, ShoppingCart, Scan, FileText,
   FileCheck, CreditCard, Store, Users, Truck,
-  TrendingUp, Settings, User, ShoppingBag, ClipboardList, Star
+  TrendingUp, Settings, User, ShoppingBag, ClipboardList, Star, LogOut
 } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle
 } from '@/components/ui/dialog';
@@ -49,9 +53,10 @@ const ALL_TILES: Tile[] = [
 
 export function MobileHomeGrid() {
   const navigate = useNavigate();
-  const { isEmployee, hasPermission, loading: authLoading } = useAuth();
+  const { isEmployee, hasPermission, loading: authLoading, signOut } = useAuth();
   const { hasModule, loading: modulesLoading } = useCompanyModules();
   const [boutiqueOpen, setBoutiqueOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const isReady = !authLoading && !modulesLoading;
 
@@ -76,7 +81,7 @@ export function MobileHomeGrid() {
     <>
       <div
         className="grid grid-cols-3 gap-2 px-1 w-full h-full min-h-0 overflow-hidden"
-        style={{ gridTemplateRows: `repeat(${Math.max(1, Math.ceil((isReady ? visibleTiles.length : 9) / 3))}, minmax(0, 1fr))` }}
+        style={{ gridTemplateRows: `repeat(${Math.max(1, Math.ceil(((isReady ? visibleTiles.length : 9) + (isReady ? 1 : 0)) / 3))}, minmax(0, 1fr))` }}
       >
         {!isReady
           ? Array.from({ length: 9 }).map((_, i) => (
@@ -98,7 +103,35 @@ export function MobileHomeGrid() {
                 </span>
               </button>
             ))}
+        {isReady && (
+          <button
+            onClick={() => setLogoutOpen(true)}
+            className="flex flex-col items-center justify-center rounded-2xl p-1.5 gap-1 active:scale-95 transition-transform shadow-sm min-w-0 min-h-0 bg-destructive"
+          >
+            <LogOut className="h-[clamp(16px,4.5vh,26px)] w-[clamp(16px,4.5vh,26px)] text-destructive-foreground shrink-0" strokeWidth={1.8} />
+            <span className="text-destructive-foreground text-[10px] font-medium text-center leading-tight">
+              Déconnexion
+            </span>
+          </button>
+        )}
       </div>
+
+      <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Se déconnecter ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Enregistrez vos données en cours avant de quitter votre session.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => signOut()} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Se déconnecter
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
 
       <Dialog open={boutiqueOpen} onOpenChange={setBoutiqueOpen}>

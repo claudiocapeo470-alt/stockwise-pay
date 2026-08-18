@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Plus, Receipt } from "lucide-react"
+import { CalendarIcon, Plus, Receipt, CreditCard } from "lucide-react"
+import { DialogHead } from "@/components/ui/dialog-head"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { usePayments, Payment } from "@/hooks/usePayments"
@@ -101,12 +102,8 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-foreground">
-            Nouveau paiement
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent className="max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto rounded-2xl">
+        <DialogHead icon={CreditCard} title="Nouveau paiement" subtitle="Client, montant et échéance" />
         
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Client Information */}

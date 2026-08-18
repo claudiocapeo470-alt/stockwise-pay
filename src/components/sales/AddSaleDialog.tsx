@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ShoppingCart } from "lucide-react";
+import { DialogHead } from "@/components/ui/dialog-head";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { useCurrency } from "@/hooks/useCurrency";
@@ -95,10 +96,8 @@ export function AddSaleDialog() {
           <span className="font-semibold text-sm">Nouvelle vente</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-lg">Enregistrer une vente</DialogTitle>
-        </DialogHeader>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl">
+        <DialogHead icon={ShoppingCart} title="Enregistrer une vente" subtitle="Client, produits et paiement" />
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Customer info */}
           <div className="grid grid-cols-2 gap-3">

@@ -105,14 +105,7 @@ export default function Factures() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      {/* Header large */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="space-y-1.5">
-          <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
-            {invoices.length} facture{invoices.length > 1 ? 's' : ''} émise{invoices.length > 1 ? 's' : ''} · {paidCount} payée{paidCount > 1 ? 's' : ''}
-          </p>
-        </div>
-      </div>
+
 
 
       {/* Stats */}
@@ -251,53 +244,51 @@ export default function Factures() {
             </Card>
           )}
 
-          {/* Grid view — cartes documents minimalistes */}
+          {/* Liste factures — style minimaliste une ligne */}
           {(isMobile || viewMode === "grid") && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
               {filteredInvoices.map((invoice) => (
-                <div key={invoice.id} className="bg-card border border-border rounded-2xl p-4 shadow-soft transition-all hover:shadow-medium">
-                  <div className="flex items-start gap-3">
-                    <div className="h-11 w-11 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
-                      <FileText className="h-5 w-5 text-accent" />
-                    </div>
-                    <div className="min-w-0 flex-1">
+                <div
+                  key={invoice.id}
+                  onClick={() => navigate(`/app/factures/${invoice.id}/preview`)}
+                  className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 cursor-pointer"
+                >
+                  <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <FileText className="h-5 w-5 text-primary" />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 min-w-0">
                       <p className="font-semibold text-[15px] truncate leading-tight">{invoice.document_number}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate">{invoice.client_name}</p>
+                      <Badge className={`${statusColors[invoice.status]} shrink-0 text-[10px] px-2 py-0.5 font-medium`}>{statusLabels[invoice.status]}</Badge>
                     </div>
-                    <Badge className={`${statusColors[invoice.status]} shrink-0`}>{statusLabels[invoice.status]}</Badge>
+                    <p className="text-xs text-muted-foreground truncate mt-0.5">
+                      {invoice.client_name} · {format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}
+                    </p>
                   </div>
 
-                  <div className="mt-4 flex items-end justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Date</p>
-                      <p className="text-sm font-medium">{format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Montant</p>
-                      <p className="text-lg font-bold leading-tight">{invoice.total_amount.toLocaleString('de-DE')} <span className="text-xs font-normal text-muted-foreground">FCFA</span></p>
-                    </div>
-                  </div>
+                  <p className="text-[15px] font-bold shrink-0 tabular-nums text-right">
+                    {invoice.total_amount.toLocaleString('de-DE')}
+                    <span className="text-[11px] font-normal text-muted-foreground ml-1">FCFA</span>
+                  </p>
 
-                  <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="sm" onClick={() => navigate(`/app/factures/${invoice.id}/preview`)} className="h-9 px-3 rounded-lg gap-1.5 text-muted-foreground hover:text-foreground">
-                      <Eye className="h-4 w-4" /> Voir
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground"><MoreVertical className="h-4 w-4" /></Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => navigate(`/app/factures/${invoice.id}`)}><Edit className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDuplicate(invoice.id!)}><Copy className="mr-2 h-4 w-4" />Dupliquer</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDownload(invoice.id!)}><Download className="mr-2 h-4 w-4" />Télécharger</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => { setInvoiceToDelete(invoice.id!); setDeleteDialogOpen(true); }} className="text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:text-foreground"><MoreVertical className="h-4 w-4" /></Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                      <DropdownMenuItem onClick={() => navigate(`/app/factures/${invoice.id}/preview`)}><Eye className="mr-2 h-4 w-4" />Voir</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate(`/app/factures/${invoice.id}`)}><Edit className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDuplicate(invoice.id!)}><Copy className="mr-2 h-4 w-4" />Dupliquer</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDownload(invoice.id!)}><Download className="mr-2 h-4 w-4" />Télécharger</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => { setInvoiceToDelete(invoice.id!); setDeleteDialogOpen(true); }} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               ))}
             </div>
           )}
+
 
         </>
       )}

@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePayments } from "@/hooks/usePayments";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { Pencil } from "lucide-react";
+import { DialogHead } from "@/components/ui/dialog-head";
 
 interface Payment {
   id: string;

@@ -101,12 +101,8 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-foreground">
-            Nouveau paiement
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent className="max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto rounded-2xl">
+        <DialogHead icon={CreditCard} title="Nouveau paiement" subtitle="Client, montant et échéance" />
         
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Client Information */}

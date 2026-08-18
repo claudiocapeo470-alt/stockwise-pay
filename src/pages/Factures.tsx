@@ -105,14 +105,7 @@ export default function Factures() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      {/* Header large */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="space-y-1.5">
-          <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">
-            {invoices.length} facture{invoices.length > 1 ? 's' : ''} émise{invoices.length > 1 ? 's' : ''} · {paidCount} payée{paidCount > 1 ? 's' : ''}
-          </p>
-        </div>
-      </div>
+
 
 
       {/* Stats */}

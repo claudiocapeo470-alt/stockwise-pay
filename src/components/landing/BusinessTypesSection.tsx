@@ -14,7 +14,7 @@ const businessTypes = [
 
 const BusinessTypesSection = () => {
   return (
-    <section className="relative py-12 sm:py-16 overflow-hidden">
+    <section className="relative py-8 sm:py-10 overflow-hidden">
       {/* Background */}
       <ParallaxContainer depth="background" className="absolute inset-0 pointer-events-none">
         <GlowOrb color="secondary" size="lg" className="absolute top-0 left-1/4 opacity-30" />
@@ -23,7 +23,7 @@ const BusinessTypesSection = () => {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <AnimatedEntry type="fade-zoom">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 sm:mb-10">
             <span className="inline-block px-4 py-2 rounded-full bg-secondary/10 text-sm font-medium text-secondary mb-4">
               Polyvalent
             </span>

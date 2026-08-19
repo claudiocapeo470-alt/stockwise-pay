@@ -879,7 +879,7 @@ export default function Caisse() {
   // ═══════════════════════════════════════════════════════
 
   const renderHeader = () => (
-    <header className="h-14 flex items-center justify-between px-4 shrink-0" style={{ background: '#1A1F36' }}>
+    <header className="app-safe-header min-h-14 flex items-center justify-between px-4 shrink-0" style={{ background: "#1A1F36" }}>
       {/* Left: Logo */}
       <div className="flex items-center gap-3">
         <span className="text-white font-black text-base tracking-tight" style={{ fontFamily: 'Nunito, sans-serif' }}>
@@ -1631,7 +1631,7 @@ export default function Caisse() {
   return (
     <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#F0F2F5' }}>
       {/* Mobile Header */}
-      <header className="h-14 flex items-center justify-between px-3 shrink-0" style={{ background: '#1A1F36' }}>
+      <header className="app-safe-header min-h-14 flex items-center justify-between px-3 shrink-0" style={{ background: "#1A1F36" }}>
         <div className="flex items-center gap-2">
           {!isEmployee ? (
             <button onClick={() => navigate('/app')} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Dashboard">

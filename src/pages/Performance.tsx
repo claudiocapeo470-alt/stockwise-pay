@@ -117,24 +117,27 @@ export default function Performance() {
           </SelectContent>
         </Select>
 
-        <div className="ml-auto flex items-center gap-2">
-          <span className="text-xs font-semibold text-muted-foreground">Exporter</span>
-          <Button
-            variant="ghost"
-            onClick={() => handleExport('excel')}
-            className="h-11 rounded-2xl bg-success/10 text-success hover:bg-success/20 font-semibold"
-          >
-            <FileSpreadsheet className="h-4 w-4 mr-2" /> Excel
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => handleExport('pdf')}
-            className="h-11 rounded-2xl bg-destructive/10 text-destructive hover:bg-destructive/20 font-semibold"
-          >
-            <FileText className="h-4 w-4 mr-2" /> PDF
-          </Button>
-        </div>
       </div>
+
+      {/* Exports — libellé aligné à gauche */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-semibold text-muted-foreground mr-1">Exporter</span>
+        <Button
+          variant="ghost"
+          onClick={() => handleExport('excel')}
+          className="h-11 rounded-2xl bg-success/10 text-success hover:bg-success/20 font-semibold"
+        >
+          <FileSpreadsheet className="h-4 w-4 mr-2" /> Excel
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => handleExport('pdf')}
+          className="h-11 rounded-2xl bg-destructive/10 text-destructive hover:bg-destructive/20 font-semibold"
+        >
+          <FileText className="h-4 w-4 mr-2" /> PDF
+        </Button>
+      </div>
+
 
       {isPersonalView && (
         <div className="bg-primary/5 rounded-2xl px-3 py-2 text-xs text-primary">

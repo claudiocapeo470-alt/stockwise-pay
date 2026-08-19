@@ -187,165 +187,106 @@ export default function Checkout() {
       `}</style>
 
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between gap-3">
+      <header className="app-safe-header sticky top-0 z-30 bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 min-h-14 md:min-h-16 flex items-center justify-between gap-3">
           <button
             onClick={() => navigate(`/boutique/${slug}`)}
             className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900"
           >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">Retour</span>
+            <ChevronLeft className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2 min-w-0">
             {store.logo_url ? (
-              <img src={store.logo_url} alt={store.name} className="h-8 w-8 object-cover" />
+              <img src={store.logo_url} alt={store.name} className="h-7 w-7 rounded-lg object-cover" />
             ) : (
-              <div className="h-8 w-8 flex items-center justify-center text-white text-[10px] font-bold" style={{ background: color }}>
+              <div className="h-7 w-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold" style={{ background: color }}>
                 {store.name.substring(0, 2).toUpperCase()}
               </div>
             )}
             <span className="font-bold tracking-tight truncate text-sm md:text-base">{store.name}</span>
           </div>
-          <div className="text-xs text-gray-400 hidden sm:block">Paiement sécurisé</div>
-          <div className="sm:hidden w-6" />
+          <div className="w-6" />
         </div>
       </header>
 
-      {/* Contenu */}
-      <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 mb-1">Finaliser la commande</h1>
-        <p className="text-sm text-gray-500 mb-6 md:mb-8">Remplissez vos informations pour valider votre achat.</p>
+      {/* Contenu — compact, sans scroll inutile */}
+      <main className="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 pb-28">
+        <h1 className="text-lg md:text-2xl font-bold tracking-tight text-gray-900">Finaliser la commande</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
-          {/* Formulaire — 3 colonnes */}
-          <section className="lg:col-span-3 space-y-6">
-            {/* Coordonnées */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-5 md:p-6">
-              <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <span className="h-7 w-7 rounded-full text-xs font-bold flex items-center justify-center text-white" style={{ background: color }}>1</span>
-                Vos coordonnées
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Nom complet *" placeholder="Jean Dupont" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Téléphone *</label>
-                  <PhoneInput value={form.phone} onChange={v => setForm(p => ({ ...p, phone: v || '' }))} defaultCountry="CI" />
-                </div>
-                <div className="sm:col-span-2">
-                  <Field label="Email" type="email" placeholder="exemple@mail.com" value={form.email} onChange={v => setForm(p => ({ ...p, email: v }))} />
-                </div>
+        <div className="mt-3 grid grid-cols-1 lg:grid-cols-5 gap-4">
+          {/* Formulaire */}
+          <section className="lg:col-span-3 bg-white border border-gray-100 rounded-2xl p-4 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Field label="Nom complet *" placeholder="Jean Dupont" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
+              <div>
+                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Téléphone *</label>
+                <PhoneInput value={form.phone} onChange={v => setForm(p => ({ ...p, phone: v || '' }))} defaultCountry="CI" />
               </div>
             </div>
-
-            {/* Livraison */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-5 md:p-6">
-              <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <span className="h-7 w-7 rounded-full text-xs font-bold flex items-center justify-center text-white" style={{ background: color }}>2</span>
-                Adresse de livraison
-              </h2>
-              <Field
-                label="Adresse complète"
-                placeholder="Quartier, Rue, Ville"
-                value={form.address}
-                onChange={v => setForm(p => ({ ...p, address: v }))}
-              />
-              <div className="mt-4">
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Notes (optionnel)</label>
-                <textarea
-                  rows={3}
-                  value={form.notes}
-                  onChange={e => setForm(p => ({ ...p, notes: e.target.value }))}
-                  placeholder="Instructions spéciales pour la livraison…"
-                  className="ck-input w-full px-4 py-3 border border-gray-200 rounded-lg text-sm resize-none bg-white"
-                />
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Field label="Email" type="email" placeholder="exemple@mail.com" value={form.email} onChange={v => setForm(p => ({ ...p, email: v }))} />
+              <Field label="Adresse de livraison" placeholder="Quartier, Rue, Ville" value={form.address} onChange={v => setForm(p => ({ ...p, address: v }))} />
             </div>
 
-            {/* Paiement */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-5 md:p-6">
-              <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <span className="h-7 w-7 rounded-full text-xs font-bold flex items-center justify-center text-white" style={{ background: color }}>3</span>
-                Mode de paiement
-              </h2>
-              <div className="space-y-2">
+            <div>
+              <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Mode de paiement</label>
+              <div className="grid grid-cols-3 gap-2">
                 {[
-                  { v: "cash_on_delivery", icon: "💵", label: "Paiement à la livraison", desc: "Payez en espèces à la réception" },
-                  { v: "mobile_money", icon: "📱", label: "Mobile Money", desc: "MTN, Orange, Moov, Wave" },
-                  { v: "bank_transfer", icon: "🏦", label: "Virement bancaire", desc: "Le vendeur vous contactera" },
+                  { v: "cash_on_delivery", icon: "💵", label: "À la livraison" },
+                  { v: "mobile_money", icon: "📱", label: "Mobile Money" },
+                  { v: "bank_transfer", icon: "🏦", label: "Virement" },
                 ].map(o => (
-                  <label
+                  <button
                     key={o.v}
-                    className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${form.payment_method === o.v ? "" : "border-gray-200 hover:border-gray-300"}`}
-                    style={form.payment_method === o.v ? { borderColor: color, background: `${color}08` } : {}}
+                    type="button"
+                    onClick={() => setForm(p => ({ ...p, payment_method: o.v }))}
+                    className={`px-2 py-2.5 border rounded-xl text-center transition-colors ${form.payment_method === o.v ? "" : "border-gray-200 hover:border-gray-300"}`}
+                    style={form.payment_method === o.v ? { borderColor: color, background: `${color}0D` } : {}}
                   >
-                    <input
-                      type="radio"
-                      checked={form.payment_method === o.v}
-                      onChange={() => setForm(p => ({ ...p, payment_method: o.v }))}
-                      className="mt-1 accent-current"
-                      style={{ accentColor: color }}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                        <span>{o.icon}</span>{o.label}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-0.5">{o.desc}</p>
-                    </div>
-                  </label>
+                    <span className="block text-lg leading-none">{o.icon}</span>
+                    <span className="block mt-1 text-[11px] font-semibold text-gray-700 leading-tight">{o.label}</span>
+                  </button>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* Récap — 2 colonnes */}
+          {/* Récap */}
           <aside className="lg:col-span-2">
-            <div className="bg-white border border-gray-100 rounded-2xl p-5 md:p-6 lg:sticky lg:top-24">
-              <h2 className="text-base font-bold text-gray-900 mb-4">Récapitulatif</h2>
-
-              <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
+            <div className="bg-white border border-gray-100 rounded-2xl p-4 lg:sticky lg:top-24">
+              <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
                 {cart.map(i => (
-                  <div key={i.id} className="flex gap-3">
-                    <div className="h-14 w-14 flex-shrink-0 rounded-lg bg-gray-50 overflow-hidden">
+                  <div key={i.id} className="flex items-center gap-2.5">
+                    <div className="h-10 w-10 flex-shrink-0 rounded-lg bg-gray-50 overflow-hidden">
                       {i.image_url
                         ? <img src={i.image_url} alt={i.name} className="h-full w-full object-cover" />
-                        : <div className="h-full w-full flex items-center justify-center text-2xl">{i.icon_emoji}</div>}
+                        : <div className="h-full w-full flex items-center justify-center text-lg">{i.icon_emoji}</div>}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{i.name}</p>
-                      <p className="text-xs text-gray-500">Quantité : {i.quantity}</p>
+                      <p className="text-[13px] font-medium text-gray-900 truncate">{i.name}</p>
+                      <p className="text-[11px] text-gray-500">x{i.quantity}</p>
                     </div>
-                    <p className="text-sm font-bold whitespace-nowrap">{fmt(i.price * i.quantity)}</p>
+                    <p className="text-[13px] font-bold whitespace-nowrap">{fmt(i.price * i.quantity)}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-gray-100 mt-5 pt-4 space-y-2">
-                <div className="flex justify-between text-sm text-gray-600">
+              <div className="border-t border-gray-100 mt-3 pt-3 space-y-1.5">
+                <div className="flex justify-between text-[13px] text-gray-600">
                   <span>Sous-total</span><span>{fmt(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
+                <div className="flex justify-between text-[13px] text-gray-600">
                   <span>Livraison</span>
                   <span className={deliveryFee === 0 ? "text-green-600 font-semibold" : ""}>
                     {deliveryFee === 0 ? "Gratuite" : fmt(deliveryFee)}
                   </span>
                 </div>
-                <div className="flex justify-between text-base font-bold pt-3 border-t border-gray-100" style={{ color }}>
+                <div className="flex justify-between text-[15px] font-bold pt-2 border-t border-gray-100" style={{ color }}>
                   <span>Total</span><span>{fmt(total)}</span>
                 </div>
               </div>
 
-              <button
-                onClick={handleSubmit}
-                disabled={submitting || !form.name.trim() || !form.phone.trim()}
-                className="mt-5 w-full py-4 text-sm font-semibold text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-transform hover:scale-[1.01]"
-                style={{ background: color }}
-              >
-                {submitting
-                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Traitement…</>
-                  : <><CheckCircle className="h-4 w-4" /> Confirmer la commande</>}
-              </button>
-
-              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                 {[
                   { icon: Truck, label: "Livraison rapide" },
                   { icon: Shield, label: "Paiement sécurisé" },
@@ -361,6 +302,26 @@ export default function Checkout() {
           </aside>
         </div>
       </main>
+
+      {/* CTA fixe */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-gray-100 px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+        <div className="max-w-5xl mx-auto flex items-center gap-3">
+          <div className="hidden sm:block">
+            <p className="text-[11px] text-gray-500 leading-none">Total</p>
+            <p className="text-base font-bold" style={{ color }}>{fmt(total)}</p>
+          </div>
+          <button
+            onClick={handleSubmit}
+            disabled={submitting || !form.name.trim() || !form.phone.trim()}
+            className="flex-1 py-3.5 text-sm font-semibold text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            style={{ background: color }}
+          >
+            {submitting
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> Traitement…</>
+              : <><CheckCircle className="h-4 w-4" /> Confirmer la commande · {fmt(total)}</>}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -372,14 +333,15 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{label}</label>
+      <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">{label}</label>
       <input
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="ck-input w-full h-11 px-4 border border-gray-200 rounded-lg text-sm bg-white"
+        className="ck-input w-full h-11 px-3.5 border border-gray-200 rounded-xl text-sm bg-white"
       />
     </div>
   );
 }
+

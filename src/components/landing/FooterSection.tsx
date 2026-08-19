@@ -3,7 +3,7 @@ import { BrandLogo } from '@/components/ui/brand-logo';
 
 const FooterSection = () => {
   return (
-    <footer className="relative py-16 bg-card/50 border-t border-border/40">
+    <footer className="relative py-10 bg-card/50 border-t border-border/40">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}

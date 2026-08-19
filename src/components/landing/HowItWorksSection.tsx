@@ -35,10 +35,10 @@ const HowItWorksSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative py-12 sm:py-16 overflow-hidden">
+    <section className="relative py-8 sm:py-10 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <AnimatedEntry type="fade-zoom">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 sm:mb-10">
             <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-sm font-medium text-primary mb-4">
               📖 Guide rapide
             </span>

@@ -313,7 +313,7 @@ export default function Checkout() {
           <button
             onClick={handleSubmit}
             disabled={submitting || !form.name.trim() || !form.phone.trim()}
-            className="flex-1 h-13 py-3.5 text-sm font-semibold text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 py-3.5 text-sm font-semibold text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             style={{ background: color }}
           >
             {submitting

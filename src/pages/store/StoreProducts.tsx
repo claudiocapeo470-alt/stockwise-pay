@@ -564,8 +564,8 @@ export default function StoreProducts() {
                 <Plus className="h-4 w-4" /> Créer votre premier produit
               </Button>
             </CardContent></Card>
-          ) : isMobile ? (
-            <div className="space-y-2.5">
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {filteredOnline.map((sp: any) => (
                 <OnlineProductCard
                   key={sp.id}
@@ -576,37 +576,8 @@ export default function StoreProducts() {
                 />
               ))}
             </div>
-          ) : (
-            <Card>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader><TableRow>
-                    <TableHead>Produit</TableHead><TableHead>Catégorie</TableHead><TableHead>Prix en ligne</TableHead><TableHead>Statut</TableHead><TableHead className="text-right">Actions</TableHead>
-                  </TableRow></TableHeader>
-                  <TableBody>
-                    {filteredOnline.map((sp: any) => {
-                      const product = sp.products;
-                      return (
-                        <TableRow key={sp.id}>
-                          <TableCell><div className="flex items-center gap-3">{product && <ProductIcon product={product} />}<span className="font-medium text-sm">{product?.name || '—'}</span></div></TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{product?.category || '—'}</TableCell>
-                          <TableCell className="font-semibold">{sp.online_price?.toLocaleString('de-DE')} XOF</TableCell>
-                          <TableCell><Badge variant={sp.is_active !== false ? 'default' : 'secondary'} className="text-xs">{sp.is_active !== false ? 'Actif' : 'Inactif'}</Badge></TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex items-center justify-end gap-1">
-                              <Button variant="ghost" size="sm" title="Modifier" onClick={() => product && setEditingProduct({ storeProduct: sp, product })}><Edit2 className="h-4 w-4" /></Button>
-                              <Button variant="ghost" size="sm" className="text-orange-500" title="Retirer de la boutique" onClick={async () => { try { await removeProduct.mutateAsync(sp.product_id); toast.success('Retiré'); } catch (e: any) { toast.error(e.message); } }}><Globe className="h-4 w-4" /></Button>
-                              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" title="Supprimer définitivement" onClick={() => product && setConfirmDelete({ id: sp.product_id, name: product.name })}><Trash2 className="h-4 w-4" /></Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            </Card>
           )}
+
         </TabsContent>
 
         <TabsContent value="stock" className="mt-3">

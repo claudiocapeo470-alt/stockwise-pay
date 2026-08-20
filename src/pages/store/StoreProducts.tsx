@@ -599,8 +599,8 @@ export default function StoreProducts() {
               <Package className="h-10 w-10 mx-auto text-muted-foreground/30" />
               <p className="text-muted-foreground text-sm">{unpublished.length === 0 ? 'Tous les produits sont publiés' : 'Aucun résultat'}</p>
             </CardContent></Card>
-          ) : isMobile ? (
-            <div className="space-y-4">
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {filteredUnpublished.map(p => (
                 <StockProductCard
                   key={p.id}
@@ -614,41 +614,8 @@ export default function StoreProducts() {
                 />
               ))}
             </div>
-          ) : (
-            <Card>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader><TableRow>
-                    <TableHead className="w-10"><Checkbox checked={selected.size === filteredUnpublished.length && filteredUnpublished.length > 0} onCheckedChange={checked => setSelected(checked ? new Set(filteredUnpublished.map(p => p.id)) : new Set())} /></TableHead>
-                    <TableHead>Produit</TableHead><TableHead>Catégorie</TableHead><TableHead>Prix stock</TableHead><TableHead>Prix en ligne</TableHead><TableHead className="text-right">Actions</TableHead>
-                  </TableRow></TableHeader>
-                  <TableBody>
-                    {filteredUnpublished.map(p => (
-                      <TableRow key={p.id} className={selected.has(p.id) ? 'bg-primary/5' : ''}>
-                        <TableCell><Checkbox checked={selected.has(p.id)} onCheckedChange={() => toggleSelect(p.id)} /></TableCell>
-                        <TableCell><div className="flex items-center gap-3"><ProductIcon product={p} /><span className="font-medium text-sm">{p.name}</span></div></TableCell>
-                        <TableCell className="text-muted-foreground text-sm">{p.category || '—'}</TableCell>
-                        <TableCell className="text-sm">{p.price?.toLocaleString('de-DE')} XOF</TableCell>
-                        <TableCell>
-                          <Input type="number" className="w-28 h-8 text-sm" value={onlinePrices[p.id] ?? p.price} onChange={e => setOnlinePrices(prev => ({ ...prev, [p.id]: Number(e.target.value) }))} onClick={e => e.stopPropagation()} />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button size="sm" variant="outline" className="gap-1" onClick={async () => { try { await publishProducts.mutateAsync([{ product_id: p.id, online_price: onlinePrices[p.id] || p.price }]); toast.success('Publié !'); } catch (e: any) { toast.error(e.message); } }}>
-                              <Globe className="h-3.5 w-3.5" /> Publier
-                            </Button>
-                            <Button size="sm" variant="ghost" className="text-destructive" title="Supprimer définitivement" onClick={() => setConfirmDelete({ id: p.id, name: p.name })}>
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </Card>
           )}
+
         </TabsContent>
       </Tabs>
 

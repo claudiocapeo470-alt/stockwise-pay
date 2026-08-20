@@ -210,51 +210,14 @@ export default function Checkout() {
       </header>
 
       {/* Contenu — compact, sans scroll inutile */}
-      <main className="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 pb-28">
+      <main className="max-w-5xl mx-auto px-4 md:px-6 py-3 md:py-5 pb-28">
         <h1 className="text-lg md:text-2xl font-bold tracking-tight text-gray-900">Finaliser la commande</h1>
 
         <div className="mt-3 grid grid-cols-1 lg:grid-cols-5 gap-4">
-          {/* Formulaire */}
-          <section className="lg:col-span-3 bg-white border border-gray-100 rounded-2xl p-4 space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field label="Nom complet *" placeholder="Jean Dupont" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
-              <div>
-                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Téléphone *</label>
-                <PhoneInput value={form.phone} onChange={v => setForm(p => ({ ...p, phone: v || '' }))} defaultCountry="CI" />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field label="Email" type="email" placeholder="exemple@mail.com" value={form.email} onChange={v => setForm(p => ({ ...p, email: v }))} />
-              <Field label="Adresse de livraison" placeholder="Quartier, Rue, Ville" value={form.address} onChange={v => setForm(p => ({ ...p, address: v }))} />
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Mode de paiement</label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { v: "cash_on_delivery", icon: "💵", label: "À la livraison" },
-                  { v: "mobile_money", icon: "📱", label: "Mobile Money" },
-                  { v: "bank_transfer", icon: "🏦", label: "Virement" },
-                ].map(o => (
-                  <button
-                    key={o.v}
-                    type="button"
-                    onClick={() => setForm(p => ({ ...p, payment_method: o.v }))}
-                    className={`px-2 py-2.5 border rounded-xl text-center transition-colors ${form.payment_method === o.v ? "" : "border-gray-200 hover:border-gray-300"}`}
-                    style={form.payment_method === o.v ? { borderColor: color, background: `${color}0D` } : {}}
-                  >
-                    <span className="block text-lg leading-none">{o.icon}</span>
-                    <span className="block mt-1 text-[11px] font-semibold text-gray-700 leading-tight">{o.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Récap */}
-          <aside className="lg:col-span-2">
+          {/* Récap — en haut sur mobile, colonne droite sur desktop */}
+          <aside className="lg:col-span-2 lg:order-2">
             <div className="bg-white border border-gray-100 rounded-2xl p-4 lg:sticky lg:top-24">
-              <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-32 overflow-y-auto pr-1">
                 {cart.map(i => (
                   <div key={i.id} className="flex items-center gap-2.5">
                     <div className="h-10 w-10 flex-shrink-0 rounded-lg bg-gray-50 overflow-hidden">
@@ -300,8 +263,43 @@ export default function Checkout() {
               </div>
             </div>
           </aside>
+
+          {/* Formulaire */}
+          <section className="lg:col-span-3 lg:order-1 bg-white border border-gray-100 rounded-2xl p-4 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Field label="Nom complet *" placeholder="Jean Dupont" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
+              <div>
+                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Téléphone *</label>
+                <PhoneInput value={form.phone} onChange={v => setForm(p => ({ ...p, phone: v || '' }))} defaultCountry="CI" />
+              </div>
+            </div>
+            <Field label="Adresse de livraison" placeholder="Quartier, Rue, Ville" value={form.address} onChange={v => setForm(p => ({ ...p, address: v }))} />
+
+            <div>
+              <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Mode de paiement</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { v: "cash_on_delivery", icon: "💵", label: "À la livraison" },
+                  { v: "mobile_money", icon: "📱", label: "Mobile Money" },
+                  { v: "bank_transfer", icon: "🏦", label: "Virement" },
+                ].map(o => (
+                  <button
+                    key={o.v}
+                    type="button"
+                    onClick={() => setForm(p => ({ ...p, payment_method: o.v }))}
+                    className={`px-2 py-2.5 border rounded-xl text-center transition-colors ${form.payment_method === o.v ? "" : "border-gray-200 hover:border-gray-300"}`}
+                    style={form.payment_method === o.v ? { borderColor: color, background: `${color}0D` } : {}}
+                  >
+                    <span className="block text-lg leading-none">{o.icon}</span>
+                    <span className="block mt-1 text-[11px] font-semibold text-gray-700 leading-tight">{o.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
       </main>
+
 
       {/* CTA fixe */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-gray-100 px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">

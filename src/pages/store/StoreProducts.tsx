@@ -387,24 +387,29 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
   );
 }
 
-// Mobile card for online products — design épuré
+// Carte produit en ligne — style carte blanche arrondie (image de référence)
 function OnlineProductCard({ sp, onEdit, onUnpublish, onDelete }: { sp: any; onEdit: () => void; onUnpublish: () => void; onDelete: () => void }) {
   const product = sp.products;
   return (
-    <div className="flex items-center gap-3 rounded-full bg-muted/50 border border-border/60 p-2 pr-3 transition-colors hover:bg-muted">
+    <div className="flex items-center gap-3 rounded-2xl bg-card border border-border/60 p-3 shadow-sm transition-shadow hover:shadow-md">
       {product?.image_url ? (
-        <img src={product.image_url} alt={product.name} loading="lazy" className="h-14 w-14 rounded-full object-cover shrink-0" />
+        <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0 bg-muted" />
       ) : (
-        <div className="h-14 w-14 rounded-full bg-background flex items-center justify-center text-xl shrink-0">
+        <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center text-2xl shrink-0">
           {product?.icon_emoji || '📦'}
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <p className="font-bold text-sm truncate">{product?.name || '—'}</p>
-        <p className="text-xs text-muted-foreground truncate">{product?.category || 'Sans catégorie'}</p>
-        <p className="text-sm font-semibold mt-0.5">{sp.online_price?.toLocaleString('de-DE')} XOF</p>
+        <p className="font-semibold text-[15px] leading-tight truncate">{product?.name || '—'}</p>
+        <p className="text-sm font-bold mt-0.5">{sp.online_price?.toLocaleString('de-DE')} XOF</p>
+        <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+          <span className="px-2.5 py-1 rounded-full bg-muted text-[11px] font-medium text-muted-foreground">
+            {product?.category || 'Sans catégorie'}
+          </span>
+          <span className="px-2.5 py-1 rounded-full bg-success/10 text-[11px] font-medium text-success">Publié</span>
+        </div>
       </div>
-      <div className="flex items-center gap-0.5 shrink-0">
+      <div className="flex flex-col items-center gap-1 shrink-0">
         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" onClick={onEdit} title="Modifier"><Edit2 className="h-4 w-4" /></Button>
         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-orange-500" onClick={onUnpublish} title="Retirer"><Globe className="h-4 w-4" /></Button>
         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive" onClick={onDelete} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
@@ -415,29 +420,34 @@ function OnlineProductCard({ sp, onEdit, onUnpublish, onDelete }: { sp: any; onE
 
 
 
-// Mobile card for stock products
+// Carte produit en stock — même design que les produits en ligne
 function StockProductCard({ product, selected, onToggle, onlinePrice, onPriceChange, onPublish, onDelete }: {
   product: any; selected: boolean; onToggle: () => void; onlinePrice: number; onPriceChange: (v: number) => void; onPublish: () => void; onDelete: () => void;
 }) {
   return (
-    <div className={`rounded-2xl border bg-card p-4 transition-colors ${selected ? 'border-primary bg-primary/5' : 'border-border'}`}>
+    <div className={`rounded-2xl bg-card border p-3 shadow-sm transition-all ${selected ? 'border-primary ring-1 ring-primary/20' : 'border-border/60 hover:shadow-md'}`}>
       <div className="flex items-center gap-3">
-        <Checkbox checked={selected} onCheckedChange={onToggle} />
+        <Checkbox checked={selected} onCheckedChange={onToggle} className="shrink-0" />
         {product.image_url ? (
-          <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0" />
+          <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0 bg-muted" />
         ) : (
-          <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center text-xl shrink-0">{product.icon_emoji || '📦'}</div>
+          <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center text-2xl shrink-0">{product.icon_emoji || '📦'}</div>
         )}
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground truncate">{product.category || 'Sans catégorie'}</p>
-          <p className="font-bold text-[15px] leading-tight truncate mt-0.5">{product.name}</p>
-          <p className="text-sm font-semibold mt-1">{product.price?.toLocaleString('de-DE')} XOF</p>
+          <p className="font-semibold text-[15px] leading-tight truncate">{product.name}</p>
+          <p className="text-sm font-bold mt-0.5">{product.price?.toLocaleString('de-DE')} XOF</p>
+          <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+            <span className="px-2.5 py-1 rounded-full bg-muted text-[11px] font-medium text-muted-foreground">
+              {product.quantity > 0 ? `${product.quantity} en stock` : 'Rupture'}
+            </span>
+            <span className="px-2.5 py-1 rounded-full bg-orange-500/10 text-[11px] font-medium text-orange-600">Non publié</span>
+          </div>
         </div>
         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive shrink-0" onClick={onDelete} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
       </div>
       <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/60">
-        <Input type="number" className="h-9 text-sm flex-1 rounded-xl" value={onlinePrice} onChange={e => onPriceChange(Number(e.target.value))} placeholder="Prix en ligne" />
-        <Button size="sm" variant="outline" className="gap-1 shrink-0 h-9 rounded-xl" onClick={onPublish}>
+        <Input type="number" className="h-10 text-sm flex-1 rounded-xl" value={onlinePrice} onChange={e => onPriceChange(Number(e.target.value))} placeholder="Prix en ligne" />
+        <Button size="sm" className="gap-1 shrink-0 h-10 rounded-xl" onClick={onPublish}>
           <Globe className="h-3.5 w-3.5" /> Publier
         </Button>
       </div>
@@ -445,6 +455,7 @@ function StockProductCard({ product, selected, onToggle, onlinePrice, onPriceCha
 
   );
 }
+
 
 export default function StoreProducts() {
   const { store } = useOnlineStore();
@@ -553,8 +564,8 @@ export default function StoreProducts() {
                 <Plus className="h-4 w-4" /> Créer votre premier produit
               </Button>
             </CardContent></Card>
-          ) : isMobile ? (
-            <div className="space-y-2.5">
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {filteredOnline.map((sp: any) => (
                 <OnlineProductCard
                   key={sp.id}
@@ -565,37 +576,8 @@ export default function StoreProducts() {
                 />
               ))}
             </div>
-          ) : (
-            <Card>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader><TableRow>
-                    <TableHead>Produit</TableHead><TableHead>Catégorie</TableHead><TableHead>Prix en ligne</TableHead><TableHead>Statut</TableHead><TableHead className="text-right">Actions</TableHead>
-                  </TableRow></TableHeader>
-                  <TableBody>
-                    {filteredOnline.map((sp: any) => {
-                      const product = sp.products;
-                      return (
-                        <TableRow key={sp.id}>
-                          <TableCell><div className="flex items-center gap-3">{product && <ProductIcon product={product} />}<span className="font-medium text-sm">{product?.name || '—'}</span></div></TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{product?.category || '—'}</TableCell>
-                          <TableCell className="font-semibold">{sp.online_price?.toLocaleString('de-DE')} XOF</TableCell>
-                          <TableCell><Badge variant={sp.is_active !== false ? 'default' : 'secondary'} className="text-xs">{sp.is_active !== false ? 'Actif' : 'Inactif'}</Badge></TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex items-center justify-end gap-1">
-                              <Button variant="ghost" size="sm" title="Modifier" onClick={() => product && setEditingProduct({ storeProduct: sp, product })}><Edit2 className="h-4 w-4" /></Button>
-                              <Button variant="ghost" size="sm" className="text-orange-500" title="Retirer de la boutique" onClick={async () => { try { await removeProduct.mutateAsync(sp.product_id); toast.success('Retiré'); } catch (e: any) { toast.error(e.message); } }}><Globe className="h-4 w-4" /></Button>
-                              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" title="Supprimer définitivement" onClick={() => product && setConfirmDelete({ id: sp.product_id, name: product.name })}><Trash2 className="h-4 w-4" /></Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            </Card>
           )}
+
         </TabsContent>
 
         <TabsContent value="stock" className="mt-3">
@@ -617,8 +599,8 @@ export default function StoreProducts() {
               <Package className="h-10 w-10 mx-auto text-muted-foreground/30" />
               <p className="text-muted-foreground text-sm">{unpublished.length === 0 ? 'Tous les produits sont publiés' : 'Aucun résultat'}</p>
             </CardContent></Card>
-          ) : isMobile ? (
-            <div className="space-y-4">
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {filteredUnpublished.map(p => (
                 <StockProductCard
                   key={p.id}
@@ -632,41 +614,8 @@ export default function StoreProducts() {
                 />
               ))}
             </div>
-          ) : (
-            <Card>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader><TableRow>
-                    <TableHead className="w-10"><Checkbox checked={selected.size === filteredUnpublished.length && filteredUnpublished.length > 0} onCheckedChange={checked => setSelected(checked ? new Set(filteredUnpublished.map(p => p.id)) : new Set())} /></TableHead>
-                    <TableHead>Produit</TableHead><TableHead>Catégorie</TableHead><TableHead>Prix stock</TableHead><TableHead>Prix en ligne</TableHead><TableHead className="text-right">Actions</TableHead>
-                  </TableRow></TableHeader>
-                  <TableBody>
-                    {filteredUnpublished.map(p => (
-                      <TableRow key={p.id} className={selected.has(p.id) ? 'bg-primary/5' : ''}>
-                        <TableCell><Checkbox checked={selected.has(p.id)} onCheckedChange={() => toggleSelect(p.id)} /></TableCell>
-                        <TableCell><div className="flex items-center gap-3"><ProductIcon product={p} /><span className="font-medium text-sm">{p.name}</span></div></TableCell>
-                        <TableCell className="text-muted-foreground text-sm">{p.category || '—'}</TableCell>
-                        <TableCell className="text-sm">{p.price?.toLocaleString('de-DE')} XOF</TableCell>
-                        <TableCell>
-                          <Input type="number" className="w-28 h-8 text-sm" value={onlinePrices[p.id] ?? p.price} onChange={e => setOnlinePrices(prev => ({ ...prev, [p.id]: Number(e.target.value) }))} onClick={e => e.stopPropagation()} />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button size="sm" variant="outline" className="gap-1" onClick={async () => { try { await publishProducts.mutateAsync([{ product_id: p.id, online_price: onlinePrices[p.id] || p.price }]); toast.success('Publié !'); } catch (e: any) { toast.error(e.message); } }}>
-                              <Globe className="h-3.5 w-3.5" /> Publier
-                            </Button>
-                            <Button size="sm" variant="ghost" className="text-destructive" title="Supprimer définitivement" onClick={() => setConfirmDelete({ id: p.id, name: p.name })}>
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </Card>
           )}
+
         </TabsContent>
       </Tabs>
 

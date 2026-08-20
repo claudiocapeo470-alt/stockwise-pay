@@ -10,7 +10,6 @@ import { useDeliveries } from "@/hooks/useDeliveries";
 import { useTeam } from "@/hooks/useTeam";
 import { toast } from "sonner";
 import { Truck, Package, CheckCircle, AlertTriangle, UserPlus } from "lucide-react";
-import { DeliveryRiderIcon } from "@/components/icons/DeliveryRiderIcon";
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
   unassigned: { label: "Non assignée", color: "bg-muted text-muted-foreground", icon: Package },
@@ -22,8 +21,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = 
 
 function EmptyDeliveries() {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-      <DeliveryRiderIcon className="h-24 w-24 text-primary" />
+    <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
       <p className="font-semibold text-foreground">Aucune livraison</p>
       <p className="text-sm text-muted-foreground">Les livraisons apparaîtront ici dès qu'une commande sera prête.</p>
     </div>

@@ -180,13 +180,11 @@ export default function StoreConfig() {
       {/* ────────────────────────────────────────────────────────────
            HERO — Bloc 3D boutique + bouton d'ouverture du wizard
          ──────────────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-background to-primary/5 p-6 sm:p-10">
-        <div className="absolute -right-6 -top-6 h-40 w-40 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
-        <div className="absolute -left-10 -bottom-10 h-48 w-48 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
-
+      <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card p-6 sm:p-10">
+                
         <div className="relative flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
           <div className="flex-shrink-0">
-            <div className="h-32 w-32 sm:h-40 sm:w-40 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg">
+            <div className="h-28 w-28 sm:h-36 sm:w-36 rounded-3xl bg-muted/50 border border-border/60 flex items-center justify-center">
               <Store className="h-16 w-16 sm:h-20 sm:w-20 text-primary" strokeWidth={1.5} />
             </div>
           </div>

@@ -114,44 +114,44 @@ export default function Settings() {
   const phone = settings?.company_phone || '';
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto animate-fade-in pb-4">
+    <div className="max-w-2xl mx-auto w-full animate-fade-in overflow-x-hidden space-y-3">
       {/* Carte profil */}
       <button
         type="button"
         onClick={() => navigate('/app/profile')}
-        className="w-full flex items-center gap-4 rounded-2xl bg-card border border-border/60 px-4 py-4 text-left shadow-soft transition-colors hover:bg-muted/50"
+        className="w-full flex items-center gap-3 rounded-2xl bg-card border border-border/60 px-3.5 py-3 text-left transition-colors hover:bg-muted/50"
       >
-        <div className="h-16 w-16 rounded-full overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
+        <div className="h-12 w-12 rounded-full overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
           {avatarUrl ? (
             <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
           ) : (
-            <User className="h-7 w-7 text-muted-foreground" />
+            <User className="h-5 w-5 text-muted-foreground" />
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-lg font-bold uppercase truncate">{displayName}</p>
-          <p className="text-sm text-muted-foreground truncate">{phone || user?.email}</p>
+          <p className="text-[15px] font-semibold truncate">{displayName}</p>
+          <p className="text-xs text-muted-foreground truncate">{phone || user?.email}</p>
         </div>
-        <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+        <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
       </button>
 
       {groups.map((group) => {
         const cards = visibleCards.filter((c) => group.ids.includes(c.id));
         if (cards.length === 0) return null;
         return (
-          <div key={group.title} className="space-y-2">
-            <p className="text-sm font-semibold text-foreground px-1">{group.title}</p>
-            <div className="rounded-2xl bg-muted/60 overflow-hidden">
+          <div key={group.title} className="space-y-1.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground px-1">{group.title}</p>
+            <div className="rounded-2xl bg-muted/50 overflow-hidden">
               {cards.map((card, i) => (
                 <button
                   key={card.id}
                   type="button"
                   onClick={() => card.id === "profile" ? navigate('/app/profile') : card.id === "subscription" ? navigate('/app/subscription') : setActivePage(card.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-colors hover:bg-muted ${i > 0 ? "border-t border-border/50" : ""}`}
+                  className={`w-full flex items-center gap-3 px-3.5 py-3 text-left transition-colors hover:bg-muted ${i > 0 ? "border-t border-border/50" : ""}`}
                 >
-                  <card.icon className="h-5 w-5 text-foreground/80 flex-shrink-0" />
-                  <span className="flex-1 min-w-0 text-[15px] text-foreground truncate">{card.title}</span>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                  <card.icon className="h-[18px] w-[18px] text-foreground/70 flex-shrink-0" />
+                  <span className="flex-1 min-w-0 text-sm text-foreground truncate">{card.title}</span>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 </button>
               ))}
             </div>

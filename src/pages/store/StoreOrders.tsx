@@ -120,14 +120,14 @@ export default function StoreOrders() {
                   <TableCell><div><p className="font-medium">{order.customer_name}</p><p className="text-xs text-muted-foreground">{order.customer_phone}</p></div></TableCell>
                   <TableCell>{items.length} article{items.length > 1 ? 's' : ''}</TableCell>
                   <TableCell className="font-bold">{(order.total || 0).toLocaleString('de-DE')} FCFA</TableCell>
-                  <TableCell><span className={`px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>{status.emoji} {status.label}</span></TableCell>
+                  <TableCell><span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.color}`}><status.icon className="h-3.5 w-3.5" />{status.label}</span></TableCell>
                   <TableCell className="text-sm text-muted-foreground">{new Date(order.created_at).toLocaleDateString('fr-FR')}</TableCell>
                   <TableCell>
                     <Select value={order.status} onValueChange={v => handleStatusChange(order.id, v)}>
                       <SelectTrigger className="w-32 h-8 text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {Object.entries(STATUS_MAP).map(([key, val]) => (
-                          <SelectItem key={key} value={key}>{val.emoji} {val.label}</SelectItem>
+                          <SelectItem key={key} value={key}><StatusOption statusKey={key} /></SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -170,7 +170,7 @@ export default function StoreOrders() {
                   <SelectTrigger className="w-36 h-9 rounded-xl text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {Object.entries(STATUS_MAP).map(([key, val]) => (
-                      <SelectItem key={key} value={key}>{val.emoji} {val.label}</SelectItem>
+                      <SelectItem key={key} value={key}><StatusOption statusKey={key} /></SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

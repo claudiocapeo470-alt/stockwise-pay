@@ -10,18 +10,31 @@ import { useOnlineStore, useStoreOrders } from "@/hooks/useOnlineStore";
 import { useDeliveries } from "@/hooks/useDeliveries";
 import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
-import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck } from "lucide-react";
+import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck, CheckCircle2, ChefHat, XCircle, PackageCheck } from "lucide-react";
 import { useOrderNotifications } from '@/hooks/useOrderNotifications';
 
 
-const STATUS_MAP: Record<string, { label: string; color: string; emoji: string }> = {
-  pending: { label: "En attente", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", emoji: "⏳" },
-  confirmed: { label: "Confirmée", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400", emoji: "✅" },
-  preparing: { label: "En préparation", color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400", emoji: "🍳" },
-  shipped: { label: "Expédiée", color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400", emoji: "🚚" },
-  delivered: { label: "Livrée", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400", emoji: "✅" },
-  cancelled: { label: "Annulée", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400", emoji: "❌" },
+const STATUS_MAP: Record<string, { label: string; color: string; icon: any; iconColor: string }> = {
+  pending: { label: "En attente", color: "bg-warning/10 text-warning", icon: Clock, iconColor: "text-warning" },
+  confirmed: { label: "Confirmée", color: "bg-primary/10 text-primary", icon: CheckCircle2, iconColor: "text-primary" },
+  preparing: { label: "En préparation", color: "bg-orange-500/10 text-orange-600", icon: ChefHat, iconColor: "text-orange-600" },
+  shipped: { label: "Expédiée", color: "bg-accent/10 text-accent", icon: Truck, iconColor: "text-accent" },
+  delivered: { label: "Livrée", color: "bg-success/10 text-success", icon: PackageCheck, iconColor: "text-success" },
+  cancelled: { label: "Annulée", color: "bg-destructive/10 text-destructive", icon: XCircle, iconColor: "text-destructive" },
 };
+
+/** Rendu unifié d'un item de statut (icône + libellé) */
+function StatusOption({ statusKey }: { statusKey: string }) {
+  const s = STATUS_MAP[statusKey] || STATUS_MAP.pending;
+  const Icon = s.icon;
+  return (
+    <span className="flex items-center gap-2">
+      <Icon className={`h-4 w-4 ${s.iconColor}`} />
+      <span>{s.label}</span>
+    </span>
+  );
+}
+
 
 export default function StoreOrders() {
   const { store } = useOnlineStore();
@@ -107,14 +120,14 @@ export default function StoreOrders() {
                   <TableCell><div><p className="font-medium">{order.customer_name}</p><p className="text-xs text-muted-foreground">{order.customer_phone}</p></div></TableCell>
                   <TableCell>{items.length} article{items.length > 1 ? 's' : ''}</TableCell>
                   <TableCell className="font-bold">{(order.total || 0).toLocaleString('de-DE')} FCFA</TableCell>
-                  <TableCell><span className={`px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>{status.emoji} {status.label}</span></TableCell>
+                  <TableCell><span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.color}`}><status.icon className="h-3.5 w-3.5" />{status.label}</span></TableCell>
                   <TableCell className="text-sm text-muted-foreground">{new Date(order.created_at).toLocaleDateString('fr-FR')}</TableCell>
                   <TableCell>
                     <Select value={order.status} onValueChange={v => handleStatusChange(order.id, v)}>
                       <SelectTrigger className="w-32 h-8 text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {Object.entries(STATUS_MAP).map(([key, val]) => (
-                          <SelectItem key={key} value={key}>{val.emoji} {val.label}</SelectItem>
+                          <SelectItem key={key} value={key}><StatusOption statusKey={key} /></SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -157,7 +170,7 @@ export default function StoreOrders() {
                   <SelectTrigger className="w-36 h-9 rounded-xl text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {Object.entries(STATUS_MAP).map(([key, val]) => (
-                      <SelectItem key={key} value={key}>{val.emoji} {val.label}</SelectItem>
+                      <SelectItem key={key} value={key}><StatusOption statusKey={key} /></SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

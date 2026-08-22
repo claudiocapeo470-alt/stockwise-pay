@@ -523,9 +523,9 @@ export default function PublicStore() {
     const isFav = favorites.has(product.id);
 
     return (
-      <div className="lz-pcard group">
+      <div className="lz-pcard group rounded-2xl bg-card border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
         {/* Image avec aspect carré */}
-        <div className="lz-pcard-img-wrap aspect-square bg-muted/40 mb-3 cursor-pointer" onClick={() => goToProduct(product.id)}>
+        <div className="lz-pcard-img-wrap aspect-square bg-muted/40 cursor-pointer" onClick={() => goToProduct(product.id)}>
           {imgs.length > 0 ? (
             <>
               <img
@@ -593,7 +593,7 @@ export default function PublicStore() {
         </div>
 
         {/* Infos sous l'image */}
-        <div className="px-1 cursor-pointer" onClick={() => goToProduct(product.id)}>
+        <div className="p-3 pb-2 cursor-pointer flex-1" onClick={() => goToProduct(product.id)}>
           <h3 className="text-sm font-medium text-foreground mb-1 line-clamp-1 transition-colors group-hover:text-current"
               style={{ color: undefined }}>
             <span className="group-hover:opacity-0 transition-opacity duration-200 inline-block w-full" style={{ color: 'inherit' }}>
@@ -619,7 +619,7 @@ export default function PublicStore() {
               e.stopPropagation();
               buyNow(product, 1);
             }}
-            className="lz-btn-cta mt-2 w-full py-2.5 px-3 text-xs sm:text-sm font-semibold text-white rounded-full flex items-center justify-center gap-1.5"
+            className="lz-btn-cta mx-3 mb-3 py-2.5 px-3 text-xs sm:text-sm font-semibold text-white rounded-xl flex items-center justify-center gap-1.5"
             style={{ background: color }}
           >
             <ShoppingCart className="h-3.5 w-3.5" />

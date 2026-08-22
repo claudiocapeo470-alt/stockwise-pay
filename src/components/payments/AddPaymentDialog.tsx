@@ -145,10 +145,10 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
               <Label htmlFor="phone" className="text-foreground">
                 Téléphone
               </Label>
-              <Input
+              <PhoneInput
                 id="phone"
                 value={formData.customer_phone}
-                onChange={(e) => setFormData(prev => ({ ...prev, customer_phone: e.target.value }))}
+                onChange={(value) => setFormData(prev => ({ ...prev, customer_phone: value || "" }))}
                 placeholder="Numéro de téléphone"
               />
             </div>

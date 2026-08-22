@@ -124,11 +124,11 @@ export function EditPaymentDialog({ payment, open, onOpenChange }: EditPaymentDi
 
           <div>
             <Label htmlFor="phone">Téléphone</Label>
-            <Input
+            <PhoneInput
               id="phone"
               value={formData.customer_phone}
-              onChange={(e) => handleInputChange("customer_phone", e.target.value)}
-              placeholder="+225 XX XX XX XX XX"
+              onChange={(value) => handleInputChange("customer_phone", value || "")}
+              placeholder="Numéro de téléphone"
             />
           </div>
 

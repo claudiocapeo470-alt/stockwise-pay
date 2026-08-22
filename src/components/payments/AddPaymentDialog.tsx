@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PhoneInput } from "@/components/ui/phone-input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
@@ -144,10 +145,10 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
               <Label htmlFor="phone" className="text-foreground">
                 Téléphone
               </Label>
-              <Input
+              <PhoneInput
                 id="phone"
                 value={formData.customer_phone}
-                onChange={(e) => setFormData(prev => ({ ...prev, customer_phone: e.target.value }))}
+                onChange={(value) => setFormData(prev => ({ ...prev, customer_phone: value || "" }))}
                 placeholder="Numéro de téléphone"
               />
             </div>

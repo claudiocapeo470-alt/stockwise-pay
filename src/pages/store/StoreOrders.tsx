@@ -12,6 +12,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck, CheckCircle2, ChefHat, XCircle, PackageCheck } from "lucide-react";
 import { useOrderNotifications } from '@/hooks/useOrderNotifications';
+import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from "@/components/layout/MinimalList";
 
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any; iconColor: string }> = {

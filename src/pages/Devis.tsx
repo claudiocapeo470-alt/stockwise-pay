@@ -1,5 +1,6 @@
 import { PageActionBar } from "@/components/layout/PageActionBar";
 import { SectionHeading } from "@/components/layout/PageShell";
+import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from "@/components/layout/MinimalList";
 import { useState } from "react";
 import { useInvoices } from "@/hooks/useInvoices";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

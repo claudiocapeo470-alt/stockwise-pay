@@ -10,6 +10,7 @@ import { useDeliveries } from "@/hooks/useDeliveries";
 import { useTeam } from "@/hooks/useTeam";
 import { toast } from "sonner";
 import { Truck, Package, CheckCircle, AlertTriangle, UserPlus } from "lucide-react";
+import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from "@/components/layout/MinimalList";
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
   unassigned: { label: "Non assignée", color: "bg-muted text-muted-foreground", icon: Package },

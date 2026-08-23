@@ -96,98 +96,45 @@ export default function StoreOrders() {
         count={orders.length}
       />
 
-      {/* Desktop table */}
-      <Card className="hidden md:block">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>N° Commande</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Articles</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.map(order => {
-              const status = STATUS_MAP[order.status] || STATUS_MAP.pending;
-              const items = Array.isArray(order.items) ? order.items : [];
-              return (
-                <TableRow key={order.id} className="cursor-pointer" onClick={() => setSelectedOrder(order)}>
-                  <TableCell className="font-mono text-sm">{order.order_number}</TableCell>
-                  <TableCell><div><p className="font-medium">{order.customer_name}</p><p className="text-xs text-muted-foreground">{order.customer_phone}</p></div></TableCell>
-                  <TableCell>{items.length} article{items.length > 1 ? 's' : ''}</TableCell>
-                  <TableCell className="font-bold">{(order.total || 0).toLocaleString('de-DE')} FCFA</TableCell>
-                  <TableCell><span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.color}`}><status.icon className="h-3.5 w-3.5" />{status.label}</span></TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{new Date(order.created_at).toLocaleDateString('fr-FR')}</TableCell>
-                  <TableCell>
-                    <Select value={order.status} onValueChange={v => handleStatusChange(order.id, v)}>
-                      <SelectTrigger className="w-32 h-8 text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {Object.entries(STATUS_MAP).map(([key, val]) => (
-                          <SelectItem key={key} value={key}><StatusOption statusKey={key} /></SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-            {orders.length === 0 && <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Aucune commande reçue</TableCell></TableRow>}
-          </TableBody>
-        </Table>
-      </Card>
+      {/* Liste minimaliste unifiée */}
+      {orders.length === 0 ? (
+        <ListEmpty
+          icon={<Package className="h-6 w-6" />}
+          title="Aucune commande reçue"
+          description="Les commandes de votre boutique s'afficheront ici."
+        />
+      ) : (
+        <ListShell>
+          {orders.map(order => {
+            const status = STATUS_MAP[order.status] || STATUS_MAP.pending;
+            const items = Array.isArray(order.items) ? order.items : [];
+            const Icon = status.icon;
+            return (
+              <ListRow
+                key={order.id}
+                onClick={() => setSelectedOrder(order)}
+                leading={<ListAvatar icon={<Icon className="h-5 w-5" />} tone="primary" />}
+                title={order.customer_name}
+                badge={<ListBadge className={status.color}>{status.label}</ListBadge>}
+                subtitle={`${order.order_number} · ${items.length} article${items.length > 1 ? 's' : ''} · ${new Date(order.created_at).toLocaleDateString('fr-FR')}`}
+                value={<>{(order.total || 0).toLocaleString('de-DE')}<span className="text-[11px] font-normal text-muted-foreground ml-1">FCFA</span></>}
+                actions={
+                  <Select value={order.status} onValueChange={v => handleStatusChange(order.id, v)}>
+                    <SelectTrigger className="w-[52px] sm:w-36 h-9 rounded-xl text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.keys(STATUS_MAP).map((key) => (
+                        <SelectItem key={key} value={key}><StatusOption statusKey={key} /></SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                }
+              />
+            );
+          })}
+        </ListShell>
+      )}
 
-      {/* Mobile cards — design minimaliste */}
-      <div className="md:hidden space-y-3">
-        {orders.map(order => {
-          const status = STATUS_MAP[order.status] || STATUS_MAP.pending;
-          const items = Array.isArray(order.items) ? order.items : [];
-          return (
-            <div
-              key={order.id}
-              onClick={() => setSelectedOrder(order)}
-              className="bg-card border border-border rounded-2xl p-4 shadow-soft active:scale-[0.99] transition-transform cursor-pointer"
-            >
-              <div className="flex items-start gap-3">
-                <div className="h-11 w-11 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
-                  <Package className="h-5 w-5 text-accent" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-[15px] truncate leading-tight">{order.customer_name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                    {order.order_number} · {items.length} article{items.length > 1 ? 's' : ''}
-                  </p>
-                </div>
-                <p className="font-bold text-[15px] shrink-0">{(order.total || 0).toLocaleString('de-DE')} <span className="text-xs font-normal text-muted-foreground">F</span></p>
-              </div>
 
-              <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString('fr-FR')}</span>
-                <Select value={order.status} onValueChange={v => handleStatusChange(order.id, v)}>
-                  <SelectTrigger className="w-36 h-9 rounded-xl text-xs" onClick={e => e.stopPropagation()}><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(STATUS_MAP).map(([key, val]) => (
-                      <SelectItem key={key} value={key}><StatusOption statusKey={key} /></SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          );
-        })}
-        {orders.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="h-20 w-20 rounded-2xl bg-accent/10 flex items-center justify-center mb-4">
-              <Package className="h-10 w-10 text-accent" />
-            </div>
-            <p className="font-semibold text-lg">Aucune commande reçue</p>
-            <p className="text-sm text-muted-foreground mt-1 max-w-xs">Les commandes de votre boutique s'afficheront ici.</p>
-          </div>
-        )}
-      </div>
 
 
       {/* Order detail modal */}

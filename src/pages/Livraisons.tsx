@@ -113,78 +113,47 @@ export default function Livraisons() {
         count={filtered.length}
       />
 
-      {/* Table desktop */}
-      <Card className="hidden md:block border-border/60 overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/60">
-              <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Commande</TableHead>
-              <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Client</TableHead>
-              <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Livreur</TableHead>
-              <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Statut</TableHead>
-              <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filtered.map(d => {
-              const st = STATUS_MAP[d.status] || STATUS_MAP.unassigned;
-              return (
-                <TableRow key={d.id} className="border-border/40 hover:bg-muted/20">
-                  <TableCell className="font-mono text-sm py-4">{d.order?.order_number || '—'}</TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-semibold text-foreground">{d.order?.customer_name || '—'}</p>
-                      <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">{d.order?.customer_address || ''}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {d.driver ? (
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-7 w-7"><AvatarImage src={d.driver.photo_url || ''} /><AvatarFallback className="text-xs">{d.driver.first_name[0]}</AvatarFallback></Avatar>
-                        <span className="text-sm">{d.driver.first_name} {d.driver.last_name || ''}</span>
-                      </div>
-                    ) : <span className="text-muted-foreground text-sm">Non assigné</span>}
-                  </TableCell>
-                  <TableCell><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${st.color}`}>{st.label}</span></TableCell>
-                  <TableCell className="text-right">
-                    {(d.status === 'unassigned' || d.status === 'problem') && (
-                      <Button size="sm" variant="outline" onClick={() => setAssignDialog(d.id)} className="gap-1">
-                        <UserPlus className="h-3.5 w-3.5" /> Assigner
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-            {filtered.length === 0 && <TableRow><TableCell colSpan={5} className="p-0"><EmptyDeliveries /></TableCell></TableRow>}
-          </TableBody>
-        </Table>
-      </Card>
-
-      {/* Mobile cards */}
-      <div className="md:hidden space-y-3">
-        {filtered.map(d => {
-          const st = STATUS_MAP[d.status] || STATUS_MAP.unassigned;
-          return (
-            <Card key={d.id} className="border-border/60">
-              <CardContent className="p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-sm">{d.order?.order_number || '—'}</span>
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${st.color}`}>{st.label}</span>
-                </div>
-                <p className="font-semibold">{d.order?.customer_name || '—'}</p>
-                {d.driver && <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">🚚 {d.driver.first_name} {d.driver.last_name || ''}</p>}
-                {(d.status === 'unassigned' || d.status === 'problem') && (
-                  <Button size="sm" variant="outline" className="w-full gap-1" onClick={() => setAssignDialog(d.id)}>
-                    <UserPlus className="h-3.5 w-3.5" /> Assigner un livreur
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-        {filtered.length === 0 && <EmptyDeliveries />}
-      </div>
+      {/* Liste minimaliste unifiée */}
+      {filtered.length === 0 ? (
+        <ListEmpty
+          icon={<Package className="h-6 w-6" />}
+          title="Aucune livraison"
+          description="Les livraisons apparaîtront ici dès qu'une commande sera prête."
+        />
+      ) : (
+        <ListShell>
+          {filtered.map(d => {
+            const st = STATUS_MAP[d.status] || STATUS_MAP.unassigned;
+            const Icon = st.icon;
+            return (
+              <ListRow
+                key={d.id}
+                leading={
+                  d.driver ? (
+                    <Avatar className="h-11 w-11">
+                      <AvatarImage src={d.driver.photo_url || ''} />
+                      <AvatarFallback className="text-xs">{d.driver.first_name[0]}</AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <ListAvatar icon={<Icon className="h-5 w-5" />} tone="primary" />
+                  )
+                }
+                title={d.order?.customer_name || d.order?.order_number || '—'}
+                badge={<ListBadge className={st.color}>{st.label}</ListBadge>}
+                subtitle={`${d.order?.order_number || '—'}${d.order?.customer_address ? ` · ${d.order.customer_address}` : ''}`}
+                meta={d.driver ? `${d.driver.first_name} ${d.driver.last_name || ''}` : 'Non assigné'}
+                actions={
+                  (d.status === 'unassigned' || d.status === 'problem') ? (
+                    <Button size="sm" variant="outline" onClick={() => setAssignDialog(d.id)} className="h-9 rounded-xl gap-1.5">
+                      <UserPlus className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Assigner</span>
+                    </Button>
+                  ) : undefined
+                }
+              />
+            );
+          })}
+        </ListShell>
+      )}
 
       {/* Assign dialog */}
       <Dialog open={!!assignDialog} onOpenChange={() => setAssignDialog(null)}>

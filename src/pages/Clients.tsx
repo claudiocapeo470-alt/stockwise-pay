@@ -14,8 +14,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from '@/hooks/useCompany';
 import { useCurrency } from '@/hooks/useCurrency';
 import { toast } from 'sonner';
-import { Plus, Search, Users, Phone, Mail, MapPin, Edit2, Trash2, Wallet, Star } from 'lucide-react';
+import { Plus, Search, Users, Phone, Mail, MapPin, Edit2, Trash2, Wallet, Star, MoreVertical } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ListShell, ListRow, ListEmpty } from '@/components/layout/MinimalList';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface Client {
   id: string;

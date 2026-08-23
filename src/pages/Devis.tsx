@@ -165,30 +165,17 @@ export default function Devis() {
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder="Rechercher devis..."
-        segments={!isMobile ? (
-          <div className="inline-flex rounded-lg border border-border/60 bg-card p-0.5">
-            <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-8 w-8 p-0"><List className="h-4 w-4" /></Button>
-            <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-8 w-8 p-0"><Grid3x3 className="h-4 w-4" /></Button>
-          </div>
-        ) : undefined}
         primary={<Button onClick={() => navigate('/app/devis/new')} className="h-11 px-5 rounded-xl gap-2"><Plus className="h-4 w-4" /><span>Nouveau Devis</span></Button>}
       />
 
 
       {/* Content */}
       {filteredInvoices.length === 0 ? (
-        <Card className="border-border/60">
-          <CardContent className="py-16 text-center">
-            <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">{invoices.length === 0 ? "Aucun devis" : "Aucun résultat"}</h3>
-            <p className="text-muted-foreground mb-4">{invoices.length === 0 ? "Commencez par créer votre premier devis" : "Aucun devis trouvé pour cette recherche"}</p>
-            {invoices.length === 0 && (
-              <Button onClick={() => navigate('/app/devis/new')}>
-                <Plus className="mr-2 h-4 w-4" />Créer un devis
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+        <ListEmpty
+          icon={<FileText className="h-6 w-6" />}
+          title={invoices.length === 0 ? "Aucun devis" : "Aucun résultat"}
+          description={invoices.length === 0 ? "Commencez par créer votre premier devis" : "Aucun devis trouvé pour cette recherche"}
+        />
       ) : (
         <>
           <SectionHeading

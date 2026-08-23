@@ -194,85 +194,23 @@ export default function Devis() {
             title="Devis"
             count={filteredInvoices.length}
           />
-          {/* Table view */}
-          {!isMobile && viewMode === "list" && (
-            <Card className="border-border/60 overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/60">
-                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Numéro</TableHead>
-                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Client</TableHead>
-                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Date</TableHead>
-                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase text-right">Montant</TableHead>
-                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase text-center">Statut</TableHead>
-                    <TableHead className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredInvoices.map((invoice) => (
-                    <TableRow key={invoice.id} className="border-border/40 hover:bg-muted/20">
-                      <TableCell className="py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 bg-primary/10">
-                            <FileText className="h-4 w-4 text-primary" />
-                          </div>
-                          <p className="font-semibold text-foreground">{invoice.document_number}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-foreground">{invoice.client_name}</TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}</TableCell>
-                      <TableCell className="text-right font-bold text-foreground">{invoice.total_amount.toLocaleString('de-DE')} FCFA</TableCell>
-                      <TableCell className="text-center">
-                        <Badge className={`${statusColors[invoice.status]} font-medium`}>{statusLabels[invoice.status]}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-0.5 justify-end">
-                          <Button variant="ghost" size="icon" onClick={() => navigate(`/app/devis/${invoice.id}/preview`)}><Eye className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => navigate(`/app/devis/${invoice.id}`)}><Edit className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDuplicate(invoice.id!)}><Copy className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => { setInvoiceToDelete(invoice.id!); setDeleteDialogOpen(true); }}><Trash2 className="h-4 w-4" /></Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Card>
-          )}
-
-          {/* Liste devis — style minimaliste une ligne */}
-          {(isMobile || viewMode === "grid") && (
-            <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
-              {filteredInvoices.map((invoice) => (
-                <div
-                  key={invoice.id}
-                  onClick={() => navigate(`/app/devis/${invoice.id}/preview`)}
-                  className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 cursor-pointer"
-                >
-                  <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <FileText className="h-5 w-5 text-primary" />
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <p className="font-semibold text-[15px] truncate leading-tight">{invoice.document_number}</p>
-                      <Badge className={`${statusColors[invoice.status]} shrink-0 text-[10px] px-2 py-0.5 font-medium`}>{statusLabels[invoice.status]}</Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground truncate mt-0.5">
-                      {invoice.client_name} · {format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}
-                    </p>
-                  </div>
-
-                  <p className="text-[15px] font-bold shrink-0 tabular-nums text-right">
-                    {invoice.total_amount.toLocaleString('de-DE')}
-                    <span className="text-[11px] font-normal text-muted-foreground ml-1">FCFA</span>
-                  </p>
-
+          {/* Liste minimaliste unifiée */}
+          <ListShell>
+            {filteredInvoices.map((invoice) => (
+              <ListRow
+                key={invoice.id}
+                onClick={() => navigate(`/app/devis/${invoice.id}/preview`)}
+                leading={<ListAvatar icon={<FileText className="h-5 w-5" />} tone="primary" />}
+                title={invoice.document_number}
+                badge={<ListBadge className={statusColors[invoice.status]}>{statusLabels[invoice.status]}</ListBadge>}
+                subtitle={`${invoice.client_name} · ${format(new Date(invoice.issue_date), 'dd MMM yyyy', { locale: fr })}`}
+                value={<>{invoice.total_amount.toLocaleString('de-DE')}<span className="text-[11px] font-normal text-muted-foreground ml-1">FCFA</span></>}
+                actions={
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:text-foreground"><MoreVertical className="h-4 w-4" /></Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => navigate(`/app/devis/${invoice.id}/preview`)}><Eye className="mr-2 h-4 w-4" />Voir</DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate(`/app/devis/${invoice.id}`)}><Edit className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleDuplicate(invoice.id!)}><Copy className="mr-2 h-4 w-4" />Dupliquer</DropdownMenuItem>
@@ -280,10 +218,10 @@ export default function Devis() {
                       <DropdownMenuItem onClick={() => { setInvoiceToDelete(invoice.id!); setDeleteDialogOpen(true); }} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </div>
-              ))}
-            </div>
-          )}
+                }
+              />
+            ))}
+          </ListShell>
 
         </>
       )}

@@ -14,8 +14,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from '@/hooks/useCompany';
 import { useCurrency } from '@/hooks/useCurrency';
 import { toast } from 'sonner';
-import { Plus, Search, Users, Phone, Mail, MapPin, Edit2, Trash2, Wallet, Star } from 'lucide-react';
+import { Plus, Search, Users, Phone, Mail, MapPin, Edit2, Trash2, Wallet, Star, MoreVertical } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ListShell, ListRow, ListEmpty } from '@/components/layout/MinimalList';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface Client {
   id: string;
@@ -166,52 +168,43 @@ export default function Clients() {
       {loading ? (
         <div className="flex justify-center py-12"><div className="h-8 w-8 border-2 border-primary border-t-transparent animate-spin rounded-full" /></div>
       ) : filtered.length === 0 ? (
-        <Card><CardContent className="py-12 text-center"><Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" /><h3 className="font-semibold mb-1">{clients.length === 0 ? 'Aucun client' : 'Aucun résultat'}</h3><p className="text-sm text-muted-foreground">{clients.length === 0 ? 'Ajoutez votre premier client' : ''}</p></CardContent></Card>
-      ) : isMobile ? (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
-          {filtered.map(c => (
-            <div key={c.id} className="flex items-center gap-4 px-4 py-4 cursor-pointer transition-colors hover:bg-muted/40" onClick={() => openEdit(c)}>
-              <Avatar className="h-14 w-14"><AvatarFallback className="bg-primary/10 text-primary text-base font-semibold">{c.first_name[0]}{(c.last_name || '')[0] || ''}</AvatarFallback></Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground truncate">Client</p>
-                <p className="font-bold text-[15px] leading-tight truncate mt-0.5">{c.first_name} {c.last_name || ''}</p>
-                <p className="text-xs text-muted-foreground truncate mt-1">{c.phone || c.email || '—'}</p>
-              </div>
-              <p className="text-sm font-bold shrink-0 tabular-nums">{formatCurrency(c.total_spent || 0)}</p>
-            </div>
-          ))}
-        </div>
-
+        <ListEmpty
+          icon={<Users className="h-6 w-6" />}
+          title={clients.length === 0 ? 'Aucun client' : 'Aucun résultat'}
+          description={clients.length === 0 ? 'Ajoutez votre premier client' : undefined}
+        />
       ) : (
-        <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Client</TableHead>
-                <TableHead>Téléphone</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead className="text-right">Total dépensé</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filtered.map(c => (
-                <TableRow key={c.id}>
-                  <TableCell><div className="flex items-center gap-2"><Avatar className="h-8 w-8"><AvatarFallback className="text-xs bg-primary/10 text-primary">{c.first_name[0]}{(c.last_name || '')[0] || ''}</AvatarFallback></Avatar><span className="font-medium">{c.first_name} {c.last_name || ''}</span></div></TableCell>
-                  <TableCell className="text-muted-foreground">{c.phone || '—'}</TableCell>
-                  <TableCell className="text-muted-foreground">{c.email || '—'}</TableCell>
-                  <TableCell className="text-right font-semibold">{formatCurrency(c.total_spent || 0)}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1 justify-end">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(c)}><Edit2 className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(c.id)}><Trash2 className="h-4 w-4" /></Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
+        <ListShell>
+          {filtered.map(c => (
+            <ListRow
+              key={c.id}
+              onClick={() => openEdit(c)}
+              leading={
+                <Avatar className="h-11 w-11">
+                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                    {c.first_name[0]}{(c.last_name || '')[0] || ''}
+                  </AvatarFallback>
+                </Avatar>
+              }
+              title={`${c.first_name} ${c.last_name || ''}`}
+              subtitle={c.phone || c.email || '—'}
+              meta={c.email && c.phone ? c.email : undefined}
+              value={formatCurrency(c.total_spent || 0)}
+              hint={`${c.loyalty_points || 0} pts`}
+              actions={
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground"><MoreVertical className="h-4 w-4" /></Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => openEdit(c)}><Edit2 className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDelete(c.id)} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              }
+            />
+          ))}
+        </ListShell>
       )}
 
       {/* Add/Edit dialog */}

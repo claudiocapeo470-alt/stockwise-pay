@@ -540,17 +540,25 @@ export default function StoreProducts() {
 
 
 
-      <Tabs defaultValue="online">
-        <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="online" className="flex-1 sm:flex-none text-xs sm:text-sm">
-            En ligne <Badge variant="secondary" className="ml-1 text-[10px]">{storeProducts.length}</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="stock" className="flex-1 sm:flex-none text-xs sm:text-sm">
-            Stock <Badge variant="secondary" className="ml-1 text-[10px]">{unpublished.length}</Badge>
-          </TabsTrigger>
-        </TabsList>
+      <div className="flex items-center justify-center">
+        <div className="inline-flex items-center gap-1 rounded-full border border-border bg-card p-1 shadow-sm">
+          <button
+            onClick={() => setTab("online")}
+            className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-sm font-medium transition-all ${tab === "online" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            En ligne <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${tab === "online" ? "bg-primary-foreground/20" : "bg-muted"}`}>{storeProducts.length}</span>
+          </button>
+          <button
+            onClick={() => setTab("stock")}
+            className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-sm font-medium transition-all ${tab === "stock" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            Stock <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${tab === "stock" ? "bg-primary-foreground/20" : "bg-muted"}`}>{unpublished.length}</span>
+          </button>
+        </div>
+      </div>
 
-        <TabsContent value="online" className="mt-3">
+      {tab === "online" ? (
+        <>
           <SectionHeading
             title="Produits en ligne"
             count={filteredOnline.length}
@@ -565,22 +573,30 @@ export default function StoreProducts() {
               </Button>
             </CardContent></Card>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <ListShell>
               {filteredOnline.map((sp: any) => (
-                <OnlineProductCard
+                <ListRow
                   key={sp.id}
-                  sp={sp}
-                  onEdit={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}
-                  onUnpublish={async () => { try { await removeProduct.mutateAsync(sp.product_id); toast.success('Retiré de la boutique'); } catch (e: any) { toast.error(e.message); } }}
-                  onDelete={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
+                  leading={<ListAvatar src={sp.products?.image_url} alt={sp.products?.name} icon={<Globe className="h-5 w-5" />} tone="primary" />}
+                  title={sp.products?.name || '—'}
+                  badge={<ListBadge className="bg-success/10 text-success">Publié</ListBadge>}
+                  subtitle={sp.products?.category || 'Sans catégorie'}
+                  value={sp.online_price?.toLocaleString('de-DE')}
+                  hint="XOF"
+                  actions={
+                    <>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })} title="Modifier"><Edit2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-orange-500" onClick={async () => { try { await removeProduct.mutateAsync(sp.product_id); toast.success('Retiré de la boutique'); } catch (e: any) { toast.error(e.message); } }} title="Retirer"><Globe className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive" onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
+                    </>
+                  }
                 />
               ))}
-            </div>
+            </ListShell>
           )}
-
-        </TabsContent>
-
-        <TabsContent value="stock" className="mt-3">
+        </>
+      ) : (
+        <>
           {selected.size > 0 && (
             <div className="p-3 mb-3 rounded-lg border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-primary/5">
               <span className="text-sm font-medium">{selected.size} sélectionné(s)</span>
@@ -600,24 +616,28 @@ export default function StoreProducts() {
               <p className="text-muted-foreground text-sm">{unpublished.length === 0 ? 'Tous les produits sont publiés' : 'Aucun résultat'}</p>
             </CardContent></Card>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <ListShell>
               {filteredUnpublished.map(p => (
-                <StockProductCard
+                <ListRow
                   key={p.id}
-                  product={p}
-                  selected={selected.has(p.id)}
-                  onToggle={() => toggleSelect(p.id)}
-                  onlinePrice={onlinePrices[p.id] ?? p.price}
-                  onPriceChange={v => setOnlinePrices(prev => ({ ...prev, [p.id]: v }))}
-                  onPublish={async () => { try { await publishProducts.mutateAsync([{ product_id: p.id, online_price: onlinePrices[p.id] || p.price }]); toast.success('Publié !'); } catch (e: any) { toast.error(e.message); } }}
-                  onDelete={() => setConfirmDelete({ id: p.id, name: p.name })}
+                  leading={<ListAvatar src={p.image_url} alt={p.name} icon={<Package className="h-5 w-5" />} tone="muted" />}
+                  title={p.name}
+                  badge={<ListBadge className={p.quantity > 0 ? "bg-orange-500/10 text-orange-600" : "bg-destructive/10 text-destructive"}>{p.quantity > 0 ? `${p.quantity} en stock` : 'Rupture'}</ListBadge>}
+                  subtitle={p.category || 'Sans catégorie'}
+                  value={p.price?.toLocaleString('de-DE')}
+                  hint="XOF"
+                  actions={
+                    <>
+                      <Checkbox checked={selected.has(p.id)} onCheckedChange={() => toggleSelect(p.id)} className="shrink-0" />
+                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive" onClick={() => setConfirmDelete({ id: p.id, name: p.name })} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
+                    </>
+                  }
                 />
               ))}
-            </div>
+            </ListShell>
           )}
-
-        </TabsContent>
-      </Tabs>
+        </>
+      )}
 
       <CreateProductDialog open={showCreateDialog} onClose={() => setShowCreateDialog(false)} storeId={store.id} onCreated={refreshAll} />
       {editingProduct && (

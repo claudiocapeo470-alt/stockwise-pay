@@ -465,6 +465,7 @@ export default function StoreProducts() {
   const isMobile = useIsMobile();
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [tab, setTab] = useState<'online' | 'stock'>('online');
   const [onlinePrices, setOnlinePrices] = useState<Record<string, number>>({});
   const [editingProduct, setEditingProduct] = useState<{ storeProduct: any; product: any } | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);

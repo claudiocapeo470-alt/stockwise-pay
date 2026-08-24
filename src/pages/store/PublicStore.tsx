@@ -166,6 +166,7 @@ const ZONE_STYLES = `
 
 /* Sticky bottom CTAs (product detail) */
 .lz-sticky-cta {
+  --lz-nav-h: calc(4rem + max(env(safe-area-inset-bottom), 4px));
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(10px);
   box-shadow: 0 -4px 20px rgba(0,0,0,0.08);

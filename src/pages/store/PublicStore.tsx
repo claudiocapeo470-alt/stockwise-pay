@@ -166,6 +166,7 @@ const ZONE_STYLES = `
 
 /* Sticky bottom CTAs (product detail) */
 .lz-sticky-cta {
+  --lz-nav-h: calc(4rem + max(env(safe-area-inset-bottom), 4px));
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(10px);
   box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
@@ -1177,7 +1178,7 @@ export default function PublicStore() {
 
         {/* STICKY BOTTOM CTA — pilules flottantes fixes au-dessus de la nav */}
         {isAvailable(p) && store.allow_orders && (
-          <div className="lz-sticky-cta fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] lg:bottom-0 left-0 right-0 z-40 pointer-events-none px-3 pb-3 lg:pb-4">
+          <div className="lz-sticky-cta fixed bottom-[var(--lz-nav-h)] left-0 right-0 z-40 pointer-events-none px-3 pb-3 lg:pb-4">
             <div className="container mx-auto flex items-center gap-2.5 lg:gap-4 max-w-3xl pointer-events-auto">
               <button
                 onClick={() => addToCart(p, qty)}

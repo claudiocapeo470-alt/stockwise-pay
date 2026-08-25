@@ -1,5 +1,6 @@
 import { PageActionBar } from "@/components/layout/PageActionBar";
 import { SectionHeading } from "@/components/layout/PageShell";
+import { FilterPills } from "@/components/layout/FilterPills";
 import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from "@/components/layout/MinimalList";
 import { useState } from "react";
 import { useInvoices } from "@/hooks/useInvoices";

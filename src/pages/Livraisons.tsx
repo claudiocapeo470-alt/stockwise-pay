@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { SectionHeading } from "@/components/layout/PageShell";
+import { FilterPills } from "@/components/layout/FilterPills";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

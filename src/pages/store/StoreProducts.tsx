@@ -563,7 +563,6 @@ export default function StoreProducts() {
           <SectionHeading
             title="Produits en ligne"
             count={filteredOnline.length}
-            centered
           />
           {filteredOnline.length === 0 ? (
             <Card><CardContent className="py-10 sm:py-14 text-center space-y-3">
@@ -585,11 +584,31 @@ export default function StoreProducts() {
                   value={sp.online_price?.toLocaleString('de-DE')}
                   hint="XOF"
                   actions={
-                    <>
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })} title="Modifier"><Edit2 className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-orange-500" onClick={async () => { try { await removeProduct.mutateAsync(sp.product_id); toast.success('Retiré de la boutique'); } catch (e: any) { toast.error(e.message); } }} title="Retirer"><Globe className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive" onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
-                    </>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Actions">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-52 rounded-2xl">
+                        <DropdownMenuItem className="gap-2.5 rounded-xl" onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}>
+                          <Edit2 className="h-4 w-4 text-primary" /> Modifier
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="gap-2.5 rounded-xl"
+                          onClick={async () => { try { await removeProduct.mutateAsync(sp.product_id); toast.success('Retiré de la boutique'); } catch (e: any) { toast.error(e.message); } }}
+                        >
+                          <Globe className="h-4 w-4 text-orange-500" /> Retirer de la boutique
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="gap-2.5 rounded-xl text-destructive focus:text-destructive"
+                          onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
+                        >
+                          <Trash2 className="h-4 w-4" /> Supprimer
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   }
                 />
               ))}
@@ -598,15 +617,6 @@ export default function StoreProducts() {
         </>
       ) : (
         <>
-          {selected.size > 0 && (
-            <div className="p-3 mb-3 rounded-lg border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-primary/5">
-              <span className="text-sm font-medium">{selected.size} sélectionné(s)</span>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setSelected(new Set())}>Annuler</Button>
-                <Button size="sm" className="gap-1" onClick={handlePublishSelected}><Globe className="h-3.5 w-3.5" /> Publier</Button>
-              </div>
-            </div>
-          )}
           <SectionHeading
             title="Produits en stock"
             count={filteredUnpublished.length}
@@ -629,8 +639,34 @@ export default function StoreProducts() {
                   hint="XOF"
                   actions={
                     <>
-                      <Checkbox checked={selected.has(p.id)} onCheckedChange={() => toggleSelect(p.id)} className="shrink-0" />
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive" onClick={() => setConfirmDelete({ id: p.id, name: p.name })} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
+                      <Button
+                        size="sm"
+                        className="h-9 rounded-full gap-1.5 px-3"
+                        disabled={publishingId === p.id}
+                        onClick={() => publishOne(p)}
+                      >
+                        {publishingId === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Globe className="h-4 w-4" />}
+                        <span className="hidden sm:inline">Publier</span>
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Actions">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-52 rounded-2xl">
+                          <DropdownMenuItem className="gap-2.5 rounded-xl" onClick={() => publishOne(p)}>
+                            <Globe className="h-4 w-4 text-primary" /> Publier en ligne
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="gap-2.5 rounded-xl text-destructive focus:text-destructive"
+                            onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
+                          >
+                            <Trash2 className="h-4 w-4" /> Supprimer
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </>
                   }
                 />

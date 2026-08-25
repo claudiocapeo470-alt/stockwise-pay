@@ -27,6 +27,7 @@ import Rapports from './pages/Rapports';
 import RapportEmployes from './pages/RapportEmployes';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import Notifications from './pages/Notifications';
 import AuthSimple from './pages/AuthSimple';
 import AuthConfirm from './pages/AuthConfirm';
 import ResetPassword from './pages/ResetPassword';

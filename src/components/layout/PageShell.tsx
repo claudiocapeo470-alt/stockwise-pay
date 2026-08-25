@@ -51,7 +51,6 @@ export function SectionHeading({
   title,
   count,
   action,
-  centered = false,
   className,
 }: {
   title: string;
@@ -59,26 +58,21 @@ export function SectionHeading({
   /** @deprecated les textes d'indication ont été retirés de l'UI */
   description?: ReactNode;
   action?: ReactNode;
+  /** @deprecated les titres de section sont désormais toujours centrés */
   centered?: boolean;
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "mt-12 sm:mt-16 mb-5 flex items-center gap-3",
-        centered ? "justify-center" : "justify-between",
-        className,
+    <div className={cn("relative mt-12 sm:mt-16 mb-5 flex items-center justify-center gap-2", className)}>
+      <h2 className="text-[15px] sm:text-base font-semibold tracking-tight leading-none truncate text-center">
+        {title}
+      </h2>
+      {count !== undefined && (
+        <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground leading-none">
+          {count}
+        </span>
       )}
-    >
-      <div className={cn("min-w-0 flex items-center gap-2", centered && "justify-center")}>
-        <h2 className="text-[15px] sm:text-base font-semibold tracking-tight leading-none truncate">{title}</h2>
-        {count !== undefined && (
-          <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground leading-none">
-            {count}
-          </span>
-        )}
-      </div>
-      {action && !centered && <div className="shrink-0 flex items-center gap-2">{action}</div>}
+      {action && <div className="absolute right-0 flex items-center gap-2">{action}</div>}
     </div>
   );
 }

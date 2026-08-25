@@ -27,6 +27,7 @@ import Rapports from './pages/Rapports';
 import RapportEmployes from './pages/RapportEmployes';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import Notifications from './pages/Notifications';
 import AuthSimple from './pages/AuthSimple';
 import AuthConfirm from './pages/AuthConfirm';
 import ResetPassword from './pages/ResetPassword';
@@ -141,6 +142,7 @@ const App = () => (
                           <Route path="/rapport-employes" element={<RapportEmployes />} />
                           <Route path="/profile" element={<Profile />} />
                           <Route path="/settings" element={<Settings />} />
+                          <Route path="/notifications" element={<Notifications />} />
                           <Route path="/team" element={<TeamManagement />} />
                           <Route path="/livraisons" element={<Livraisons />} />
                           <Route path="/clients" element={<Clients />} />

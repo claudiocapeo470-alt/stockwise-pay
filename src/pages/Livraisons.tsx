@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { SectionHeading } from "@/components/layout/PageShell";
+import { FilterPills } from "@/components/layout/FilterPills";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -90,24 +91,8 @@ export default function Livraisons() {
         ))}
       </div>
 
-      {/* Toolbar pills */}
-      <div className="border-b border-border/60 pb-4">
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar -mx-1 px-1">
-          {filters.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setStatusFilter(f.key)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-colors ${
-                statusFilter === f.key
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted/40 text-muted-foreground hover:bg-muted"
-              }`}
-            >
-              {f.label.toUpperCase()}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Filtres centrés */}
+      <FilterPills filters={filters} value={statusFilter} onChange={setStatusFilter} />
 
       <SectionHeading
         title="Détails des livraisons"

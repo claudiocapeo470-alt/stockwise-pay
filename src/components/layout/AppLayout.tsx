@@ -95,6 +95,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     if (path.includes('/performance')) return 'Performance';
     if (path.includes('/profile')) return 'Profil';
     if (path.includes('/settings')) return 'Paramètres';
+    if (path.includes('/notifications')) return 'Notifications';
     if (path.includes('/team')) return 'Mon équipe';
     if (path.includes('/livraisons')) return 'Livraisons';
     if (path.includes('/clients')) return 'Clients';

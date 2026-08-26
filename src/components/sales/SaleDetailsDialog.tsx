@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { DialogHead } from "@/components/ui/dialog-head";
-import { Package, User, Phone, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Package, User, Phone, Calendar, Download, Printer, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -16,6 +17,7 @@ interface Sale {
     name: string;
     category?: string;
     sku?: string;
+    image_url?: string | null;
   };
 }
 
@@ -23,6 +25,9 @@ interface SaleDetailsDialogProps {
   sale: Sale | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onDownload?: () => void;
+  onPrint?: () => void;
+  onDelete?: () => void;
 }
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {

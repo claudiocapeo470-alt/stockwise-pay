@@ -18,7 +18,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes, Store } from 'lucide-react';
+import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes, Store, MoreVertical } from 'lucide-react';
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
@@ -472,6 +472,16 @@ export default function StoreProducts() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [search, setSearch] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  const [publishingId, setPublishingId] = useState<string | null>(null);
+
+  const publishOne = async (p: any) => {
+    setPublishingId(p.id);
+    try {
+      await publishProducts.mutateAsync([{ product_id: p.id, online_price: onlinePrices[p.id] || p.price || 0 }]);
+      toast.success(`${p.name} publié !`);
+    } catch (e: any) { toast.error(e.message); }
+    finally { setPublishingId(null); }
+  };
 
   const publishedIds = new Set(storeProducts.map((sp: any) => sp.product_id));
   const unpublished = products.filter(p => !publishedIds.has(p.id));

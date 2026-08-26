@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { DialogHead } from "@/components/ui/dialog-head";
-import { Package, User, Phone, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Package, User, Phone, Calendar, Download, Printer, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -16,6 +17,7 @@ interface Sale {
     name: string;
     category?: string;
     sku?: string;
+    image_url?: string | null;
   };
 }
 
@@ -23,6 +25,9 @@ interface SaleDetailsDialogProps {
   sale: Sale | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onDownload?: () => void;
+  onPrint?: () => void;
+  onDelete?: () => void;
 }
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
@@ -34,7 +39,7 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-export function SaleDetailsDialog({ sale, open, onOpenChange }: SaleDetailsDialogProps) {
+export function SaleDetailsDialog({ sale, open, onOpenChange, onDownload, onPrint, onDelete }: SaleDetailsDialogProps) {
   if (!sale) return null;
 
   const formatPrice = (price: number) =>
@@ -57,7 +62,16 @@ export function SaleDetailsDialog({ sale, open, onOpenChange }: SaleDetailsDialo
 
         {/* Produit */}
         <div className="rounded-2xl border border-border bg-card px-4 divide-y divide-border/60">
-          <Row label="Produit" value={sale.products?.name || "Produit supprimé"} />
+          <div className="flex items-center gap-3 py-3">
+            {sale.products?.image_url ? (
+              <img src={sale.products.image_url} alt={sale.products?.name || "Produit"} loading="lazy" className="h-12 w-12 rounded-xl object-cover shrink-0" />
+            ) : (
+              <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <Package className="h-5 w-5 text-muted-foreground" />
+              </div>
+            )}
+            <p className="text-[14px] font-semibold truncate">{sale.products?.name || "Produit supprimé"}</p>
+          </div>
           {sale.products?.category && <Row label="Catégorie" value={sale.products.category} />}
           {sale.products?.sku && <Row label="SKU" value={sale.products.sku} />}
           <Row label="Quantité" value={sale.quantity} />
@@ -78,6 +92,26 @@ export function SaleDetailsDialog({ sale, open, onOpenChange }: SaleDetailsDialo
             )}
           </div>
         </div>
+
+        {(onDownload || onPrint || onDelete) && (
+          <div className="flex items-center gap-2">
+            {onDownload && (
+              <Button variant="outline" className="flex-1 h-11 rounded-xl gap-2" onClick={onDownload}>
+                <Download className="h-4 w-4" /> PDF
+              </Button>
+            )}
+            {onPrint && (
+              <Button variant="outline" className="flex-1 h-11 rounded-xl gap-2" onClick={onPrint}>
+                <Printer className="h-4 w-4" /> Imprimer
+              </Button>
+            )}
+            {onDelete && (
+              <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl text-destructive hover:bg-destructive/10" onClick={() => { onDelete(); onOpenChange(false); }}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

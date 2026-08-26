@@ -9,6 +9,7 @@ import { ListShell, ListRow, ListAvatar, ListBadge } from '@/components/layout/M
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useProducts } from '@/hooks/useProducts';
 import { useOnlineStore, useStoreProducts } from '@/hooks/useOnlineStore';
@@ -17,7 +18,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes, Store } from 'lucide-react';
+import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes, Store, MoreVertical } from 'lucide-react';
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
@@ -471,6 +472,16 @@ export default function StoreProducts() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [search, setSearch] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  const [publishingId, setPublishingId] = useState<string | null>(null);
+
+  const publishOne = async (p: any) => {
+    setPublishingId(p.id);
+    try {
+      await publishProducts.mutateAsync([{ product_id: p.id, online_price: onlinePrices[p.id] || p.price || 0 }]);
+      toast.success(`${p.name} publié !`);
+    } catch (e: any) { toast.error(e.message); }
+    finally { setPublishingId(null); }
+  };
 
   const publishedIds = new Set(storeProducts.map((sp: any) => sp.product_id));
   const unpublished = products.filter(p => !publishedIds.has(p.id));

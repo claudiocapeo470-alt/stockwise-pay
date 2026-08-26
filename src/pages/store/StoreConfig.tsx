@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Save, Eye, Rocket, Copy, Check, Link2, Store, Palette,
-  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Sparkles, Tags, Settings2,
+  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Tags, Settings2,
 } from "lucide-react";
 import CategoryManager from "@/components/store/CategoryManager";
 import { StoreHeader } from "@/components/store/StoreHeader";
@@ -218,22 +218,23 @@ export default function StoreConfig() {
       <Sheet open={wizardOpen} onOpenChange={setWizardOpen}>
         <SheetContent
           side="bottom"
-          className="h-[92vh] sm:h-[90vh] p-0 rounded-t-3xl border-t-0 flex flex-col gap-0 overflow-hidden sm:max-w-none"
+          className="h-[100dvh] sm:h-[88vh] p-0 rounded-none sm:rounded-t-3xl border-t-0 flex flex-col gap-0 overflow-hidden sm:max-w-none"
+          style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
           {/* Drag handle + header */}
-          <div className="flex-shrink-0 pt-3 pb-2 px-5 bg-background border-b border-border">
-            <div className="mx-auto h-1.5 w-12 rounded-full bg-muted mb-3" />
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <CurrentIcon className="h-5 w-5 text-primary" />
+          <div className="flex-shrink-0 pt-2 pb-2 px-4 sm:px-5 bg-background border-b border-border">
+            <div className="mx-auto h-1.5 w-10 rounded-full bg-muted mb-2" />
+            <div className="flex items-center gap-2.5">
+              <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <CurrentIcon className="h-4 w-4 text-primary" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-base font-bold truncate">{STEPS[currentStep - 1].title}</p>
-                <p className="text-xs text-muted-foreground truncate">{STEPS[currentStep - 1].desc}</p>
+                <p className="text-sm sm:text-base font-bold truncate leading-tight">{STEPS[currentStep - 1].title}</p>
+                <p className="text-[11px] sm:text-xs text-muted-foreground truncate">{STEPS[currentStep - 1].desc}</p>
               </div>
             </div>
             {/* Progress bar (no numbers) */}
-            <div className="mt-3 h-1.5 w-full bg-muted rounded-full overflow-hidden">
+            <div className="mt-2 h-1 w-full bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${progressPct}%` }}
@@ -243,32 +244,32 @@ export default function StoreConfig() {
 
           {/* Body: formulaire centré, pleine largeur */}
           <div className="flex-1 flex overflow-hidden">
-            <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-5 space-y-6 w-full max-w-3xl mx-auto">
+            <div className="flex-1 overflow-y-auto overscroll-contain px-4 sm:px-6 py-3.5 space-y-3.5 w-full max-w-3xl mx-auto">
 
           {/* ÉTAPE 1 — IDENTITÉ */}
           {currentStep === 1 && (
             <>
-              <div className="flex items-center gap-2 pb-3 border-b border-border">
+              <div className="flex items-center gap-2 pb-2.5 border-b border-border">
                 <Store className="h-4 w-4 text-primary" />
-                <h2 className="text-base font-bold">Identité de la boutique</h2>
+                <h2 className="text-sm sm:text-base font-bold">Identité de la boutique</h2>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label className="text-sm">Nom de la boutique <span className="text-destructive">*</span></Label>
                 <Input
                   value={form.name}
                   onChange={e => handleNameChange(e.target.value)}
                   placeholder="Ex : Lumix Store"
-                  className="h-11 rounded-xl"
+                  className="h-10 rounded-xl"
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label className="text-sm">Description (optionnel)</Label>
                 <Textarea
                   value={form.description}
                   onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
-                  rows={3}
+                  rows={2}
                   placeholder="Décrivez votre boutique en quelques mots…"
                   className="rounded-xl resize-none"
                 />
@@ -300,20 +301,20 @@ export default function StoreConfig() {
           {/* ÉTAPE 2 — DESIGN (couleur + bannière) */}
           {currentStep === 2 && (
             <>
-              <div className="flex items-center gap-2 pb-3 border-b border-border">
+              <div className="flex items-center gap-2 pb-2.5 border-b border-border">
                 <Palette className="h-4 w-4 text-primary" />
-                <h2 className="text-base font-bold">Apparence visuelle</h2>
+                <h2 className="text-sm sm:text-base font-bold">Apparence visuelle</h2>
               </div>
 
               {/* Couleur */}
               <div>
-                <Label className="text-sm mb-3 block">Couleur principale</Label>
-                <div className="flex flex-wrap gap-2.5 sm:gap-3">
+                <Label className="text-sm mb-2 block">Couleur principale</Label>
+                <div className="flex flex-wrap gap-2">
                   {COLOR_PALETTE.map(c => (
                     <button
                       key={c.value}
                       onClick={() => setForm(p => ({ ...p, primary_color: c.value }))}
-                      className={`h-10 w-10 rounded-full border-2 transition-all flex items-center justify-center ${form.primary_color === c.value ? 'border-foreground scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`}
+                      className={`h-9 w-9 rounded-full border-2 transition-all flex items-center justify-center ${form.primary_color === c.value ? 'border-foreground scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`}
                       style={{ background: c.value }}
                       title={c.name}
                     >
@@ -324,7 +325,7 @@ export default function StoreConfig() {
               </div>
 
               {/* Bannière hero */}
-              <div className="space-y-3 pt-2">
+              <div className="space-y-2">
                 <div>
                   <Label className="text-sm flex items-center gap-1.5">
                     <ImageIcon className="h-3.5 w-3.5" />
@@ -340,7 +341,7 @@ export default function StoreConfig() {
                     <img
                       src={form.banner_url}
                       alt="Bannière de la boutique"
-                      className="w-full h-40 sm:h-56 object-cover"
+                      className="w-full h-28 sm:h-44 object-cover"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
                       <Button
@@ -368,7 +369,7 @@ export default function StoreConfig() {
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploadingBanner}
-                    className="w-full h-40 sm:h-56 rounded-xl border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground"
+                    className="w-full h-28 sm:h-44 rounded-xl border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground"
                   >
                     {uploadingBanner ? (
                       <>
@@ -396,23 +397,15 @@ export default function StoreConfig() {
                 />
               </div>
 
-              <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 sm:p-4 flex items-start gap-3">
-                <Sparkles className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  La bannière s'affiche en grand sur la page d'accueil de votre boutique.
-                  Choisissez une image de qualité qui représente bien vos produits.
-                </p>
-              </div>
-
             </>
           )}
 
           {/* ÉTAPE 3 — CATÉGORIES */}
           {currentStep === 3 && (
             <>
-              <div className="flex items-center gap-2 pb-3 border-b border-border">
+              <div className="flex items-center gap-2 pb-2.5 border-b border-border">
                 <Tags className="h-4 w-4 text-primary" />
-                <h2 className="text-base font-bold">Catégories de la boutique</h2>
+                <h2 className="text-sm sm:text-base font-bold">Catégories de la boutique</h2>
               </div>
               <CategoryManager />
             </>
@@ -421,25 +414,25 @@ export default function StoreConfig() {
           {/* ÉTAPE 4 — CONTACT + LIVRAISON + OPTIONS */}
           {currentStep === 4 && (
             <>
-              <div className="flex items-center gap-2 pb-3 border-b border-border">
+              <div className="flex items-center gap-2 pb-2.5 border-b border-border">
                 <Phone className="h-4 w-4 text-primary" />
-                <h2 className="text-base font-bold">Contact, livraison & options</h2>
+                <h2 className="text-sm sm:text-base font-bold">Contact, livraison & options</h2>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-sm">WhatsApp</Label>
-                  <Input value={form.whatsapp} onChange={e => setForm(p => ({ ...p, whatsapp: e.target.value }))} className="h-11 rounded-xl" />
+                  <Input value={form.whatsapp} onChange={e => setForm(p => ({ ...p, whatsapp: e.target.value }))} className="h-10 rounded-xl" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-sm">Téléphone</Label>
-                  <Input value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} className="h-11 rounded-xl" />
+                  <Input value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} className="h-10 rounded-xl" />
                 </div>
               </div>
 
               <div className="space-y-1.5">
                 <Label className="text-sm">Email</Label>
-                <Input value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} type="email" className="h-11 rounded-xl" />
+                <Input value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} type="email" className="h-10 rounded-xl" />
               </div>
 
               <div className="space-y-1.5">
@@ -447,22 +440,22 @@ export default function StoreConfig() {
                 <Textarea value={form.address} onChange={e => setForm(p => ({ ...p, address: e.target.value }))} rows={2} className="rounded-xl resize-none" />
               </div>
 
-              <div className="border-t border-border pt-5">
-                <h3 className="text-sm font-bold mb-3">🚚 Livraison</h3>
+              <div className="border-t border-border pt-3.5">
+                <h3 className="text-sm font-bold mb-2">Livraison</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <Label className="text-sm">Frais de livraison (FCFA)</Label>
-                    <Input type="number" min="0" value={form.delivery_fee} onChange={e => setForm(p => ({ ...p, delivery_fee: Number(e.target.value) }))} className="h-11 rounded-xl" />
+                    <Input type="number" min="0" value={form.delivery_fee} onChange={e => setForm(p => ({ ...p, delivery_fee: Number(e.target.value) }))} className="h-10 rounded-xl" />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-sm">Gratuit dès (FCFA)</Label>
-                    <Input type="number" min="0" value={form.free_delivery_minimum} onChange={e => setForm(p => ({ ...p, free_delivery_minimum: Number(e.target.value) }))} className="h-11 rounded-xl" />
+                    <Input type="number" min="0" value={form.free_delivery_minimum} onChange={e => setForm(p => ({ ...p, free_delivery_minimum: Number(e.target.value) }))} className="h-10 rounded-xl" />
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-border pt-5">
-                <h3 className="text-sm font-bold mb-3">⚙️ Options</h3>
+              <div className="border-t border-border pt-3.5">
+                <h3 className="text-sm font-bold mb-2">Options</h3>
                 <div className="space-y-2">
                   {[
                     { key: 'show_stock', label: 'Afficher le stock', desc: 'Les clients voient "X en stock"' },
@@ -470,7 +463,7 @@ export default function StoreConfig() {
                     { key: 'enable_reviews', label: 'Avis clients', desc: 'Permettre les avis et notes' },
                     { key: 'maintenance_mode', label: 'Mode maintenance', desc: 'Afficher "Bientôt disponible"' },
                   ].map(item => (
-                    <div key={item.key} className="flex items-center justify-between p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div key={item.key} className="flex items-center justify-between px-3 py-2 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors">
                       <div className="min-w-0 mr-3">
                         <p className="text-sm font-medium truncate">{item.label}</p>
                         <p className="text-[11px] sm:text-xs text-muted-foreground">{item.desc}</p>
@@ -483,8 +476,14 @@ export default function StoreConfig() {
             </>
           )}
 
-          {/* NAVIGATION ENTRE ÉTAPES */}
-          <div className="flex items-center justify-between gap-3 pt-4 border-t border-border">
+            </div>
+          </div>
+
+          {/* NAVIGATION ENTRE ÉTAPES — pied fixe */}
+          <div
+            className="flex-shrink-0 flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-t border-border bg-background"
+            style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+          >
             <Button
               variant="outline"
               size={isMobile ? "sm" : "default"}
@@ -513,10 +512,6 @@ export default function StoreConfig() {
                 Enregistrer
               </Button>
             )}
-          </div>
-          </div>
-
-
           </div>
         </SheetContent>
       </Sheet>

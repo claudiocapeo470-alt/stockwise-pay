@@ -45,7 +45,7 @@ export const useSales = () => {
       if (!effectiveUserId) return [];
       const { data, error } = await supabase
         .from('sales')
-        .select(`*, products (name, price)`)
+        .select(`*, products (name, price, image_url, icon_emoji, category, sku)`)
         .eq('user_id', effectiveUserId)
         .order('created_at', { ascending: false });
       if (error) throw error;

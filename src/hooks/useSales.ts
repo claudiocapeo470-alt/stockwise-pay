@@ -23,6 +23,10 @@ export interface Sale {
   products?: {
     name: string;
     price: number;
+    image_url?: string | null;
+    icon_emoji?: string | null;
+    category?: string | null;
+    sku?: string | null;
   };
 }
 

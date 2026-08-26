@@ -226,7 +226,7 @@ export default function StoreConfig() {
             <div className="mx-auto h-1.5 w-10 rounded-full bg-muted mb-2" />
             <div className="flex items-center gap-2.5">
               <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <CurrentIcon className="h-4.5 w-4.5 text-primary" />
+                <CurrentIcon className="h-4 w-4 text-primary" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm sm:text-base font-bold truncate leading-tight">{STEPS[currentStep - 1].title}</p>

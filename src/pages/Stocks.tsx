@@ -211,7 +211,14 @@ export default function Stocks() {
               {filteredProducts.map((product) => {
                 const status = getStockStatus(product);
                 return (
-                  <div key={product.id} className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/40">
+                  <div
+                    key={product.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleEditProduct(product)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleEditProduct(product); }}
+                    className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/40 cursor-pointer active:bg-muted/60"
+                  >
                     {product.image_url ? (
                       <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0" />
                     ) : (

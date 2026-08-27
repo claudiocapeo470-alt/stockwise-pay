@@ -372,7 +372,7 @@ export default function Ventes() {
                         {sale.total_amount.toLocaleString('de-DE')} FCFA
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-1 justify-end">
+                        <div className="flex gap-1 justify-end" onClick={(e) => e.stopPropagation()}>
                           <Button variant="ghost" size="icon" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
                             <Eye className="h-4 w-4" />
                           </Button>

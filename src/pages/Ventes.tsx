@@ -418,7 +418,14 @@ export default function Ventes() {
           {(isMobile || viewMode === "grid") && (
             <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
               {filteredSales.map((sale) => (
-                <div key={sale.id} className="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40">
+                <div
+                  key={sale.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { setSelectedSale(sale); setShowSaleDetails(true); } }}
+                  className="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 cursor-pointer active:bg-muted/60"
+                >
                   <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center shrink-0 overflow-hidden">
                     {(sale.products as any)?.image_url ? (
                       <img src={(sale.products as any).image_url} alt={sale.products?.name || "Produit"} loading="lazy" className="h-full w-full object-cover" />
@@ -443,7 +450,7 @@ export default function Ventes() {
                   </div>
 
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                       <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:text-foreground">
                         <MoreVertical className="h-4 w-4" />
                       </Button>

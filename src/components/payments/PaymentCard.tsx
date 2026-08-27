@@ -132,7 +132,13 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
 
   return (
     <>
-      <div className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40">
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => setShowEditDialog(true)}
+        onKeyDown={(e) => { if (e.key === 'Enter') setShowEditDialog(true); }}
+        className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 cursor-pointer active:bg-muted/60"
+      >
         <div className="h-11 w-11 rounded-full bg-muted flex items-center justify-center shrink-0">
           <StatusIcon className={cn("h-5 w-5", status.iconColor)} />
         </div>
@@ -158,7 +164,7 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full shrink-0 text-muted-foreground hover:text-foreground">
               <MoreHorizontal className="h-4 w-4" />
             </Button>

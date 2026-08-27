@@ -162,7 +162,7 @@ export default function Stocks() {
                   {filteredProducts.map((product) => {
                     const status = getStockStatus(product);
                     return (
-                      <TableRow key={product.id}>
+                      <TableRow key={product.id} className="cursor-pointer" onClick={() => handleEditProduct(product)}>
                         <TableCell>
                           <div className="flex items-center gap-3">
                             {product.image_url && (
@@ -180,7 +180,7 @@ export default function Stocks() {
                         <TableCell className="text-center"><span className="font-medium">{product.quantity}</span><span className="text-muted-foreground text-sm"> / {product.min_quantity}</span></TableCell>
                         <TableCell className="text-center"><Badge variant={status.variant}>{status.label}</Badge></TableCell>
                         <TableCell>
-                          <div className="flex gap-1 justify-end">
+                          <div className="flex gap-1 justify-end" onClick={(e) => e.stopPropagation()}>
                             <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}><Edit2 className="h-4 w-4" /></Button>
                             <AlertDialog>
                               <AlertDialogTrigger asChild><Button variant="ghost" size="icon"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
@@ -211,7 +211,14 @@ export default function Stocks() {
               {filteredProducts.map((product) => {
                 const status = getStockStatus(product);
                 return (
-                  <div key={product.id} className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/40">
+                  <div
+                    key={product.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleEditProduct(product)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleEditProduct(product); }}
+                    className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/40 cursor-pointer active:bg-muted/60"
+                  >
                     {product.image_url ? (
                       <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0" />
                     ) : (
@@ -235,7 +242,7 @@ export default function Stocks() {
 
                     <div className="flex flex-col items-end gap-1.5 shrink-0">
                       <Badge variant={status.variant} className="text-[10px]">{status.label}</Badge>
-                      <div className="flex items-center">
+                      <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
                         <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)} className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground">
                           <Edit2 className="h-4 w-4" />
                         </Button>

@@ -242,7 +242,7 @@ export default function Stocks() {
 
                     <div className="flex flex-col items-end gap-1.5 shrink-0">
                       <Badge variant={status.variant} className="text-[10px]">{status.label}</Badge>
-                      <div className="flex items-center">
+                      <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
                         <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)} className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground">
                           <Edit2 className="h-4 w-4" />
                         </Button>

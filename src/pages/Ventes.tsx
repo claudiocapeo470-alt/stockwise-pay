@@ -472,6 +472,9 @@ export default function Ventes() {
             setShowSaleDetails(open);
             if (!open) setSelectedSale(null);
           }}
+          onDownload={() => generateDocumentA4(selectedSale, 'facture', 'download')}
+          onPrint={() => generateDocumentA4(selectedSale, 'facture', 'print')}
+          onDelete={() => handleDelete(selectedSale.id)}
         />
       )}
     </div>

@@ -357,7 +357,7 @@ export default function Ventes() {
                 </TableHeader>
                 <TableBody>
                   {filteredSales.map((sale) => (
-                    <TableRow key={sale.id}>
+                    <TableRow key={sale.id} className="cursor-pointer" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
                       <TableCell className="text-muted-foreground">
                         {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
                       </TableCell>

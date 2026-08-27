@@ -180,7 +180,7 @@ export default function Stocks() {
                         <TableCell className="text-center"><span className="font-medium">{product.quantity}</span><span className="text-muted-foreground text-sm"> / {product.min_quantity}</span></TableCell>
                         <TableCell className="text-center"><Badge variant={status.variant}>{status.label}</Badge></TableCell>
                         <TableCell>
-                          <div className="flex gap-1 justify-end">
+                          <div className="flex gap-1 justify-end" onClick={(e) => e.stopPropagation()}>
                             <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}><Edit2 className="h-4 w-4" /></Button>
                             <AlertDialog>
                               <AlertDialogTrigger asChild><Button variant="ghost" size="icon"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>

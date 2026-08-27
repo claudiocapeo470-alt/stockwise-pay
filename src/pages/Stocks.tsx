@@ -162,7 +162,7 @@ export default function Stocks() {
                   {filteredProducts.map((product) => {
                     const status = getStockStatus(product);
                     return (
-                      <TableRow key={product.id}>
+                      <TableRow key={product.id} className="cursor-pointer" onClick={() => handleEditProduct(product)}>
                         <TableCell>
                           <div className="flex items-center gap-3">
                             {product.image_url && (

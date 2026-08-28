@@ -116,14 +116,9 @@ export default function Stocks() {
           <>
             <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm rounded-xl"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
             <ImportProductsDialog />
-            {!isMobile && (
-              <div className="hidden lg:inline-flex rounded-lg border border-border bg-card p-0.5">
-                <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0"><List className="h-4 w-4" /></Button>
-                <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0"><Grid3x3 className="h-4 w-4" /></Button>
-              </div>
-            )}
           </>
         }
+
         primary={<AddProductDialog />}
       />
 

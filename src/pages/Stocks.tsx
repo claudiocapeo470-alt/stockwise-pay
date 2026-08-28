@@ -3,8 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List, History, Bell } from "lucide-react";
+import { Package, Search, AlertTriangle, Edit2, Trash2, History, Bell } from "lucide-react";
 import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
@@ -22,7 +21,6 @@ export default function Stocks() {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [showMovements, setShowMovements] = useState(false);
   const { products, isLoading, deleteProduct } = useProducts();
   const isMobile = useIsMobile();
@@ -116,14 +114,9 @@ export default function Stocks() {
           <>
             <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm rounded-xl"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
             <ImportProductsDialog />
-            {!isMobile && (
-              <div className="hidden lg:inline-flex rounded-lg border border-border bg-card p-0.5">
-                <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0"><List className="h-4 w-4" /></Button>
-                <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0"><Grid3x3 className="h-4 w-4" /></Button>
-              </div>
-            )}
           </>
         }
+
         primary={<AddProductDialog />}
       />
 
@@ -144,81 +137,20 @@ export default function Stocks() {
             title="Produits en stock"
             count={filteredProducts.length}
           />
-          {/* Table view */}
-          {!isMobile && viewMode === "list" && (
-            <Card>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Produit</TableHead>
-                    <TableHead>Catégorie</TableHead>
-                    <TableHead className="text-right">Prix</TableHead>
-                    <TableHead className="text-center">Stock</TableHead>
-                    <TableHead className="text-center">Statut</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredProducts.map((product) => {
-                    const status = getStockStatus(product);
-                    return (
-                      <TableRow key={product.id} className="cursor-pointer" onClick={() => handleEditProduct(product)}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            {product.image_url && (
-                              <img src={product.image_url} alt={product.name} loading="lazy" className="h-9 w-9 rounded-lg object-cover shrink-0 border border-border/60" />
-                            )}
-
-                            <div>
-                              <p className="font-medium">{product.name}</p>
-                              {product.sku && <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>{product.category ? <Badge variant="outline">{product.category}</Badge> : <span className="text-muted-foreground">—</span>}</TableCell>
-                        <TableCell className="text-right font-medium">{formatCurrency(product.price)}</TableCell>
-                        <TableCell className="text-center"><span className="font-medium">{product.quantity}</span><span className="text-muted-foreground text-sm"> / {product.min_quantity}</span></TableCell>
-                        <TableCell className="text-center"><Badge variant={status.variant}>{status.label}</Badge></TableCell>
-                        <TableCell>
-                          <div className="flex gap-1 justify-end" onClick={(e) => e.stopPropagation()}>
-                            <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}><Edit2 className="h-4 w-4" /></Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild><Button variant="ghost" size="icon"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-                                  <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer "{product.name}" ?</AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                  <AlertDialogAction onClick={() => handleDeleteProduct(product)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </Card>
-          )}
-
-          {/* Liste produits — style catalogue minimaliste */}
-          {(isMobile || viewMode === "grid") && (
-            <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
-              {filteredProducts.map((product) => {
-                const status = getStockStatus(product);
-                return (
-                  <div
-                    key={product.id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => handleEditProduct(product)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') handleEditProduct(product); }}
-                    className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/40 cursor-pointer active:bg-muted/60"
-                  >
+          {/* Grille de cartes produits (remplace l'ancien tableau / liste) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+            {filteredProducts.map((product) => {
+              const status = getStockStatus(product);
+              return (
+                <div
+                  key={product.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleEditProduct(product)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleEditProduct(product); } }}
+                  className="group relative flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm transition-all cursor-pointer hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <div className="flex items-start gap-3">
                     {product.image_url ? (
                       <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0" />
                     ) : (
@@ -227,49 +159,47 @@ export default function Stocks() {
                       </div>
                     )}
 
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 pr-16">
                       <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground truncate">
                         {product.category || (product.sku ? `SKU ${product.sku}` : "Sans catégorie")}
                       </p>
                       <p className="font-bold text-[15px] leading-tight truncate mt-0.5">{product.name}</p>
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-sm font-semibold">{formatCurrency(product.price)}</span>
-                        <span className="text-[11px] text-muted-foreground">
-                          Stock {product.quantity}/{product.min_quantity}
-                        </span>
-                      </div>
+                      <Badge variant={status.variant} className="text-[10px] mt-2">{status.label}</Badge>
                     </div>
 
-                    <div className="flex flex-col items-end gap-1.5 shrink-0">
-                      <Badge variant={status.variant} className="text-[10px]">{status.label}</Badge>
-                      <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)} className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground">
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-                              <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer "{product.name}" ?</AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDeleteProduct(product)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                    <div className="absolute right-2 top-2 flex items-center" onClick={(e) => e.stopPropagation()}>
+                      <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)} className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground">
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+                            <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer "{product.name}" ?</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDeleteProduct(product)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
+
+                  <div className="mt-auto flex items-end justify-between gap-2 border-t border-border/60 pt-3">
+                    <p className="text-[11px] text-muted-foreground">Stock {product.quantity}/{product.min_quantity}</p>
+                    <p className="text-base font-bold leading-none tabular-nums">{formatCurrency(product.price)}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
 
 
         </>

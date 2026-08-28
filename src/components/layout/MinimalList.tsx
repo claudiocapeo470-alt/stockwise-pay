@@ -1,21 +1,27 @@
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-/** Conteneur de liste minimaliste : carte arrondie, lignes séparées. */
+/**
+ * Conteneur de contenu en **grille de cartes** (remplace l'ancien affichage en liste).
+ * 1 colonne sur mobile, 2 à partir de sm, 3 à partir de xl.
+ */
 export function ListShell({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60", className)}>
+    <div
+      role="list"
+      className={cn("grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4", className)}
+    >
       {children}
     </div>
   );
 }
 
 /**
- * Ligne de liste minimaliste unifiée (mobile, tablette et desktop).
+ * Carte d'entité (mobile, tablette et desktop).
  * - leading : avatar / image / icône ronde
  * - title + badge, subtitle en dessous
- * - value + hint alignés à droite
- * - actions : menu ou boutons (toujours accessibles)
+ * - value + hint alignés en bas à droite
+ * - actions : menu ou boutons, en haut à droite
  */
 export function ListRow({
   leading,
@@ -42,45 +48,59 @@ export function ListRow({
 }) {
   return (
     <div
+      role="listitem"
       onClick={onClick}
-      role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? (e) => { if (e.key === "Enter") onClick(); } : undefined}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
       className={cn(
-        "flex items-center gap-3 px-4 sm:px-5 py-3.5 transition-colors",
-        onClick && "cursor-pointer hover:bg-muted/40",
+        "group relative flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm transition-all",
+        onClick &&
+          "cursor-pointer hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
     >
-      {leading && <div className="shrink-0">{leading}</div>}
+      <div className="flex items-start gap-3">
+        {leading && <div className="shrink-0">{leading}</div>}
 
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2 min-w-0">
-          <p className="font-semibold text-[15px] truncate leading-tight">{title}</p>
-          {badge}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 min-w-0 pr-8">
+            <p className="font-semibold text-[15px] truncate leading-tight">{title}</p>
+            {badge}
+          </div>
+          {subtitle && <p className="text-xs text-muted-foreground truncate mt-1">{subtitle}</p>}
+          {meta && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{meta}</p>}
         </div>
-        {subtitle && <p className="text-xs text-muted-foreground truncate mt-0.5">{subtitle}</p>}
+
+        {actions && (
+          <div
+            className="absolute right-2 top-2 flex items-center gap-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {actions}
+          </div>
+        )}
       </div>
 
-      {meta && <div className="hidden lg:block shrink-0 text-xs text-muted-foreground">{meta}</div>}
-
       {(value || hint) && (
-        <div className="shrink-0 text-right">
-          {value && <p className="text-[15px] font-bold leading-tight tabular-nums">{value}</p>}
-          {hint && <p className="text-[11px] text-muted-foreground mt-0.5">{hint}</p>}
-        </div>
-      )}
-
-      {actions && (
-        <div className="shrink-0 flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-          {actions}
+        <div className="mt-auto flex items-end justify-between gap-2 border-t border-border/60 pt-3">
+          {hint ? <p className="text-[11px] text-muted-foreground truncate">{hint}</p> : <span />}
+          {value && <p className="text-base font-bold leading-none tabular-nums">{value}</p>}
         </div>
       )}
     </div>
   );
 }
 
-/** Pastille ronde (icône ou image) utilisée en tête de ligne. */
+/** Pastille ronde (icône ou image) utilisée en tête de carte. */
 export function ListAvatar({
   src,
   alt,
@@ -103,7 +123,7 @@ export function ListAvatar({
   } as const;
 
   return (
-    <div className={cn("h-11 w-11 rounded-full flex items-center justify-center overflow-hidden", tones[tone], className)}>
+    <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center overflow-hidden", tones[tone], className)}>
       {src ? <img src={src} alt={alt || ""} loading="lazy" className="h-full w-full object-cover" /> : icon}
     </div>
   );
@@ -118,7 +138,7 @@ export function ListBadge({ className, children }: { className?: string; childre
   );
 }
 
-/** État vide homogène pour toutes les listes. */
+/** État vide homogène pour toutes les vues. */
 export function ListEmpty({ icon, title, description }: { icon?: ReactNode; title: string; description?: string }) {
   return (
     <div className="rounded-2xl border border-border bg-card py-14 px-6 text-center">

@@ -3,8 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Package, Search, AlertTriangle, Edit2, Trash2, Grid3x3, List, History, Bell } from "lucide-react";
+import { Package, Search, AlertTriangle, Edit2, Trash2, History, Bell } from "lucide-react";
 import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
@@ -22,7 +21,6 @@ export default function Stocks() {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [showMovements, setShowMovements] = useState(false);
   const { products, isLoading, deleteProduct } = useProducts();
   const isMobile = useIsMobile();

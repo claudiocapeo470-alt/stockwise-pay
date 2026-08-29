@@ -21,6 +21,7 @@ import jsPDF from "jspdf";
 import { useToast } from "@/hooks/use-toast";
 import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCurrency } from "@/hooks/useCurrency";
 
 export default function Ventes() {
   const [searchQuery, setSearchQuery] = useState("");

@@ -305,150 +305,41 @@ export default function Ventes() {
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder="Rechercher par client ou produit..."
-        segments={!isMobile ? (
-          <div className="inline-flex rounded-xl border border-border bg-card p-0.5">
-            <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0 rounded-lg">
-              <List className="h-4 w-4" />
-            </Button>
-            <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0 rounded-lg">
-              <Grid3x3 className="h-4 w-4" />
-            </Button>
-          </div>
-        ) : undefined}
         primary={<AddSaleDialog />}
       />
 
-
-      {/* Sales list */}
+      {/* Sales grid */}
       {filteredSales.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <ShoppingCart className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
-              {sales.length === 0 ? "Aucune vente" : "Aucun résultat"}
-            </h3>
-            <p className="text-muted-foreground">
-              {sales.length === 0
-                ? "Commencez par enregistrer votre première vente"
-                : "Aucune vente trouvée pour cette recherche"
-              }
-            </p>
-          </CardContent>
-        </Card>
+        <ListEmpty
+          icon={<ShoppingCart className="h-5 w-5" />}
+          title={sales.length === 0 ? "Aucune vente" : "Aucun résultat"}
+          description={
+            sales.length === 0
+              ? "Commencez par enregistrer votre première vente"
+              : "Aucune vente trouvée pour cette recherche"
+          }
+        />
       ) : (
         <>
-          <SectionHeading
-            title="Transactions"
-            count={filteredSales.length}
-          />
-          {/* Table view */}
-          {!isMobile && viewMode === "list" && (
-            <Card>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Produit</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead className="text-center">Quantité</TableHead>
-                    <TableHead className="text-right">Montant</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredSales.map((sale) => (
-                    <TableRow key={sale.id} className="cursor-pointer" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
-                      <TableCell className="text-muted-foreground">
-                        {format(new Date(sale.sale_date), "dd/MM/yyyy HH:mm", { locale: fr })}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {sale.products?.name || "Produit supprimé"}
-                      </TableCell>
-                      <TableCell>
-                        {sale.customer_name || <span className="text-muted-foreground">—</span>}
-                      </TableCell>
-                      <TableCell className="text-center">{sale.quantity}</TableCell>
-                      <TableCell className="text-right font-semibold">
-                        {sale.total_amount.toLocaleString('de-DE')} FCFA
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1 justify-end" onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="icon" onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => generateDocumentA4(sale, 'facture', 'download')}>
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => generateDocumentA4(sale, 'facture', 'print')}>
-                            <Printer className="h-4 w-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Supprimer cette vente ?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Cette action est irréversible. La vente de{" "}
-                                  {sale.total_amount.toLocaleString('de-DE')} FCFA{" "}
-                                  sera définitivement supprimée.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(sale.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                  Supprimer
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Card>
-          )}
-
-          {/* Liste transactions — style minimaliste */}
-          {(isMobile || viewMode === "grid") && (
-            <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
-              {filteredSales.map((sale) => (
-                <div
-                  key={sale.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { setSelectedSale(sale); setShowSaleDetails(true); } }}
-                  className="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 cursor-pointer active:bg-muted/60"
-                >
-                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center shrink-0 overflow-hidden">
-                    {(sale.products as any)?.image_url ? (
-                      <img src={(sale.products as any).image_url} alt={sale.products?.name || "Produit"} loading="lazy" className="h-full w-full object-cover" />
-                    ) : (
-                      <ShoppingCart className="h-5 w-5 text-muted-foreground" />
-                    )}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-[15px] truncate leading-tight">{sale.products?.name || "Produit"}</p>
-                    <p className="text-xs text-muted-foreground truncate mt-0.5">
-                      {format(new Date(sale.sale_date), "dd MMM yyyy", { locale: fr })} · {sale.customer_name || "Client anonyme"}
-                    </p>
-                  </div>
-
-                  <div className="shrink-0 text-right">
-                    <p className="text-[15px] font-bold leading-tight tabular-nums">
-                      {sale.total_amount.toLocaleString('de-DE')}
-                      <span className="text-[11px] font-normal text-muted-foreground ml-1">FCFA</span>
-                    </p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">Qté {sale.quantity}</p>
-                  </div>
-
+          <SectionHeading title="Transactions" count={filteredSales.length} />
+          <ListShell>
+            {filteredSales.map((sale) => (
+              <ListRow
+                key={sale.id}
+                onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}
+                leading={
+                  <ListAvatar
+                    src={(sale.products as any)?.image_url}
+                    alt={sale.products?.name || "Produit"}
+                    icon={<ShoppingCart className="h-5 w-5" />}
+                  />
+                }
+                title={sale.products?.name || "Produit"}
+                subtitle={sale.customer_name || "Client anonyme"}
+                meta={format(new Date(sale.sale_date), "dd MMM yyyy · HH:mm", { locale: fr })}
+                hint={`Qté ${sale.quantity}`}
+                value={formatCurrency(sale.total_amount)}
+                actions={
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                       <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-full text-muted-foreground hover:text-foreground">
@@ -462,14 +353,13 @@ export default function Ventes() {
                       <DropdownMenuItem onClick={() => handleDelete(sale.id)} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </div>
-              ))}
-            </div>
-          )}
-
-
+                }
+              />
+            ))}
+          </ListShell>
         </>
       )}
+
 
       {selectedSale && (
         <SaleDetailsDialog

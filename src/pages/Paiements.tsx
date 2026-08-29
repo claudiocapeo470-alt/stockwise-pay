@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+
 import { EmptyStateCard } from "@/components/onboarding/EmptyStateCard"
 import { AddPaymentDialog } from "@/components/payments/AddPaymentDialog"
 import { PaymentCard } from "@/components/payments/PaymentCard"
@@ -177,12 +177,6 @@ export default function Paiements() {
             <SelectItem value="carte_bancaire">Carte</SelectItem>
           </SelectContent>
         </Select>
-        {!isMobile && (
-          <div className="inline-flex rounded-xl border border-border bg-card p-0.5 shrink-0">
-            <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 p-0 rounded-lg"><List className="h-4 w-4" /></Button>
-            <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 p-0 rounded-lg"><Grid3x3 className="h-4 w-4" /></Button>
-          </div>
-        )}
       </div>
 
 

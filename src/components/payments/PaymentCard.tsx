@@ -132,53 +132,39 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
 
   return (
     <>
-      <div
-        role="button"
-        tabIndex={0}
+      <ListRow
         onClick={() => setShowEditDialog(true)}
-        onKeyDown={(e) => { if (e.key === 'Enter') setShowEditDialog(true); }}
-        className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 cursor-pointer active:bg-muted/60"
-      >
-        <div className="h-11 w-11 rounded-full bg-muted flex items-center justify-center shrink-0">
-          <StatusIcon className={cn("h-5 w-5", status.iconColor)} />
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 min-w-0">
-            <p className="font-semibold text-[15px] truncate leading-tight">{getFullName() || 'Client inconnu'}</p>
-            <Badge className={cn("shrink-0 text-[10px] px-2 py-0.5 font-medium", status.className)}>{status.label}</Badge>
-          </div>
-          <p className="text-xs text-muted-foreground truncate mt-0.5 flex items-center gap-1.5">
+        leading={<ListAvatar icon={<StatusIcon className={cn("h-5 w-5", status.iconColor)} />} />}
+        title={getFullName() || 'Client inconnu'}
+        badge={<Badge className={cn("shrink-0 text-[10px] px-2 py-0.5 font-medium", status.className)}>{status.label}</Badge>}
+        subtitle={
+          <span className="flex items-center gap-1.5">
             <MethodIcon className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{methodLabel} · {formatDate(payment.payment_date)}</span>
-          </p>
-        </div>
+            <span className="truncate">{methodLabel}</span>
+          </span>
+        }
+        meta={formatDate(payment.payment_date)}
+        hint={payment.remaining_amount > 0 ? `Reste ${formatAmount(payment.remaining_amount)}` : 'Soldé'}
+        value={formatAmount(payment.paid_amount)}
+        actions={
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full shrink-0 text-muted-foreground hover:text-foreground">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+                <Edit className="mr-2 h-4 w-4" />Modifier
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
+                <Trash2 className="mr-2 h-4 w-4" />Supprimer
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        }
+      />
 
-        <div className="shrink-0 text-right">
-          <p className="text-[15px] font-bold leading-tight tabular-nums">{formatAmount(payment.paid_amount)}</p>
-          {payment.remaining_amount > 0 ? (
-            <p className="text-[11px] text-warning mt-0.5">Reste {formatAmount(payment.remaining_amount)}</p>
-          ) : (
-            <p className="text-[11px] text-muted-foreground mt-0.5">Soldé</p>
-          )}
-        </div>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full shrink-0 text-muted-foreground hover:text-foreground">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
-              <Edit className="mr-2 h-4 w-4" />Modifier
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
-              <Trash2 className="mr-2 h-4 w-4" />Supprimer
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
 
       <EditPaymentDialog 
         payment={payment}

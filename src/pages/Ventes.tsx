@@ -35,6 +35,7 @@ export default function Ventes() {
   const { settings } = useCompanySettings();
   const { profile } = useAuth();
   const isMobile = useIsMobile();
+  const { formatCurrency } = useCurrency();
 
   const companyName = settings?.company_name || profile?.company_name || "Stocknix";
   const companyAddress = settings?.company_address || "";

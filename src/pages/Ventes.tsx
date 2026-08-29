@@ -27,7 +27,7 @@ export default function Ventes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [showSaleDetails, setShowSaleDetails] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  
 
   const { sales, isLoading, deleteSale } = useSales();
   const { products } = useProducts();

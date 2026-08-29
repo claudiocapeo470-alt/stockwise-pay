@@ -202,61 +202,14 @@ export default function Paiements() {
             title="Opérations"
             count={filteredPayments.length}
           />
-          {/* List view */}
-          {!isMobile && viewMode === "list" && (
-            <Card>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Méthode</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead className="text-right">Payé</TableHead>
-                    <TableHead className="text-right">Reste</TableHead>
-                    <TableHead className="text-center">Statut</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredPayments.map((payment) => (
-                    <TableRow key={payment.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 bg-primary/10">
-                            <Receipt className="h-4 w-4 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{payment.customer_first_name} {payment.customer_last_name}</p>
-                            {payment.customer_phone && <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">{payment.customer_phone}</p>}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell><Badge variant="outline">{payment.payment_method}</Badge></TableCell>
-                      <TableCell className="text-right font-medium">{payment.total_amount.toLocaleString('de-DE')} FCFA</TableCell>
-                      <TableCell className="text-right">{payment.paid_amount.toLocaleString('de-DE')} FCFA</TableCell>
-                      <TableCell className="text-right">{payment.remaining_amount.toLocaleString('de-DE')} FCFA</TableCell>
-                      <TableCell className="text-center">{getStatusBadge(payment.status)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Card>
-          )}
-
-          {/* Grid view */}
-          {(isMobile || viewMode === "grid") && (
-            <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
-              {filteredPayments.map((payment) => (
-                <PaymentCard
-                  key={payment.id}
-                  payment={payment}
-                  onEdit={(payment) => console.log('Edit payment:', payment)}
-                  onDelete={(payment) => console.log('Delete payment:', payment)}
-                />
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+            {filteredPayments.map((payment) => (
+              <PaymentCard key={payment.id} payment={payment} />
+            ))}
+          </div>
         </>
       )}
+
     </div>
   )
 }

@@ -142,39 +142,45 @@ export default function Stocks() {
             {filteredProducts.map((product) => {
               const status = getStockStatus(product);
               return (
-                <div
+                <ProductGridCard
                   key={product.id}
-                  role="button"
-                  tabIndex={0}
+                  image={product.image_url}
+                  name={product.name}
                   onClick={() => handleEditProduct(product)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleEditProduct(product); } }}
-                  className="group relative flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm transition-all cursor-pointer hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <div className="flex items-start gap-3">
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0" />
-                    ) : (
-                      <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                        <Package className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                    )}
-
-                    <div className="min-w-0 flex-1 pr-16">
-                      <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground truncate">
+                  badge={
+                    <Badge variant={status.variant} className="text-[10px] shadow-sm">{status.label}</Badge>
+                  }
+                  meta={
+                    <>
+                      <ProductMeta icon={<Layers className="h-3 w-3" />}>
+                        {product.quantity}/{product.min_quantity}
+                      </ProductMeta>
+                      <ProductMeta icon={<Tag className="h-3 w-3" />} className="max-w-[60%]">
                         {product.category || (product.sku ? `SKU ${product.sku}` : "Sans catégorie")}
-                      </p>
-                      <p className="font-bold text-[15px] leading-tight truncate mt-0.5">{product.name}</p>
-                      <Badge variant={status.variant} className="text-[10px] mt-2">{status.label}</Badge>
-                    </div>
-
-                    <div className="absolute right-2 top-2 flex items-center" onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)} className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground">
-                        <Edit2 className="h-4 w-4" />
+                      </ProductMeta>
+                    </>
+                  }
+                  price={formatCurrency(product.price)}
+                  actions={
+                    <>
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        onClick={() => handleEditProduct(product)}
+                        className="h-8 w-8 rounded-full bg-background/90 shadow-sm hover:bg-background"
+                        aria-label="Modifier"
+                      >
+                        <Edit2 className="h-3.5 w-3.5" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10">
-                            <Trash2 className="h-4 w-4" />
+                          <Button
+                            variant="secondary"
+                            size="icon"
+                            className="h-8 w-8 rounded-full bg-background/90 text-destructive shadow-sm hover:bg-background"
+                            aria-label="Supprimer"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
@@ -188,17 +194,12 @@ export default function Stocks() {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
-                    </div>
-                  </div>
-
-                  <div className="mt-auto flex items-end justify-between gap-2 border-t border-border/60 pt-3">
-                    <p className="text-[11px] text-muted-foreground">Stock {product.quantity}/{product.min_quantity}</p>
-                    <p className="text-base font-bold leading-none tabular-nums">{formatCurrency(product.price)}</p>
-                  </div>
-                </div>
+                    </>
+                  }
+                />
               );
             })}
-          </div>
+          </ProductGrid>
 
 
 

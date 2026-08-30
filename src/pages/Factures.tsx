@@ -1,5 +1,5 @@
 import { PageActionBar } from "@/components/layout/PageActionBar";
-import { SectionHeading } from "@/components/layout/PageShell";
+import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
 import { FilterPills } from "@/components/layout/FilterPills";
 import { useState } from "react";
 import { useInvoices } from "@/hooks/useInvoices";

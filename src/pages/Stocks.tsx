@@ -14,7 +14,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PageActionBar } from "@/components/layout/PageActionBar";
-import { SectionHeading } from "@/components/layout/PageShell";
+import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
 
 
 export default function Stocks() {

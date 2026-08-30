@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SectionHeading } from "@/components/layout/PageShell";
+import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
 import { FilterPills } from "@/components/layout/FilterPills";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,7 +70,7 @@ export default function Livraisons() {
   return (
     <div className="space-y-5 animate-fade-in">
       <StickyTop>
-woo        {/* Stats */}
+        {/* Stats */}
         <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
           {[
             { label: "Assignées", value: stats.assigned, bg: "bg-primary/10", color: "text-primary", icon: UserPlus },

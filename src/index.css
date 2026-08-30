@@ -86,6 +86,16 @@ input, select, textarea {
   .app-safe-header { padding-top: env(safe-area-inset-top, 0px); }
 }
 
+/* Hauteur réelle de l'en-tête applicatif — sert d'ancrage aux blocs sticky */
+:root { --app-header-h: 3.5rem; }
+@media (min-width: 640px) { :root { --app-header-h: 4rem; } }
+@media (display-mode: standalone) {
+  :root { --app-header-h: calc(3.5rem + env(safe-area-inset-top, 0px)); }
+}
+@media (display-mode: fullscreen) {
+  :root { --app-header-h: calc(3.5rem + env(safe-area-inset-top, 0px)); }
+}
+
 
 /* Bouton retour standard, identique partout */
 .back-fab {

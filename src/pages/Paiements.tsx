@@ -1,5 +1,5 @@
 import { PageActionBar } from "@/components/layout/PageActionBar";
-import { SectionHeading } from "@/components/layout/PageShell";
+import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

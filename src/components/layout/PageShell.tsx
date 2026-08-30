@@ -77,6 +77,30 @@ export function SectionHeading({
   );
 }
 
+/**
+ * Bloc supérieur figé d'une page (KPI, filtres, barre d'actions, titre de section).
+ * Il reste collé sous l'en-tête applicatif pendant que la liste en dessous défile.
+ */
+export function StickyTop({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div
+      className={cn(
+        "sticky z-30 bg-background/95 backdrop-blur-xl",
+        // déborde des paddings du conteneur de page pour couvrir toute la largeur
+        "-mx-3 sm:-mx-5 md:-mx-6 lg:-mx-10 xl:-mx-12 px-3 sm:px-5 md:px-6 lg:px-10 xl:px-12",
+        "-mt-3 sm:-mt-5 md:-mt-6 pt-3 sm:pt-5 md:pt-6 pb-1",
+        "border-b border-border/40 space-y-4",
+        className,
+      )}
+      style={{ top: "var(--app-header-h)" }}
+    >
+      {children}
+    </div>
+  );
+}
+
+
+
 
 type Tone = "primary" | "success" | "warning" | "destructive" | "accent";
 

@@ -1,5 +1,5 @@
 import { PageActionBar } from "@/components/layout/PageActionBar";
-import { SectionHeading } from "@/components/layout/PageShell";
+import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

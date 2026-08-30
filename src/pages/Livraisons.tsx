@@ -69,35 +69,39 @@ export default function Livraisons() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      {/* Stats */}
-      <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
-        {[
-          { label: "Assignées", value: stats.assigned, bg: "bg-primary/10", color: "text-primary", icon: UserPlus },
-          { label: "En cours", value: stats.in_progress, bg: "bg-warning/10", color: "text-warning", icon: Truck },
-          { label: "Livrées", value: stats.delivered, bg: "bg-success/10", color: "text-success", icon: CheckCircle },
-          { label: "Problèmes", value: stats.problem, bg: "bg-destructive/10", color: "text-destructive", icon: AlertTriangle },
-        ].map((s, i) => (
-          <Card key={i} className="border-border/60">
-            <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <div className={`h-10 w-10 ${s.bg} flex items-center justify-center rounded-xl`}>
-                <s.icon className={`h-5 w-5 ${s.color}`} />
-              </div>
-              <div>
-                <p className="text-lg sm:text-2xl font-bold leading-none truncate">{s.value}</p>
-                <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">{s.label}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <StickyTop>
+woo        {/* Stats */}
+        <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
+          {[
+            { label: "Assignées", value: stats.assigned, bg: "bg-primary/10", color: "text-primary", icon: UserPlus },
+            { label: "En cours", value: stats.in_progress, bg: "bg-warning/10", color: "text-warning", icon: Truck },
+            { label: "Livrées", value: stats.delivered, bg: "bg-success/10", color: "text-success", icon: CheckCircle },
+            { label: "Problèmes", value: stats.problem, bg: "bg-destructive/10", color: "text-destructive", icon: AlertTriangle },
+          ].map((s, i) => (
+            <Card key={i} className="border-border/60">
+              <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <div className={`h-10 w-10 ${s.bg} flex items-center justify-center rounded-xl`}>
+                  <s.icon className={`h-5 w-5 ${s.color}`} />
+                </div>
+                <div>
+                  <p className="text-lg sm:text-2xl font-bold leading-none truncate">{s.value}</p>
+                  <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">{s.label}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-      {/* Filtres centrés */}
-      <FilterPills filters={filters} value={statusFilter} onChange={setStatusFilter} />
+        {/* Filtres centrés */}
+        <FilterPills filters={filters} value={statusFilter} onChange={setStatusFilter} />
 
-      <SectionHeading
-        title="Détails des livraisons"
-        count={filtered.length}
-      />
+        <SectionHeading
+          title="Détails des livraisons"
+          count={filtered.length}
+          className="!mt-0 !mb-3"
+        />
+      </StickyTop>
+
 
       {/* Liste minimaliste unifiée */}
       {filtered.length === 0 ? (

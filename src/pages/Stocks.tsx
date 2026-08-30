@@ -68,58 +68,62 @@ export default function Stocks() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      {/* Stats */}
-      <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
-        <Card className="border-border/60">
-          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">
-              <Package className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xl sm:text-2xl font-bold leading-none">{products.length}</p>
-              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Total Produits</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className={`border-border/60 ${lowStockProducts.length > 0 ? "border-warning/40 bg-warning/5" : ""}`}>
-          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0">
-              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-warning" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xl sm:text-2xl font-bold leading-none">{lowStockProducts.length}</p>
-              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Stock Critique</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className={`border-border/60 ${outOfStockProducts.length > 0 ? "border-destructive/40 bg-destructive/5" : ""}`}>
-          <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-destructive/10 flex items-center justify-center rounded-xl shrink-0">
-              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xl sm:text-2xl font-bold leading-none">{outOfStockProducts.length}</p>
-              <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Rupture</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <StickyTop>
+        {/* Stats */}
+        <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
+          <Card className="border-border/60">
+            <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0">
+                <Package className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xl sm:text-2xl font-bold leading-none">{products.length}</p>
+                <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Total Produits</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className={`border-border/60 ${lowStockProducts.length > 0 ? "border-warning/40 bg-warning/5" : ""}`}>
+            <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0">
+                <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-warning" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xl sm:text-2xl font-bold leading-none">{lowStockProducts.length}</p>
+                <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Stock Critique</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className={`border-border/60 ${outOfStockProducts.length > 0 ? "border-destructive/40 bg-destructive/5" : ""}`}>
+            <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <div className="h-9 w-9 sm:h-10 sm:w-10 bg-destructive/10 flex items-center justify-center rounded-xl shrink-0">
+                <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xl sm:text-2xl font-bold leading-none">{outOfStockProducts.length}</p>
+                <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Rupture</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Toolbar */}
-      <PageActionBar
-        searchValue={searchQuery}
-        onSearchChange={setSearchQuery}
-        searchPlaceholder="Rechercher un produit..."
-        segments={
-          <>
-            <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm rounded-xl"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
-            <ImportProductsDialog />
-          </>
-        }
+        {/* Toolbar */}
+        <PageActionBar
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder="Rechercher un produit..."
+          segments={
+            <>
+              <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm rounded-xl"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
+              <ImportProductsDialog />
+            </>
+          }
+          primary={<AddProductDialog />}
+        />
 
-        primary={<AddProductDialog />}
-      />
-
+        {filteredProducts.length > 0 && (
+          <SectionHeading title="Produits en stock" count={filteredProducts.length} className="!mt-0 !mb-3" />
+        )}
+      </StickyTop>
 
       {/* Products */}
       {filteredProducts.length === 0 ? (
@@ -133,12 +137,8 @@ export default function Stocks() {
         </Card>
       ) : (
         <>
-          <SectionHeading
-            title="Produits en stock"
-            count={filteredProducts.length}
-          />
-          {/* Grille de cartes produits (remplace l'ancien tableau / liste) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+          {/* Grille catalogue : 2 colonnes mobile, 3 tablette, 4 desktop */}
+          <ProductGrid>
             {filteredProducts.map((product) => {
               const status = getStockStatus(product);
               return (

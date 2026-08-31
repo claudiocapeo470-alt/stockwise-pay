@@ -121,10 +121,11 @@ export default function Stocks() {
           primary={<AddProductDialog />}
         />
 
-        {filteredProducts.length > 0 && (
-          <SectionHeading title="Produits en stock" count={filteredProducts.length} className="!mt-0 !mb-3" />
-        )}
       </StickyTop>
+
+      {filteredProducts.length > 0 && (
+        <SectionHeading title="Produits en stock" count={filteredProducts.length} className="!mt-4 !mb-3" />
+      )}
 
       {/* Products */}
       {filteredProducts.length === 0 ? (

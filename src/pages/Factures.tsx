@@ -109,6 +109,7 @@ export default function Factures() {
 
 
 
+      <StickyTop>
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
         <Card className="border-border/60">
@@ -161,6 +162,7 @@ export default function Factures() {
         ) : undefined}
         primary={<Button onClick={() => navigate('/app/factures/new')} className="h-11 px-5 rounded-xl gap-2"><Plus className="h-4 w-4" /><span>Nouvelle Facture</span></Button>}
       />
+      </StickyTop>
 
 
       {/* Content */}

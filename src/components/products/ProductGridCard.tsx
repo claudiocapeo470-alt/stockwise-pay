@@ -57,9 +57,8 @@ export function ProductGridCard({
           : undefined
       }
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all",
-        onClick &&
-          "cursor-pointer hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm",
+        onClick && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
     >

@@ -95,12 +95,13 @@ export default function Livraisons() {
         {/* Filtres centrés */}
         <FilterPills filters={filters} value={statusFilter} onChange={setStatusFilter} />
 
-        <SectionHeading
-          title="Détails des livraisons"
-          count={filtered.length}
-          className="!mt-0 !mb-3"
-        />
       </StickyTop>
+
+      <SectionHeading
+        title="Détails des livraisons"
+        count={filtered.length}
+        className="!mt-4 !mb-3"
+      />
 
 
       {/* Liste minimaliste unifiée */}

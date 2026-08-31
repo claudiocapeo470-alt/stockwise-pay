@@ -63,7 +63,7 @@ export function SectionHeading({
   className?: string;
 }) {
   return (
-    <div className={cn("relative mt-12 sm:mt-16 mb-5 flex items-center justify-center gap-2", className)}>
+    <div className={cn("relative mt-5 sm:mt-6 mb-3 flex items-center justify-center gap-2", className)}>
       <h2 className="text-[15px] sm:text-base font-semibold tracking-tight leading-none truncate text-center">
         {title}
       </h2>
@@ -85,11 +85,12 @@ export function StickyTop({ children, className }: { children: ReactNode; classN
   return (
     <div
       className={cn(
-        "sticky z-30 bg-background/95 backdrop-blur-xl",
+        "sticky z-30 bg-background",
         // déborde des paddings du conteneur de page pour couvrir toute la largeur
         "-mx-3 sm:-mx-5 md:-mx-6 lg:-mx-10 xl:-mx-12 px-3 sm:px-5 md:px-6 lg:px-10 xl:px-12",
-        "-mt-3 sm:-mt-5 md:-mt-6 pt-3 sm:pt-5 md:pt-6 pb-1",
-        "border-b border-border/40 space-y-4",
+        // collé à l'en-tête : aucun espace vide au-dessus des KPI
+        "-mt-3 sm:-mt-5 md:-mt-6 pt-2 sm:pt-3 pb-2",
+        "border-b border-border/40 space-y-3",
         className,
       )}
       style={{ top: "var(--app-header-h)" }}

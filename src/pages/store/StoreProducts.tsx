@@ -584,20 +584,20 @@ export default function StoreProducts() {
               </Button>
             </CardContent></Card>
           ) : (
-            <ListShell>
+            <ProductGrid>
               {filteredOnline.map((sp: any) => (
-                <ListRow
+                <ProductGridCard
                   key={sp.id}
-                  leading={<ListAvatar src={sp.products?.image_url} alt={sp.products?.name} icon={<Globe className="h-5 w-5" />} tone="primary" />}
-                  title={sp.products?.name || '—'}
-                  badge={<ListBadge className="bg-success/10 text-success">Publié</ListBadge>}
-                  subtitle={sp.products?.category || 'Sans catégorie'}
-                  value={sp.online_price?.toLocaleString('de-DE')}
-                  hint="XOF"
+                  image={sp.products?.image_url}
+                  name={sp.products?.name || '—'}
+                  badge={<span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold text-success shadow-sm">Publié</span>}
+                  meta={<ProductMeta icon={<Tag className="h-3 w-3" />}>{sp.products?.category || 'Sans catégorie'}</ProductMeta>}
+                  price={<>{sp.online_price?.toLocaleString('de-DE')}<span className="ml-1 text-[11px] font-normal text-muted-foreground">XOF</span></>}
+                  onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}
                   actions={
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Actions">
+                        <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full bg-background/90 shadow-sm" aria-label="Actions">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -623,7 +623,7 @@ export default function StoreProducts() {
                   }
                 />
               ))}
-            </ListShell>
+            </ProductGrid>
           )}
         </>
       ) : (

@@ -63,13 +63,13 @@ export function ProductGridCard({
       )}
     >
       {/* Visuel */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+      <div className="relative aspect-square w-full overflow-hidden bg-muted">
         {image ? (
           <img
             src={image}
             alt={typeof name === "string" ? name : ""}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+            className="h-full w-full object-cover"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">

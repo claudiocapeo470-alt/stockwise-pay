@@ -99,6 +99,7 @@ export default function Paiements() {
 
   return (
     <div className="space-y-5 animate-fade-in">
+      <StickyTop>
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
         <Card>
@@ -178,7 +179,7 @@ export default function Paiements() {
           </SelectContent>
         </Select>
       </div>
-
+      </StickyTop>
 
       {/* Content */}
       {filteredPayments.length === 0 ? (

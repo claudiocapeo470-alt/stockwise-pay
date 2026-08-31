@@ -263,6 +263,7 @@ export default function Ventes() {
 
 
 
+      <StickyTop>
       {/* Stats compactes */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
         <Card>
@@ -309,6 +310,7 @@ export default function Ventes() {
         searchPlaceholder="Rechercher par client ou produit..."
         primary={<AddSaleDialog />}
       />
+      </StickyTop>
 
       {/* Sales grid */}
       {filteredSales.length === 0 ? (

@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -30,7 +30,6 @@ export function PageActionBar({
   className,
 }: PageActionBarProps) {
   const isMobile = useIsMobile();
-  const [searchOpen, setSearchOpen] = useState(false);
   const hasSearch = typeof searchValue === "string" && !!onSearchChange;
 
   if (!isMobile) {

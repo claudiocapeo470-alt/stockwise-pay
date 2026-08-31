@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Package, Search, AlertTriangle, Edit2, Trash2, History, Bell } from "lucide-react";
+import { Package, Search, AlertTriangle, Edit2, Trash2, History, Bell, Layers, Tag } from "lucide-react";
 import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";

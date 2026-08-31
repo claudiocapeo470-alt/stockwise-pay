@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PageActionBar } from "@/components/layout/PageActionBar";
 import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
+import { ProductGrid, ProductGridCard, ProductMeta } from "@/components/products/ProductGridCard";
 
 
 export default function Stocks() {

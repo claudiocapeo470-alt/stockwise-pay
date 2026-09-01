@@ -63,7 +63,7 @@ export function SectionHeading({
   className?: string;
 }) {
   return (
-    <div className={cn("relative mt-5 sm:mt-6 mb-3 flex items-center justify-center gap-2", className)}>
+    <div className={cn("relative mt-4 sm:mt-5 mb-3 flex items-center justify-center gap-2", className)}>
       <h2 className="text-[15px] sm:text-base font-semibold tracking-tight leading-none truncate text-center">
         {title}
       </h2>

@@ -58,7 +58,7 @@ export function PageActionBar({
 
   // Mobile : recherche pleine largeur + bouton d'ajout compact à droite (style SaaS classique)
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("space-y-2.5", className)}>
       <div className="flex items-center gap-2">
         {hasSearch && (
           <div className="relative flex-1 min-w-0">

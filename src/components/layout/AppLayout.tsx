@@ -156,6 +156,24 @@ export function AppLayout({ children }: AppLayoutProps) {
     return () => window.removeEventListener('app-navigate', handler as EventListener);
   }, [navigate]);
 
+  // Mesure la hauteur réelle de l'en-tête (safe-area incluse) : évite tout espace vide
+  // au-dessus des blocs figés (KPI, filtres) des pages.
+  const headerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const apply = () =>
+      document.documentElement.style.setProperty('--app-header-h', `${Math.round(el.getBoundingClientRect().height)}px`);
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    window.addEventListener('resize', apply);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', apply);
+    };
+  }, [loading, user]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -187,7 +205,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         {!isMobile && <AppSidebar />}
         
         <main className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden">
-          <header className="app-safe-header sticky top-0 z-40 min-h-14 sm:min-h-16 bg-background/95 backdrop-blur-xl px-4 sm:px-5 md:px-6 lg:px-10 xl:px-12 flex items-center border-b border-border/40 md:border-transparent">
+          <header ref={headerRef} className="app-safe-header sticky top-0 z-40 min-h-14 sm:min-h-16 bg-background/95 backdrop-blur-xl px-4 sm:px-5 md:px-6 lg:px-10 xl:px-12 flex items-center border-b border-border/40 md:border-transparent">
             <div className="w-full max-w-[1440px] mx-auto flex items-center h-14 sm:h-16">
 
 

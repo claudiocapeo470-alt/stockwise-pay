@@ -156,6 +156,24 @@ export function AppLayout({ children }: AppLayoutProps) {
     return () => window.removeEventListener('app-navigate', handler as EventListener);
   }, [navigate]);
 
+  // Mesure la hauteur réelle de l'en-tête (safe-area incluse) : évite tout espace vide
+  // au-dessus des blocs figés (KPI, filtres) des pages.
+  const headerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const apply = () =>
+      document.documentElement.style.setProperty('--app-header-h', `${Math.round(el.getBoundingClientRect().height)}px`);
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    window.addEventListener('resize', apply);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', apply);
+    };
+  }, [loading, user]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">

@@ -205,7 +205,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         {!isMobile && <AppSidebar />}
         
         <main className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden">
-          <header className="app-safe-header sticky top-0 z-40 min-h-14 sm:min-h-16 bg-background/95 backdrop-blur-xl px-4 sm:px-5 md:px-6 lg:px-10 xl:px-12 flex items-center border-b border-border/40 md:border-transparent">
+          <header ref={headerRef} className="app-safe-header sticky top-0 z-40 min-h-14 sm:min-h-16 bg-background/95 backdrop-blur-xl px-4 sm:px-5 md:px-6 lg:px-10 xl:px-12 flex items-center border-b border-border/40 md:border-transparent">
             <div className="w-full max-w-[1440px] mx-auto flex items-center h-14 sm:h-16">
 
 

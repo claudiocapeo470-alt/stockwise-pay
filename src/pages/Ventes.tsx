@@ -264,6 +264,14 @@ export default function Ventes() {
 
 
       <StickyTop>
+      {/* Barre de recherche + ajout */}
+      <PageActionBar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Rechercher par client ou produit..."
+        primary={<AddSaleDialog />}
+      />
+
       {/* Stats compactes */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
         <Card>
@@ -302,14 +310,6 @@ export default function Ventes() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Toolbar */}
-      <PageActionBar
-        searchValue={searchQuery}
-        onSearchChange={setSearchQuery}
-        searchPlaceholder="Rechercher par client ou produit..."
-        primary={<AddSaleDialog />}
-      />
       </StickyTop>
 
       {/* Sales grid */}

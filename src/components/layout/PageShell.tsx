@@ -89,8 +89,8 @@ export function StickyTop({ children, className }: { children: ReactNode; classN
         // déborde des paddings du conteneur de page pour couvrir toute la largeur
         "-mx-3 sm:-mx-5 md:-mx-6 lg:-mx-10 xl:-mx-12 px-3 sm:px-5 md:px-6 lg:px-10 xl:px-12",
         // collé à l'en-tête : aucun espace vide au-dessus des KPI
-        "-mt-3 sm:-mt-5 md:-mt-6 pt-2 sm:pt-3 pb-2",
-        "border-b border-border/40 space-y-3",
+        "-mt-3 sm:-mt-5 md:-mt-6 pt-1.5 sm:pt-3 pb-3",
+        "border-b border-border/40 shadow-[0_6px_12px_-12px_hsl(var(--foreground)/0.4)] space-y-3",
         className,
       )}
       style={{ top: "var(--app-header-h)" }}

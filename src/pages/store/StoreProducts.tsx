@@ -23,6 +23,7 @@ import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialo
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
 import { PageActionBar } from '@/components/layout/PageActionBar';
+import { ProductGrid, ProductGridCard, ProductMeta } from '@/components/products/ProductGridCard';
 import { SectionHeading } from '@/components/layout/PageShell';
 
 function ProductIcon({ product }: { product: any }) {
@@ -638,51 +639,55 @@ export default function StoreProducts() {
               <p className="text-muted-foreground text-sm">{unpublished.length === 0 ? 'Tous les produits sont publiés' : 'Aucun résultat'}</p>
             </CardContent></Card>
           ) : (
-            <ListShell>
+            <ProductGrid>
               {filteredUnpublished.map(p => (
-                <ListRow
+                <ProductGridCard
                   key={p.id}
-                  leading={<ListAvatar src={p.image_url} alt={p.name} icon={<Package className="h-5 w-5" />} tone="muted" />}
-                  title={p.name}
-                  badge={<ListBadge className={p.quantity > 0 ? "bg-orange-500/10 text-orange-600" : "bg-destructive/10 text-destructive"}>{p.quantity > 0 ? `${p.quantity} en stock` : 'Rupture'}</ListBadge>}
-                  subtitle={p.category || 'Sans catégorie'}
-                  value={p.price?.toLocaleString('de-DE')}
-                  hint="XOF"
+                  image={p.image_url}
+                  name={p.name}
+                  badge={
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold shadow-sm ${p.quantity > 0 ? "bg-orange-500/10 text-orange-600" : "bg-destructive/10 text-destructive"}`}>
+                      {p.quantity > 0 ? `${p.quantity} en stock` : 'Rupture'}
+                    </span>
+                  }
+                  meta={<ProductMeta icon={<Tag className="h-3 w-3" />}>{p.category || 'Sans catégorie'}</ProductMeta>}
+                  price={<>{p.price?.toLocaleString('de-DE')}<span className="ml-1 text-[11px] font-normal text-muted-foreground">XOF</span></>}
+                  onClick={() => publishOne(p)}
                   actions={
-                    <>
-                      <Button
-                        size="sm"
-                        className="h-9 rounded-full gap-1.5 px-3"
-                        disabled={publishingId === p.id}
-                        onClick={() => publishOne(p)}
-                      >
-                        {publishingId === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Globe className="h-4 w-4" />}
-                        <span className="hidden sm:inline">Publier</span>
-                      </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Actions">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-52 rounded-2xl">
-                          <DropdownMenuItem className="gap-2.5 rounded-xl" onClick={() => publishOne(p)}>
-                            <Globe className="h-4 w-4 text-primary" /> Publier en ligne
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="gap-2.5 rounded-xl text-destructive focus:text-destructive"
-                            onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
-                          >
-                            <Trash2 className="h-4 w-4" /> Supprimer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full bg-background/90 shadow-sm" aria-label="Actions">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-52 rounded-2xl">
+                        <DropdownMenuItem className="gap-2.5 rounded-xl" onClick={() => publishOne(p)}>
+                          <Globe className="h-4 w-4 text-primary" /> Publier en ligne
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="gap-2.5 rounded-xl text-destructive focus:text-destructive"
+                          onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
+                        >
+                          <Trash2 className="h-4 w-4" /> Supprimer
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  }
+                  footer={
+                    <Button
+                      size="sm"
+                      className="mt-2 h-9 w-full rounded-xl gap-1.5"
+                      disabled={publishingId === p.id}
+                      onClick={(e) => { e.stopPropagation(); publishOne(p); }}
+                    >
+                      {publishingId === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Globe className="h-4 w-4" />}
+                      Publier
+                    </Button>
                   }
                 />
               ))}
-            </ListShell>
+            </ProductGrid>
           )}
         </>
       )}

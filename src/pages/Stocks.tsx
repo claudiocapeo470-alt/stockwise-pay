@@ -176,25 +176,26 @@ export default function Stocks() {
                   actions={
                     <>
                       <Button
-                        variant="secondary"
+                        variant="ghost"
                         size="icon"
                         onClick={() => handleEditProduct(product)}
-                        className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur hover:bg-background"
+                        className="h-8 w-8 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
                         aria-label="Modifier"
                       >
-                        <Edit2 className="h-3.5 w-3.5" />
+                        <Edit2 className="h-4 w-4" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
-                            variant="secondary"
+                            variant="ghost"
                             size="icon"
-                            className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
+                            className="h-8 w-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                             aria-label="Supprimer"
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
+
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>

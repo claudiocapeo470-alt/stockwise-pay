@@ -68,7 +68,7 @@ export default function Stocks() {
 
 
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-3 animate-fade-in">
       <StickyTop>
         {/* 1. Recherche + ajout */}
         <PageActionBar
@@ -118,7 +118,7 @@ export default function Stocks() {
 
         {/* 3. Actions secondaires sous les blocs KPI */}
         <SegmentRow>
-          <Button variant="outline" onClick={() => setShowMovements(true)} className="gap-1.5">
+          <Button variant="outline" size="sm" onClick={() => setShowMovements(true)} className="gap-1.5 h-9 rounded-xl">
             <History className="h-4 w-4 shrink-0" /> Mouvements
           </Button>
           <ImportProductsDialog />

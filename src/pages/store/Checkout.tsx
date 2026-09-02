@@ -6,7 +6,7 @@
  * ============================================================
  */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -14,6 +14,8 @@ import {
   CreditCard, MessageCircle, Loader2,
 } from "lucide-react";
 import { PhoneInput } from "@/components/ui/phone-input";
+import StorePixels from "@/components/store/StorePixels";
+import { trackPixelEvent } from "@/lib/pixels";
 
 interface CartItem {
   id: string; name: string; price: number; quantity: number;
@@ -66,6 +68,18 @@ export default function Checkout() {
   }, [store, subtotal]);
   const total = subtotal + deliveryFee;
 
+  // InitiateCheckout dès l'affichage de la page de paiement
+  const checkoutTracked = useRef(false);
+  useEffect(() => {
+    if (checkoutTracked.current || !store || cart.length === 0) return;
+    checkoutTracked.current = true;
+    trackPixelEvent("InitiateCheckout", {
+      content_ids: cart.map(i => i.id),
+      value: total,
+      quantity: cart.reduce((s, i) => s + i.quantity, 0),
+    });
+  }, [store, cart, total]);
+
   const color = store?.primary_color || "#16a34a";
 
   const handleSubmit = async () => {
@@ -99,6 +113,12 @@ export default function Checkout() {
     });
     setSubmitting(false);
     if (error) { alert("Erreur: " + error.message); return; }
+    trackPixelEvent("Purchase", {
+      content_ids: cart.map(i => i.id),
+      value: total,
+      quantity: cart.reduce((s, i) => s + i.quantity, 0),
+      order_id: orderNumber,
+    });
     setSuccess(orderNumber);
     localStorage.removeItem(`cart-${slug}`);
   };
@@ -180,6 +200,7 @@ export default function Checkout() {
   // ─── CHECKOUT PRINCIPAL ───────────────────────────────────────────
   return (
     <div className="min-h-screen w-full bg-gray-50 overflow-x-hidden" style={{ fontFamily: "Inter, sans-serif" }}>
+      <StorePixels storeId={store.id} color={color} />
       <style>{`
         html, body { overflow-x: hidden; max-width: 100vw; }
         .ck-input { transition: border-color .2s, box-shadow .2s; }

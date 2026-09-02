@@ -13,9 +13,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Save, Eye, Rocket, Copy, Check, Link2, Store, Palette,
-  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Tags, Settings2,
+  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Tags, Settings2, Megaphone,
 } from "lucide-react";
 import CategoryManager from "@/components/store/CategoryManager";
+import PixelSettings from "@/components/store/PixelSettings";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
@@ -28,12 +29,13 @@ const COLOR_PALETTE = [
   { name: "Noir", value: "#111827" }, { name: "Lime", value: "#65a30d" },
 ];
 
-// 4 étapes : Identité, Design, Catégories, Contact
+// 5 étapes : Identité, Design, Catégories, Contact, Marketing
 const STEPS = [
   { id: 1, title: "Identité", icon: Store, desc: "Nom et URL de votre boutique" },
   { id: 2, title: "Design", icon: Palette, desc: "Couleur et bannière" },
   { id: 3, title: "Catégories", icon: Tags, desc: "Catégories de la boutique" },
   { id: 4, title: "Contact", icon: Phone, desc: "Coordonnées et options" },
+  { id: 5, title: "Marketing & Pixels", icon: Megaphone, desc: "Suivi publicitaire de la boutique" },
 ];
 
 const MAX_BANNER_SIZE = 3 * 1024 * 1024; // 3 MB
@@ -475,6 +477,19 @@ export default function StoreConfig() {
               </div>
             </>
           )}
+
+          {/* ÉTAPE 5 — MARKETING & PIXELS */}
+          {currentStep === 5 && (
+            <>
+              <div className="flex items-center gap-2 pb-2.5 border-b border-border">
+                <Megaphone className="h-4 w-4 text-primary" />
+                <h2 className="text-sm sm:text-base font-bold">Marketing & Pixels</h2>
+              </div>
+              <PixelSettings shopId={store?.id} />
+            </>
+          )}
+
+
 
             </div>
           </div>

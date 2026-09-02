@@ -38,8 +38,8 @@ export default function Dashboard() {
         <div className="shrink-0 rounded-3xl bg-primary text-primary-foreground px-5 py-5 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="h-12 w-12 rounded-full bg-primary-foreground/15 overflow-hidden shrink-0 flex items-center justify-center">
-              {(settings?.logo_url || company?.logo_url) ? (
-                <img src={settings?.logo_url || company?.logo_url || ''} alt={companyName} className="h-full w-full object-cover" />
+              {(settings?.logo_url || company?.logo_url || profile?.avatar_url) ? (
+                <img src={settings?.logo_url || company?.logo_url || profile?.avatar_url || ''} alt={companyName} className="h-full w-full object-cover" />
               ) : (
                 <span className="text-base font-bold">{companyName.charAt(0).toUpperCase()}</span>
               )}

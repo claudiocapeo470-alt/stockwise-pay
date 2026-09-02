@@ -1390,6 +1390,59 @@ export type Database = {
           },
         ]
       }
+      shop_pixels: {
+        Row: {
+          created_at: string
+          enabled_platforms: Json
+          ga4_measurement_id: string | null
+          google_ads_conversion_id: string | null
+          id: string
+          linkedin_partner_id: string | null
+          meta_pixel_id: string | null
+          shop_id: string
+          snapchat_pixel_id: string | null
+          tiktok_pixel_id: string | null
+          updated_at: string
+          x_pixel_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          enabled_platforms?: Json
+          ga4_measurement_id?: string | null
+          google_ads_conversion_id?: string | null
+          id?: string
+          linkedin_partner_id?: string | null
+          meta_pixel_id?: string | null
+          shop_id: string
+          snapchat_pixel_id?: string | null
+          tiktok_pixel_id?: string | null
+          updated_at?: string
+          x_pixel_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          enabled_platforms?: Json
+          ga4_measurement_id?: string | null
+          google_ads_conversion_id?: string | null
+          id?: string
+          linkedin_partner_id?: string | null
+          meta_pixel_id?: string | null
+          shop_id?: string
+          snapchat_pixel_id?: string | null
+          tiktok_pixel_id?: string | null
+          updated_at?: string
+          x_pixel_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_pixels_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: true
+            referencedRelation: "online_store"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stock_movements: {
         Row: {
           created_at: string

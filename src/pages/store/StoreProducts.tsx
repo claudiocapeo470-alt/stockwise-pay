@@ -577,7 +577,7 @@ export default function StoreProducts() {
                   actions={
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full bg-background/90 shadow-sm" aria-label="Actions">
+                        <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur" aria-label="Actions">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -635,7 +635,7 @@ export default function StoreProducts() {
                   actions={
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full bg-background/90 shadow-sm" aria-label="Actions">
+                        <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur" aria-label="Actions">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>

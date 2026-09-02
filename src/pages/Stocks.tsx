@@ -172,7 +172,7 @@ export default function Stocks() {
                         variant="secondary"
                         size="icon"
                         onClick={() => handleEditProduct(product)}
-                        className="h-8 w-8 rounded-full bg-background/90 shadow-sm hover:bg-background"
+                        className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur hover:bg-background"
                         aria-label="Modifier"
                       >
                         <Edit2 className="h-3.5 w-3.5" />
@@ -182,7 +182,7 @@ export default function Stocks() {
                           <Button
                             variant="secondary"
                             size="icon"
-                            className="h-8 w-8 rounded-full bg-background/90 text-destructive shadow-sm hover:bg-background"
+                            className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
                             aria-label="Supprimer"
                           >
                             <Trash2 className="h-3.5 w-3.5" />

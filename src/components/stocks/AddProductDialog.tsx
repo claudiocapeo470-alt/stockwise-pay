@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, ChevronLeft, ChevronRight, Package, Tag, Image as ImageIcon } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
-import { EmojiPicker, IconColorPicker, getIconBgStyle } from "./EmojiPicker";
+
 import { MultiImageUpload } from "./MultiImageUpload";
 import { DialogHead } from "@/components/ui/dialog-head";
 
@@ -16,7 +16,7 @@ const UNITS = ["pièce", "kg", "L", "m"];
 export function AddProductDialog() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
-  const [showPicker, setShowPicker] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "", description: "", price: "", quantity: "", min_quantity: "10",
     category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue",
@@ -43,7 +43,7 @@ export function AddProductDialog() {
 
   const resetForm = () => {
     setFormData({ name: "", description: "", price: "", quantity: "", min_quantity: "10", category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue", image_url: null, unit: "pièce", extraImages: [] });
-    setStep(1); setShowPicker(false); setOpen(false);
+    setStep(1); setOpen(false);
   };
 
   const canNext = (s: number) => {
@@ -53,7 +53,7 @@ export function AddProductDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setStep(1); setShowPicker(false); } }}>
+    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setStep(1); }}>
       <DialogTrigger asChild>
         <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-medium hover:shadow-glow transition-all duration-300 rounded-xl h-11 px-5 flex items-center justify-center gap-2 group">
           <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />

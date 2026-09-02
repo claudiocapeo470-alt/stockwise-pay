@@ -160,14 +160,14 @@ export default function Stocks() {
                   name={product.name}
                   onClick={() => handleEditProduct(product)}
                   badge={
-                    <Badge variant={status.variant} className="text-[10px] shadow-sm">{status.label}</Badge>
+                    <Badge variant={status.variant} className="text-[9px] px-1.5 py-0 shadow-sm">{status.label}</Badge>
                   }
                   meta={
                     <>
-                      <ProductMeta icon={<Layers className="h-3 w-3" />}>
+                      <ProductMeta icon={<Layers className="h-2.5 w-2.5" />}>
                         {product.quantity}/{product.min_quantity}
                       </ProductMeta>
-                      <ProductMeta icon={<Tag className="h-3 w-3" />} className="max-w-[60%]">
+                      <ProductMeta icon={<Tag className="h-2.5 w-2.5" />} className="max-w-[55%]">
                         {product.category || (product.sku ? `SKU ${product.sku}` : "Sans catégorie")}
                       </ProductMeta>
                     </>
@@ -179,20 +179,20 @@ export default function Stocks() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleEditProduct(product)}
-                        className="h-8 w-8 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                        className="h-7 w-7 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
                         aria-label="Modifier"
                       >
-                        <Edit2 className="h-4 w-4" />
+                        <Edit2 className="h-3.5 w-3.5" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                            className="h-7 w-7 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                             aria-label="Supprimer"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </AlertDialogTrigger>
 

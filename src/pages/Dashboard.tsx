@@ -44,10 +44,11 @@ export default function Dashboard() {
                 <span className="text-base font-bold">{companyName.charAt(0).toUpperCase()}</span>
               )}
             </div>
-            <div className="flex items-baseline gap-2 min-w-0">
-              <p className="text-sm opacity-80 leading-none shrink-0">Bienvenue</p>
-              <h2 className="text-xl font-bold leading-none truncate">{companyName}</h2>
+            <div className="min-w-0">
+              <p className="text-sm opacity-80 leading-none">Bienvenue</p>
+              <h2 className="text-xl font-bold leading-tight truncate mt-1">{companyName}</h2>
             </div>
+
           </div>
 
           <div className="grid grid-cols-2 gap-2.5 mt-4">

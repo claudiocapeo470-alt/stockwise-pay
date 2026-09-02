@@ -28,12 +28,13 @@ const COLOR_PALETTE = [
   { name: "Noir", value: "#111827" }, { name: "Lime", value: "#65a30d" },
 ];
 
-// 4 étapes : Identité, Design, Catégories, Contact
+// 5 étapes : Identité, Design, Catégories, Contact, Marketing
 const STEPS = [
   { id: 1, title: "Identité", icon: Store, desc: "Nom et URL de votre boutique" },
   { id: 2, title: "Design", icon: Palette, desc: "Couleur et bannière" },
   { id: 3, title: "Catégories", icon: Tags, desc: "Catégories de la boutique" },
   { id: 4, title: "Contact", icon: Phone, desc: "Coordonnées et options" },
+  { id: 5, title: "Marketing & Pixels", icon: Megaphone, desc: "Suivi publicitaire de la boutique" },
 ];
 
 const MAX_BANNER_SIZE = 3 * 1024 * 1024; // 3 MB

@@ -27,7 +27,7 @@ export function StoreHeader({
   const { store, togglePublish } = useOnlineStore();
   const { settings } = useCompanySettings();
   const { company } = useCompany();
-  const companyLogo = settings?.logo_url || company?.logo_url || store?.banner_url || null;
+  const companyLogo = settings?.logo_url || company?.logo_url || profile?.avatar_url || null;
   const [copied, setCopied] = useState(false);
 
 

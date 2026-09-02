@@ -8,7 +8,7 @@ import { Package } from "lucide-react";
  */
 export function ProductGrid({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4", className)}>
+    <div className={cn("grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3", className)}>
       {children}
     </div>
   );
@@ -60,7 +60,7 @@ export function ProductGridCard({
           : undefined
       }
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-3xl bg-card ring-1 ring-border/50 shadow-[0_1px_2px_hsl(var(--foreground)/0.04)] transition-all duration-200 hover:ring-border hover:shadow-[0_8px_24px_-12px_hsl(var(--foreground)/0.25)] active:scale-[0.99]",
+        "group relative flex flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-border/50 shadow-[0_1px_2px_hsl(var(--foreground)/0.04)] transition-all duration-200 hover:ring-border hover:shadow-[0_6px_18px_-10px_hsl(var(--foreground)/0.18)] active:scale-[0.99]",
         onClick && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
@@ -76,7 +76,7 @@ export function ProductGridCard({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Package className="h-8 w-8 text-muted-foreground/30" />
+            <Package className="h-6 w-6 text-muted-foreground/30" />
           </div>
         )}
 
@@ -84,15 +84,15 @@ export function ProductGridCard({
       </div>
 
       {/* Infos */}
-      <div className="flex flex-1 flex-col gap-0.5 px-3 pb-2.5 pt-2.5">
-        <p className="truncate text-[13px] sm:text-sm font-semibold leading-tight">{name}</p>
+      <div className="flex flex-1 flex-col gap-0 px-2 pb-2 pt-2">
+        <p className="truncate text-[12px] sm:text-[13px] font-semibold leading-tight">{name}</p>
         {meta && (
-          <div className="flex flex-wrap items-center gap-x-3 text-[11px] text-muted-foreground">{meta}</div>
+          <div className="flex flex-wrap items-center gap-x-2 text-[10px] sm:text-[11px] text-muted-foreground">{meta}</div>
         )}
 
         {(price || priceAction) && (
-          <div className="mt-1.5 flex items-center justify-between gap-2">
-            {price && <p className="text-[15px] sm:text-base font-bold tabular-nums leading-none truncate">{price}</p>}
+          <div className="mt-1 flex items-center justify-between gap-1.5">
+            {price && <p className="text-[13px] sm:text-[14px] font-bold tabular-nums leading-none truncate">{price}</p>}
             {priceAction && (
               <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
                 {priceAction}
@@ -103,7 +103,7 @@ export function ProductGridCard({
 
         {actions && (
           <div
-            className="mt-2 flex items-center justify-end gap-1"
+            className="mt-1 flex items-center justify-end gap-0.5"
             onClick={(e) => e.stopPropagation()}
           >
             {actions}
@@ -121,7 +121,7 @@ export function ProductGridCard({
 /** Petite info secondaire (icône + texte) dans la zone meta d'une carte produit. */
 export function ProductMeta({ icon, children, className }: { icon?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-1 truncate", className)}>
+    <span className={cn("inline-flex items-center gap-0.5 truncate", className)}>
       {icon}
       {children}
     </span>

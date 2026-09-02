@@ -120,7 +120,6 @@ export default function Livraisons() {
       <SectionHeading
         title="Détails des livraisons"
         count={filtered.length}
-        className="!mt-4 !mb-3"
       />
 
 

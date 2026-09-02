@@ -126,7 +126,7 @@ export default function Stocks() {
       </StickyTop>
 
 
-      <SectionHeading title="Produits en stock" count={filteredProducts.length} className="!mt-4 !mb-3" />
+      <SectionHeading title="Produits en stock" count={filteredProducts.length} />
 
 
       {/* Products */}

@@ -165,38 +165,25 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
 
   const totalSteps = 4;
 
-  const StepIndicator = () => (
-    <div className="flex items-center justify-center gap-1.5 mb-4">
-      {[1, 2, 3, 4].map(s => (
-        <div key={s} className="flex items-center gap-1.5">
-          <button
-            onClick={() => setStep(s)}
-            className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
-              s < step ? "bg-success text-success-foreground" : s === step ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {s < step ? <Check className="h-3 w-3" /> : s}
-          </button>
-          {s < totalSteps && <div className={`w-5 h-0.5 ${s < step ? "bg-success" : "bg-muted"}`} />}
-        </div>
-      ))}
-    </div>
-  );
-
   const stepLabels = ["Infos", "Photos", "Description", "Avis"];
+  const stepIcons = [Info, ImageIcon, FileText, Star];
+  const StepIcon = stepIcons[step - 1];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-lg">
-            Modifier — {product?.name}
-          </DialogTitle>
-          <DialogDescription>Étape {step}: {stepLabels[step - 1]}</DialogDescription>
-        </DialogHeader>
-        <StepIndicator />
+      <DialogContent className="max-w-sm sm:max-w-lg p-0 gap-0 overflow-hidden flex flex-col max-h-[92dvh]">
+        <div className="px-5 pt-5 pb-4 border-b border-border">
+          <DialogHead
+            icon={StepIcon}
+            title={product?.name || "Modifier le produit"}
+            subtitle={`Étape ${step} sur ${totalSteps} · ${stepLabels[step - 1]}`}
+            step={step}
+            totalSteps={totalSteps}
+          />
+        </div>
 
-        <div className="space-y-4 min-h-[200px]">
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3.5">
+
           {/* Step 1: Basic info */}
           {step === 1 && (
             <>
@@ -364,7 +351,7 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
           )}
         </div>
 
-        <div className="flex justify-between pt-3 border-t border-border">
+        <div className="flex justify-between items-center gap-2 px-5 py-3 border-t border-border bg-background">
           <div>
             {step > 1 ? (
               <Button variant="outline" size="sm" onClick={() => setStep(s => s - 1)} className="gap-1">
@@ -381,7 +368,7 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
               </Button>
             ) : (
               <Button size="sm" onClick={handleSave} disabled={saving}>
-                {saving ? "Sauvegarde..." : "💾 Enregistrer tout"}
+                {saving ? "Sauvegarde..." : "Enregistrer"}
               </Button>
             )}
           </div>

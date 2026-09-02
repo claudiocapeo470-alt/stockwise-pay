@@ -116,11 +116,12 @@ export function ListAvatar({
   } as const;
 
   return (
-    <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center overflow-hidden", tones[tone], className)}>
+    <div className={cn("h-10 w-10 sm:h-11 sm:w-11 rounded-full flex items-center justify-center overflow-hidden", tones[tone], className)}>
       {src ? <img src={src} alt={alt || ""} loading="lazy" className="h-full w-full object-cover" /> : icon}
     </div>
   );
 }
+
 
 /** Badge de statut minimaliste. */
 export function ListBadge({ className, children }: { className?: string; children: ReactNode }) {

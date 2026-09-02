@@ -30,6 +30,7 @@ const paymentMethods = [
 
 export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
   const [open, setOpen] = useState(false)
+  const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
     customer_first_name: "",
     customer_last_name: "",
@@ -84,12 +85,13 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
       notes: ""
     })
     
+    setStep(1)
     setOpen(false)
     onSuccess?.()
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setStep(1) }}>
       <DialogTrigger asChild>
         <Button
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-medium hover:shadow-glow transition-all duration-300 rounded-xl h-auto py-3 px-4 sm:py-3.5 sm:px-5 flex items-center justify-center gap-2 sm:gap-3 group"
@@ -103,234 +105,185 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto rounded-2xl">
-        <DialogHead icon={CreditCard} title="Nouveau paiement" subtitle="Client, montant et échéance" />
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Client Information */}
-          <div className="space-y-3">
-            <h3 className="text-base font-medium text-foreground border-b border-border pb-1.5">
-              Informations client
-            </h3>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName" className="text-foreground">
-                  Prénom *
-                </Label>
-                <Input
-                  id="firstName"
-                  value={formData.customer_first_name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, customer_first_name: e.target.value }))}
-                  placeholder="Prénom du client"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="lastName" className="text-foreground">
-                  Nom *
-                </Label>
-                <Input
-                  id="lastName"
-                  value={formData.customer_last_name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, customer_last_name: e.target.value }))}
-                  placeholder="Nom du client"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="text-foreground">
-                Téléphone
-              </Label>
-              <PhoneInput
-                id="phone"
-                value={formData.customer_phone}
-                onChange={(value) => setFormData(prev => ({ ...prev, customer_phone: value || "" }))}
-                placeholder="Numéro de téléphone"
-              />
-            </div>
-          </div>
+      <DialogContent className="max-w-sm sm:max-w-md max-h-[88vh] flex flex-col gap-0 p-4 sm:p-6 rounded-2xl">
+        <DialogHead
+          icon={step === 1 ? Receipt : CreditCard}
+          title={step === 1 ? "Nouveau paiement · Client" : "Nouveau paiement · Montant"}
+          subtitle={step === 1 ? "Identité et téléphone" : "Méthode, montants et dates"}
+          step={step}
+          totalSteps={2}
+        />
 
-          {/* Payment Information */}
-          <div className="space-y-3">
-            <h3 className="text-base font-medium text-foreground border-b border-border pb-1.5">
-              Détails du paiement
-            </h3>
-            
-            <div className="space-y-2">
-              <Label htmlFor="method" className="text-foreground">
-                Méthode de paiement *
-              </Label>
-              <Select value={formData.payment_method} onValueChange={(value) => setFormData(prev => ({ ...prev, payment_method: value as Payment['payment_method'] }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une méthode" />
-                </SelectTrigger>
-                <SelectContent>
-                  {paymentMethods.map((method) => (
-                    <SelectItem key={method.value} value={method.value}>
-                      {method.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="totalAmount" className="text-foreground">
-                  Montant total *
-                </Label>
-                <Input
-                  id="totalAmount"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.total_amount}
-                  onChange={(e) => setFormData(prev => ({ ...prev, total_amount: e.target.value }))}
-                  placeholder="0"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="paidAmount" className="text-foreground">
-                  Montant payé
-                </Label>
-                <Input
-                  id="paidAmount"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.paid_amount}
-                  onChange={(e) => setFormData(prev => ({ ...prev, paid_amount: e.target.value }))}
-                  placeholder="0"
-                />
-              </div>
-            </div>
-            
-            {formData.total_amount && (
-              <div className="p-3 bg-surface-secondary rounded-lg border border-border text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Reste à payer:</span>
-                  <span className={cn(
-                    "font-semibold text-lg",
-                    remainingAmount > 0 ? "text-warning" : "text-success"
-                  )}>
-                    {new Intl.NumberFormat('de-DE', {
-                      style: 'currency',
-                      currency: 'XOF',
-                      minimumFractionDigits: 0
-                    }).format(remainingAmount).replace('XOF', 'CFA')}
-                  </span>
+        <form onSubmit={handleSubmit} className="flex flex-col min-h-0 flex-1">
+          <div className="flex-1 overflow-y-auto -mx-1 px-1 space-y-3 [&_label]:text-[13px] [&_label]:font-medium [&_input]:h-11 [&_input]:rounded-xl [&_button[role=combobox]]:h-11 [&_button[role=combobox]]:rounded-xl">
+            {step === 1 && (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="firstName">Prénom *</Label>
+                    <Input
+                      id="firstName"
+                      value={formData.customer_first_name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, customer_first_name: e.target.value }))}
+                      placeholder="Prénom"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="lastName">Nom *</Label>
+                    <Input
+                      id="lastName"
+                      value={formData.customer_last_name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, customer_last_name: e.target.value }))}
+                      placeholder="Nom"
+                    />
+                  </div>
                 </div>
-                
-                <div className="mt-2 text-sm text-muted-foreground">
-                  État: {
-                    remainingAmount === 0 ? (
-                      <span className="text-success font-medium">Payé</span>
-                    ) : Number(formData.paid_amount) > 0 ? (
-                      <span className="text-warning font-medium">Partiellement payé</span>
-                    ) : (
-                      <span className="text-muted-foreground font-medium">En attente</span>
-                    )
-                  }
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone">Téléphone</Label>
+                  <PhoneInput
+                    id="phone"
+                    value={formData.customer_phone}
+                    onChange={(value) => setFormData(prev => ({ ...prev, customer_phone: value || "" }))}
+                    placeholder="Numéro de téléphone"
+                  />
                 </div>
-              </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="notes">Notes (optionnel)</Label>
+                  <Textarea
+                    id="notes"
+                    value={formData.notes}
+                    onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                    placeholder="Informations complémentaires..."
+                    rows={2}
+                    className="rounded-xl"
+                  />
+                </div>
+              </>
+            )}
+
+            {step === 2 && (
+              <>
+                <div className="space-y-1.5">
+                  <Label htmlFor="method">Méthode de paiement *</Label>
+                  <Select value={formData.payment_method} onValueChange={(value) => setFormData(prev => ({ ...prev, payment_method: value as Payment['payment_method'] }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner une méthode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {paymentMethods.map((method) => (
+                        <SelectItem key={method.value} value={method.value}>{method.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="totalAmount">Montant total *</Label>
+                    <Input
+                      id="totalAmount"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.total_amount}
+                      onChange={(e) => setFormData(prev => ({ ...prev, total_amount: e.target.value }))}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="paidAmount">Montant payé</Label>
+                    <Input
+                      id="paidAmount"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.paid_amount}
+                      onChange={(e) => setFormData(prev => ({ ...prev, paid_amount: e.target.value }))}
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+
+                {formData.total_amount && (
+                  <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-3 py-2.5 text-sm">
+                    <span className="text-muted-foreground">Reste à payer</span>
+                    <span className={cn("font-semibold tabular-nums", remainingAmount > 0 ? "text-warning" : "text-success")}>
+                      {new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(remainingAmount).replace(/\u202f|\u00a0/g, ' ')} FCFA
+                    </span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label>Date du paiement</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full h-11 rounded-xl justify-start text-left font-normal text-[13px] px-3">
+                          <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                          <span className="truncate">{format(formData.payment_date, "dd MMM yyyy", { locale: fr })}</span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.payment_date}
+                          onSelect={(date) => date && setFormData(prev => ({ ...prev, payment_date: date }))}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Date d'échéance</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn("w-full h-11 rounded-xl justify-start text-left font-normal text-[13px] px-3", !formData.due_date && "text-muted-foreground")}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                          <span className="truncate">{formData.due_date ? format(formData.due_date, "dd MMM yyyy", { locale: fr }) : "Optionnel"}</span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.due_date || undefined}
+                          onSelect={(date) => setFormData(prev => ({ ...prev, due_date: date || null }))}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+              </>
             )}
           </div>
 
-          {/* Dates */}
-          <div className="space-y-3">
-            <h3 className="text-base font-medium text-foreground border-b border-border pb-1.5">
-              Dates
-            </h3>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-foreground">Date du paiement</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !formData.payment_date && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.payment_date ? format(formData.payment_date, "PPP", { locale: fr }) : "Sélectionner une date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={formData.payment_date}
-                      onSelect={(date) => date && setFormData(prev => ({ ...prev, payment_date: date }))}
-                      initialFocus
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-foreground">Date d'échéance</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !formData.due_date && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.due_date ? format(formData.due_date, "PPP", { locale: fr }) : "Optionnel"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={formData.due_date || undefined}
-                      onSelect={(date) => setFormData(prev => ({ ...prev, due_date: date || null }))}
-                      initialFocus
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div className="space-y-2">
-            <Label htmlFor="notes" className="text-foreground">
-              Notes (optionnel)
-            </Label>
-            <Textarea
-              id="notes"
-              value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Informations complémentaires..."
-              rows={3}
-            />
-          </div>
-
-          {/* Actions */}
-          <div className="flex justify-end gap-2 pt-2 border-t border-border">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Annuler
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={addPayment.isPending}
-              className="bg-success hover:bg-success/90"
-            >
-              {addPayment.isPending ? "Enregistrement..." : "Enregistrer"}
-            </Button>
+          <div className="flex items-center gap-2 pt-3 mt-1 border-t border-border/60 [&_button]:h-11 [&_button]:flex-1 [&_button]:rounded-xl">
+            {step === 1 ? (
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Annuler</Button>
+            ) : (
+              <Button type="button" variant="outline" onClick={() => setStep(1)}>Précédent</Button>
+            )}
+            {step === 1 ? (
+              <Button
+                type="button"
+                onClick={() => setStep(2)}
+                disabled={!formData.customer_first_name.trim() || !formData.customer_last_name.trim()}
+              >
+                Suivant
+              </Button>
+            ) : (
+              <Button type="submit" disabled={addPayment.isPending || !formData.payment_method || !formData.total_amount}>
+                {addPayment.isPending ? "Enregistrement..." : "Enregistrer"}
+              </Button>
+            )}
           </div>
         </form>
       </DialogContent>

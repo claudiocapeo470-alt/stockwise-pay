@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, ChevronLeft, ChevronRight, Package, Tag, Image as ImageIcon } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
-import { EmojiPicker, IconColorPicker, getIconBgStyle } from "./EmojiPicker";
+
 import { MultiImageUpload } from "./MultiImageUpload";
 import { DialogHead } from "@/components/ui/dialog-head";
 
@@ -16,7 +16,7 @@ const UNITS = ["pièce", "kg", "L", "m"];
 export function AddProductDialog() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
-  const [showPicker, setShowPicker] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "", description: "", price: "", quantity: "", min_quantity: "10",
     category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue",
@@ -43,7 +43,7 @@ export function AddProductDialog() {
 
   const resetForm = () => {
     setFormData({ name: "", description: "", price: "", quantity: "", min_quantity: "10", category: "", sku: "", icon_emoji: "📦", icon_bg_color: "bg-blue", image_url: null, unit: "pièce", extraImages: [] });
-    setStep(1); setShowPicker(false); setOpen(false);
+    setStep(1); setOpen(false);
   };
 
   const canNext = (s: number) => {
@@ -53,14 +53,14 @@ export function AddProductDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setStep(1); setShowPicker(false); } }}>
+    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setStep(1); }}>
       <DialogTrigger asChild>
         <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-medium hover:shadow-glow transition-all duration-300 rounded-xl h-11 px-5 flex items-center justify-center gap-2 group">
           <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
           <span className="font-semibold text-sm">Ajouter produit</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-sm sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl">
+      <DialogContent className="max-w-sm sm:max-w-lg max-h-[88vh] flex flex-col gap-0 p-4 sm:p-6 rounded-2xl">
         <DialogHead
           icon={step === 1 ? Package : step === 2 ? Tag : ImageIcon}
           title={step === 1 ? "Nouveau produit · Identité" : step === 2 ? "Nouveau produit · Prix & stock" : "Nouveau produit · Média"}
@@ -69,24 +69,24 @@ export function AddProductDialog() {
           totalSteps={3}
         />
 
-        <div className="space-y-3">
+        <div className="flex-1 overflow-y-auto -mx-1 px-1 space-y-3 [&_label]:text-[13px] [&_label]:font-medium [&_input]:h-11 [&_input]:rounded-xl [&_button[role=combobox]]:h-11 [&_button[role=combobox]]:rounded-xl">
           {step === 1 && (
             <>
-              <div><Label>Nom du produit *</Label><Input value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="Ex: iPhone 14" /></div>
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label>Catégorie</Label><Input value={formData.category} onChange={e => setFormData(p => ({ ...p, category: e.target.value }))} placeholder="Ex: Électronique" /></div>
-                <div><Label>SKU</Label><Input value={formData.sku} onChange={e => setFormData(p => ({ ...p, sku: e.target.value }))} placeholder="Optionnel" /></div>
+              <div className="space-y-1.5"><Label>Nom du produit *</Label><Input value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="Ex: iPhone 14" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5"><Label>Catégorie</Label><Input value={formData.category} onChange={e => setFormData(p => ({ ...p, category: e.target.value }))} placeholder="Ex: Électronique" /></div>
+                <div className="space-y-1.5"><Label>SKU</Label><Input value={formData.sku} onChange={e => setFormData(p => ({ ...p, sku: e.target.value }))} placeholder="Optionnel" /></div>
               </div>
             </>
           )}
           {step === 2 && (
             <>
-              <div><Label>Prix de vente (FCFA) *</Label><Input type="number" value={formData.price} onChange={e => setFormData(p => ({ ...p, price: e.target.value }))} min="0" step="0.01" placeholder="0" /></div>
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label>Quantité en stock *</Label><Input type="number" value={formData.quantity} onChange={e => setFormData(p => ({ ...p, quantity: e.target.value }))} min="0" placeholder="0" /></div>
-                <div><Label>Stock minimum</Label><Input type="number" value={formData.min_quantity} onChange={e => setFormData(p => ({ ...p, min_quantity: e.target.value }))} min="0" placeholder="10" /></div>
+              <div className="space-y-1.5"><Label>Prix de vente (FCFA) *</Label><Input type="number" value={formData.price} onChange={e => setFormData(p => ({ ...p, price: e.target.value }))} min="0" step="0.01" placeholder="0" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5"><Label>Quantité en stock *</Label><Input type="number" value={formData.quantity} onChange={e => setFormData(p => ({ ...p, quantity: e.target.value }))} min="0" placeholder="0" /></div>
+                <div className="space-y-1.5"><Label>Stock minimum</Label><Input type="number" value={formData.min_quantity} onChange={e => setFormData(p => ({ ...p, min_quantity: e.target.value }))} min="0" placeholder="10" /></div>
               </div>
-              <div>
+              <div className="space-y-1.5">
                 <Label>Unité</Label>
                 <Select value={formData.unit} onValueChange={v => setFormData(p => ({ ...p, unit: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
@@ -97,25 +97,7 @@ export function AddProductDialog() {
           )}
           {step === 3 && (
             <>
-              {/* Icon picker */}
-              <div className="space-y-2">
-                <Label>Icône du produit (optionnel)</Label>
-                <div className="flex items-center gap-3">
-                  <button type="button" onClick={() => setShowPicker(!showPicker)} className="h-14 w-14 rounded-xl flex items-center justify-center border-2 border-dashed border-border hover:border-primary transition-colors" style={getIconBgStyle(formData.icon_bg_color)}>
-                    <span className="text-3xl">{formData.icon_emoji}</span>
-                  </button>
-                  <p className="text-sm text-muted-foreground">Cliquez pour changer l'icône</p>
-                </div>
-                {showPicker && (
-                  <div className="space-y-3 p-3 border border-border rounded-xl bg-card">
-                    <EmojiPicker value={formData.icon_emoji} onChange={v => setFormData(p => ({ ...p, icon_emoji: v }))} />
-                    <IconColorPicker value={formData.icon_bg_color} onChange={v => setFormData(p => ({ ...p, icon_bg_color: v }))} />
-                  </div>
-                )}
-              </div>
-
-              {/* Multiple images */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label>Photos du produit (optionnel)</Label>
                 <MultiImageUpload
                   images={formData.extraImages}
@@ -124,14 +106,13 @@ export function AddProductDialog() {
                 />
               </div>
 
-              {/* Description */}
-              <div><Label>Description (optionnel)</Label><Textarea value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Description détaillée du produit..." rows={3} /></div>
+              <div className="space-y-1.5"><Label>Description (optionnel)</Label><Textarea value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Description détaillée du produit..." rows={3} className="rounded-xl" /></div>
             </>
           )}
         </div>
-        <div className="flex justify-between pt-3">
-          <div>{step > 1 ? <Button variant="outline" onClick={() => setStep(s => s - 1)} className="gap-1"><ChevronLeft className="h-4 w-4" /> Précédent</Button> : <Button variant="outline" onClick={() => setOpen(false)}>Annuler</Button>}</div>
-          <div>{step < 3 ? <Button onClick={() => setStep(s => s + 1)} disabled={!canNext(step)} className="gap-1">Suivant <ChevronRight className="h-4 w-4" /></Button> : <Button onClick={handleSubmit} disabled={addProduct.isPending}>{addProduct.isPending ? "Ajout..." : "Enregistrer"}</Button>}</div>
+        <div className="flex items-center gap-2 pt-3 mt-1 border-t border-border/60 [&_button]:h-11 [&_button]:flex-1 [&_button]:rounded-xl">
+          {step > 1 ? <Button variant="outline" onClick={() => setStep(s => s - 1)} className="gap-1"><ChevronLeft className="h-4 w-4" /> Précédent</Button> : <Button variant="outline" onClick={() => setOpen(false)}>Annuler</Button>}
+          {step < 3 ? <Button onClick={() => setStep(s => s + 1)} disabled={!canNext(step)} className="gap-1">Suivant <ChevronRight className="h-4 w-4" /></Button> : <Button onClick={handleSubmit} disabled={addProduct.isPending}>{addProduct.isPending ? "Ajout..." : "Enregistrer"}</Button>}
         </div>
       </DialogContent>
     </Dialog>

@@ -478,6 +478,19 @@ export default function StoreConfig() {
             </>
           )}
 
+          {/* ÉTAPE 5 — MARKETING & PIXELS */}
+          {currentStep === 5 && (
+            <>
+              <div className="flex items-center gap-2 pb-2.5 border-b border-border">
+                <Megaphone className="h-4 w-4 text-primary" />
+                <h2 className="text-sm sm:text-base font-bold">Marketing & Pixels</h2>
+              </div>
+              <PixelSettings shopId={store?.id} />
+            </>
+          )}
+
+
+
             </div>
           </div>
 

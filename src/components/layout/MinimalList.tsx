@@ -135,7 +135,7 @@ export function ListBadge({ className, children }: { className?: string; childre
 /** État vide homogène pour toutes les vues. */
 export function ListEmpty({ icon, title, description }: { icon?: ReactNode; title: string; description?: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-card py-14 px-6 text-center">
+    <div className="py-14 px-6 text-center">
       {icon && <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">{icon}</div>}
       <p className="font-semibold text-foreground">{title}</p>
       {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}

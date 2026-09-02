@@ -575,32 +575,28 @@ export default function StoreProducts() {
                   price={<>{sp.online_price?.toLocaleString('de-DE')}<span className="ml-1 text-[11px] font-normal text-muted-foreground">XOF</span></>}
                   onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}
                   actions={
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur" aria-label="Actions">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-52 rounded-2xl">
-                        <DropdownMenuItem className="gap-2.5 rounded-xl" onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}>
-                          <Edit2 className="h-4 w-4 text-primary" /> Modifier
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="gap-2.5 rounded-xl"
-                          onClick={async () => { try { await removeProduct.mutateAsync(sp.product_id); toast.success('Retiré de la boutique'); } catch (e: any) { toast.error(e.message); } }}
-                        >
-                          <Globe className="h-4 w-4 text-orange-500" /> Retirer de la boutique
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="gap-2.5 rounded-xl text-destructive focus:text-destructive"
-                          onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
-                        >
-                          <Trash2 className="h-4 w-4" /> Supprimer
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <>
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        aria-label="Modifier"
+                        className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur hover:bg-background"
+                        onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}
+                      >
+                        <Edit2 className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        aria-label="Supprimer"
+                        className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
+                        onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </>
                   }
+
                 />
               ))}
             </ProductGrid>

@@ -116,14 +116,14 @@ export default function Stocks() {
           </Card>
         </div>
 
-        {/* 3. Actions secondaires sous les blocs KPI (même style que les onglets) */}
+        {/* 3. Actions secondaires sous les blocs KPI */}
         <div className="flex items-center justify-center">
           <div className="inline-flex items-center gap-1.5">
             <button
               onClick={() => setShowMovements(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-foreground/70 px-3 py-1 text-[12px] font-semibold text-foreground transition-all hover:bg-foreground hover:text-background"
+              className="inline-flex items-center gap-1 rounded-full border border-foreground/60 px-2.5 py-0.5 text-[11px] font-semibold text-foreground transition-all hover:bg-foreground hover:text-background"
             >
-              <History className="h-3.5 w-3.5 shrink-0" /> Mouvements
+              <History className="h-3 w-3 shrink-0" /> Mouvements
             </button>
 
             <ImportProductsDialog />

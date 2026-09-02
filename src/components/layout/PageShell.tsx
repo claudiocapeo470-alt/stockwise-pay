@@ -88,8 +88,8 @@ export function StickyTop({ children, className }: { children: ReactNode; classN
         "sticky z-30 bg-background",
         // déborde des paddings du conteneur de page pour couvrir toute la largeur
         "-mx-3 sm:-mx-5 md:-mx-6 lg:-mx-10 xl:-mx-12 px-3 sm:px-5 md:px-6 lg:px-10 xl:px-12",
-        // collé à l'en-tête : aucun espace vide au-dessus du premier élément
-        "-mt-3 sm:-mt-5 md:-mt-6 pt-0 pb-2.5",
+        // Le conteneur des pages concernées commence à pt-0 : aucun correctif négatif par breakpoint.
+        "pt-0 pb-2.5",
         "border-b border-border/40 shadow-[0_6px_12px_-12px_hsl(var(--foreground)/0.4)] space-y-2.5",
         className,
       )}

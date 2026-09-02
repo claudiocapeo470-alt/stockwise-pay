@@ -532,29 +532,29 @@ export default function StoreProducts() {
 
 
       <div className="flex items-center justify-center">
-        <div className="inline-flex items-center gap-1 rounded-full border border-border bg-card p-0.5 shadow-sm">
+        <div className="inline-flex items-center gap-1.5">
           <button
             onClick={() => setTab("online")}
-            className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${tab === "online" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"}`}
+            className={`rounded-full border px-3 py-1 text-[12px] font-semibold transition-all ${tab === "online" ? "border-foreground bg-foreground text-background" : "border-foreground/70 text-foreground hover:bg-foreground/5"}`}
           >
-            En ligne <span className={`rounded-full px-1.5 text-[10px] font-bold ${tab === "online" ? "bg-primary-foreground/20" : "bg-muted"}`}>{storeProducts.length}</span>
+            En ligne · {storeProducts.length}
           </button>
           <button
             onClick={() => setTab("stock")}
-            className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${tab === "stock" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"}`}
+            className={`rounded-full border px-3 py-1 text-[12px] font-semibold transition-all ${tab === "stock" ? "border-foreground bg-foreground text-background" : "border-foreground/70 text-foreground hover:bg-foreground/5"}`}
           >
-            Stock <span className={`rounded-full px-1.5 text-[10px] font-bold ${tab === "stock" ? "bg-primary-foreground/20" : "bg-muted"}`}>{unpublished.length}</span>
+            Stock · {unpublished.length}
           </button>
         </div>
-
       </div>
 
       {tab === "online" ? (
         <>
           <SectionHeading
-            title="Produits en ligne"
+            title="Catalogue de la boutique"
             count={filteredOnline.length}
           />
+
           {filteredOnline.length === 0 ? (
             <Card><CardContent className="py-10 sm:py-14 text-center space-y-3">
               <Globe className="h-10 w-10 mx-auto text-muted-foreground/30" />

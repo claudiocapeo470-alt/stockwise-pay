@@ -70,19 +70,14 @@ export default function Stocks() {
   return (
     <div className="space-y-5 animate-fade-in">
       <StickyTop>
-        {/* Toolbar */}
+        {/* 1. Recherche + ajout */}
         <PageActionBar
           searchValue={searchQuery}
           onSearchChange={setSearchQuery}
           searchPlaceholder="Rechercher un produit..."
-          segments={
-            <>
-              <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm rounded-xl"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
-              <ImportProductsDialog />
-            </>
-          }
           primary={<AddProductDialog />}
         />
+
 
         {/* Stats */}
         <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>

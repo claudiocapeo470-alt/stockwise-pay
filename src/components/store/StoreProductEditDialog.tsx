@@ -131,28 +131,17 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
     }
   };
 
-  const handleAddReview = async () => {
-    if (!newReview.customer_name.trim() || !newReview.comment.trim()) {
-      toast.error("Nom et commentaire requis");
-      return;
-    }
+  const handleToggleReview = async (reviewId: string, approved: boolean) => {
     try {
-      const { data, error } = await supabase.from('store_reviews').insert({
-        store_id: storeId,
-        product_id: product.id,
-        customer_name: newReview.customer_name,
-        comment: newReview.comment,
-        rating: newReview.rating,
-        is_approved: true,
-      }).select().single();
+      const { error } = await supabase.from('store_reviews').update({ is_approved: approved }).eq('id', reviewId);
       if (error) throw error;
-      setReviews(prev => [data, ...prev]);
-      setNewReview({ customer_name: "", comment: "", rating: 5, photo_url: "" });
-      toast.success("Avis ajouté");
+      setReviews(prev => prev.map(r => r.id === reviewId ? { ...r, is_approved: approved } : r));
+      toast.success(approved ? "Avis affiché en boutique" : "Avis masqué");
     } catch {
-      toast.error("Erreur lors de l'ajout");
+      toast.error("Erreur");
     }
   };
+
 
   const handleDeleteReview = async (reviewId: string) => {
     try {

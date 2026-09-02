@@ -70,10 +70,31 @@ const loadImage = (url: string): Promise<HTMLImageElement | null> =>
     }
   });
 
+/** Ouvre le PDF dans une iframe cachée pour l'impression (URL propre). */
+const printPdf = (doc: jsPDF) => {
+  const dataUri = doc.output('datauristring');
+  const existing = document.getElementById('stx-print-frame');
+  if (existing) existing.remove();
+  const iframe = document.createElement('iframe');
+  iframe.id = 'stx-print-frame';
+  iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  iframe.src = dataUri;
+  document.body.appendChild(iframe);
+  iframe.onload = () => {
+    try {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+    } catch {
+      window.open(dataUri, '_blank')?.focus();
+    }
+  };
+};
+
 export const exportInvoiceToPDF = async (
   invoice: Invoice,
   items: InvoiceItem[],
-  currencySymbol: string = 'FCFA'
+  currencySymbol: string = 'FCFA',
+  action: 'download' | 'print' = 'download'
 ) => {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageWidth = doc.internal.pageSize.width;
@@ -340,6 +361,9 @@ export const exportInvoiceToPDF = async (
     { align: 'right' }
   );
 
-  const filename = `${invoice.document_type}-${invoice.document_number}.pdf`;
-  doc.save(filename);
+  if (action === 'print') {
+    printPdf(doc);
+    return;
+  }
+  doc.save(`${invoice.document_type}-${invoice.document_number}.pdf`);
 };

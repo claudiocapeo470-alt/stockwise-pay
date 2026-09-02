@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { DialogHead } from "@/components/ui/dialog-head";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ChevronLeft, ChevronRight, Check, Star, Trash2, Plus, User, AlertTriangle, EyeOff } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Star, Trash2, Plus, User, AlertTriangle, EyeOff, Info, Image as ImageIcon, FileText } from "lucide-react";
 import { MultiImageUpload } from "@/components/stocks/MultiImageUpload";
 import { RichTextEditor } from "@/components/stocks/RichTextEditor";
 import { supabase } from "@/integrations/supabase/client";

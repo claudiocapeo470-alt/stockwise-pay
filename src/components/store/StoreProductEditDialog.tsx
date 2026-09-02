@@ -49,7 +49,6 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
 
   // Step 4: Reviews/Testimonials
   const [reviews, setReviews] = useState<any[]>([]);
-  const [newReview, setNewReview] = useState({ customer_name: "", comment: "", rating: 5, photo_url: "" });
 
   // Load images & reviews
   useEffect(() => {

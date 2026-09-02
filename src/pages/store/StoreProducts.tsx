@@ -18,7 +18,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes, Store, MoreVertical } from 'lucide-react';
+import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes, Store, MoreVertical, ChevronLeft, ChevronRight } from 'lucide-react';
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
@@ -29,8 +29,8 @@ import { SectionHeading } from '@/components/layout/PageShell';
 function ProductIcon({ product }: { product: any }) {
   if (product.image_url) return <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover" />;
   return (
-    <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-lg">
-      {product.icon_emoji || '📦'}
+    <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+      <Package className="h-4 w-4 text-muted-foreground" />
     </div>
   );
 }
@@ -282,7 +282,7 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
                       {c.image_url ? (
                         <img src={c.image_url} alt={c.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full bg-muted flex items-center justify-center text-2xl">📦</div>
+                        <div className="w-full h-full bg-muted flex items-center justify-center"><Package className="h-6 w-6 text-muted-foreground/60" /></div>
                       )}
                       <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-1.5 py-1.5">
                         <p className="text-[11px] font-medium text-white truncate text-center">{c.name}</p>
@@ -346,42 +346,20 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
             </div>
           )}
 
-          {/* ─── Prévisualisation LIVE de la carte produit ─── */}
-          {(images.length > 0 || form.name || form.price) && (
-            <div className="mt-4 border border-dashed border-primary/30 rounded-2xl p-3 bg-primary/5">
-              <p className="text-[11px] font-semibold text-primary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <ImageIcon className="h-3 w-3" /> Aperçu carte produit
-              </p>
-              <div className="max-w-[200px] mx-auto bg-card rounded-xl border border-border overflow-hidden shadow-soft">
-                <div className="aspect-square bg-muted flex items-center justify-center">
-                  {images[0] ? (
-                    <img src={images[0]} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <Package className="h-10 w-10 text-muted-foreground/40" />
-                  )}
-                </div>
-                <div className="p-2.5 space-y-1">
-                  <p className="text-sm font-medium truncate">{form.name || 'Nom du produit'}</p>
-                  <p className="text-xs text-muted-foreground truncate">{form.category || 'Catégorie'}</p>
-                  <p className="text-sm font-bold">{form.price ? Number(form.price).toLocaleString('de-DE') : '0'} XOF</p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
 
         {/* Footer actions */}
         <div className="flex-shrink-0 flex items-center justify-between gap-2 px-5 py-3 border-t border-border bg-background">
           {step > 1 ? (
-            <Button variant="outline" size="sm" onClick={() => setStep(s => s - 1)} className="rounded-full">← Précédent</Button>
+            <Button variant="outline" size="sm" onClick={() => setStep(s => s - 1)} className="rounded-full gap-1"><ChevronLeft className="h-4 w-4" />Précédent</Button>
           ) : (
             <Button variant="outline" size="sm" onClick={onClose} className="rounded-full">Annuler</Button>
           )}
           {step < totalSteps ? (
-            <Button size="sm" onClick={() => setStep(s => s + 1)} disabled={!canNext} className="rounded-full">Suivant →</Button>
+            <Button size="sm" onClick={() => setStep(s => s + 1)} disabled={!canNext} className="rounded-full gap-1">Suivant<ChevronRight className="h-4 w-4" /></Button>
           ) : (
-            <Button size="sm" onClick={handleCreate} disabled={saving} className="rounded-full">{saving ? 'Création...' : '✓ Créer et publier'}</Button>
+            <Button size="sm" onClick={handleCreate} disabled={saving} className="rounded-full">{saving ? 'Création...' : 'Créer et publier'}</Button>
           )}
         </div>
       </SheetContent>
@@ -398,7 +376,7 @@ function OnlineProductCard({ sp, onEdit, onUnpublish, onDelete }: { sp: any; onE
         <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0 bg-muted" />
       ) : (
         <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center text-2xl shrink-0">
-          {product?.icon_emoji || '📦'}
+          <Package className="h-5 w-5 text-muted-foreground" />
         </div>
       )}
       <div className="flex-1 min-w-0">
@@ -433,7 +411,7 @@ function StockProductCard({ product, selected, onToggle, onlinePrice, onPriceCha
         {product.image_url ? (
           <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0 bg-muted" />
         ) : (
-          <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center text-2xl shrink-0">{product.icon_emoji || '📦'}</div>
+          <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center shrink-0"><Package className="h-6 w-6 text-muted-foreground" /></div>
         )}
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-[15px] leading-tight truncate">{product.name}</p>

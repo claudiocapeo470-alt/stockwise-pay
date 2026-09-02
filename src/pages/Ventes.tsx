@@ -212,6 +212,8 @@ export default function Ventes() {
               <ListRow
                 key={sale.id}
                 onClick={() => { setSelectedSale(sale); setShowSaleDetails(true); }}
+                onSwipeDelete={() => handleDelete(sale.id)}
+
                 leading={
                   <ListAvatar
                     src={(sale.products as any)?.image_url}

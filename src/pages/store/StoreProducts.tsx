@@ -573,31 +573,34 @@ export default function StoreProducts() {
                   badge={<span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold text-success shadow-sm">Publié</span>}
                   meta={<ProductMeta icon={<Tag className="h-3 w-3" />}>{sp.products?.category || 'Sans catégorie'}</ProductMeta>}
                   price={<>{sp.online_price?.toLocaleString('de-DE')}<span className="ml-1 text-[11px] font-normal text-muted-foreground">XOF</span></>}
+                  priceAction={
+                    <button
+                      onClick={async () => {
+                        try {
+                          await removeProduct.mutateAsync(sp.product_id);
+                          toast.success('Produit dépublié');
+                        } catch (e: any) { toast.error(e.message); }
+                      }}
+                      className="rounded-full border border-foreground px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background"
+                    >
+                      Dépublier
+                    </button>
+                  }
                   onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}
                   actions={
-                    <>
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        aria-label="Modifier"
-                        className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur hover:bg-background"
-                        onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}
-                      >
-                        <Edit2 className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        aria-label="Supprimer"
-                        className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
-                        onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      aria-label="Supprimer"
+                      className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
+                      onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
                   }
 
                 />
+
               ))}
             </ProductGrid>
           )}

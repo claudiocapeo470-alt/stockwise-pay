@@ -38,10 +38,20 @@ export default function Livraisons() {
   const [assignDialog, setAssignDialog] = useState<string | null>(null);
   const [selectedDriver, setSelectedDriver] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
   const drivers = members.filter(m => m.role?.name === 'Livreur' && m.is_active);
 
-  const filtered = statusFilter === 'all' ? deliveries : deliveries.filter(d => d.status === statusFilter);
+  const byStatus = statusFilter === 'all' ? deliveries : deliveries.filter(d => d.status === statusFilter);
+  const q = search.trim().toLowerCase();
+  const filtered = !q
+    ? byStatus
+    : byStatus.filter(d =>
+        [d.order?.customer_name, d.order?.order_number, d.order?.customer_address,
+         d.driver ? `${d.driver.first_name} ${d.driver.last_name || ''}` : '']
+          .some(v => (v || '').toLowerCase().includes(q)),
+      );
+
 
   const stats = {
     assigned: deliveries.filter(d => d.status === 'assigned').length,

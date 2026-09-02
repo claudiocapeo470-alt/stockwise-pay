@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { useOnlineStore } from "@/hooks/useOnlineStore";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { useCompany } from "@/hooks/useCompany";
+
 import { toast } from "sonner";
 import { Save, Store, Rocket, Copy, Check, Loader2 } from "lucide-react";
 
@@ -22,7 +25,11 @@ export function StoreHeader({
   saving = false,
 }: StoreHeaderProps) {
   const { store, togglePublish } = useOnlineStore();
+  const { settings } = useCompanySettings();
+  const { company } = useCompany();
+  const companyLogo = settings?.logo_url || company?.logo_url || store?.banner_url || null;
   const [copied, setCopied] = useState(false);
+
 
   const storeUrl = store?.slug ? `${PUBLIC_DOMAIN}/boutique/${store.slug}` : "";
   // Smart link : les crawlers (WhatsApp, Facebook, LinkedIn...) reçoivent
@@ -49,15 +56,16 @@ export function StoreHeader({
 
   return (
     <div className="w-full rounded-2xl bg-card border border-border/60 p-4 space-y-3">
-      {/* Bienvenue + identité boutique */}
+      {/* Bienvenue + identité entreprise */}
       <div className="flex items-center gap-3">
         <div className="h-12 w-12 rounded-full overflow-hidden bg-muted flex items-center justify-center shrink-0">
-          {store?.banner_url ? (
-            <img src={store.banner_url} alt={store?.name || "Boutique"} className="h-full w-full object-cover" />
+          {companyLogo ? (
+            <img src={companyLogo} alt={store?.name || "Entreprise"} className="h-full w-full object-cover" />
           ) : (
             <Store className="h-5 w-5 text-muted-foreground" />
           )}
         </div>
+
         <div className="min-w-0 flex-1">
           <p className="text-xs text-muted-foreground leading-none">Bienvenue,</p>
           <p className="text-lg font-bold truncate leading-tight mt-1">{store?.name || title}</p>

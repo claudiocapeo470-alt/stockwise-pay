@@ -116,14 +116,14 @@ export default function Stocks() {
           </Card>
         </div>
 
-        {/* 3. Actions secondaires sous les blocs KPI (même style que les onglets) */}
+        {/* 3. Actions secondaires sous les blocs KPI */}
         <div className="flex items-center justify-center">
           <div className="inline-flex items-center gap-1.5">
             <button
               onClick={() => setShowMovements(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-foreground/70 px-3 py-1 text-[12px] font-semibold text-foreground transition-all hover:bg-foreground hover:text-background"
+              className="inline-flex items-center gap-1 rounded-full border border-foreground/60 px-2.5 py-0.5 text-[11px] font-semibold text-foreground transition-all hover:bg-foreground hover:text-background"
             >
-              <History className="h-3.5 w-3.5 shrink-0" /> Mouvements
+              <History className="h-3 w-3 shrink-0" /> Mouvements
             </button>
 
             <ImportProductsDialog />
@@ -160,7 +160,7 @@ export default function Stocks() {
                   name={product.name}
                   onClick={() => handleEditProduct(product)}
                   badge={
-                    <Badge variant={status.variant} className="text-[9px] px-1.5 py-0 shadow-sm">{status.label}</Badge>
+                    <Badge variant={status.variant} className="text-[8px] px-1 py-0">{status.label}</Badge>
                   }
                   meta={
                     <>
@@ -179,20 +179,20 @@ export default function Stocks() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleEditProduct(product)}
-                        className="h-7 w-7 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                        className="h-6 w-6 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
                         aria-label="Modifier"
                       >
-                        <Edit2 className="h-3.5 w-3.5" />
+                        <Edit2 className="h-3 w-3" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                            className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                             aria-label="Supprimer"
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <Trash2 className="h-3 w-3" />
                           </Button>
                         </AlertDialogTrigger>
 

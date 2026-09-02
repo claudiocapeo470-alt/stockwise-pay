@@ -62,185 +62,66 @@ export default function Ventes() {
     documentType: 'facture' | 'proforma' = 'facture',
     action: 'download' | 'print' = 'download'
   ) => {
-    const doc = new jsPDF({ format: 'a4', unit: 'mm' });
-    const pageWidth = 210;
-    const margin = 20;
-    let y = 20;
-
-    const docTitle = documentType === 'facture' ? 'FACTURE' : 'PROFORMA';
+    const docTitle = documentType === 'facture' ? 'Facture' : 'Proforma';
     const docPrefix = documentType === 'facture' ? 'FAC' : 'PRO';
 
-    if (logoUrl) {
-      try {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        await new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = reject;
-          img.src = logoUrl;
-        });
-        doc.addImage(img, 'PNG', margin, y, 35, 35);
-      } catch (e) {
-        console.log("Logo non chargé");
-      }
-    }
-
-    doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(17, 24, 39);
-    doc.text(companyName.toUpperCase(), pageWidth - margin, y + 8, { align: 'right' });
-
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(107, 114, 128);
-    y += 15;
-    if (companyAddress) { doc.text(companyAddress, pageWidth - margin, y, { align: 'right' }); y += 5; }
-    if (companyCity) { doc.text(companyCity, pageWidth - margin, y, { align: 'right' }); y += 5; }
-    if (companyPhone) { doc.text(`Tél: ${companyPhone}`, pageWidth - margin, y, { align: 'right' }); y += 5; }
-    if (companyEmail) { doc.text(companyEmail, pageWidth - margin, y, { align: 'right' }); y += 5; }
-
-    y = 70;
-    doc.setFontSize(28);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(0, 102, 204);
-    doc.text(docTitle, margin, y);
-
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(75, 85, 99);
-    y += 12;
-    doc.text(`N° ${docPrefix}-${sale.id.slice(0, 8).toUpperCase()}`, margin, y);
-    doc.text(`Date: ${format(new Date(sale.sale_date), "dd MMMM yyyy", { locale: fr })}`, pageWidth - margin, y, { align: 'right' });
-
-    y += 10;
-    doc.setDrawColor(0, 102, 204);
-    doc.setLineWidth(0.5);
-    doc.line(margin, y, pageWidth - margin, y);
-
-    y += 15;
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(17, 24, 39);
-    doc.text("CLIENT", margin, y);
-
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(75, 85, 99);
-    y += 8;
-    doc.text(sale.customer_name || "Client anonyme", margin, y);
-    if (sale.customer_phone) { y += 6; doc.text(`Tél: ${sale.customer_phone}`, margin, y); }
-
-    y += 20;
-    doc.setFillColor(17, 24, 39);
-    doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
-
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(255, 255, 255);
-    doc.text("DESCRIPTION", margin + 5, y + 7);
-    doc.text("QTÉ", 100, y + 7, { align: 'center' });
-    doc.text("PRIX UNIT.", 135, y + 7, { align: 'center' });
-    doc.text("TOTAL", pageWidth - margin - 5, y + 7, { align: 'right' });
-
-    // Build line items (multi-product support)
-    const lineItems: Array<{ name: string; qty: number; unitPrice: number; total: number }> = [];
-
+    // Construction des lignes (support multi-produits)
+    const rawItems: Array<{ name: string; qty: number; unitPrice: number; total: number }> = [];
     if (sale.items && Array.isArray(sale.items) && sale.items.length > 0) {
       sale.items.forEach((item: any) => {
-        lineItems.push({
+        rawItems.push({
           name: item.name || item.product_name || 'Article',
           qty: item.quantity || 1,
           unitPrice: item.unit_price || item.price || 0,
-          total: item.total_amount || (item.quantity * item.price) || 0,
+          total: item.total_amount || (item.quantity * (item.unit_price || item.price || 0)) || 0,
         });
       });
     } else {
-      const productName = sale.products?.name
-        || products.find(p => p.id === sale.product_id)?.name
-        || 'Produit';
-      lineItems.push({
-        name: productName,
+      rawItems.push({
+        name: sale.products?.name || products.find(p => p.id === sale.product_id)?.name || 'Produit',
         qty: sale.quantity,
         unitPrice: sale.unit_price,
         total: sale.total_amount,
       });
     }
 
-    lineItems.forEach((item, index) => {
-      y += 10;
-      const bgColor = index % 2 === 0 ? [249, 250, 251] : [255, 255, 255];
-      doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-      doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
+    const items = rawItems.map((it, i) => ({
+      description: it.name,
+      quantity: it.qty,
+      unit_price: it.unitPrice,
+      tax_rate: 0,
+      discount_rate: 0,
+      subtotal: it.total,
+      tax_amount: 0,
+      total_amount: it.total,
+      position: i,
+    }));
 
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(55, 65, 81);
-      let displayName = item.name;
-      const maxNameWidth = 65;
-      if (doc.getTextWidth(displayName) > maxNameWidth) {
-        while (doc.getTextWidth(displayName + '...') > maxNameWidth && displayName.length > 0) {
-          displayName = displayName.slice(0, -1);
-        }
-        displayName += '...';
-      }
-      doc.text(displayName, margin + 5, y + 7);
-      doc.text(item.qty.toString(), 100, y + 7, { align: 'center' });
-      doc.text(`${item.unitPrice.toLocaleString('de-DE')} FCFA`, 135, y + 7, { align: 'center' });
-      doc.text(`${item.total.toLocaleString('de-DE')} FCFA`, pageWidth - margin - 5, y + 7, { align: 'right' });
-    });
+    const invoiceLike: any = {
+      document_type: documentType === 'facture' ? 'facture' : 'devis',
+      document_number: `${docPrefix}-${sale.id.slice(0, 8).toUpperCase()}`,
+      status: 'paye',
+      issue_date: sale.sale_date,
+      company_name: companyName,
+      company_address: companyAddress,
+      company_city: companyCity,
+      company_phone: companyPhone,
+      company_email: companyEmail,
+      company_logo_url: logoUrl,
+      client_name: sale.customer_name || 'Client anonyme',
+      client_phone: sale.customer_phone || '',
+      subtotal: sale.total_amount,
+      tax_amount: 0,
+      discount_amount: 0,
+      total_amount: sale.total_amount,
+      notes: '',
+      terms: '',
+    };
 
-    y += 20;
-    doc.setDrawColor(229, 231, 235);
-    doc.setLineWidth(0.3);
-    doc.line(120, y, pageWidth - margin, y);
-
-    y += 10;
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(17, 24, 39);
-    doc.text("TOTAL TTC", 120, y);
-    doc.setTextColor(0, 102, 204);
-    doc.text(`${sale.total_amount.toLocaleString('de-DE')} FCFA`, pageWidth - margin, y, { align: 'right' });
-
-    y = 270;
-    doc.setDrawColor(0, 102, 204);
-    doc.setLineWidth(0.3);
-    doc.line(margin, y, pageWidth - margin, y);
-    y += 8;
-    doc.setFontSize(9);
-    doc.setTextColor(107, 114, 128);
-    doc.text("Merci pour votre confiance !", pageWidth / 2, y, { align: 'center' });
-
-    if (action === 'download') {
-      doc.save(`${documentType}_${format(new Date(sale.sale_date), "yyyy-MM-dd")}_${sale.id.slice(0, 8)}.pdf`);
-      toast({ title: `✅ ${docTitle} téléchargée` });
-    } else {
-      // Print via hidden iframe — keeps the URL clean (no blob:lovableproject.com exposed)
-      const dataUri = doc.output('datauristring');
-      let iframe = document.getElementById('stx-print-frame') as HTMLIFrameElement | null;
-      if (iframe) iframe.remove();
-      iframe = document.createElement('iframe');
-      iframe.id = 'stx-print-frame';
-      iframe.style.position = 'fixed';
-      iframe.style.right = '0';
-      iframe.style.bottom = '0';
-      iframe.style.width = '0';
-      iframe.style.height = '0';
-      iframe.style.border = '0';
-      iframe.src = dataUri;
-      document.body.appendChild(iframe);
-      iframe.onload = () => {
-        try {
-          iframe!.contentWindow?.focus();
-          iframe!.contentWindow?.print();
-        } catch (e) {
-          // Fallback: open the PDF in a new tab
-          const win = window.open(dataUri, '_blank');
-          if (win) win.focus();
-        }
-      };
-      toast({ title: `🖨️ Impression ${docTitle}` });
-    }
+    await exportInvoiceToPDF(invoiceLike, items, 'FCFA', action);
+    toast({ title: action === 'download' ? `${docTitle} téléchargée` : `Impression ${docTitle}` });
   };
+
 
   const handleDelete = async (saleId: string) => {
     try {

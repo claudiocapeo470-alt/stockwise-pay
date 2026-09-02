@@ -629,26 +629,28 @@ export default function StoreProducts() {
                   price={<>{p.price?.toLocaleString('de-DE')}<span className="ml-1 text-[11px] font-normal text-muted-foreground">XOF</span></>}
                   onClick={() => publishOne(p)}
                   actions={
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur" aria-label="Actions">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-52 rounded-2xl">
-                        <DropdownMenuItem className="gap-2.5 rounded-xl" onClick={() => publishOne(p)}>
-                          <Globe className="h-4 w-4 text-primary" /> Publier en ligne
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="gap-2.5 rounded-xl text-destructive focus:text-destructive"
-                          onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
-                        >
-                          <Trash2 className="h-4 w-4" /> Supprimer
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <>
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        aria-label="Publier en ligne"
+                        className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur hover:bg-background"
+                        onClick={() => publishOne(p)}
+                      >
+                        <Globe className="h-3.5 w-3.5 text-primary" />
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        aria-label="Supprimer"
+                        className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
+                        onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </>
                   }
+
                   footer={
                     <Button
                       size="sm"

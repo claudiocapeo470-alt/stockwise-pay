@@ -80,18 +80,19 @@ export default function Paiements() {
   if (payments.length === 0) {
     return (
       <div className="space-y-5 animate-fade-in">
-        <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
-          <Card><CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"><div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0"><Receipt className="h-5 w-5 text-primary" /></div><div><p className="text-lg sm:text-2xl font-bold leading-none truncate">0</p><p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Total Paiements</p></div></CardContent></Card>
-          <Card><CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"><div className="h-9 w-9 sm:h-10 sm:w-10 bg-success/10 flex items-center justify-center rounded-xl shrink-0"><CheckCircle className="h-5 w-5 text-success" /></div><div><p className="text-lg sm:text-2xl font-bold leading-none truncate">0</p><p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Payés</p></div></CardContent></Card>
-          <Card><CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"><div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0"><Clock className="h-5 w-5 text-warning" /></div><div><p className="text-lg sm:text-2xl font-bold leading-none truncate">0</p><p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">En attente</p></div></CardContent></Card>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-          <div className="relative flex-1 max-w-md w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input placeholder="Rechercher..." disabled className="pl-10" />
+        <StickyTop>
+          <PageActionBar
+            searchValue={searchTerm}
+            onSearchChange={setSearchTerm}
+            searchPlaceholder="Rechercher par nom ou téléphone..."
+            primary={<AddPaymentDialog />}
+          />
+          <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
+            <Card><CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"><div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 flex items-center justify-center rounded-xl shrink-0"><Receipt className="h-5 w-5 text-primary" /></div><div><p className="text-lg sm:text-2xl font-bold leading-none truncate">0</p><p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Total Paiements</p></div></CardContent></Card>
+            <Card><CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"><div className="h-9 w-9 sm:h-10 sm:w-10 bg-success/10 flex items-center justify-center rounded-xl shrink-0"><CheckCircle className="h-5 w-5 text-success" /></div><div><p className="text-lg sm:text-2xl font-bold leading-none truncate">0</p><p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">Payés</p></div></CardContent></Card>
+            <Card><CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"><div className="h-9 w-9 sm:h-10 sm:w-10 bg-warning/10 flex items-center justify-center rounded-xl shrink-0"><Clock className="h-5 w-5 text-warning" /></div><div><p className="text-lg sm:text-2xl font-bold leading-none truncate">0</p><p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight">En attente</p></div></CardContent></Card>
           </div>
-          <AddPaymentDialog />
-        </div>
+        </StickyTop>
         <EmptyStateCard icon={Receipt} title="Aucun paiement enregistré" description="Commencez par enregistrer votre premier paiement client pour suivre vos encaissements." />
       </div>
     )

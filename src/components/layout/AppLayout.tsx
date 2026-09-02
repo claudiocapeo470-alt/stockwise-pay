@@ -112,6 +112,14 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const isHomePage = location.pathname === '/app' || location.pathname === '/app/';
   const isStorePage = location.pathname.includes('/boutique');
+  const usesFlushListHeader = [
+    '/app/stocks',
+    '/app/ventes',
+    '/app/factures',
+    '/app/devis',
+    '/app/paiements',
+    '/app/livraisons',
+  ].includes(location.pathname);
 
 
   // Pages exclues de l'en-tête centré : Accueil, Caisse, Paramètres + pages d'analyse (titre à gauche)
@@ -279,7 +287,11 @@ export function AppLayout({ children }: AppLayoutProps) {
             )}
             </div>
           </header>
-          <div className={`flex-1 p-3 sm:p-5 md:p-6 lg:px-10 xl:px-12 overflow-x-hidden ${isMobile ? 'pb-24' : 'pb-10'} animate-fade-in`}>
+          <div
+            className={`flex-1 px-3 sm:px-5 md:px-6 lg:px-10 xl:px-12 overflow-x-hidden ${
+              usesFlushListHeader ? 'pt-0' : 'pt-3 sm:pt-5 md:pt-6'
+            } ${isMobile ? 'pb-24' : 'pb-10'} animate-fade-in`}
+          >
             <div className="w-full max-w-[1440px] mx-auto min-w-0">
               {children}
             </div>

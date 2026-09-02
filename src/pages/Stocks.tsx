@@ -13,7 +13,7 @@ import { StockMovementsDialog } from "@/components/stocks/StockMovementsDialog";
 import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { PageActionBar, SegmentRow } from "@/components/layout/PageActionBar";
+import { PageActionBar } from "@/components/layout/PageActionBar";
 import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
 import { ProductGrid, ProductGridCard, ProductMeta } from "@/components/products/ProductGridCard";
 
@@ -116,17 +116,20 @@ export default function Stocks() {
           </Card>
         </div>
 
-        {/* 3. Actions secondaires sous les blocs KPI */}
-        <SegmentRow>
-          <button
-            onClick={() => setShowMovements(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-foreground/70 px-3 py-1 text-[12px] font-semibold text-foreground transition-all hover:bg-foreground/5"
-          >
-            <History className="h-3.5 w-3.5 shrink-0" /> Mouvements
-          </button>
+        {/* 3. Actions secondaires sous les blocs KPI (même style que les onglets) */}
+        <div className="flex items-center justify-center">
+          <div className="inline-flex items-center gap-1.5">
+            <button
+              onClick={() => setShowMovements(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-foreground/70 px-3 py-1 text-[12px] font-semibold text-foreground transition-all hover:bg-foreground hover:text-background"
+            >
+              <History className="h-3.5 w-3.5 shrink-0" /> Mouvements
+            </button>
 
-          <ImportProductsDialog />
-        </SegmentRow>
+            <ImportProductsDialog />
+          </div>
+        </div>
+
 
       </StickyTop>
 
@@ -173,25 +176,26 @@ export default function Stocks() {
                   actions={
                     <>
                       <Button
-                        variant="secondary"
+                        variant="ghost"
                         size="icon"
                         onClick={() => handleEditProduct(product)}
-                        className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur hover:bg-background"
+                        className="h-8 w-8 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
                         aria-label="Modifier"
                       >
-                        <Edit2 className="h-3.5 w-3.5" />
+                        <Edit2 className="h-4 w-4" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
-                            variant="secondary"
+                            variant="ghost"
                             size="icon"
-                            className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
+                            className="h-8 w-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                             aria-label="Supprimer"
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
+
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>

@@ -24,7 +24,7 @@ export function FilterPills({
   return (
     <div className={cn("flex justify-center", className)}>
       <div className="max-w-full overflow-x-auto no-scrollbar">
-        <div className="inline-flex items-center gap-1 rounded-full bg-muted/50 p-1">
+        <div className="inline-flex items-center gap-1.5 py-0.5">
           {filters.map((f) => {
             const active = value === f.key;
             return (
@@ -33,10 +33,10 @@ export function FilterPills({
                 type="button"
                 onClick={() => onChange(f.key)}
                 className={cn(
-                  "shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold whitespace-nowrap transition-all",
+                  "shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-all",
                   active
-                    ? "bg-card text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground",
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-foreground/70 text-foreground hover:bg-foreground/5",
                 )}
               >
                 {f.label}
@@ -44,7 +44,7 @@ export function FilterPills({
                   <span
                     className={cn(
                       "ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold",
-                      active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground",
+                      active ? "bg-background/20 text-background" : "bg-muted text-muted-foreground",
                     )}
                   >
                     {f.count}
@@ -54,6 +54,7 @@ export function FilterPills({
             );
           })}
         </div>
+
       </div>
     </div>
   );

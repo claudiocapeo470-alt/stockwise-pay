@@ -288,9 +288,9 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
           </header>
           <div
-            className={`flex-1 px-3 sm:px-5 md:px-6 lg:px-10 xl:px-12 overflow-x-hidden ${
-              usesFlushListHeader ? 'pt-0' : 'pt-3 sm:pt-5 md:pt-6'
-            } ${isMobile ? 'pb-24' : 'pb-10'} animate-fade-in`}
+            className={`flex-1 px-3 sm:px-5 md:px-6 lg:px-10 xl:px-12 overflow-x-hidden pt-3 sm:pt-5 md:pt-6 ${
+              isMobile ? 'pb-24' : 'pb-10'
+            } animate-fade-in`}
           >
             <div className="w-full max-w-[1440px] mx-auto min-w-0">
               {children}

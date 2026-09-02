@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { useOnlineStore } from "@/hooks/useOnlineStore";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { useCompany } from "@/hooks/useCompany";
+
 import { toast } from "sonner";
 import { Save, Store, Rocket, Copy, Check, Loader2 } from "lucide-react";
 

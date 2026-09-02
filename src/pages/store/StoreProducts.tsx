@@ -630,41 +630,29 @@ export default function StoreProducts() {
                   }
                   meta={<ProductMeta icon={<Tag className="h-3 w-3" />}>{p.category || 'Sans catégorie'}</ProductMeta>}
                   price={<>{p.price?.toLocaleString('de-DE')}<span className="ml-1 text-[11px] font-normal text-muted-foreground">XOF</span></>}
+                  priceAction={
+                    <button
+                      disabled={publishingId === p.id}
+                      onClick={() => publishOne(p)}
+                      className="inline-flex items-center gap-1 rounded-full border border-foreground px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background disabled:opacity-60"
+                    >
+                      {publishingId === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                      Publier
+                    </button>
+                  }
                   onClick={() => publishOne(p)}
                   actions={
-                    <>
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        aria-label="Publier en ligne"
-                        className="h-8 w-8 rounded-full border border-border bg-background/95 shadow-sm backdrop-blur hover:bg-background"
-                        onClick={() => publishOne(p)}
-                      >
-                        <Globe className="h-3.5 w-3.5 text-primary" />
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        aria-label="Supprimer"
-                        className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
-                        onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </>
-                  }
-
-                  footer={
                     <Button
-                      size="sm"
-                      className="mt-2 h-9 w-full rounded-xl gap-1.5"
-                      disabled={publishingId === p.id}
-                      onClick={(e) => { e.stopPropagation(); publishOne(p); }}
+                      variant="secondary"
+                      size="icon"
+                      aria-label="Supprimer"
+                      className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
+                      onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
                     >
-                      {publishingId === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Globe className="h-4 w-4" />}
-                      Publier
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   }
+
                 />
               ))}
             </ProductGrid>

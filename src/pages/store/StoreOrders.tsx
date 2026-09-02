@@ -73,19 +73,21 @@ export default function StoreOrders() {
       
 
       {/* Stats */}
-      <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
+      <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
         {[
-          { icon: Package, label: "Aujourd'hui", value: todayOrders.length, color: "text-primary" },
-          { icon: Clock, label: "En attente", value: pendingOrders.length, color: "text-yellow-600" },
-          { icon: DollarSign, label: "Revenus du jour", value: `${todayRevenue.toLocaleString('de-DE')} F`, color: "text-green-600" },
-          { icon: TrendingUp, label: "Total commandes", value: orders.length, color: "text-blue-600" },
+          { icon: Package, label: "Aujourd'hui", value: todayOrders.length, bg: "bg-primary/10", fg: "text-primary" },
+          { icon: Clock, label: "En attente", value: pendingOrders.length, bg: "bg-warning/10", fg: "text-warning" },
+          { icon: DollarSign, label: "Revenus du jour", value: `${todayRevenue.toLocaleString('de-DE')} F`, bg: "bg-success/10", fg: "text-success" },
+          { icon: TrendingUp, label: "Total commandes", value: orders.length, bg: "bg-accent/10", fg: "text-accent" },
         ].map((s, i) => (
-          <Card key={i}>
-            <CardContent className="p-3 sm:p-4 flex items-center gap-3">
-              <s.icon className={`h-6 w-6 sm:h-8 sm:w-8 ${s.color} flex-shrink-0`} />
+          <Card key={i} className="border-border/60">
+            <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <div className={`h-9 w-9 sm:h-10 sm:w-10 ${s.bg} flex items-center justify-center rounded-xl shrink-0`}>
+                <s.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${s.fg}`} />
+              </div>
               <div className="min-w-0">
-                <p className="text-lg sm:text-xl font-bold truncate">{s.value}</p>
-                <p className="text-xs text-muted-foreground truncate">{s.label}</p>
+                <p className="text-xl sm:text-2xl font-bold leading-none truncate">{s.value}</p>
+                <p className="text-[11px] sm:text-sm text-muted-foreground mt-1 leading-tight truncate">{s.label}</p>
               </div>
             </CardContent>
           </Card>

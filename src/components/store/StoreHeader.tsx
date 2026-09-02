@@ -22,7 +22,11 @@ export function StoreHeader({
   saving = false,
 }: StoreHeaderProps) {
   const { store, togglePublish } = useOnlineStore();
+  const { settings } = useCompanySettings();
+  const { company } = useCompany();
+  const companyLogo = settings?.logo_url || company?.logo_url || store?.banner_url || null;
   const [copied, setCopied] = useState(false);
+
 
   const storeUrl = store?.slug ? `${PUBLIC_DOMAIN}/boutique/${store.slug}` : "";
   // Smart link : les crawlers (WhatsApp, Facebook, LinkedIn...) reçoivent

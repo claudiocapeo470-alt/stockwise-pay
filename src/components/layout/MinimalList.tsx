@@ -2,26 +2,23 @@ import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Conteneur de contenu en **grille de cartes** (remplace l'ancien affichage en liste).
- * 1 colonne sur mobile, 2 à partir de sm, 3 à partir de xl.
+ * Conteneur de contenu : **liste fluide** sans blocs.
+ * Les lignes sont séparées par un filet fin, pleine largeur.
  */
 export function ListShell({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div
-      role="list"
-      className={cn("grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4", className)}
-    >
+    <div role="list" className={cn("divide-y divide-border/60", className)}>
       {children}
     </div>
   );
 }
 
 /**
- * Carte d'entité (mobile, tablette et desktop).
+ * Ligne d'entité épurée (mobile, tablette et desktop).
  * - leading : avatar / image / icône ronde
- * - title + badge, subtitle en dessous
- * - value + hint alignés en bas à droite
- * - actions : menu ou boutons, en haut à droite
+ * - title + badge, subtitle / meta en dessous
+ * - value + hint alignés à droite
+ * - actions : menu ou boutons, à l'extrémité droite
  */
 export function ListRow({
   leading,
@@ -62,43 +59,39 @@ export function ListRow({
           : undefined
       }
       className={cn(
-        "group relative flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm transition-all",
+        "group flex items-center gap-3 sm:gap-4 py-3 sm:py-3.5 px-1 sm:px-2 -mx-1 sm:-mx-2 rounded-xl transition-colors",
         onClick &&
-          "cursor-pointer hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "cursor-pointer hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
     >
-      <div className="flex items-start gap-3">
-        {leading && <div className="shrink-0">{leading}</div>}
+      {leading && <div className="shrink-0">{leading}</div>}
 
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 min-w-0 pr-8">
-            <p className="font-semibold text-[15px] truncate leading-tight">{title}</p>
-            {badge}
-          </div>
-          {subtitle && <p className="text-xs text-muted-foreground truncate mt-1">{subtitle}</p>}
-          {meta && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{meta}</p>}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2 min-w-0">
+          <p className="font-medium text-[15px] truncate leading-tight">{title}</p>
+          {badge}
         </div>
-
-        {actions && (
-          <div
-            className="absolute right-2 top-2 flex items-center gap-1"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {actions}
-          </div>
-        )}
+        {subtitle && <p className="text-xs text-muted-foreground truncate mt-0.5">{subtitle}</p>}
+        {meta && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{meta}</p>}
       </div>
 
       {(value || hint) && (
-        <div className="mt-auto flex items-end justify-between gap-2 border-t border-border/60 pt-3">
-          {hint ? <p className="text-[11px] text-muted-foreground truncate">{hint}</p> : <span />}
-          {value && <p className="text-base font-bold leading-none tabular-nums">{value}</p>}
+        <div className="shrink-0 text-right">
+          {value && <p className="text-[15px] font-semibold leading-tight tabular-nums">{value}</p>}
+          {hint && <p className="text-[11px] text-muted-foreground mt-0.5">{hint}</p>}
+        </div>
+      )}
+
+      {actions && (
+        <div className="shrink-0 flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+          {actions}
         </div>
       )}
     </div>
   );
 }
+
 
 /** Pastille ronde (icône ou image) utilisée en tête de carte. */
 export function ListAvatar({

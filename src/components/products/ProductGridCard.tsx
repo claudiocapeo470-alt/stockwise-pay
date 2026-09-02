@@ -26,6 +26,7 @@ export function ProductGridCard({
   badge,
   meta,
   price,
+  priceAction,
   footer,
   onClick,
   actions,
@@ -36,6 +37,7 @@ export function ProductGridCard({
   badge?: ReactNode;
   meta?: ReactNode;
   price?: ReactNode;
+  priceAction?: ReactNode;
   footer?: ReactNode;
   onClick?: () => void;
   actions?: ReactNode;
@@ -57,7 +59,7 @@ export function ProductGridCard({
           : undefined
       }
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card p-1.5 transition-shadow hover:shadow-md",
+        "group relative flex flex-col overflow-hidden rounded-2xl border border-foreground bg-card p-1.5 transition-transform active:scale-[0.99]",
         onClick && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
@@ -95,12 +97,22 @@ export function ProductGridCard({
         {meta && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">{meta}</div>
         )}
-        {price && <p className="mt-auto pt-1.5 text-[15px] sm:text-base font-bold tabular-nums leading-none">{price}</p>}
+        {(price || priceAction) && (
+          <div className="mt-auto flex items-center justify-between gap-2 pt-1.5">
+            {price && <p className="text-[15px] sm:text-base font-bold tabular-nums leading-none truncate">{price}</p>}
+            {priceAction && (
+              <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+                {priceAction}
+              </div>
+            )}
+          </div>
+        )}
         {footer}
       </div>
     </div>
   );
 }
+
 
 
 /** Petite info secondaire (icône + texte) dans la zone meta d'une carte produit. */

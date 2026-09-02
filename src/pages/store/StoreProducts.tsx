@@ -589,13 +589,13 @@ export default function StoreProducts() {
                   onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}
                   actions={
                     <Button
-                      variant="secondary"
+                      variant="ghost"
                       size="icon"
                       aria-label="Supprimer"
-                      className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
+                      className="h-8 w-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   }
 
@@ -643,13 +643,13 @@ export default function StoreProducts() {
                   onClick={() => publishOne(p)}
                   actions={
                     <Button
-                      variant="secondary"
+                      variant="ghost"
                       size="icon"
                       aria-label="Supprimer"
-                      className="h-8 w-8 rounded-full border border-destructive/30 bg-background/95 text-destructive shadow-sm backdrop-blur hover:bg-destructive hover:text-destructive-foreground"
+                      className="h-8 w-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   }
 

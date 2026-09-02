@@ -100,6 +100,13 @@ export default function Paiements() {
   return (
     <div className="space-y-5 animate-fade-in">
       <StickyTop>
+      <PageActionBar
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Rechercher par nom ou téléphone..."
+        primary={<AddPaymentDialog />}
+      />
+
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
         <Card>

@@ -107,6 +107,13 @@ export default function Devis() {
   return (
     <div className="space-y-5 animate-fade-in">
       <StickyTop>
+      <PageActionBar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Rechercher devis..."
+        primary={<Button onClick={() => navigate('/app/devis/new')} className="h-11 px-5 rounded-xl gap-2"><Plus className="h-4 w-4" /><span>Nouveau Devis</span></Button>}
+      />
+
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
         <Card className="border-border/60">

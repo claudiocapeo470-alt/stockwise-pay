@@ -49,7 +49,6 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
 
   // Step 4: Reviews/Testimonials
   const [reviews, setReviews] = useState<any[]>([]);
-  const [newReview, setNewReview] = useState({ customer_name: "", comment: "", rating: 5, photo_url: "" });
 
   // Load images & reviews
   useEffect(() => {
@@ -131,28 +130,17 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
     }
   };
 
-  const handleAddReview = async () => {
-    if (!newReview.customer_name.trim() || !newReview.comment.trim()) {
-      toast.error("Nom et commentaire requis");
-      return;
-    }
+  const handleToggleReview = async (reviewId: string, approved: boolean) => {
     try {
-      const { data, error } = await supabase.from('store_reviews').insert({
-        store_id: storeId,
-        product_id: product.id,
-        customer_name: newReview.customer_name,
-        comment: newReview.comment,
-        rating: newReview.rating,
-        is_approved: true,
-      }).select().single();
+      const { error } = await supabase.from('store_reviews').update({ is_approved: approved }).eq('id', reviewId);
       if (error) throw error;
-      setReviews(prev => [data, ...prev]);
-      setNewReview({ customer_name: "", comment: "", rating: 5, photo_url: "" });
-      toast.success("Avis ajouté");
+      setReviews(prev => prev.map(r => r.id === reviewId ? { ...r, is_approved: approved } : r));
+      toast.success(approved ? "Avis affiché en boutique" : "Avis masqué");
     } catch {
-      toast.error("Erreur lors de l'ajout");
+      toast.error("Erreur");
     }
   };
+
 
   const handleDeleteReview = async (reviewId: string) => {
     try {
@@ -274,75 +262,50 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
             </>
           )}
 
-          {/* Step 4: Reviews/Testimonials */}
+          {/* Step 4: Reviews moderation */}
           {step === 4 && (
             <>
-              <Label>Avis & Témoignages</Label>
-              
-              {/* Add new review */}
-              <div className="p-3 border border-border rounded-lg space-y-3 bg-muted/30">
-                <p className="text-sm font-medium">Ajouter un avis</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label className="text-xs">Nom du client *</Label>
-                    <Input
-                      value={newReview.customer_name}
-                      onChange={e => setNewReview(p => ({ ...p, customer_name: e.target.value }))}
-                      placeholder="Jean Dupont"
-                      className="h-8 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Note</Label>
-                    <div className="flex items-center gap-1 mt-1">
-                      {[1, 2, 3, 4, 5].map(n => (
-                        <button key={n} type="button" onClick={() => setNewReview(p => ({ ...p, rating: n }))}>
-                          <Star className={`h-4 w-4 ${n <= newReview.rating ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground"}`} />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-xs">Commentaire *</Label>
-                  <Textarea
-                    value={newReview.comment}
-                    onChange={e => setNewReview(p => ({ ...p, comment: e.target.value }))}
-                    placeholder="Super produit, je recommande..."
-                    rows={2}
-                    className="text-sm"
-                  />
-                </div>
-                <Button size="sm" onClick={handleAddReview} className="gap-1">
-                  <Plus className="h-3 w-3" /> Ajouter l'avis
-                </Button>
+              <div>
+                <Label>Avis & Témoignages clients</Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Activez les avis laissés par vos clients pour les afficher sur la fiche produit de la boutique.
+                </p>
               </div>
 
-              <Separator />
-
-              {/* Existing reviews */}
-              <div className="space-y-2 max-h-[200px] overflow-y-auto">
+              <div className="space-y-2">
                 {reviews.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">Aucun avis pour ce produit</p>
+                  <div className="py-10 text-center">
+                    <Star className="h-8 w-8 mx-auto text-muted-foreground/40" />
+                    <p className="text-sm text-muted-foreground mt-2">Aucun avis client pour ce produit</p>
+                  </div>
                 ) : (
                   reviews.map(review => (
-                    <div key={review.id} className="flex items-start gap-3 p-2 border border-border rounded-lg">
+                    <div key={review.id} className="flex items-start gap-3 p-3 border border-border rounded-xl">
                       <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <User className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">{review.customer_name}</span>
+                          <span className="text-sm font-medium truncate">{review.customer_name}</span>
                           <div className="flex">
                             {[1, 2, 3, 4, 5].map(n => (
                               <Star key={n} className={`h-3 w-3 ${n <= (review.rating || 0) ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground"}`} />
                             ))}
                           </div>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{review.comment}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{review.comment}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Switch
+                            checked={!!review.is_approved}
+                            onCheckedChange={v => handleToggleReview(review.id, v)}
+                          />
+                          <span className="text-[11px] font-medium text-muted-foreground">
+                            {review.is_approved ? "Affiché en boutique" : "Masqué"}
+                          </span>
+                        </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0" onClick={() => handleDeleteReview(review.id)}>
-                        <Trash2 className="h-3 w-3 text-destructive" />
+                      <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0" onClick={() => handleDeleteReview(review.id)}>
+                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
                       </Button>
                     </div>
                   ))
@@ -350,6 +313,7 @@ export function StoreProductEditDialog({ storeProduct, product, storeId, open, o
               </div>
             </>
           )}
+
         </div>
 
         <div className="flex justify-between items-center gap-2 px-5 py-3 border-t border-border bg-background">

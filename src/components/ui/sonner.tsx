@@ -1,48 +1,50 @@
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, toast } from "sonner"
+import { Check, X, Info, AlertTriangle } from "lucide-react"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 /**
- * Toaster style "iOS Dynamic Island" :
- * - Position : haut centré
- * - Forme : pilule arrondie noire (mode clair) / blanc translucide (mode sombre)
- * - Animation slide-down + scale (depuis le haut)
- * - Backdrop blur premium
+ * Toaster "popup carré centré" :
+ * - Position : centré à l'écran
+ * - Forme : carré arrondi avec grande icône (succès / erreur)
  */
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
+
+  const iconWrap = (bg: string, children: React.ReactNode) => (
+    <div className={`h-14 w-14 rounded-full flex items-center justify-center ${bg}`}>{children}</div>
+  )
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
       position="top-center"
-      offset={12}
-      visibleToasts={3}
-      duration={3500}
+      offset="38vh"
+      visibleToasts={1}
+      duration={2200}
       className="toaster group"
+      icons={{
+        success: iconWrap("bg-success/10", <Check className="h-7 w-7 text-success" strokeWidth={3} />),
+        error: iconWrap("bg-destructive/10", <X className="h-7 w-7 text-destructive" strokeWidth={3} />),
+        info: iconWrap("bg-primary/10", <Info className="h-7 w-7 text-primary" />),
+        warning: iconWrap("bg-warning/10", <AlertTriangle className="h-7 w-7 text-warning" />),
+      }}
       toastOptions={{
         unstyled: false,
         classNames: {
           toast:
-            "group toast !rounded-full !px-5 !py-3 !min-h-[48px] !max-w-[92vw] sm:!max-w-[420px] " +
-            "!bg-[#0A0A0A] dark:!bg-white/95 !text-white dark:!text-black " +
-            "!border-0 !shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] " +
-            "backdrop-blur-xl !flex !items-center !gap-3 " +
-            "data-[type=success]:!bg-[#0A0A0A] dark:data-[type=success]:!bg-white/95 " +
-            "data-[type=error]:!bg-[#1a0606] dark:data-[type=error]:!bg-white/95 " +
-            "animate-[ios-slide-down_0.35s_cubic-bezier(0.34,1.56,0.64,1)]",
-          title: "!text-sm !font-semibold !leading-tight",
-          description: "!text-xs !opacity-80 !text-white/80 dark:!text-black/70 !mt-0.5",
-          actionButton:
-            "!bg-white !text-black dark:!bg-black dark:!text-white !rounded-full !text-xs !font-semibold !px-3 !py-1",
-          cancelButton:
-            "!bg-white/10 !text-white dark:!bg-black/10 dark:!text-black !rounded-full !text-xs !px-3 !py-1",
-          icon: "!text-white dark:!text-black",
-          success: "!text-emerald-400 dark:!text-emerald-600",
-          error: "!text-red-400 dark:!text-red-600",
-          info: "!text-sky-400 dark:!text-sky-600",
-          warning: "!text-amber-400 dark:!text-amber-600",
+            "group toast !w-[210px] !min-h-[210px] !mx-auto !rounded-3xl !p-6 " +
+            "!bg-card !text-foreground !border !border-border " +
+            "!shadow-[0_24px_60px_-20px_hsl(var(--foreground)/0.35)] " +
+            "!flex !flex-col !items-center !justify-center !text-center !gap-3 " +
+            "animate-scale-in",
+          content: "!flex !flex-col !items-center !gap-1 !w-full",
+          title: "!text-[15px] !font-semibold !leading-snug !text-center !w-full",
+          description: "!text-xs !text-muted-foreground !text-center !w-full",
+          actionButton: "!rounded-full !text-xs !font-semibold !px-3 !py-1",
+          cancelButton: "!rounded-full !text-xs !px-3 !py-1",
+          icon: "!m-0 !w-14 !h-14 !flex !items-center !justify-center",
         },
       }}
       {...props}

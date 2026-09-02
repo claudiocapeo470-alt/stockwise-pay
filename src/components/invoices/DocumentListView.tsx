@@ -179,7 +179,9 @@ export function DocumentListView({
                       </DropdownMenu>
                     </div>
                   </div>
+                 </SwipeToDelete>
                 </li>
+
               );
             })}
           </ul>

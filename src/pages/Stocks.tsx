@@ -13,7 +13,7 @@ import { StockMovementsDialog } from "@/components/stocks/StockMovementsDialog";
 import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { PageActionBar } from "@/components/layout/PageActionBar";
+import { PageActionBar, SegmentRow } from "@/components/layout/PageActionBar";
 import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
 import { ProductGrid, ProductGridCard, ProductMeta } from "@/components/products/ProductGridCard";
 
@@ -70,19 +70,14 @@ export default function Stocks() {
   return (
     <div className="space-y-5 animate-fade-in">
       <StickyTop>
-        {/* Toolbar */}
+        {/* 1. Recherche + ajout */}
         <PageActionBar
           searchValue={searchQuery}
           onSearchChange={setSearchQuery}
           searchPlaceholder="Rechercher un produit..."
-          segments={
-            <>
-              <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm rounded-xl"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
-              <ImportProductsDialog />
-            </>
-          }
           primary={<AddProductDialog />}
         />
+
 
         {/* Stats */}
         <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
@@ -120,9 +115,18 @@ export default function Stocks() {
             </CardContent>
           </Card>
         </div>
+
+        {/* 3. Actions secondaires sous les blocs KPI */}
+        <SegmentRow>
+          <Button variant="outline" onClick={() => setShowMovements(true)} className="gap-1.5">
+            <History className="h-4 w-4 shrink-0" /> Mouvements
+          </Button>
+          <ImportProductsDialog />
+        </SegmentRow>
       </StickyTop>
 
-      <SectionHeading title="Produits en stock" count={filteredProducts.length} className="!mt-4 !mb-3" />
+
+      <SectionHeading title="Produits en stock" count={filteredProducts.length} />
 
 
       {/* Products */}

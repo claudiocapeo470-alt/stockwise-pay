@@ -12,6 +12,8 @@ import { useTeam } from "@/hooks/useTeam";
 import { toast } from "sonner";
 import { Truck, Package, CheckCircle, AlertTriangle, UserPlus } from "lucide-react";
 import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from "@/components/layout/MinimalList";
+import { PageActionBar } from "@/components/layout/PageActionBar";
+
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any }> = {
   unassigned: { label: "Non assignée", color: "bg-muted text-muted-foreground", icon: Package },
@@ -36,10 +38,20 @@ export default function Livraisons() {
   const [assignDialog, setAssignDialog] = useState<string | null>(null);
   const [selectedDriver, setSelectedDriver] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
   const drivers = members.filter(m => m.role?.name === 'Livreur' && m.is_active);
 
-  const filtered = statusFilter === 'all' ? deliveries : deliveries.filter(d => d.status === statusFilter);
+  const byStatus = statusFilter === 'all' ? deliveries : deliveries.filter(d => d.status === statusFilter);
+  const q = search.trim().toLowerCase();
+  const filtered = !q
+    ? byStatus
+    : byStatus.filter(d =>
+        [d.order?.customer_name, d.order?.order_number, d.order?.customer_address,
+         d.driver ? `${d.driver.first_name} ${d.driver.last_name || ''}` : '']
+          .some(v => (v || '').toLowerCase().includes(q)),
+      );
+
 
   const stats = {
     assigned: deliveries.filter(d => d.status === 'assigned').length,
@@ -70,7 +82,14 @@ export default function Livraisons() {
   return (
     <div className="space-y-5 animate-fade-in">
       <StickyTop>
-        {/* Stats */}
+        {/* 1. Recherche */}
+        <PageActionBar
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Rechercher une livraison..."
+        />
+
+        {/* 2. Blocs KPI */}
         <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
           {[
             { label: "Assignées", value: stats.assigned, bg: "bg-primary/10", color: "text-primary", icon: UserPlus },
@@ -92,15 +111,15 @@ export default function Livraisons() {
           ))}
         </div>
 
-        {/* Filtres centrés */}
+        {/* 3. Filtres */}
         <FilterPills filters={filters} value={statusFilter} onChange={setStatusFilter} />
 
       </StickyTop>
 
+
       <SectionHeading
         title="Détails des livraisons"
         count={filtered.length}
-        className="!mt-4 !mb-3"
       />
 
 

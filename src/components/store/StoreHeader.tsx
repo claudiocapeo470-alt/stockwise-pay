@@ -49,15 +49,16 @@ export function StoreHeader({
 
   return (
     <div className="w-full rounded-2xl bg-card border border-border/60 p-4 space-y-3">
-      {/* Bienvenue + identité boutique */}
+      {/* Bienvenue + identité entreprise */}
       <div className="flex items-center gap-3">
         <div className="h-12 w-12 rounded-full overflow-hidden bg-muted flex items-center justify-center shrink-0">
-          {store?.banner_url ? (
-            <img src={store.banner_url} alt={store?.name || "Boutique"} className="h-full w-full object-cover" />
+          {companyLogo ? (
+            <img src={companyLogo} alt={store?.name || "Entreprise"} className="h-full w-full object-cover" />
           ) : (
             <Store className="h-5 w-5 text-muted-foreground" />
           )}
         </div>
+
         <div className="min-w-0 flex-1">
           <p className="text-xs text-muted-foreground leading-none">Bienvenue,</p>
           <p className="text-lg font-bold truncate leading-tight mt-1">{store?.name || title}</p>

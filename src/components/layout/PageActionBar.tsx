@@ -88,12 +88,26 @@ export function PageActionBar({
         )}
       </div>
 
-      {segments && (
-        <div className="flex items-center gap-2 [&>*]:flex-1 [&_button]:w-full [&_button]:h-10 [&_button]:rounded-xl [&_button]:border [&_button]:border-border [&_button]:bg-card [&_button]:text-[13px] [&_button]:font-semibold [&_button]:text-foreground [&_button:hover]:bg-muted [&_button]:px-2 [&_svg]:text-accent">
-          {segments}
-        </div>
-      )}
+      {segments && <SegmentRow>{segments}</SegmentRow>}
     </div>
   );
 }
+
+/**
+ * Rangée d'actions secondaires (même style que les segments de PageActionBar),
+ * utilisable seule pour les placer sous les blocs KPI.
+ */
+export function SegmentRow({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-2 [&>*]:flex-1 [&_button]:w-full [&_button]:h-10 [&_button]:rounded-xl [&_button]:border [&_button]:border-border [&_button]:bg-card [&_button]:text-[13px] [&_button]:font-semibold [&_button]:text-foreground [&_button:hover]:bg-muted [&_button]:px-2 [&_svg]:text-accent",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 

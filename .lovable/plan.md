@@ -1,41 +1,34 @@
-## 1. Supprimer le pilule StoreNav (capture 1) — partout
+# Refonte UI : blocs, FAB, dialogues produit et paiement
 
-- Supprimer l'import + l'usage `<StoreNav />` dans :
-  - `src/pages/store/StoreConfig.tsx`
-  - `src/pages/store/StoreProducts.tsx`
-  - `src/pages/store/StoreOrders.tsx`
-  - `src/pages/store/StoreReviews.tsx`
-- Supprimer le fichier `src/components/store/StoreNav.tsx` (plus utilisé).
+## 1. Blocs KPI de la page Commandes reçues
+Les blocs de `Commandes reçues` sont affichés sur 4 colonnes, donc plus petits que ceux de Stocks (3 colonnes).
+- Passer la grille des KPI commandes au même réglage que Stocks (`--stat-cols: 3`), même padding, même rayon, mêmes tailles de texte/icônes.
+- Résultat : blocs identiques en taille sur mobile, tablette et desktop.
 
-## 2. Header partagé "Ma Boutique" sur les 4 pages (capture 3)
+## 2. Dialogue « Nouveau produit »
+- Supprimer complètement le bloc **« Icône du produit (optionnel) »** (aperçu emoji + sélecteur d'emoji + sélecteur de couleur) de l'étape 3. La valeur par défaut reste enregistrée en base pour ne rien casser.
+- Refonte mobile de l'assistant : champs plus compacts (hauteur 44px, labels 13px), espacement resserré, zone photos plus large et centrée, description sur 3 lignes.
+- Barre de boutons Précédent / Suivant collée en bas du dialogue, boutons pleine largeur répartis sur mobile.
+- Objectif : chaque étape tient dans l'écran sans scroll sur mobile.
 
-Créer **`src/components/store/StoreHeader.tsx`** : header responsive contenant exactement le bloc de la capture 3 — icône carrée + titre + sous-titre + boutons **OK / Voir / Publier ou Dépublier** + barre URL "En ligne" copiable. Tout sur la même ligne sur desktop, empilé proprement sur mobile.
+## 3. Boutons flottants Recherche + Ajouter (partout)
+Nouveau comportement mobile/tablette de `PageActionBar` :
+- Bouton **+** rond, flottant en bas à droite, au-dessus de la barre de navigation mobile (safe-area incluse), taille 56px, ombre marquée.
+- Bouton **Recherche** rond juste au-dessus du **+**, plus petit (44px), fond clair.
+- Un clic sur Recherche ouvre un champ de recherche en surimpression (plein largeur, au-dessus des FAB) avec bouton d'effacement ; la barre de recherche inline disparaît du haut de page.
+- Desktop : inchangé (recherche à gauche, actions à droite, pas de flottant).
+- S'applique automatiquement à toutes les pages utilisant `PageActionBar` (Stocks, Ventes, Factures, Devis, Paiements, Livraisons, Clients, Produits en ligne).
 
-- Prop `title?` et `subtitle?` pour personnaliser par page (défaut : "Ma Boutique" / "Configurez et publiez votre boutique en ligne").
-- Le composant lit `useOnlineStore()` lui-même (store, togglePublish) et l'action **Enregistrer** est masquée par défaut (seul `StoreConfig` la passe via prop `onSave`), pour ne pas dupliquer la logique de sauvegarde sur les pages Produits/Commandes/Avis.
-- Barre URL "En ligne" affichée uniquement si `store.is_published`.
-- Layout : `flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between` ; boutons en `flex-wrap` ; URL en `truncate`. Aucun overflow horizontal.
+## 4. Dialogue « Nouveau paiement » en 2 étapes
+Actuellement un formulaire long qui scrolle.
+- **Étape 1 – Client** : prénom, nom, téléphone (indicatif + drapeau conservés).
+- **Étape 2 – Paiement** : méthode, montant total, montant payé, date de paiement, date d'échéance, notes éventuelles.
+- Même en-tête à icône + barre de progression que le dialogue produit, boutons Précédent / Suivant / Enregistrer en bas fixe.
+- Champs compacts et grille 2 colonnes pour que chaque étape tienne sans scroll.
 
-Intégrer `<StoreHeader />` en tête de :
-- `StoreConfig.tsx` (avec `onSave={handleSave}` → bouton OK affiché, remplace le header local actuel).
-- `StoreProducts.tsx` (remplace le bloc titre actuel).
-- `StoreOrders.tsx` (remplace le `<h1>Commandes reçues</h1>`).
-- `StoreReviews.tsx` (remplace le `<h1>Avis clients</h1>`).
-
-Chaque page conserve son contenu spécifique (stats, tables, dialogs) sous le header.
-
-## 3. Description produit lisible (capture 2)
-
-Dans `src/pages/store/PublicStore.tsx`, l'onglet "Description" affiche actuellement le HTML brut visible (l'utilisateur a collé du code HTML dans l'éditeur, qui a été stocké encodé `&lt;h2&gt;…`).
-
-- Ajouter un helper `decodeToPlainText(raw)` qui décode récursivement les entités HTML (jusqu'à 3 passes) puis retourne le `textContent` final — donc strippé de toutes les balises.
-- Remplacer le `dangerouslySetInnerHTML` actuel par un rendu `<p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{decodeToPlainText(p.description)}</p>`.
-- Garder le fallback existant (texte par défaut) si description vide.
-
-Résultat : l'utilisateur ne voit plus jamais les balises `<h2 class="…">…</h2>`, seulement le texte lisible.
-
-## Fichiers touchés
-
-- créé : `src/components/store/StoreHeader.tsx`
-- supprimé : `src/components/store/StoreNav.tsx`
-- modifié : `src/pages/store/StoreConfig.tsx`, `StoreProducts.tsx`, `StoreOrders.tsx`, `StoreReviews.tsx`, `PublicStore.tsx`
+## Détails techniques
+- `src/pages/store/StoreOrders.tsx` : `--stat-cols` 4 → 3.
+- `src/components/stocks/AddProductDialog.tsx` : retrait des imports `EmojiPicker`/`IconColorPicker`/`getIconBgStyle` et de l'état `showPicker` ; densification des étapes.
+- `src/components/layout/PageActionBar.tsx` : nouvelle pile de FAB (`fixed bottom-[calc(var(--lz-nav-h)+1rem)] right-4 z-40`), état local d'ouverture de la recherche.
+- `src/components/payments/AddPaymentDialog.tsx` : état `step` (1/2), validation avant passage à l'étape 2, soumission inchangée.
+- Aucune modification de logique métier, de requêtes ou de schéma.

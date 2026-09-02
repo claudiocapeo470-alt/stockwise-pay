@@ -57,24 +57,31 @@ export function StoreHeader({
 
 
   return (
-    <div className="w-full rounded-2xl bg-card border border-border/60 p-4 space-y-3">
+    <div className="w-full rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/[0.07] via-card to-card p-4 space-y-3 shadow-[0_2px_10px_hsl(var(--primary)/0.06)]">
       {/* Bienvenue + identité entreprise */}
       <div className="flex items-center gap-3">
-        <div className="h-12 w-12 rounded-full overflow-hidden bg-muted flex items-center justify-center shrink-0">
+        <div className="h-12 w-12 rounded-full overflow-hidden bg-primary/10 ring-2 ring-primary/20 flex items-center justify-center shrink-0">
           {companyLogo ? (
             <img src={companyLogo} alt={store?.name || "Entreprise"} className="h-full w-full object-cover" />
           ) : (
-            <Store className="h-5 w-5 text-muted-foreground" />
+            <Store className="h-5 w-5 text-primary" />
           )}
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-xs text-muted-foreground leading-none">Bienvenue,</p>
+          <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground leading-none">Bienvenue,</p>
           <p className="text-lg font-bold truncate leading-tight mt-1">{store?.name || title}</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {onSave && (
-            <Button size="icon" variant="outline" onClick={onSave} disabled={saving} aria-label="Enregistrer" className="h-10 w-10 rounded-full">
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={onSave}
+              disabled={saving}
+              aria-label="Enregistrer"
+              className="h-10 w-10 rounded-full border-primary/30 text-primary hover:bg-primary/10"
+            >
               {saving ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <Save className="h-[18px] w-[18px]" />}
             </Button>
           )}
@@ -84,10 +91,10 @@ export function StoreHeader({
               onClick={handlePublish}
               disabled={togglePublish.isPending}
               aria-label={store.is_published ? "Dépublier" : "Publier"}
-              className={`h-10 w-10 rounded-full ${
+              className={`h-10 w-10 rounded-full shadow-sm ${
                 store.is_published
-                  ? "bg-warning hover:bg-warning/90 text-warning-foreground"
-                  : "bg-success hover:bg-success/90 text-success-foreground"
+                  ? "bg-primary/15 text-primary hover:bg-primary/25"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90"
               }`}
             >
               <Rocket className="h-[18px] w-[18px]" />
@@ -98,14 +105,14 @@ export function StoreHeader({
 
       {/* Lien de la boutique */}
       {store?.is_published && storeUrl && (
-        <div className="flex items-center gap-3 border-t border-border/60 pt-3">
+        <div className="flex items-center gap-3 border-t border-primary/10 pt-3">
           <div className="min-w-0 flex-1">
-            <p className="text-xs text-muted-foreground leading-none">Visiter la boutique</p>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground leading-none">Visiter la boutique</p>
             <a
               href={storeUrl}
               target="_blank"
               rel="noreferrer"
-              className="mt-1 block text-sm font-semibold text-success truncate hover:underline"
+              className="mt-1 block text-sm font-semibold text-primary truncate hover:underline"
             >
               {storeUrl} ↗
             </a>
@@ -114,12 +121,13 @@ export function StoreHeader({
             type="button"
             onClick={copyUrl}
             aria-label="Copier le lien"
-            className="h-10 w-10 rounded-full bg-success/10 text-success flex items-center justify-center shrink-0 hover:bg-success/20 transition-colors"
+            className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
           >
             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
           </button>
         </div>
       )}
+
     </div>
   );
 }

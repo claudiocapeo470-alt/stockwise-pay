@@ -535,13 +535,13 @@ export default function StoreProducts() {
         <div className="inline-flex items-center gap-1.5">
           <button
             onClick={() => setTab("online")}
-            className={`rounded-full border px-3 py-1 text-[12px] font-semibold transition-all ${tab === "online" ? "border-foreground bg-foreground text-background" : "border-foreground/70 text-foreground hover:bg-foreground/5"}`}
+            className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold transition-all ${tab === "online" ? "border-foreground bg-foreground text-background" : "border-foreground/60 text-foreground hover:bg-foreground/5"}`}
           >
             En ligne · {storeProducts.length}
           </button>
           <button
             onClick={() => setTab("stock")}
-            className={`rounded-full border px-3 py-1 text-[12px] font-semibold transition-all ${tab === "stock" ? "border-foreground bg-foreground text-background" : "border-foreground/70 text-foreground hover:bg-foreground/5"}`}
+            className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold transition-all ${tab === "stock" ? "border-foreground bg-foreground text-background" : "border-foreground/60 text-foreground hover:bg-foreground/5"}`}
           >
             Stock · {unpublished.length}
           </button>
@@ -570,9 +570,9 @@ export default function StoreProducts() {
                   key={sp.id}
                   image={sp.products?.image_url}
                   name={sp.products?.name || '—'}
-                  badge={<span className="rounded-full bg-success/10 px-1.5 py-0 text-[9px] font-semibold text-success shadow-sm">Publié</span>}
+                  badge={<span className="rounded-full bg-success/10 px-1 py-0 text-[8px] font-semibold text-success">Publié</span>}
                   meta={<ProductMeta icon={<Tag className="h-2.5 w-2.5" />}>{sp.products?.category || 'Sans catégorie'}</ProductMeta>}
-                  price={<>{sp.online_price?.toLocaleString('de-DE')}<span className="ml-0.5 text-[10px] font-normal text-muted-foreground">XOF</span></>}
+                  price={<>{sp.online_price?.toLocaleString('de-DE')}<span className="ml-0.5 text-[9px] font-normal text-muted-foreground">XOF</span></>}
                   priceAction={
                     <button
                       onClick={async () => {
@@ -581,7 +581,7 @@ export default function StoreProducts() {
                           toast.success('Produit dépublié');
                         } catch (e: any) { toast.error(e.message); }
                       }}
-                      className="rounded-full border border-foreground px-2 py-0.5 text-[10px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background"
+                      className="rounded-full border border-foreground/70 px-1.5 py-0 text-[9px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background"
                     >
                       Dépublier
                     </button>
@@ -592,15 +592,13 @@ export default function StoreProducts() {
                       variant="ghost"
                       size="icon"
                       aria-label="Supprimer"
-                      className="h-7 w-7 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3 w-3" />
                     </Button>
                   }
-
                 />
-
               ))}
             </ProductGrid>
           )}
@@ -624,17 +622,17 @@ export default function StoreProducts() {
                   image={p.image_url}
                   name={p.name}
                   badge={
-                    <span className={`rounded-full px-1.5 py-0 text-[9px] font-semibold shadow-sm ${p.quantity > 0 ? "bg-orange-500/10 text-orange-600" : "bg-destructive/10 text-destructive"}`}>
+                    <span className={`rounded-full px-1 py-0 text-[8px] font-semibold ${p.quantity > 0 ? "bg-orange-500/10 text-orange-600" : "bg-destructive/10 text-destructive"}`}>
                       {p.quantity > 0 ? `${p.quantity} en stock` : 'Rupture'}
                     </span>
                   }
                   meta={<ProductMeta icon={<Tag className="h-2.5 w-2.5" />}>{p.category || 'Sans catégorie'}</ProductMeta>}
-                  price={<>{p.price?.toLocaleString('de-DE')}<span className="ml-0.5 text-[10px] font-normal text-muted-foreground">XOF</span></>}
+                  price={<>{p.price?.toLocaleString('de-DE')}<span className="ml-0.5 text-[9px] font-normal text-muted-foreground">XOF</span></>}
                   priceAction={
                     <button
                       disabled={publishingId === p.id}
                       onClick={() => publishOne(p)}
-                      className="inline-flex items-center gap-1 rounded-full border border-foreground px-2 py-0.5 text-[10px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background disabled:opacity-60"
+                      className="inline-flex items-center gap-0.5 rounded-full border border-foreground/70 px-1.5 py-0 text-[9px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background disabled:opacity-60"
                     >
                       {publishingId === p.id ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : null}
                       Publier
@@ -646,13 +644,12 @@ export default function StoreProducts() {
                       variant="ghost"
                       size="icon"
                       aria-label="Supprimer"
-                      className="h-7 w-7 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3 w-3" />
                     </Button>
                   }
-
                 />
               ))}
             </ProductGrid>

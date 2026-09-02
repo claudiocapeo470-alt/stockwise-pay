@@ -118,12 +118,16 @@ export default function Stocks() {
 
         {/* 3. Actions secondaires sous les blocs KPI */}
         <SegmentRow>
-          <Button variant="outline" size="sm" onClick={() => setShowMovements(true)} className="gap-1.5 h-9 rounded-xl border-foreground text-foreground hover:bg-foreground/5">
-            <History className="h-4 w-4 shrink-0" /> Mouvements
-          </Button>
+          <button
+            onClick={() => setShowMovements(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-foreground/70 px-3 py-1 text-[12px] font-semibold text-foreground transition-all hover:bg-foreground/5"
+          >
+            <History className="h-3.5 w-3.5 shrink-0" /> Mouvements
+          </button>
 
           <ImportProductsDialog />
         </SegmentRow>
+
       </StickyTop>
 
 

@@ -155,13 +155,6 @@ export default function Paiements() {
         </Card>
       </div>
 
-      <PageActionBar
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder="Rechercher par nom ou téléphone..."
-        primary={<AddPaymentDialog />}
-      />
-
       {/* Filtres — même disposition segmentée que la page Stocks */}
       <div className="flex items-center gap-2">
         <Select value={statusFilter} onValueChange={setStatusFilter}>

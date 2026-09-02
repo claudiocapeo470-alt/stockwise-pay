@@ -162,19 +162,6 @@ export default function Factures() {
 
       {/* Filtres centrés */}
       <FilterPills filters={filters} value={statusFilter} onChange={setStatusFilter} />
-
-      <PageActionBar
-        searchValue={searchQuery}
-        onSearchChange={setSearchQuery}
-        searchPlaceholder="Rechercher facture..."
-        segments={!isMobile ? (
-          <div className="inline-flex rounded-lg border border-border/60 bg-card p-0.5">
-            <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-8 w-8 p-0"><List className="h-4 w-4" /></Button>
-            <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-8 w-8 p-0"><Grid3x3 className="h-4 w-4" /></Button>
-          </div>
-        ) : undefined}
-        primary={<Button onClick={() => navigate('/app/factures/new')} className="h-11 px-5 rounded-xl gap-2"><Plus className="h-4 w-4" /><span>Nouvelle Facture</span></Button>}
-      />
       </StickyTop>
 
 

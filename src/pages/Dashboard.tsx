@@ -11,7 +11,7 @@ import { useCompanySettings } from '@/hooks/useCompanySettings';
 
 export default function Dashboard() {
   useRoleRedirect();
-  const { isEmployee, memberInfo } = useAuth();
+  const { isEmployee, memberInfo, profile } = useAuth();
   const isMobile = useIsMobile();
   const { sales } = useSales();
   const { formatCurrency } = useCurrency();

@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { SwipeToDelete } from "@/components/ui/swipe-to-delete";
+
 import type { Invoice } from "@/hooks/useInvoices";
 
 /** Couleur d'accent par statut (tokens sémantiques uniquement). */

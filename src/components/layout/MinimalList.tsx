@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { SwipeToDelete } from "@/components/ui/swipe-to-delete";
+
 
 /**
  * Conteneur de contenu : **liste fluide** sans blocs.

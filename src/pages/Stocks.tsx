@@ -115,7 +115,16 @@ export default function Stocks() {
             </CardContent>
           </Card>
         </div>
+
+        {/* 3. Actions secondaires sous les blocs KPI */}
+        <SegmentRow>
+          <Button variant="outline" onClick={() => setShowMovements(true)} className="gap-1.5">
+            <History className="h-4 w-4 shrink-0" /> Mouvements
+          </Button>
+          <ImportProductsDialog />
+        </SegmentRow>
       </StickyTop>
+
 
       <SectionHeading title="Produits en stock" count={filteredProducts.length} className="!mt-4 !mb-3" />
 

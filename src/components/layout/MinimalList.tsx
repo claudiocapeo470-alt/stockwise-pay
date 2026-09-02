@@ -92,7 +92,20 @@ export function ListRow({
       )}
     </div>
   );
+
+  if (onSwipeDelete) {
+    return (
+      <div role="listitem" className="rounded-xl">
+        <SwipeToDelete onDelete={onSwipeDelete} className="rounded-xl">
+          {row}
+        </SwipeToDelete>
+      </div>
+    );
+  }
+
+  return row;
 }
+
 
 
 /** Pastille ronde (icône ou image) utilisée en tête de carte. */

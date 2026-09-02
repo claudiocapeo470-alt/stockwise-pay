@@ -137,8 +137,8 @@ export function ImportProductsDialog() {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="inline-flex items-center gap-1.5 rounded-full border border-foreground/70 px-3 py-1 text-[12px] font-semibold text-foreground transition-all hover:bg-foreground/5">
-        <Upload className="h-3.5 w-3.5" /> Importer
+      <button onClick={() => setOpen(true)} className="inline-flex items-center gap-1 rounded-full border border-foreground/60 px-2.5 py-0.5 text-[11px] font-semibold text-foreground transition-all hover:bg-foreground hover:text-background">
+        <Upload className="h-3 w-3" /> Importer
       </button>
 
 

@@ -200,6 +200,7 @@ export default function Checkout() {
   // ─── CHECKOUT PRINCIPAL ───────────────────────────────────────────
   return (
     <div className="min-h-screen w-full bg-gray-50 overflow-x-hidden" style={{ fontFamily: "Inter, sans-serif" }}>
+      <StorePixels storeId={store.id} color={color} />
       <style>{`
         html, body { overflow-x: hidden; max-width: 100vw; }
         .ck-input { transition: border-color .2s, box-shadow .2s; }

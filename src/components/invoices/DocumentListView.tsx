@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { SwipeToDelete } from "@/components/ui/swipe-to-delete";
+
 import type { Invoice } from "@/hooks/useInvoices";
 
 /** Couleur d'accent par statut (tokens sémantiques uniquement). */
@@ -71,11 +73,18 @@ export function DocumentListView({
             {group.label}
           </p>
 
-          <ul className="divide-y divide-border/50 rounded-2xl border border-border/50 bg-card overflow-hidden">
+          <ul className="divide-y divide-border/50 rounded-2xl border border-border/50 bg-card overflow-hidden shadow-[0_1px_2px_hsl(var(--foreground)/0.04)]">
             {group.items.map((doc) => {
               const tone = STATUS_TONE[doc.status] ?? STATUS_TONE.brouillon;
+              const initials = (doc.client_name || "?")
+                .split(" ")
+                .filter(Boolean)
+                .slice(0, 2)
+                .map((w) => w[0]?.toUpperCase())
+                .join("");
               return (
                 <li key={doc.id}>
+                 <SwipeToDelete onDelete={() => onDelete(doc.id!)}>
                   <div
                     role="button"
                     tabIndex={0}
@@ -91,8 +100,21 @@ export function DocumentListView({
                     {/* Accent statut */}
                     <span className={cn("h-9 w-[3px] shrink-0 rounded-full", tone.dot)} aria-hidden />
 
+                    {/* Monogramme client */}
+                    <span
+                      className={cn(
+                        "hidden xs:flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[11px] font-bold",
+                        tone.soft,
+                        tone.text,
+                      )}
+                      aria-hidden
+                    >
+                      {initials}
+                    </span>
+
                     {/* Identité */}
                     <div className="min-w-0 flex-1">
+
                       <div className="flex items-center gap-2 min-w-0">
                         <p className="truncate text-[15px] font-semibold leading-tight tracking-tight">
                           {doc.client_name}
@@ -159,7 +181,9 @@ export function DocumentListView({
                       </DropdownMenu>
                     </div>
                   </div>
+                 </SwipeToDelete>
                 </li>
+
               );
             })}
           </ul>

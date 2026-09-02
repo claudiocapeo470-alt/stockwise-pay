@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { SwipeToDelete } from "@/components/ui/swipe-to-delete";
+
 
 /**
  * Conteneur de contenu : **liste fluide** sans blocs.
@@ -30,6 +32,7 @@ export function ListRow({
   hint,
   actions,
   onClick,
+  onSwipeDelete,
   className,
 }: {
   leading?: ReactNode;
@@ -41,11 +44,13 @@ export function ListRow({
   hint?: ReactNode;
   actions?: ReactNode;
   onClick?: () => void;
+  onSwipeDelete?: () => void;
   className?: string;
 }) {
-  return (
+  const row = (
     <div
-      role="listitem"
+      role={onSwipeDelete ? undefined : "listitem"}
+
       onClick={onClick}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={
@@ -90,7 +95,20 @@ export function ListRow({
       )}
     </div>
   );
+
+  if (onSwipeDelete) {
+    return (
+      <div role="listitem" className="rounded-xl">
+        <SwipeToDelete onDelete={onSwipeDelete} className="rounded-xl">
+          {row}
+        </SwipeToDelete>
+      </div>
+    );
+  }
+
+  return row;
 }
+
 
 
 /** Pastille ronde (icône ou image) utilisée en tête de carte. */

@@ -135,6 +135,8 @@ export function PaymentCard({ payment, onEdit, onDelete }: PaymentCardProps) {
     <>
       <ListRow
         onClick={() => setShowEditDialog(true)}
+        onSwipeDelete={handleDelete}
+
         leading={<ListAvatar icon={<StatusIcon className={cn("h-5 w-5", status.iconColor)} />} />}
         title={getFullName() || 'Client inconnu'}
         badge={<Badge className={cn("shrink-0 text-[10px] px-2 py-0.5 font-medium", status.className)}>{status.label}</Badge>}

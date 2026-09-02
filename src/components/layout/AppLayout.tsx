@@ -112,14 +112,8 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const isHomePage = location.pathname === '/app' || location.pathname === '/app/';
   const isStorePage = location.pathname.includes('/boutique');
-  const usesFlushListHeader = [
-    '/app/stocks',
-    '/app/ventes',
-    '/app/factures',
-    '/app/devis',
-    '/app/paiements',
-    '/app/livraisons',
-  ].includes(location.pathname);
+
+
 
 
   // Pages exclues de l'en-tête centré : Accueil, Caisse, Paramètres + pages d'analyse (titre à gauche)

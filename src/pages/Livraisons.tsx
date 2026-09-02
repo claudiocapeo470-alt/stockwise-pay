@@ -70,7 +70,14 @@ export default function Livraisons() {
   return (
     <div className="space-y-5 animate-fade-in">
       <StickyTop>
-        {/* Stats */}
+        {/* 1. Recherche */}
+        <PageActionBar
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Rechercher une livraison..."
+        />
+
+        {/* 2. Blocs KPI */}
         <div className="stat-scroller" style={{ ["--stat-cols" as any]: 4 }}>
           {[
             { label: "Assignées", value: stats.assigned, bg: "bg-primary/10", color: "text-primary", icon: UserPlus },
@@ -92,10 +99,11 @@ export default function Livraisons() {
           ))}
         </div>
 
-        {/* Filtres centrés */}
+        {/* 3. Filtres */}
         <FilterPills filters={filters} value={statusFilter} onChange={setStatusFilter} />
 
       </StickyTop>
+
 
       <SectionHeading
         title="Détails des livraisons"

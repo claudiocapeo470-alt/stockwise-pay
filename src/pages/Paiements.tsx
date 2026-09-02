@@ -1,3 +1,4 @@
+import { ListShell } from "@/components/layout/MinimalList";
 import { PageActionBar } from "@/components/layout/PageActionBar";
 import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
 import { useState } from "react"
@@ -198,11 +199,11 @@ export default function Paiements() {
             title="Opérations"
             count={filteredPayments.length}
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+          <ListShell>
             {filteredPayments.map((payment) => (
               <PaymentCard key={payment.id} payment={payment} />
             ))}
-          </div>
+          </ListShell>
         </>
       )}
 

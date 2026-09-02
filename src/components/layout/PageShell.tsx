@@ -78,27 +78,13 @@ export function SectionHeading({
 }
 
 /**
- * Bloc supérieur figé d'une page (KPI, filtres, barre d'actions, titre de section).
- * Il reste collé sous l'en-tête applicatif pendant que la liste en dessous défile.
+ * Bloc supérieur d'une page (barre de recherche, KPI, filtres, actions).
+ * Disposition identique sur toutes les pages listes : aucun espace vide au-dessus.
  */
 export function StickyTop({ children, className }: { children: ReactNode; className?: string }) {
-  return (
-    <div
-      className={cn(
-        "sticky z-30 bg-background",
-        // déborde des paddings du conteneur de page pour couvrir toute la largeur
-        "-mx-3 sm:-mx-5 md:-mx-6 lg:-mx-10 xl:-mx-12 px-3 sm:px-5 md:px-6 lg:px-10 xl:px-12",
-        // Le conteneur des pages concernées commence à pt-0 : aucun correctif négatif par breakpoint.
-        "pt-0 pb-2.5",
-        "border-b border-border/40 shadow-[0_6px_12px_-12px_hsl(var(--foreground)/0.4)] space-y-2.5",
-        className,
-      )}
-      style={{ top: "var(--app-header-h)" }}
-    >
-      {children}
-    </div>
-  );
+  return <div className={cn("space-y-4", className)}>{children}</div>;
 }
+
 
 
 

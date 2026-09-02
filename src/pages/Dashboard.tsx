@@ -36,10 +36,20 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col gap-4 h-[calc(100dvh-10.25rem)] min-h-0 overflow-hidden">
         <div className="shrink-0 rounded-3xl bg-primary text-primary-foreground px-5 py-5 shadow-sm">
-          <p className="text-sm opacity-80 leading-none">Bienvenue</p>
-          <h2 className="text-2xl font-bold leading-tight truncate mt-1">
-            {companyName}
-          </h2>
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-full bg-primary-foreground/15 overflow-hidden shrink-0 flex items-center justify-center">
+              {(settings?.logo_url || company?.logo_url) ? (
+                <img src={settings?.logo_url || company?.logo_url || ''} alt={companyName} className="h-full w-full object-cover" />
+              ) : (
+                <span className="text-base font-bold">{companyName.charAt(0).toUpperCase()}</span>
+              )}
+            </div>
+            <div className="flex items-baseline gap-2 min-w-0">
+              <p className="text-sm opacity-80 leading-none shrink-0">Bienvenue</p>
+              <h2 className="text-xl font-bold leading-none truncate">{companyName}</h2>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-2.5 mt-4">
             <div className="rounded-2xl bg-primary-foreground/10 px-3.5 py-3">
               <p className="text-[11px] opacity-70 leading-none">C.A (Mois)</p>

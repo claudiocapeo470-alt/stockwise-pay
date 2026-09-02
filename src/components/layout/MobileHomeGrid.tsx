@@ -80,25 +80,33 @@ export function MobileHomeGrid() {
   return (
     <>
       <div
-        className="grid grid-cols-3 gap-2 px-1 w-full h-full min-h-0 overflow-hidden"
-        style={{ gridTemplateRows: `repeat(${Math.max(1, Math.ceil(((isReady ? visibleTiles.length : 9) + (isReady ? 1 : 0)) / 3))}, minmax(0, 1fr))` }}
+        className="grid grid-cols-4 gap-2 px-1 w-full h-full min-h-0 overflow-hidden"
+        style={{ gridTemplateRows: `repeat(${Math.max(1, Math.ceil(((isReady ? visibleTiles.length : 12) + (isReady ? 1 : 0)) / 4))}, minmax(0, 1fr))` }}
       >
         {!isReady
-          ? Array.from({ length: 9 }).map((_, i) => (
+          ? Array.from({ length: 12 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl bg-muted/60 animate-pulse"
+                className="rounded-2xl bg-muted/40 animate-pulse"
               />
             ))
           : visibleTiles.map((tile) => (
               <button
                 key={tile.id}
                 onClick={() => handleTileClick(tile)}
-                className="flex flex-col items-center justify-center rounded-2xl p-1.5 gap-1 active:scale-95 transition-transform shadow-sm min-w-0 min-h-0"
-                style={{ backgroundColor: tile.color }}
+                className="flex flex-col items-center justify-center gap-1.5 p-1 active:scale-95 transition-transform min-w-0 min-h-0"
               >
-                <tile.icon className="h-[clamp(16px,4.5vh,26px)] w-[clamp(16px,4.5vh,26px)] text-white shrink-0" strokeWidth={1.8} />
-                <span className="text-white text-[10px] font-medium text-center leading-tight line-clamp-2 break-words">
+                <span
+                  className="rounded-full flex items-center justify-center shrink-0 h-[clamp(44px,8vh,58px)] w-[clamp(44px,8vh,58px)]"
+                  style={{ backgroundColor: `${tile.color}1F` }}
+                >
+                  <tile.icon
+                    className="h-[clamp(20px,4vh,26px)] w-[clamp(20px,4vh,26px)]"
+                    style={{ color: tile.color }}
+                    strokeWidth={1.9}
+                  />
+                </span>
+                <span className="text-foreground text-[11px] font-medium text-center leading-tight line-clamp-2 break-words">
                   {tile.label}
                 </span>
               </button>
@@ -106,10 +114,12 @@ export function MobileHomeGrid() {
         {isReady && (
           <button
             onClick={() => setLogoutOpen(true)}
-            className="flex flex-col items-center justify-center rounded-2xl p-1.5 gap-1 active:scale-95 transition-transform shadow-sm min-w-0 min-h-0 bg-destructive"
+            className="flex flex-col items-center justify-center gap-1.5 p-1 active:scale-95 transition-transform min-w-0 min-h-0"
           >
-            <LogOut className="h-[clamp(16px,4.5vh,26px)] w-[clamp(16px,4.5vh,26px)] text-destructive-foreground shrink-0" strokeWidth={1.8} />
-            <span className="text-destructive-foreground text-[10px] font-medium text-center leading-tight">
+            <span className="rounded-full flex items-center justify-center shrink-0 h-[clamp(44px,8vh,58px)] w-[clamp(44px,8vh,58px)] bg-destructive/10">
+              <LogOut className="h-[clamp(20px,4vh,26px)] w-[clamp(20px,4vh,26px)] text-destructive" strokeWidth={1.9} />
+            </span>
+            <span className="text-foreground text-[11px] font-medium text-center leading-tight">
               Déconnexion
             </span>
           </button>

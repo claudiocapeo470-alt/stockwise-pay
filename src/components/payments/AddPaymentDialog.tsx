@@ -30,6 +30,7 @@ const paymentMethods = [
 
 export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
   const [open, setOpen] = useState(false)
+  const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
     customer_first_name: "",
     customer_last_name: "",
@@ -84,12 +85,13 @@ export function AddPaymentDialog({ onSuccess }: AddPaymentDialogProps) {
       notes: ""
     })
     
+    setStep(1)
     setOpen(false)
     onSuccess?.()
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setStep(1) }}>
       <DialogTrigger asChild>
         <Button
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-medium hover:shadow-glow transition-all duration-300 rounded-xl h-auto py-3 px-4 sm:py-3.5 sm:px-5 flex items-center justify-center gap-2 sm:gap-3 group"

@@ -57,13 +57,13 @@ export function ProductGridCard({
           : undefined
       }
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm",
+        "group relative flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card p-1.5 transition-shadow hover:shadow-md",
         onClick && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
     >
       {/* Visuel */}
-      <div className="relative aspect-square w-full overflow-hidden bg-muted">
+      <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted/60">
         {image ? (
           <img
             src={image}
@@ -80,24 +80,28 @@ export function ProductGridCard({
         {badge && <div className="absolute left-2 top-2">{badge}</div>}
 
         {actions && (
-          <div className="absolute right-1.5 top-1.5 flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="absolute right-1.5 top-1.5 flex items-center gap-1.5"
+            onClick={(e) => e.stopPropagation()}
+          >
             {actions}
           </div>
         )}
       </div>
 
       {/* Infos */}
-      <div className="flex flex-1 flex-col gap-1.5 p-3">
+      <div className="flex flex-1 flex-col gap-1 px-2 pb-1.5 pt-2">
         <p className="truncate text-[13px] sm:text-sm font-semibold leading-tight">{name}</p>
         {meta && (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">{meta}</div>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">{meta}</div>
         )}
-        {price && <p className="mt-auto pt-1 text-[15px] sm:text-base font-bold tabular-nums leading-none">{price}</p>}
+        {price && <p className="mt-auto pt-1.5 text-[15px] sm:text-base font-bold tabular-nums leading-none">{price}</p>}
         {footer}
       </div>
     </div>
   );
 }
+
 
 /** Petite info secondaire (icône + texte) dans la zone meta d'une carte produit. */
 export function ProductMeta({ icon, children, className }: { icon?: ReactNode; children: ReactNode; className?: string }) {

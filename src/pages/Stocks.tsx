@@ -116,17 +116,20 @@ export default function Stocks() {
           </Card>
         </div>
 
-        {/* 3. Actions secondaires sous les blocs KPI */}
-        <SegmentRow>
-          <button
-            onClick={() => setShowMovements(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-foreground/70 px-3 py-1 text-[12px] font-semibold text-foreground transition-all hover:bg-foreground/5"
-          >
-            <History className="h-3.5 w-3.5 shrink-0" /> Mouvements
-          </button>
+        {/* 3. Actions secondaires sous les blocs KPI (même style que les onglets) */}
+        <div className="flex items-center justify-center">
+          <div className="inline-flex items-center gap-1.5">
+            <button
+              onClick={() => setShowMovements(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-foreground/70 px-3 py-1 text-[12px] font-semibold text-foreground transition-all hover:bg-foreground hover:text-background"
+            >
+              <History className="h-3.5 w-3.5 shrink-0" /> Mouvements
+            </button>
 
-          <ImportProductsDialog />
-        </SegmentRow>
+            <ImportProductsDialog />
+          </div>
+        </div>
+
 
       </StickyTop>
 

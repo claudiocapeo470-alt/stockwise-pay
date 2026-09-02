@@ -13,9 +13,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Save, Eye, Rocket, Copy, Check, Link2, Store, Palette,
-  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Tags, Settings2,
+  Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Tags, Settings2, Megaphone,
 } from "lucide-react";
 import CategoryManager from "@/components/store/CategoryManager";
+import PixelSettings from "@/components/store/PixelSettings";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 

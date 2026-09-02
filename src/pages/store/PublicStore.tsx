@@ -9,6 +9,8 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { supabase } from "@/integrations/supabase/client";
+import StorePixels from "@/components/store/StorePixels";
+import { trackPixelEvent } from "@/lib/pixels";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import {
   Search, ShoppingCart, Heart, X, Plus, Minus, Star,
@@ -408,6 +410,9 @@ export default function PublicStore() {
   // Cart helpers
   const addToCart = (p: ProductData, qty = 1) => {
     if (!isAvailable(p)) return;
+    trackPixelEvent("AddToCart", {
+      content_ids: [p.id], content_name: p.name, value: p.price * qty, quantity: qty,
+    });
     setCart(prev => {
       const ex = prev.find(i => i.id === p.id);
       if (ex) return prev.map(i => i.id === p.id ? { ...i, quantity: i.quantity + qty } : i);
@@ -416,6 +421,10 @@ export default function PublicStore() {
   };
   const buyNow = (p: ProductData, qty = 1) => {
     if (!isAvailable(p)) return;
+    trackPixelEvent("AddToCart", {
+      content_ids: [p.id], content_name: p.name, value: p.price * qty, quantity: qty,
+    });
+    trackPixelEvent("InitiateCheckout", { content_ids: [p.id], value: p.price * qty, quantity: qty });
     const updatedCart = (() => {
       const ex = cart.find(i => i.id === p.id);
       if (ex) return cart.map(i => i.id === p.id ? { ...i, quantity: i.quantity + qty } : i);
@@ -471,11 +480,19 @@ export default function PublicStore() {
     });
     setSubmitting(false);
     if (error) { alert("Erreur: " + error.message); return; }
+    trackPixelEvent("Purchase", {
+      content_ids: cart.map(i => i.id),
+      value: cartTotal,
+      quantity: totalItems,
+      order_id: orderNumber,
+    });
     setOrderSuccess(orderNumber);
     setCart([]); setShowCheckout(false); setShowCart(false);
   };
 
   const goToProduct = (id: string) => {
+    const prod = products.find(p => p.id === id);
+    if (prod) trackPixelEvent("ViewContent", { content_ids: [prod.id], content_name: prod.name, value: prod.price });
     setActiveProductId(id);
     setActivePage("product");
   };
@@ -1715,6 +1732,7 @@ export default function PublicStore() {
         {activePage === "search"     && <SearchPage />}
         {activePage === "account"    && <AccountPage />}
         {activePage === "product"    && <ProductDetailPage />}
+        <StorePixels storeId={store?.id} color={store?.primary_color} />
       </div>
 
       {/* OVERLAY DE TRAITEMENT COMMANDE */}

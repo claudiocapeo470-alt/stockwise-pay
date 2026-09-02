@@ -120,26 +120,10 @@ export default function Stocks() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Toolbar */}
-        <PageActionBar
-          searchValue={searchQuery}
-          onSearchChange={setSearchQuery}
-          searchPlaceholder="Rechercher un produit..."
-          segments={
-            <>
-              <Button variant="outline" onClick={() => setShowMovements(true)} className="h-11 gap-1.5 px-3 text-sm rounded-xl"><History className="h-4 w-4 shrink-0" /> Mouvements</Button>
-              <ImportProductsDialog />
-            </>
-          }
-          primary={<AddProductDialog />}
-        />
-
       </StickyTop>
 
-      {filteredProducts.length > 0 && (
-        <SectionHeading title="Produits en stock" count={filteredProducts.length} className="!mt-4 !mb-3" />
-      )}
+      <SectionHeading title="Produits en stock" count={filteredProducts.length} className="!mt-4 !mb-3" />
+
 
       {/* Products */}
       {filteredProducts.length === 0 ? (

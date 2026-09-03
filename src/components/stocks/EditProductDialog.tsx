@@ -127,7 +127,7 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
         </div>
         <div className="flex justify-between pt-3">
           <div>{step > 1 ? <Button variant="outline" onClick={() => setStep(s => s - 1)} className="gap-1"><ChevronLeft className="h-4 w-4" /> Précédent</Button> : <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>}</div>
-          <div>{step < 3 ? <Button onClick={() => setStep(s => s + 1)} className="gap-1">Suivant <ChevronRight className="h-4 w-4" /></Button> : <Button onClick={handleSubmit} disabled={isSubmitting}>{isSubmitting ? "Modification..." : "💾 Enregistrer"}</Button>}</div>
+          <div>{step < 3 ? <Button onClick={() => setStep(s => s + 1)} className="gap-1">Suivant <ChevronRight className="h-4 w-4" /></Button> : <Button onClick={handleSubmit} disabled={isSubmitting || imageUploading}>{isSubmitting ? "Modification..." : imageUploading ? "Upload image..." : "💾 Enregistrer"}</Button>}</div>
         </div>
       </DialogContent>
     </Dialog>

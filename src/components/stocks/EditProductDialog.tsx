@@ -10,6 +10,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { toast } from "sonner";
 import { EmojiPicker, IconColorPicker, getIconBgStyle } from "./EmojiPicker";
 import { MultiImageUpload } from "./MultiImageUpload";
+import { ProductImageInput } from "./ProductImageInput";
 
 interface Product { id: string; name: string; description?: string; price: number; quantity: number; min_quantity: number; category?: string; sku?: string; icon_emoji?: string; icon_bg_color?: string; image_url?: string | null; }
 interface EditProductDialogProps { product: Product | null; open: boolean; onOpenChange: (open: boolean) => void; }
@@ -98,15 +99,26 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
               {showPicker && (<div className="space-y-3 p-3 border border-border rounded-xl bg-card"><EmojiPicker value={formData.icon_emoji} onChange={v => setFormData(p => ({ ...p, icon_emoji: v }))} /><IconColorPicker value={formData.icon_bg_color} onChange={v => setFormData(p => ({ ...p, icon_bg_color: v }))} /></div>)}
             </div>
 
+            {/* Main image via Edge Function (R2) */}
+            <div className="space-y-2">
+              <Label>Image du produit</Label>
+              <ProductImageInput
+                value={formData.image_url}
+                onChange={url => setFormData(p => ({ ...p, image_url: url, extraImages: url ? [url, ...p.extraImages.filter(i => i !== url)] : p.extraImages }))}
+                onUploadingChange={setImageUploading}
+              />
+            </div>
+
             {/* Multiple images */}
             <div className="space-y-2">
-              <Label>Photos du produit (optionnel)</Label>
+              <Label>Photos additionnelles (optionnel)</Label>
               <MultiImageUpload
                 images={formData.extraImages}
-                onImagesChange={imgs => setFormData(p => ({ ...p, extraImages: imgs, image_url: imgs[0] || null }))}
+                onImagesChange={imgs => setFormData(p => ({ ...p, extraImages: imgs, image_url: p.image_url || imgs[0] || null }))}
                 maxImages={5}
               />
             </div>
+
 
             {/* Description */}
             <div><Label>Description (optionnel)</Label><Textarea value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} rows={3} /></div>

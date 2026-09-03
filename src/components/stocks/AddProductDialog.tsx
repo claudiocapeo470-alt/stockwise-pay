@@ -9,6 +9,7 @@ import { Plus, ChevronLeft, ChevronRight, Package, Tag, Image as ImageIcon } fro
 import { useProducts } from "@/hooks/useProducts";
 
 import { MultiImageUpload } from "./MultiImageUpload";
+import { ProductImageInput } from "./ProductImageInput";
 import { DialogHead } from "@/components/ui/dialog-head";
 
 const UNITS = ["pièce", "kg", "L", "m"];
@@ -16,6 +17,7 @@ const UNITS = ["pièce", "kg", "L", "m"];
 export function AddProductDialog() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
+  const [imageUploading, setImageUploading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "", description: "", price: "", quantity: "", min_quantity: "10",
@@ -98,13 +100,23 @@ export function AddProductDialog() {
           {step === 3 && (
             <>
               <div className="space-y-1.5">
-                <Label>Photos du produit (optionnel)</Label>
+                <Label>Image du produit</Label>
+                <ProductImageInput
+                  value={formData.image_url}
+                  onChange={url => setFormData(p => ({ ...p, image_url: url }))}
+                  onUploadingChange={setImageUploading}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Photos additionnelles (optionnel)</Label>
                 <MultiImageUpload
                   images={formData.extraImages}
-                  onImagesChange={imgs => setFormData(p => ({ ...p, extraImages: imgs, image_url: imgs[0] || null }))}
+                  onImagesChange={imgs => setFormData(p => ({ ...p, extraImages: imgs, image_url: p.image_url || imgs[0] || null }))}
                   maxImages={5}
                 />
               </div>
+
 
               <div className="space-y-1.5"><Label>Description (optionnel)</Label><Textarea value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Description détaillée du produit..." rows={3} className="rounded-xl" /></div>
             </>
@@ -112,7 +124,7 @@ export function AddProductDialog() {
         </div>
         <div className="flex items-center gap-2 pt-3 mt-1 border-t border-border/60 [&_button]:h-11 [&_button]:flex-1 [&_button]:rounded-xl">
           {step > 1 ? <Button variant="outline" onClick={() => setStep(s => s - 1)} className="gap-1"><ChevronLeft className="h-4 w-4" /> Précédent</Button> : <Button variant="outline" onClick={() => setOpen(false)}>Annuler</Button>}
-          {step < 3 ? <Button onClick={() => setStep(s => s + 1)} disabled={!canNext(step)} className="gap-1">Suivant <ChevronRight className="h-4 w-4" /></Button> : <Button onClick={handleSubmit} disabled={addProduct.isPending}>{addProduct.isPending ? "Ajout..." : "Enregistrer"}</Button>}
+          {step < 3 ? <Button onClick={() => setStep(s => s + 1)} disabled={!canNext(step)} className="gap-1">Suivant <ChevronRight className="h-4 w-4" /></Button> : <Button onClick={handleSubmit} disabled={addProduct.isPending || imageUploading}>{addProduct.isPending ? "Ajout..." : imageUploading ? "Upload image..." : "Enregistrer"}</Button>}
         </div>
       </DialogContent>
     </Dialog>

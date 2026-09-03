@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Camera, X, Loader2, Plus } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { uploadProductImage } from "@/lib/uploadProductImage";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -57,10 +57,9 @@ export function MultiImageUpload({ images, onImagesChange, maxImages = 5 }: Mult
           canvas.toBlob(b => b ? resolve(b) : reject('No blob'), 'image/webp', 0.85);
         });
 
-        const { error } = await supabase.storage.from("product-images").upload(fileName, blob, { contentType: "image/webp" });
-        if (error) throw error;
-        const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
-        newUrls.push(data.publicUrl);
+        const webpFile = new File([blob], fileName.split('/').pop() || 'image.webp', { type: "image/webp" });
+        const { url } = await uploadProductImage(webpFile);
+        newUrls.push(url);
       } catch (err: any) {
         toast.error(`Erreur: ${err.message || 'Upload échoué'}`);
       }

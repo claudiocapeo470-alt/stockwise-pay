@@ -22,6 +22,7 @@ import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
+import { uploadProductImage } from '@/lib/uploadProductImage';
 import { PageActionBar } from '@/components/layout/PageActionBar';
 import { ProductGrid, ProductGridCard, ProductMeta } from '@/components/products/ProductGridCard';
 import { SectionHeading } from '@/components/layout/PageShell';
@@ -86,15 +87,16 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const uploadFile = async (file: File, prefix: string): Promise<string | null> => {
+  const uploadFile = async (file: File, _prefix: string): Promise<string | null> => {
     if (!user) return null;
     if (file.size > 5 * 1024 * 1024) { toast.error('Image trop lourde (max 5 Mo)'); return null; }
-    const ext = file.name.split('.').pop();
-    const path = `${user.id}/${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
-    const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: false });
-    if (error) { toast.error(error.message); return null; }
-    const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(path);
-    return publicUrl;
+    try {
+      const { url } = await uploadProductImage(file);
+      return url;
+    } catch (err: any) {
+      toast.error(err?.message || "Erreur lors de l'upload");
+      return null;
+    }
   };
 
   const handleProductImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -22,6 +22,7 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
   const [showPicker, setShowPicker] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: product?.name || "", description: product?.description || "", price: product?.price || 0,
     quantity: product?.quantity || 0, min_quantity: product?.min_quantity || 10, category: product?.category || "",

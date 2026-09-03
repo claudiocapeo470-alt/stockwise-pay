@@ -3,7 +3,7 @@ import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from "react-image-cr
 import "react-image-crop/dist/ReactCrop.css";
 import { Button } from "@/components/ui/button";
 import { Camera, Upload, X, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { uploadProductImage } from "@/lib/uploadProductImage";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -77,11 +77,9 @@ export function ImageCropUpload({ currentImageUrl, onImageUploaded }: ImageCropU
     setUploading(true);
     try {
       const blob = await getCroppedBlob();
-      const fileName = `${user.id}/${Date.now()}.webp`;
-      const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, blob, { contentType: "image/webp", upsert: true });
-      if (uploadError) throw uploadError;
-      const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
-      onImageUploaded(data.publicUrl);
+      const file = new File([blob], `${Date.now()}.webp`, { type: "image/webp" });
+      const { url } = await uploadProductImage(file);
+      onImageUploaded(url);
       setImgSrc("");
       toast.success("Image uploadée !");
     } catch (err: any) {

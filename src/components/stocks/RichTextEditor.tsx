@@ -2,7 +2,7 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Bold, Italic, Underline, List, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { uploadProductImage } from "@/lib/uploadProductImage";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -65,10 +65,9 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       const blob = await new Promise<Blob>((resolve, reject) =>
         canvas.toBlob(b => b ? resolve(b) : reject('fail'), 'image/webp', 0.8)
       );
-      const { error } = await supabase.storage.from("product-images").upload(fileName, blob, { contentType: "image/webp" });
-      if (error) throw error;
-      const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
-      execCommand('insertHTML', `<img src="${data.publicUrl}" style="max-width:100%;border-radius:8px;margin:8px 0;" />`);
+      const webpFile = new File([blob], fileName.split('/').pop() || 'desc.webp', { type: "image/webp" });
+      const { url } = await uploadProductImage(webpFile);
+      execCommand('insertHTML', `<img src="${url}" style="max-width:100%;border-radius:8px;margin:8px 0;" />`);
     } catch {
       toast.error("Erreur upload image");
     } finally {

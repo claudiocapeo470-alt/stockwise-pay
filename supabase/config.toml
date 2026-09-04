@@ -90,4 +90,5 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.send-push-notification]
-verify_jwt = true
+verify_jwt = false
+

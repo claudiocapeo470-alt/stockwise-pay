@@ -153,6 +153,7 @@ function CompanyCodeTab() {
 
 function MembersTab() {
   const { members, roles, createMember, updateMember, deleteMember, generatePin } = useTeam();
+  const { company } = useCompany();
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editMember, setEditMember] = useState<CompanyMember | null>(null);

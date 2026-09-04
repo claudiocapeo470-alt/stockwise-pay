@@ -104,6 +104,8 @@ export interface PushPayload {
   body: string;
   url?: string;
   tag?: string;
+  /** Notification prioritaire : reste affichée jusqu'à interaction de l'utilisateur. */
+  requireInteraction?: boolean;
 }
 
 /** Envoie une notification push via l'Edge Function (silencieux en cas d'échec). */

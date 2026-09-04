@@ -11,7 +11,6 @@ import { useDeliveries } from "@/hooks/useDeliveries";
 import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck, CheckCircle2, ChefHat, XCircle, PackageCheck } from "lucide-react";
-import { useOrderNotifications } from '@/hooks/useOrderNotifications';
 import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from "@/components/layout/MinimalList";
 
 
@@ -42,7 +41,6 @@ export default function StoreOrders() {
   const { orders, updateOrderStatus } = useStoreOrders(store?.id);
   const { company } = useCompany();
   const { createDelivery } = useDeliveries();
-  useOrderNotifications(store?.id);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   const handleCreateDelivery = async (order: any) => {

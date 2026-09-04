@@ -15,7 +15,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { useTeam, CompanyMember } from "@/hooks/useTeam";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { sendPushNotification } from "@/lib/webPush";
+import { notifyUser } from "@/lib/notifyUser";
 import { Copy, Eye, EyeOff, Plus, RefreshCw, Users, Building2, MoreVertical, Pencil, Power, Trash2, BarChart3, Camera, UserSquare2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -249,12 +249,13 @@ function MembersTab() {
           role_id: matchingRole?.id || undefined,
           pin_code: pinToUse,
         });
-        toast.success(`Membre créé ! PIN : ${(result as any).generatedPin || result.pin_code}`);
         if (company?.owner_id) {
-          void sendPushNotification({
-            user_id: company.owner_id,
+          notifyUser({
+            companyId: company?.id,
+            userId: company.owner_id,
+            type: 'success',
             title: "Nouveau membre dans l'équipe",
-            body: `${firstName} ${lastName || ''} a rejoint votre équipe`.trim(),
+            message: `${firstName} ${lastName || ''} a rejoint votre équipe`.trim(),
             url: '/app/team',
             tag: `member-${(result as any).id || firstName}`,
           });

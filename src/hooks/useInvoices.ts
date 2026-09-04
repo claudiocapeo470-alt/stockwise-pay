@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCompany } from "./useCompany";
 import { useRealtimeSync } from "./useRealtimeSync";
 import { toast } from "sonner";
-import { sendPushNotification } from "@/lib/webPush";
+import { notifyUser } from "@/lib/notifyUser";
 
 export interface InvoiceItem {
   id?: string;
@@ -181,11 +181,13 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
       const isDevis = data?.document_type === "devis";
       const label = `${isDevis ? "Devis" : "Facture"} ${data?.document_number || ""}`.trim();
       const amount = Number(data?.total_amount || 0).toLocaleString("fr-FR");
-      const notify = (title: string, body: string, priority = false) =>
-        void sendPushNotification({
-          user_id: effectiveUserId,
+      const notify = (title: string, message: string, priority = false) =>
+        notifyUser({
+          companyId: company?.id,
+          userId: effectiveUserId,
+          type: title.includes("refusé") ? "error" : "success",
           title,
-          body,
+          message,
           url: isDevis ? "/app/devis" : "/app/factures",
           tag: `invoice-${data?.id}-${data?.status}`,
           requireInteraction: priority,

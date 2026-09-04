@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from './useCompany';
 import { useSubscription } from './useSubscription';
-import { sendPushNotification } from '@/lib/webPush';
+import { notifyUser } from '@/lib/notifyUser';
 
 /** Évite d'envoyer deux fois la même alerte (par jour). */
 function alreadyNotified(key: string): boolean {
@@ -50,11 +49,12 @@ export function useBusinessAlerts() {
         if (alreadyNotified(`invoice-overdue-${inv.id}`)) return;
         const label = `${inv.document_type === 'devis' ? 'Devis' : 'Facture'} ${inv.document_number}`;
         const body = `${label} — ${inv.client_name || 'client'} — ${Number(inv.total_amount || 0).toLocaleString('fr-FR')} FCFA`;
-        toast.warning('Document échu', { description: body });
-        void sendPushNotification({
-          user_id: ownerId,
+        notifyUser({
+          companyId: company?.id,
+          userId: ownerId,
+          type: 'warning',
           title: 'Facture échue',
-          body,
+          message: body,
           url: inv.document_type === 'devis' ? '/app/devis' : '/app/factures',
           tag: `invoice-overdue-${inv.id}`,
           requireInteraction: true,
@@ -75,11 +75,12 @@ export function useBusinessAlerts() {
           [pay.customer_first_name, pay.customer_last_name].filter(Boolean).join(' ') ||
           'Client';
         const body = `${client} — reste ${Number(pay.remaining_amount || 0).toLocaleString('fr-FR')} FCFA`;
-        toast.warning('Paiement en retard', { description: body });
-        void sendPushNotification({
-          user_id: ownerId,
+        notifyUser({
+          companyId: company?.id,
+          userId: ownerId,
+          type: 'warning',
           title: 'Paiement en retard',
-          body,
+          message: body,
           url: '/app/paiements',
           tag: `payment-overdue-${pay.id}`,
           requireInteraction: true,
@@ -90,7 +91,7 @@ export function useBusinessAlerts() {
     void check();
     const interval = setInterval(check, 1000 * 60 * 60);
     return () => clearInterval(interval);
-  }, [ownerId, isEmployee]);
+    }, [ownerId, isEmployee, company?.id]);
 
   // --- Abonnement : expiration proche + échec de paiement ---
   useEffect(() => {
@@ -100,11 +101,12 @@ export function useBusinessAlerts() {
     if (status.subscriptionEnd && daysLeft > 0 && daysLeft <= 3) {
       if (!alreadyNotified(`subscription-expiring-${ownerId}`)) {
         const body = `Votre abonnement expire dans ${daysLeft} jour${daysLeft > 1 ? 's' : ''}.`;
-        toast.warning('Abonnement bientôt expiré', { description: body });
-        void sendPushNotification({
-          user_id: ownerId,
+        notifyUser({
+          companyId: company?.id,
+          userId: ownerId,
+          type: 'warning',
           title: 'Abonnement bientôt expiré',
-          body,
+          message: body,
           url: '/app/subscription',
           tag: 'subscription-expiring',
         });
@@ -123,11 +125,12 @@ export function useBusinessAlerts() {
       (data || []).forEach((p: any) => {
         if (alreadyNotified(`subscription-failed-${p.id}`)) return;
         const body = `Le paiement de votre abonnement ${p.plan_name || ''} a échoué.`;
-        toast.error('Échec de paiement', { description: body });
-        void sendPushNotification({
-          user_id: ownerId,
+        notifyUser({
+          companyId: company?.id,
+          userId: ownerId,
+          type: 'error',
           title: 'Échec de paiement abonnement',
-          body,
+          message: body,
           url: '/app/subscription',
           tag: `subscription-failed-${p.id}`,
           requireInteraction: true,
@@ -136,7 +139,7 @@ export function useBusinessAlerts() {
     };
 
     void checkFailure();
-  }, [ownerId, isEmployee, status.trialDaysLeft, status.subscriptionEnd]);
+  }, [ownerId, isEmployee, status.trialDaysLeft, status.subscriptionEnd, company?.id]);
 
   // --- Nouvel avis client sur la boutique ---
   useEffect(() => {
@@ -160,11 +163,12 @@ export function useBusinessAlerts() {
           (payload) => {
             const review = payload.new as any;
             const body = `${review.customer_name || 'Un client'} a laissé ${review.rating || 0}/5`;
-            toast.success('Nouvel avis client', { description: body });
-            void sendPushNotification({
-              user_id: ownerId,
+            notifyUser({
+              companyId: company?.id,
+              userId: ownerId,
+              type: 'success',
               title: 'Nouvel avis client',
-              body,
+              message: body,
               url: '/app/boutique/avis',
               tag: `review-${review.id}`,
             });
@@ -177,5 +181,5 @@ export function useBusinessAlerts() {
       cancelled = true;
       if (channel) supabase.removeChannel(channel);
     };
-  }, [ownerId, isEmployee]);
+  }, [ownerId, isEmployee, company?.id]);
 }

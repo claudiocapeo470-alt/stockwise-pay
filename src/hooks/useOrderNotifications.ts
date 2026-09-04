@@ -1,10 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { sendPushNotification } from '@/lib/webPush';
+import { notifyUser } from '@/lib/notifyUser';
 
-export function useOrderNotifications(storeId: string | undefined) {
+export function useOrderNotifications(storeId: string | undefined, companyId: string | undefined) {
   const { user, isEmployee, memberInfo } = useAuth();
   const channelRef = useRef<any>(null);
 
@@ -27,25 +26,14 @@ export function useOrderNotifications(storeId: string | undefined) {
         (payload) => {
           const order = payload.new as any;
           const ownerId = isEmployee ? memberInfo?.owner_id : user?.id;
-          if (ownerId) {
-            void sendPushNotification({
-              user_id: ownerId,
-              title: 'Nouvelle commande',
-              body: `${order.customer_name || 'Client'} — ${(order.total || 0).toLocaleString('fr-FR')} FCFA`,
-              url: '/app/boutique/commandes',
-              tag: `order-${order.id}`,
-            });
-          }
-          toast.success('🛍️ Nouvelle commande !', {
-            description: `Commande de ${order.customer_name || 'client'} — ${(order.total || 0).toLocaleString('de-DE')} FCFA`,
-            duration: 6000,
-            action: {
-              label: 'Voir',
-              // Use SPA navigation via custom event (handled in AppLayout)
-              onClick: () => window.dispatchEvent(
-                new CustomEvent('app-navigate', { detail: '/app/boutique/commandes' })
-              ),
-            },
+          notifyUser({
+            companyId,
+            userId: ownerId,
+            type: 'success',
+            title: '🛍️ Nouvelle commande !',
+            message: `${order.customer_name || 'Client'} — ${(order.total || 0).toLocaleString('fr-FR')} FCFA`,
+            url: '/app/boutique/commandes',
+            tag: `order-${order.id}`,
           });
         }
       )
@@ -56,5 +44,5 @@ export function useOrderNotifications(storeId: string | undefined) {
         supabase.removeChannel(channelRef.current);
       }
     };
-  }, [storeId, isEmployee, memberInfo, user?.id]);
+  }, [storeId, companyId, isEmployee, memberInfo, user?.id]);
 }

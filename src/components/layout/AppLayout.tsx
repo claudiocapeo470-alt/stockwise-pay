@@ -15,6 +15,8 @@ import { SubscriptionAlert } from "@/components/subscription/SubscriptionAlert";
 import { useSessionWarning } from "@/hooks/useSessionWarning";
 import { useStockAlerts } from "@/hooks/useStockAlerts";
 import { useBusinessAlerts } from "@/hooks/useBusinessAlerts";
+import { useOrderNotifications } from "@/hooks/useOrderNotifications";
+import { supabase } from "@/integrations/supabase/client";
 import { NotificationCenter } from "./NotificationCenter";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";
@@ -34,10 +36,31 @@ export function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation();
   const isMobile = useIsMobile();
   const { company } = useCompany();
+  const [storeId, setStoreId] = useState<string>();
+  const ownerId = isEmployee ? (memberInfo?.owner_id || company?.owner_id) : user?.id;
+  useEffect(() => {
+    if (!ownerId) {
+      setStoreId(undefined);
+      return;
+    }
+    let cancelled = false;
+    void supabase
+      .from('online_store')
+      .select('id')
+      .eq('user_id', ownerId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setStoreId(data?.id);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ownerId]);
   useSessionWarning();
   // Stock alerts - triggers toast notifications on low stock
   useStockAlerts();
   useBusinessAlerts();
+  useOrderNotifications(storeId, company?.id);
   const [isLocked, setIsLocked] = useState(false);
   const lastActivityRef = useRef(Date.now());
 

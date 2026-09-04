@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useCompany } from './useCompany';
 import { useRealtimeSync } from './useRealtimeSync';
-import { sendPushNotification } from '@/lib/webPush';
+import { notifyUser } from '@/lib/notifyUser';
 
 export interface Payment {
   id: string;
@@ -68,13 +68,14 @@ export const usePayments = () => {
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['payments', effectiveUserId] });
-      toast({ title: 'Paiement enregistré', description: 'Le paiement a été enregistré avec succès' });
       if (effectiveUserId) {
         const client = data?.customer_name || [data?.customer_first_name, data?.customer_last_name].filter(Boolean).join(' ') || 'Client';
-        void sendPushNotification({
-          user_id: effectiveUserId,
+        notifyUser({
+          companyId: company?.id,
+          userId: effectiveUserId,
+          type: 'success',
           title: 'Nouveau paiement',
-          body: `${client} — ${Number(data?.paid_amount || 0).toLocaleString('fr-FR')} FCFA`,
+          message: `${client} — ${Number(data?.paid_amount || 0).toLocaleString('fr-FR')} FCFA`,
           url: '/app/paiements',
           tag: `payment-${data?.id}`,
         });
@@ -103,10 +104,12 @@ export const usePayments = () => {
       toast({ title: 'Paiement modifié', description: 'Le paiement a été modifié avec succès' });
       if (effectiveUserId && data?.status === 'completed') {
         const client = data?.customer_name || [data?.customer_first_name, data?.customer_last_name].filter(Boolean).join(' ') || 'Client';
-        void sendPushNotification({
-          user_id: effectiveUserId,
+        notifyUser({
+          companyId: company?.id,
+          userId: effectiveUserId,
+          type: 'success',
           title: 'Paiement soldé',
-          body: `${client} — ${Number(data?.total_amount || 0).toLocaleString('fr-FR')} FCFA encaissés`,
+          message: `${client} — ${Number(data?.total_amount || 0).toLocaleString('fr-FR')} FCFA encaissés`,
           url: '/app/paiements',
           tag: `payment-paid-${data?.id}`,
         });

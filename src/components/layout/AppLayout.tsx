@@ -14,6 +14,7 @@ import { Lock, BarChart3, UserSquare2 } from "lucide-react";
 import { SubscriptionAlert } from "@/components/subscription/SubscriptionAlert";
 import { useSessionWarning } from "@/hooks/useSessionWarning";
 import { useStockAlerts } from "@/hooks/useStockAlerts";
+import { useBusinessAlerts } from "@/hooks/useBusinessAlerts";
 import { NotificationCenter } from "./NotificationCenter";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";
@@ -36,6 +37,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   useSessionWarning();
   // Stock alerts - triggers toast notifications on low stock
   useStockAlerts();
+  useBusinessAlerts();
   const [isLocked, setIsLocked] = useState(false);
   const lastActivityRef = useRef(Date.now());
 

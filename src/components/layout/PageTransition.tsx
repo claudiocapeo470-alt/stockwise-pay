@@ -7,12 +7,16 @@ import { AnimatePresence, motion } from "framer-motion";
  * fade + léger slide vertical, ~180ms, easing doux.
  * Enveloppe un bloc <Routes> (y compris les routes imbriquées /app/* et /admin/*).
  */
-export function AnimatedRoutes({ children }: { children: React.ReactNode }) {
+export function AnimatedRoutes({ children, topLevel = false }: { children: React.ReactNode; topLevel?: boolean }) {
   const location = useLocation();
+  // Au niveau racine, on ne re-anime pas quand on navigue à l'intérieur de /app ou /admin
+  // (leurs blocs <Routes> imbriqués ont leur propre AnimatedRoutes) — sinon tout le layout serait remonté.
+  const segment = location.pathname.split('/')[1] || '/';
+  const key = topLevel && (segment === 'app' || segment === 'admin') ? segment : location.pathname;
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
-        key={location.pathname}
+        key={key}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}

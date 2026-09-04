@@ -83,7 +83,7 @@ const App = () => (
           <ScrollToTop />
           <SWUpdater />
           <AuthProvider>
-            <AnimatedRoutes>
+            <AnimatedRoutes topLevel>
               <Route path="/" element={<PWARedirect />} />
               <Route path="/tarifs" element={<Tarifs />} />
               <Route path="/fonctionnalites" element={<Fonctionnalites />} />

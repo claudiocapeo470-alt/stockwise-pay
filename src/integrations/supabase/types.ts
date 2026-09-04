@@ -1947,6 +1947,10 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
+      member_has_permission: {
+        Args: { _owner_id: string; _permission: string }
+        Returns: boolean
+      }
       validate_pin_login: {
         Args: { _company_code: string; _pin_code: string }
         Returns: {

@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from './useCompany';
 import { toast } from 'sonner';
+import { sendPushNotification } from '@/lib/webPush';
 
 export interface StockAlert {
   id: string;
@@ -64,6 +65,15 @@ export function useStockAlerts() {
             const existing = prev.find(a => a.id === p.id);
             if (!existing) {
               toast.warning(`⚠️ Stock bas : ${p.name} — Il reste ${p.quantity} unités`);
+              if (effectiveUserId) {
+                void sendPushNotification({
+                  user_id: effectiveUserId,
+                  title: 'Stock bas',
+                  body: `${p.name} — il reste ${p.quantity} unité(s)`,
+                  url: '/app/stocks',
+                  tag: `stock-${p.id}`,
+                });
+              }
             }
             const filtered = prev.filter(a => a.id !== p.id);
             return [...filtered, {

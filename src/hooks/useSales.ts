@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { sendPushNotification } from '@/lib/webPush';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useCompany } from './useCompany';
@@ -82,6 +83,16 @@ export const useSales = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['sales', effectiveUserId] });
       queryClient.invalidateQueries({ queryKey: ['products', effectiveUserId] });
+      // Notifie l'administrateur uniquement lorsqu'un employé enregistre la vente
+      if (isEmployee && effectiveUserId) {
+        void sendPushNotification({
+          user_id: effectiveUserId,
+          title: 'Nouvelle vente',
+          body: `${(data?.total_amount || 0).toLocaleString('fr-FR')} FCFA encaissés`,
+          url: '/app/ventes',
+          tag: `sale-${data?.id}`,
+        });
+      }
       log({
         action: 'sale.created',
         entity_type: 'sale',

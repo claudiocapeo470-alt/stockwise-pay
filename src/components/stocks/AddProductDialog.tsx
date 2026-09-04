@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, ChevronLeft, ChevronRight, Package, Tag, Image as ImageIcon } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
+import { supabase } from "@/integrations/supabase/client";
 
 import { MultiImageUpload } from "./MultiImageUpload";
 import { ProductImageInput } from "./ProductImageInput";
@@ -31,14 +32,28 @@ export function AddProductDialog() {
     try {
       // Use first extra image as main image_url if no main image set
       const mainImage = formData.image_url || formData.extraImages[0] || null;
-      await addProduct.mutateAsync({
+      const created = await addProduct.mutateAsync({
         name: formData.name, description: formData.description || null,
         price: parseFloat(formData.price) || 0, quantity: parseInt(formData.quantity) || 0,
         min_quantity: parseInt(formData.min_quantity) || 10, category: formData.category || null,
         sku: formData.sku || null, icon_emoji: formData.icon_emoji, icon_bg_color: formData.icon_bg_color,
         image_url: mainImage,
       });
-      // TODO: Save extra images to product_images table after product creation
+
+      // Save additional images (skip the one used as main image) to product_images
+      const extraUrls = formData.extraImages.filter((url) => url && url !== mainImage);
+      if (created?.id && extraUrls.length > 0) {
+        const { error } = await supabase.from("product_images").insert(
+          extraUrls.map((url, i) => ({
+            product_id: created.id,
+            user_id: created.user_id,
+            image_url: url,
+            sort_order: i + 1,
+          }))
+        );
+        if (error) console.error("Erreur sauvegarde images additionnelles:", error);
+      }
+
       resetForm();
     } catch {}
   };

@@ -15,6 +15,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { useTeam, CompanyMember } from "@/hooks/useTeam";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { sendPushNotification } from "@/lib/webPush";
 import { Copy, Eye, EyeOff, Plus, RefreshCw, Users, Building2, MoreVertical, Pencil, Power, Trash2, BarChart3, Camera, UserSquare2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -152,6 +153,7 @@ function CompanyCodeTab() {
 
 function MembersTab() {
   const { members, roles, createMember, updateMember, deleteMember, generatePin } = useTeam();
+  const { company } = useCompany();
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editMember, setEditMember] = useState<CompanyMember | null>(null);
@@ -248,6 +250,15 @@ function MembersTab() {
           pin_code: pinToUse,
         });
         toast.success(`Membre créé ! PIN : ${(result as any).generatedPin || result.pin_code}`);
+        if (company?.owner_id) {
+          void sendPushNotification({
+            user_id: company.owner_id,
+            title: "Nouveau membre dans l'équipe",
+            body: `${firstName} ${lastName || ''} a rejoint votre équipe`.trim(),
+            url: '/app/team',
+            tag: `member-${(result as any).id || firstName}`,
+          });
+        }
       }
       setDialogOpen(false);
     } catch {

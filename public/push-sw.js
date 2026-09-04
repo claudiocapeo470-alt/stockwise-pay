@@ -17,6 +17,7 @@ self.addEventListener("push", (event) => {
     renotify: Boolean(data.tag),
     data: { url: data.url || "/app" },
     vibrate: [80, 40, 80],
+    requireInteraction: data.requireInteraction === true,
   };
 
   event.waitUntil(self.registration.showNotification(title, options));

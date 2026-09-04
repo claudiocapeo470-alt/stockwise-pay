@@ -120,6 +120,7 @@ Deno.serve(async (req) => {
     const message = typeof payload?.body === "string" ? payload.body.slice(0, 400) : "";
     const url = typeof payload?.url === "string" ? payload.url : "/app";
     const tag = typeof payload?.tag === "string" ? payload.tag : undefined;
+    const requireInteraction = payload?.requireInteraction === true;
     const userIds: string[] = Array.isArray(payload?.user_ids)
       ? payload.user_ids.filter((v: unknown) => typeof v === "string")
       : typeof payload?.user_id === "string"
@@ -148,7 +149,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const notification = JSON.stringify({ title, body: message, url, tag });
+    const notification = JSON.stringify({ title, body: message, url, tag, requireInteraction });
     let sent = 0;
     const expired: string[] = [];
 

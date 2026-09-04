@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCompany } from "./useCompany";
 import { useRealtimeSync } from "./useRealtimeSync";
 import { toast } from "sonner";
+import { sendPushNotification } from "@/lib/webPush";
 
 export interface InvoiceItem {
   id?: string;
@@ -173,9 +174,26 @@ export const useInvoices = (documentType?: 'facture' | 'devis') => {
       }
       return { id, ...invoice };
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
       toast.success("Document modifié avec succès");
+      if (!effectiveUserId) return;
+      const isDevis = data?.document_type === "devis";
+      const label = `${isDevis ? "Devis" : "Facture"} ${data?.document_number || ""}`.trim();
+      const amount = Number(data?.total_amount || 0).toLocaleString("fr-FR");
+      const notify = (title: string, body: string, priority = false) =>
+        void sendPushNotification({
+          user_id: effectiveUserId,
+          title,
+          body,
+          url: isDevis ? "/app/devis" : "/app/factures",
+          tag: `invoice-${data?.id}-${data?.status}`,
+          requireInteraction: priority,
+        });
+
+      if (data?.status === "paye") notify("Facture payée", `${label} — ${amount} FCFA encaissés`);
+      else if (data?.status === "accepte") notify("Devis accepté", `${label} — ${data?.client_name || "client"}`);
+      else if (data?.status === "refuse") notify("Devis refusé", `${label} — ${data?.client_name || "client"}`, true);
     },
     onError: (error: Error) => {
       toast.error("Erreur lors de la modification: " + error.message);

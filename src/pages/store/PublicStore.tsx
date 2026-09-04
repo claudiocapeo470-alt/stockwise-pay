@@ -10,6 +10,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { supabase } from "@/integrations/supabase/client";
 import StorePixels from "@/components/store/StorePixels";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { trackPixelEvent } from "@/lib/pixels";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import {

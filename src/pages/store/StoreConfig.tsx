@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 // Card removed — wizard now lives in a bottom sheet
 import { Badge } from "@/components/ui/badge";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { useOnlineStore } from "@/hooks/useOnlineStore";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";

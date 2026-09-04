@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCompany } from "@/hooks/useCompany";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { Lock, BarChart3, UserSquare2 } from "lucide-react";
 import { SubscriptionAlert } from "@/components/subscription/SubscriptionAlert";
 import { useSessionWarning } from "@/hooks/useSessionWarning";

@@ -21,6 +21,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { generateCashReportPDF, CashReportPreview } from "@/components/caisse/CashReport";
 import { PosReceipt, type ReceiptData } from "@/components/caisse/PosReceipt";
 

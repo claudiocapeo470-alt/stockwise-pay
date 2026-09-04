@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from './useCompany';
-import { notifyUser } from '@/lib/notifyUser';
 
 export interface StockAlert {
   id: string;

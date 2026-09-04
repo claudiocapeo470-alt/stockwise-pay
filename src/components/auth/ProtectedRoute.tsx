@@ -12,7 +12,12 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   '/app/caisse': 'pos',
   '/app/ventes': 'sales',
   '/app/facturation': 'sales',
-  '/app/boutique/config': 'boutique',
+  '/app/factures': 'sales',
+  '/app/devis': 'sales',
+  '/app/paiements': 'sales',
+  '/app/rapports': 'reports',
+  '/app/rapport-employes': 'reports',
+
   '/app/boutique/produits': 'boutique',
   '/app/boutique/commandes': 'boutique_orders',
   '/app/boutique/avis': 'boutique',

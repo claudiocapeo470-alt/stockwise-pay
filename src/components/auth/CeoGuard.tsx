@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { PageLoader } from '@/components/ui/PageLoader';
 
 const CEO_EMAIL = (import.meta.env.VITE_CEO_EMAIL as string | undefined) || 'support@stocknix.com';
 
@@ -53,14 +54,7 @@ export function CeoGuard({ children }: { children: React.ReactNode }) {
   }, []);
 
   if (status === 'checking') {
-    return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-10 h-10 border-2 border-teal-400 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-slate-400 text-sm">Vérification sécurité...</p>
-        </div>
-      </div>
-    );
+    return <PageLoader label="Vérification sécurité..." className="bg-slate-950" />;
   }
 
   if (status === 'denied') return null;

@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useCompany } from './useCompany';
+import { toast } from 'sonner';
+import { sendPushNotification } from '@/lib/webPush';
 
 export interface Delivery {
   id: string;
@@ -81,8 +83,38 @@ export function useDeliveries(driverMemberId?: string) {
       if (status === 'problem') updates.problem_reason = problemReason || null;
       const { error } = await supabase.from('deliveries').update(updates).eq('id', deliveryId);
       if (error) throw error;
+      return { deliveryId, status };
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['deliveries', companyId, driverMemberId] }),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ['deliveries', companyId, driverMemberId] });
+      const ownerId = company?.owner_id;
+      const delivery = (deliveriesQuery.data || []).find(d => d.id === res?.deliveryId);
+      const ref = delivery?.order?.order_number ? `Commande ${delivery.order.order_number}` : 'Livraison';
+      if (res?.status === 'delivered') {
+        toast.success(`${ref} livrée`);
+        if (ownerId) {
+          void sendPushNotification({
+            user_id: ownerId,
+            title: 'Livraison effectuée',
+            body: `${ref} — ${delivery?.order?.customer_name || 'client'}`,
+            url: '/app/livraisons',
+            tag: `delivery-${res.deliveryId}`,
+          });
+        }
+      } else if (res?.status === 'problem') {
+        toast.error(`${ref} — échec de livraison`);
+        if (ownerId) {
+          void sendPushNotification({
+            user_id: ownerId,
+            title: 'Échec de livraison',
+            body: `${ref} — ${delivery?.problem_reason || 'problème signalé par le livreur'}`,
+            url: '/app/livraisons',
+            tag: `delivery-problem-${res.deliveryId}`,
+            requireInteraction: true,
+          });
+        }
+      }
+    },
   });
 
   return {

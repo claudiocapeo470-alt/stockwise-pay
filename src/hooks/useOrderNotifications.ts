@@ -2,9 +2,10 @@ import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { sendPushNotification } from '@/lib/webPush';
 
 export function useOrderNotifications(storeId: string | undefined) {
-  const { isEmployee, memberInfo } = useAuth();
+  const { user, isEmployee, memberInfo } = useAuth();
   const channelRef = useRef<any>(null);
 
   useEffect(() => {
@@ -25,6 +26,16 @@ export function useOrderNotifications(storeId: string | undefined) {
         { event: 'INSERT', schema: 'public', table: 'store_orders', filter: `store_id=eq.${storeId}` },
         (payload) => {
           const order = payload.new as any;
+          const ownerId = isEmployee ? memberInfo?.owner_id : user?.id;
+          if (ownerId) {
+            void sendPushNotification({
+              user_id: ownerId,
+              title: 'Nouvelle commande',
+              body: `${order.customer_name || 'Client'} — ${(order.total || 0).toLocaleString('fr-FR')} FCFA`,
+              url: '/app/boutique/commandes',
+              tag: `order-${order.id}`,
+            });
+          }
           toast.success('🛍️ Nouvelle commande !', {
             description: `Commande de ${order.customer_name || 'client'} — ${(order.total || 0).toLocaleString('de-DE')} FCFA`,
             duration: 6000,
@@ -45,5 +56,5 @@ export function useOrderNotifications(storeId: string | undefined) {
         supabase.removeChannel(channelRef.current);
       }
     };
-  }, [storeId, isEmployee, memberInfo]);
+  }, [storeId, isEmployee, memberInfo, user?.id]);
 }

@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { useAdminAllProducts } from "@/hooks/useAdmin";
 
 export default function AdminStocks() {

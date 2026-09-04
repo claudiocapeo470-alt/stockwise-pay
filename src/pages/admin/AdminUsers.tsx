@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UserCheck, UserX, Edit } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { EditUserDialog } from "@/components/admin/EditUserDialog";
 import { useAdminUsers, useToggleUserStatus } from "@/hooks/useAdmin";

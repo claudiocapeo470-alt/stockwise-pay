@@ -127,15 +127,25 @@ Deno.serve(async (req) => {
         ? [payload.user_id]
         : [];
 
+    const serviceKey = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}")["default"] ?? "";
+    const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", serviceKey);
+
+    if (typeof payload?.company_id === "string") {
+      const { error: notificationError } = await supabase.from("notifications").insert({
+        company_id: payload.company_id,
+        type: payload.type || "info",
+        title: payload.title,
+        message: payload.body,
+      });
+      if (notificationError) console.error("notification insert failed", notificationError.message);
+    }
+
     if (!title || userIds.length === 0) {
       return new Response(JSON.stringify({ error: "Paramètres invalides: user_id(s) et title requis" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    const serviceKey = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}")["default"] ?? "";
-    const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", serviceKey);
 
     const { data: subscriptions, error } = await supabase
       .from("push_subscriptions")

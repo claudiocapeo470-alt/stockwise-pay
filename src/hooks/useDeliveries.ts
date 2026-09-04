@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useCompany } from './useCompany';
-import { toast } from 'sonner';
-import { sendPushNotification } from '@/lib/webPush';
+import { notifyUser } from '@/lib/notifyUser';
 
 export interface Delivery {
   id: string;
@@ -91,23 +90,25 @@ export function useDeliveries(driverMemberId?: string) {
       const delivery = (deliveriesQuery.data || []).find(d => d.id === res?.deliveryId);
       const ref = delivery?.order?.order_number ? `Commande ${delivery.order.order_number}` : 'Livraison';
       if (res?.status === 'delivered') {
-        toast.success(`${ref} livrée`);
         if (ownerId) {
-          void sendPushNotification({
-            user_id: ownerId,
+          notifyUser({
+            companyId: company?.id,
+            userId: ownerId,
+            type: 'success',
             title: 'Livraison effectuée',
-            body: `${ref} — ${delivery?.order?.customer_name || 'client'}`,
+            message: `${ref} — ${delivery?.order?.customer_name || 'client'}`,
             url: '/app/livraisons',
             tag: `delivery-${res.deliveryId}`,
           });
         }
       } else if (res?.status === 'problem') {
-        toast.error(`${ref} — échec de livraison`);
         if (ownerId) {
-          void sendPushNotification({
-            user_id: ownerId,
+          notifyUser({
+            companyId: company?.id,
+            userId: ownerId,
+            type: 'error',
             title: 'Échec de livraison',
-            body: `${ref} — ${delivery?.problem_reason || 'problème signalé par le livreur'}`,
+            message: `${ref} — ${delivery?.problem_reason || 'problème signalé par le livreur'}`,
             url: '/app/livraisons',
             tag: `delivery-problem-${res.deliveryId}`,
             requireInteraction: true,

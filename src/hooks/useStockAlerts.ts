@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from './useCompany';
-import { toast } from 'sonner';
-import { sendPushNotification } from '@/lib/webPush';
+import { notifyUser } from '@/lib/notifyUser';
 
 export interface StockAlert {
   id: string;
@@ -64,17 +63,16 @@ export function useStockAlerts() {
           setAlerts(prev => {
             const existing = prev.find(a => a.id === p.id);
             if (!existing) {
-              toast.warning(`⚠️ Stock bas : ${p.name} — Il reste ${p.quantity} unités`);
-              if (effectiveUserId) {
-                void sendPushNotification({
-                  user_id: effectiveUserId,
-                  title: 'Stock bas',
-                  body: `${p.name} — il reste ${p.quantity} unité(s)`,
-                  url: '/app/stocks',
-                  tag: `stock-${p.id}`,
-                  requireInteraction: p.quantity <= 0,
-                });
-              }
+              notifyUser({
+                companyId: company?.id,
+                userId: effectiveUserId,
+                type: 'warning',
+                title: 'Stock bas',
+                message: `${p.name} — il reste ${p.quantity} unité(s)`,
+                url: '/app/stocks',
+                tag: `stock-${p.id}`,
+                requireInteraction: p.quantity === 0,
+              });
             }
             const filtered = prev.filter(a => a.id !== p.id);
             return [...filtered, {
@@ -93,7 +91,7 @@ export function useStockAlerts() {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [effectiveUserId]);
+  }, [effectiveUserId, company?.id]);
 
   const markAsRead = useCallback((id: string) => {
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, read: true } : a));

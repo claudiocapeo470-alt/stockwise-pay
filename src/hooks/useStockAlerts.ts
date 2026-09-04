@@ -72,6 +72,7 @@ export function useStockAlerts() {
                   body: `${p.name} — il reste ${p.quantity} unité(s)`,
                   url: '/app/stocks',
                   tag: `stock-${p.id}`,
+                  requireInteraction: p.quantity <= 0,
                 });
               }
             }

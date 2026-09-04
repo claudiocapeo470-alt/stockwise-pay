@@ -23,7 +23,7 @@ export default function AdminStocks() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={4} className="text-center py-6 text-muted-foreground">Chargement...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={4}><PageLoader fullScreen={false} className="py-6" /></TableCell></TableRow>
               ) : products.map((p: any) => (
                 <TableRow key={p.id}>
                   <TableCell>{p.name}</TableCell>

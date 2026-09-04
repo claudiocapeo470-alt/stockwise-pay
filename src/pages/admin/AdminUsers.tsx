@@ -52,7 +52,7 @@ export default function AdminUsers() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-6 text-muted-foreground">Chargement...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5}><PageLoader fullScreen={false} className="py-6" /></TableCell></TableRow>
               ) : filtered.map((user: any) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.first_name} {user.last_name}</TableCell>

@@ -536,10 +536,8 @@ export default function Caisse() {
 
   // ─── Cash Session ─────────────────────────────────────
   const openCashSession = async () => {
-    if (!user || !effectiveUserId) {
-      toast({ title: "Chargement en cours", description: "Patientez pendant la synchronisation de votre entreprise.", variant: "destructive" });
-      return;
-    }
+    // Le bouton est désactivé tant que la session n'est pas prête — garde silencieuse.
+    if (!user || !effectiveUserId) return;
     // Check for existing open session for THIS user (one per station/employee)
     const { data: existing } = await supabase
       .from('cash_sessions')
@@ -1392,7 +1390,7 @@ export default function Caisse() {
             </div>
             <div className="grid grid-cols-2 gap-2">
               <ModalBtn label="Plus tard" onClick={() => setShowOpenCashModal(false)} />
-              <ModalBtn label="Ouvrir la caisse" primary onClick={openCashSession} color="#10B981" />
+              <ModalBtn label="Ouvrir la caisse" primary onClick={openCashSession} color="#10B981" disabled={!user || !effectiveUserId} icon={(!user || !effectiveUserId) ? <Loader2 className="h-4 w-4 animate-spin" /> : undefined} />
             </div>
           </div>
         </ModalOverlay>

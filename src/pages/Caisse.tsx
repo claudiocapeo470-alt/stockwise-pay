@@ -731,11 +731,7 @@ export default function Caisse() {
     );
   }
   if (!effectiveUserId) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
-        <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <PageLoader label="Ouverture de la caisse…" />;
   }
 
   // ═══════════════════════════════════════════════════════

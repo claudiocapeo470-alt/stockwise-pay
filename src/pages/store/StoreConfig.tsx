@@ -166,11 +166,7 @@ export default function StoreConfig() {
   const storeUrl = `${PUBLIC_DOMAIN}/boutique/${form.slug}`;
   const copyUrl = () => { navigator.clipboard.writeText(storeUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center h-64">
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-    </div>
-  );
+  if (isLoading) return <PageLoader fullScreen={false} className="h-64" />;
 
   const progressPct = (currentStep / STEPS.length) * 100;
   const CurrentIcon = STEPS[currentStep - 1].icon;

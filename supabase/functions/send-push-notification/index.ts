@@ -130,6 +130,26 @@ Deno.serve(async (req) => {
     const serviceKey = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}")["default"] ?? "";
     const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", serviceKey);
 
+    // Autorisation : soit un appel serveur-à-serveur signé (triggers SQL / cron),
+    // soit un utilisateur authentifié depuis l'app.
+    const triggerSecret = Deno.env.get("PUSH_TRIGGER_SECRET") ?? "";
+    const providedSecret = req.headers.get("x-push-trigger-secret") ?? "";
+    const isInternalCall = triggerSecret.length > 0 && providedSecret === triggerSecret;
+
+    if (!isInternalCall) {
+      const token = (req.headers.get("Authorization") ?? "").replace("Bearer ", "");
+      const { data: userData } = token
+        ? await supabase.auth.getUser(token)
+        : { data: { user: null } };
+      if (!userData?.user) {
+        return new Response(JSON.stringify({ error: "Non autorisé" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+
     if (typeof payload?.company_id === "string") {
       const { error: notificationError } = await supabase.from("notifications").insert({
         company_id: payload.company_id,

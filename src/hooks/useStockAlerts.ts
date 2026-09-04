@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from './useCompany';
-import { notifyUser } from '@/lib/notifyUser';
 
 export interface StockAlert {
   id: string;
@@ -60,20 +59,9 @@ export function useStockAlerts() {
         const p = payload.new as any;
 
         if (p.min_quantity > 0 && p.quantity <= p.min_quantity) {
+          // L'alerte push/toast est envoyée par le trigger serveur `notify_low_stock`.
+          // Ici on met seulement à jour la liste affichée dans l'app.
           setAlerts(prev => {
-            const existing = prev.find(a => a.id === p.id);
-            if (!existing) {
-              notifyUser({
-                companyId: company?.id,
-                userId: effectiveUserId,
-                type: 'warning',
-                title: 'Stock bas',
-                message: `${p.name} — il reste ${p.quantity} unité(s)`,
-                url: '/app/stocks',
-                tag: `stock-${p.id}`,
-                requireInteraction: p.quantity === 0,
-              });
-            }
             const filtered = prev.filter(a => a.id !== p.id);
             return [...filtered, {
               id: p.id,
@@ -85,6 +73,7 @@ export function useStockAlerts() {
             }];
           });
         } else {
+
           setAlerts(prev => prev.filter(a => a.id !== p.id));
         }
       })

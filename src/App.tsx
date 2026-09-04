@@ -71,6 +71,7 @@ import CeoSettings from './pages/ceo/CeoSettings';
 import CeoAppearance from './pages/ceo/CeoAppearance';
 import { CeoGuard } from './components/auth/CeoGuard';
 import { CeoLayout } from './components/layout/CeoLayout';
+import { AnimatedRoutes } from './components/layout/PageTransition';
 
 
 const App = () => (

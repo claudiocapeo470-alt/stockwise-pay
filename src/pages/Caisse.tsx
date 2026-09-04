@@ -21,6 +21,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { generateCashReportPDF, CashReportPreview } from "@/components/caisse/CashReport";
 import { PosReceipt, type ReceiptData } from "@/components/caisse/PosReceipt";
 
@@ -535,10 +536,8 @@ export default function Caisse() {
 
   // ─── Cash Session ─────────────────────────────────────
   const openCashSession = async () => {
-    if (!user || !effectiveUserId) {
-      toast({ title: "Chargement en cours", description: "Patientez pendant la synchronisation de votre entreprise.", variant: "destructive" });
-      return;
-    }
+    // Le bouton est désactivé tant que la session n'est pas prête — garde silencieuse.
+    if (!user || !effectiveUserId) return;
     // Check for existing open session for THIS user (one per station/employee)
     const { data: existing } = await supabase
       .from('cash_sessions')
@@ -731,11 +730,7 @@ export default function Caisse() {
     );
   }
   if (!effectiveUserId) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: '#1A1F36' }}>
-        <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <PageLoader label="Ouverture de la caisse…" />;
   }
 
   // ═══════════════════════════════════════════════════════
@@ -1395,7 +1390,7 @@ export default function Caisse() {
             </div>
             <div className="grid grid-cols-2 gap-2">
               <ModalBtn label="Plus tard" onClick={() => setShowOpenCashModal(false)} />
-              <ModalBtn label="Ouvrir la caisse" primary onClick={openCashSession} color="#10B981" />
+              <ModalBtn label="Ouvrir la caisse" primary onClick={openCashSession} color="#10B981" disabled={!user || !effectiveUserId} icon={(!user || !effectiveUserId) ? <Loader2 className="h-4 w-4 animate-spin" /> : undefined} />
             </div>
           </div>
         </ModalOverlay>

@@ -71,6 +71,7 @@ import CeoSettings from './pages/ceo/CeoSettings';
 import CeoAppearance from './pages/ceo/CeoAppearance';
 import { CeoGuard } from './components/auth/CeoGuard';
 import { CeoLayout } from './components/layout/CeoLayout';
+import { AnimatedRoutes } from './components/layout/PageTransition';
 
 
 const App = () => (
@@ -82,7 +83,7 @@ const App = () => (
           <ScrollToTop />
           <SWUpdater />
           <AuthProvider>
-            <Routes>
+            <AnimatedRoutes topLevel>
               <Route path="/" element={<PWARedirect />} />
               <Route path="/tarifs" element={<Tarifs />} />
               <Route path="/fonctionnalites" element={<Fonctionnalites />} />
@@ -99,7 +100,7 @@ const App = () => (
               <Route path="/admin/*" element={
                 <AdminGuard>
                   <AdminLayout>
-                    <Routes>
+                    <AnimatedRoutes>
                       <Route path="/" element={<AdminDashboard />} />
                       <Route path="/users" element={<AdminUsers />} />
                       <Route path="/subscriptions" element={<AdminSubscriptions />} />
@@ -107,7 +108,7 @@ const App = () => (
                       <Route path="/notifications" element={<AdminNotifications />} />
                       <Route path="/performance" element={<AdminPerformance />} />
                       <Route path="*" element={<NotFound />} />
-                    </Routes>
+                    </AnimatedRoutes>
                   </AdminLayout>
                 </AdminGuard>
               } />
@@ -121,7 +122,7 @@ const App = () => (
                   <ModuleGuard>
                     <SubscriptionGuard>
                       <AppLayout>
-                        <Routes>
+                        <AnimatedRoutes>
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/stocks" element={<Stocks />} />
                           <Route path="/ventes" element={<Ventes />} />
@@ -150,7 +151,7 @@ const App = () => (
                           <Route path="/boutique/avis" element={<StoreReviews />} />
                           <Route path="/subscription" element={<MySubscription />} />
                           <Route path="*" element={<NotFound />} />
-                        </Routes>
+                        </AnimatedRoutes>
                       </AppLayout>
                     </SubscriptionGuard>
                   </ModuleGuard>
@@ -169,7 +170,7 @@ const App = () => (
               <Route path="/ceo/appearance" element={<CeoGuard><CeoLayout><CeoAppearance /></CeoLayout></CeoGuard>} />
 
               <Route path="*" element={<NotFound />} />
-            </Routes>
+            </AnimatedRoutes>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

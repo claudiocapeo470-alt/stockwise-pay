@@ -81,15 +81,6 @@ export default defineConfig(({ mode }) => ({
               expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 },
             },
           },
-          {
-            urlPattern: /\.supabase\.co/,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'supabase-cache',
-              networkTimeoutSeconds: 10,
-              expiration: { maxEntries: 50, maxAgeSeconds: 300 },
-            },
-          },
         ],
       },
     }),

@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCompany } from "@/hooks/useCompany";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { Lock, BarChart3, UserSquare2 } from "lucide-react";
 import { SubscriptionAlert } from "@/components/subscription/SubscriptionAlert";
 import { useSessionWarning } from "@/hooks/useSessionWarning";
@@ -202,14 +203,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   }, [loading, user]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 border-2 border-primary border-t-transparent mx-auto mb-4 animate-spin"></div>
-          <p className="text-muted-foreground text-sm">Chargement...</p>
-        </div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (!user && location.pathname !== '/auth') {

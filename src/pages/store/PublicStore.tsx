@@ -10,6 +10,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { supabase } from "@/integrations/supabase/client";
 import StorePixels from "@/components/store/StorePixels";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { trackPixelEvent } from "@/lib/pixels";
 import { getIconBgStyle } from "@/components/stocks/EmojiPicker";
 import {
@@ -498,15 +499,7 @@ export default function PublicStore() {
   };
 
   // ─── Loading / 404 ──────────────────────────────────────────────────────────
-  if (loading) return (
-    <div style={{ fontFamily: "Inter, sans-serif" }}
-      className="flex items-center justify-center min-h-screen bg-background">
-      <div className="flex flex-col items-center gap-4">
-        <div className="h-10 w-10 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-muted-foreground">Chargement de la boutique…</p>
-      </div>
-    </div>
-  );
+  if (loading) return <PageLoader label="Chargement de la boutique…" />;
   if (!store) return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center space-y-3">

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 // Card removed — wizard now lives in a bottom sheet
 import { Badge } from "@/components/ui/badge";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { useOnlineStore } from "@/hooks/useOnlineStore";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -166,11 +167,7 @@ export default function StoreConfig() {
   const storeUrl = `${PUBLIC_DOMAIN}/boutique/${form.slug}`;
   const copyUrl = () => { navigator.clipboard.writeText(storeUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center h-64">
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-    </div>
-  );
+  if (isLoading) return <PageLoader fullScreen={false} className="h-64" />;
 
   const progressPct = (currentStep / STEPS.length) * 100;
   const CurrentIcon = STEPS[currentStep - 1].icon;

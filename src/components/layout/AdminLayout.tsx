@@ -8,6 +8,7 @@ import { AdminBottomNav } from "./AdminBottomNav";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Shield } from "lucide-react";
+import { PageLoader } from "@/components/ui/PageLoader";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -40,14 +41,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   }, [user, loading, isAdmin, navigate]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4 animate-spin"></div>
-          <p className="text-muted-foreground">Chargement...</p>
-        </div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (!user || !isAdmin) {

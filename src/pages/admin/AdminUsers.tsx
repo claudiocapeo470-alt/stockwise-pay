@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UserCheck, UserX, Edit } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { EditUserDialog } from "@/components/admin/EditUserDialog";
 import { useAdminUsers, useToggleUserStatus } from "@/hooks/useAdmin";
@@ -52,7 +53,7 @@ export default function AdminUsers() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-6 text-muted-foreground">Chargement...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5}><PageLoader fullScreen={false} className="py-6" /></TableCell></TableRow>
               ) : filtered.map((user: any) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.first_name} {user.last_name}</TableCell>

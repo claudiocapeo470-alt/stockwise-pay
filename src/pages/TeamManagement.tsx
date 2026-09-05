@@ -23,7 +23,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
 const PREDEFINED_ROLES = [
-  { name: "Manager", icon: "👔", description: "Accès total sauf paramètres — supervise l'activité, CRM complet", permissions: { all: true, settings: false, subscription: false } },
+  { name: "Manager", icon: "👔", description: "Accès total sauf paramètres — supervise l'activité, CRM complet", permissions: { all: true, sales: true, settings: false, subscription: false } },
   { name: "Gestionnaire Stock", icon: "📦", description: "Gère l'inventaire, livraisons, factures, devis et clients", permissions: { stock: true, sales: true, deliveries: true, reports: true, customers: true, performance: true } },
   { name: "Gestionnaire Commandes", icon: "🛒", description: "Traite les commandes boutique, factures, devis et CRM complet", permissions: { boutique: true, boutique_orders: true, sales: true, reports: true, customers: true, performance: true } },
   { name: "Gestionnaire Fusionné", icon: "🔗", description: "Stock + Boutique — inventaire, commandes, factures, devis et CRM", permissions: { stock: true, boutique: true, boutique_orders: true, sales: true, deliveries: true, reports: true, customers: true, performance: true } },

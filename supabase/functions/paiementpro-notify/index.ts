@@ -138,8 +138,55 @@ serve(async (req) => {
       });
     }
 
-    const isSuccess = responsecode === "0" || responsecode === "00";
-    const status = isSuccess ? "active" : "failed";
+    // Already processed -> idempotent
+    if (sub.status === "active") {
+      return new Response("OK", { status: 200, headers: corsHeaders });
+    }
+
+    const merchantId = Deno.env.get("PAIEMENTPRO_MERCHANT_ID");
+    const merchantSecret = Deno.env.get("PAIEMENTPRO_SECRET_KEY");
+    if (!merchantId || !merchantSecret) {
+      console.error("Missing PaiementPro credentials — cannot verify payment");
+      return new Response(
+        JSON.stringify({ error: "Configuration marchand manquante" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    // NEVER trust the incoming payload alone: verify server-to-server.
+    const verification = await verifyWithPaiementPro({
+      merchantId,
+      merchantSecret,
+      reference,
+      sessionId: sessionId ?? sub.session_id,
+      amount: sub.amount,
+    });
+
+    const payloadSuccess = responsecode === "0" || responsecode === "00";
+
+    if (!verification.confirmed) {
+      console.warn("Payment NOT confirmed by PaiementPro:", reference, {
+        payloadSuccess,
+        raw: verification.raw.slice(0, 200),
+      });
+      // Nothing is written when the payload claimed success but verification failed.
+      if (payloadSuccess) {
+        return new Response(
+          JSON.stringify({ error: "Paiement non confirmé par Paiement Pro" }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      // Genuine failure notification: mark the pending subscription as failed.
+      await supabase
+        .from("subscriptions")
+        .update({ status: "failed", session_id: sessionId ?? sub.session_id, payment_method: paymentMethod })
+        .eq("reference", reference);
+      return new Response("OK", { status: 200, headers: corsHeaders });
+    }
+
+    const isSuccess = true;
+    const status = "active";
+
 
     // Compute expiration based on billing cycle
     const now = new Date();

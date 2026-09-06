@@ -147,8 +147,8 @@ export function AppSidebar() {
           <img src={companyLogo} alt="Logo" className="h-8 w-8 rounded-lg object-cover flex-shrink-0" />
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">{companyLabel}</p>
-              <p className="text-xs text-muted-foreground truncate">{roleLabel}</p>
+              <p className="text-sm font-semibold text-sidebar-foreground truncate">{companyLabel}</p>
+              <p className="text-xs text-sidebar-foreground/70 truncate">{roleLabel}</p>
             </div>
           )}
         </div>
@@ -162,7 +162,7 @@ export function AppSidebar() {
           return (
             <div key={group.label} className="px-2 py-1">
               {!isCollapsed && (
-                <p className="px-3 py-1.5 text-[10px] font-semibold text-muted-foreground tracking-wider uppercase">
+                <p className="px-3 py-1.5 text-[10px] font-semibold text-sidebar-foreground/60 tracking-wider uppercase">
                   {group.label}
                 </p>
               )}
@@ -192,8 +192,8 @@ export function AppSidebar() {
                 <AvatarFallback className="text-xs bg-primary/10 text-primary">{initials}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
-                <p className="text-xs text-muted-foreground truncate">{isEmployee ? (memberInfo?.member_role_name || '') : user.email}</p>
+                <p className="text-sm font-medium text-sidebar-foreground truncate">{displayName}</p>
+                <p className="text-xs text-sidebar-foreground/70 truncate">{isEmployee ? (memberInfo?.member_role_name || '') : user.email}</p>
                 {isAdmin && !isEmployee && <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">Admin</span>}
               </div>
             </div>
@@ -201,7 +201,7 @@ export function AppSidebar() {
         )}
       <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive">
+            <Button variant="ghost" className="w-full justify-start text-sidebar-foreground/80 hover:text-destructive">
               <LogOut className="h-4 w-4 mr-2" />
               {!isCollapsed && <span>Déconnexion</span>}
             </Button>

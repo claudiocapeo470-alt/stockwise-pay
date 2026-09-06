@@ -19,7 +19,6 @@ import { useBusinessAlerts } from "@/hooks/useBusinessAlerts";
 import { useOrderNotifications } from "@/hooks/useOrderNotifications";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationCenter } from "./NotificationCenter";
-import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { PWAInstallBanner } from "./PWAInstallBanner";
 import { StatScrollerDots } from "./StatScrollerDots";
 import { StoreOpenButton } from "@/components/store/StoreOpenButton";
@@ -284,7 +283,6 @@ export function AppLayout({ children }: AppLayoutProps) {
               </div>
 
               <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 [&_button]:rounded-full [&_button]:bg-muted/40 [&_button]:border [&_button]:border-border [&_button]:hover:bg-muted">
-                {!isMobile && <GlobalSearch />}
                 {isEmployee && !isMobile && (
                   <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground hover:text-foreground rounded-full bg-muted/60" title="Verrouiller">
                     <Lock className="h-4 w-4" />

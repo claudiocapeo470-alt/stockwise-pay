@@ -8,8 +8,85 @@ const corsHeaders = {
 };
 
 // Public webhook called by Paiement Pro after payment.
-// No JWT — verified via reference + Paiement Pro verify endpoint.
+// No JWT — the payment is ALWAYS re-verified server-to-server against
+// Paiement Pro before anything is marked as paid.
+
+/**
+ * Server-to-server verification with Paiement Pro.
+ * Returns true only if Paiement Pro itself confirms a successful payment.
+ */
+async function verifyWithPaiementPro(params: {
+  merchantId: string;
+  merchantSecret: string;
+  reference: string;
+  sessionId?: string | null;
+  amount?: number | null;
+}): Promise<{ confirmed: boolean; raw: string }> {
+  const { merchantId, merchantSecret, reference, sessionId, amount } = params;
+
+  // Hashcode built the same way as in paiementpro-init
+  const hashString = `${merchantId}${amount ?? ""}${reference}${merchantSecret}`;
+  const hashBuffer = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(hashString),
+  );
+  const hashcode = Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  const payload: Record<string, string> = {
+    merchantId,
+    referenceNumber: reference,
+    hashcode,
+  };
+  if (sessionId) payload.sessionid = sessionId;
+
+  const endpoints = [
+    "https://www.paiementpro.net/webservice/onlinepayment/verify/curl-verify.php",
+    "https://www.paiementpro.net/webservice/onlinepayment/curl-verify.php",
+  ];
+
+  let lastRaw = "";
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json, text/plain, */*",
+        },
+        body: new URLSearchParams(payload).toString(),
+      });
+      lastRaw = await res.text();
+      console.log("PaiementPro verify response:", { url, status: res.status, body: lastRaw.slice(0, 400) });
+      if (!res.ok) continue;
+
+      let parsed: any = null;
+      try {
+        parsed = JSON.parse(lastRaw);
+      } catch {
+        try {
+          parsed = Object.fromEntries(new URLSearchParams(lastRaw).entries());
+        } catch { /* ignore */ }
+      }
+      if (!parsed) continue;
+
+      const code = String(
+        parsed.responsecode ?? parsed.responseCode ?? parsed.status ?? "",
+      ).trim();
+      const confirmed = code === "0" || code === "00" ||
+        String(parsed.status ?? "").toLowerCase() === "success";
+      if (confirmed) return { confirmed: true, raw: lastRaw };
+    } catch (e) {
+      console.error("PaiementPro verify call failed:", url, e);
+    }
+  }
+
+  return { confirmed: false, raw: lastRaw };
+}
+
 serve(async (req) => {
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }

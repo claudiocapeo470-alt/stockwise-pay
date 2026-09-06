@@ -1,0 +1,9 @@
+CREATE INDEX IF NOT EXISTS idx_company_members_auth_user_id ON public.company_members (auth_user_id);
+CREATE INDEX IF NOT EXISTS idx_company_members_company_id ON public.company_members (company_id);
+CREATE INDEX IF NOT EXISTS idx_sales_user_id ON public.sales (user_id);
+CREATE INDEX IF NOT EXISTS idx_invoices_user_id ON public.invoices (user_id);
+CREATE INDEX IF NOT EXISTS idx_customers_user_id ON public.customers (user_id);
+CREATE INDEX IF NOT EXISTS idx_products_user_id ON public.products (user_id);
+CREATE INDEX IF NOT EXISTS idx_payments_user_id ON public.payments (user_id);
+CREATE INDEX IF NOT EXISTS idx_cash_sessions_user_id ON public.cash_sessions (user_id);
+CREATE INDEX IF NOT EXISTS idx_cash_movements_user_id ON public.cash_movements (user_id);

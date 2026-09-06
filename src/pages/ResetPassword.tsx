@@ -86,62 +86,62 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a1628] via-[#0d1f3c] to-[#081020] p-4">
-      <div className="w-full max-w-md bg-[#0f2440]/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8 space-y-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sidebar via-sidebar-accent to-background dark p-4">
+      <div className="w-full max-w-md bg-card/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-border p-8 space-y-6">
         <div className="text-center">
           <BrandLogo className="h-10 mx-auto" />
         </div>
 
         {status === 'loading' && (
           <div className="text-center space-y-4 py-6">
-            <Loader2 className="h-12 w-12 text-emerald-400 animate-spin mx-auto" />
-            <h2 className="text-xl font-bold text-white">Vérification en cours…</h2>
+            <Loader2 className="h-12 w-12 text-primary animate-spin mx-auto" />
+            <h2 className="text-xl font-bold text-foreground">Vérification en cours…</h2>
           </div>
         )}
 
         {status === 'form' && (
           <div className="space-y-6">
             <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold text-white">Nouveau mot de passe</h2>
-              <p className="text-sm text-slate-400">Choisissez un nouveau mot de passe sécurisé</p>
+              <h2 className="text-2xl font-bold text-foreground">Nouveau mot de passe</h2>
+              <p className="text-sm text-muted-foreground">Choisissez un nouveau mot de passe sécurisé</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-slate-300">Nouveau mot de passe</Label>
+                <Label className="text-foreground">Nouveau mot de passe</Label>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Minimum 8 caractères"
-                    className="bg-[#0d1f3c] border-[#1e3a5f] text-white pr-10"
+                    className="bg-background border-border text-foreground pr-10"
                     required
                   />
-                  <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" onClick={() => setShowPassword(!showPassword)}>
+                  <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-300">Confirmer le mot de passe</Label>
+                <Label className="text-foreground">Confirmer le mot de passe</Label>
                 <div className="relative">
                   <Input
                     type={showConfirm ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Répétez votre mot de passe"
-                    className="bg-[#0d1f3c] border-[#1e3a5f] text-white pr-10"
+                    className="bg-background border-border text-foreground pr-10"
                     required
                   />
-                  <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" onClick={() => setShowConfirm(!showConfirm)}>
+                  <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowConfirm(!showConfirm)}>
                     {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
-              <Button type="submit" className="w-full h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium" disabled={isLoading}>
+              <Button type="submit" className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-medium" disabled={isLoading}>
                 {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Mise à jour...</> : 'Mettre à jour le mot de passe'}
               </Button>
             </form>
@@ -150,20 +150,20 @@ export default function ResetPassword() {
 
         {status === 'success' && (
           <div className="text-center space-y-4 py-6">
-            <CheckCircle className="h-12 w-12 text-emerald-400 mx-auto" />
-            <h2 className="text-xl font-bold text-white">Mot de passe mis à jour !</h2>
-            <p className="text-sm text-slate-400">Vous allez être redirigé vers la connexion…</p>
+            <CheckCircle className="h-12 w-12 text-primary mx-auto" />
+            <h2 className="text-xl font-bold text-foreground">Mot de passe mis à jour !</h2>
+            <p className="text-sm text-muted-foreground">Vous allez être redirigé vers la connexion…</p>
           </div>
         )}
 
         {status === 'error' && (
           <div className="text-center space-y-4 py-6">
-            <XCircle className="h-12 w-12 text-red-400 mx-auto" />
-            <h2 className="text-xl font-bold text-white">Lien invalide</h2>
-            <p className="text-sm text-slate-400">{errorMsg}</p>
+            <XCircle className="h-12 w-12 text-destructive mx-auto" />
+            <h2 className="text-xl font-bold text-foreground">Lien invalide</h2>
+            <p className="text-sm text-muted-foreground">{errorMsg}</p>
             <Button
               onClick={() => navigate('/auth')}
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium"
+              className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-medium"
             >
               Retour à la connexion
             </Button>

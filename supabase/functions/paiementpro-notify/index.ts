@@ -8,8 +8,85 @@ const corsHeaders = {
 };
 
 // Public webhook called by Paiement Pro after payment.
-// No JWT — verified via reference + Paiement Pro verify endpoint.
+// No JWT — the payment is ALWAYS re-verified server-to-server against
+// Paiement Pro before anything is marked as paid.
+
+/**
+ * Server-to-server verification with Paiement Pro.
+ * Returns true only if Paiement Pro itself confirms a successful payment.
+ */
+async function verifyWithPaiementPro(params: {
+  merchantId: string;
+  merchantSecret: string;
+  reference: string;
+  sessionId?: string | null;
+  amount?: number | null;
+}): Promise<{ confirmed: boolean; raw: string }> {
+  const { merchantId, merchantSecret, reference, sessionId, amount } = params;
+
+  // Hashcode built the same way as in paiementpro-init
+  const hashString = `${merchantId}${amount ?? ""}${reference}${merchantSecret}`;
+  const hashBuffer = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(hashString),
+  );
+  const hashcode = Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  const payload: Record<string, string> = {
+    merchantId,
+    referenceNumber: reference,
+    hashcode,
+  };
+  if (sessionId) payload.sessionid = sessionId;
+
+  const endpoints = [
+    "https://www.paiementpro.net/webservice/onlinepayment/verify/curl-verify.php",
+    "https://www.paiementpro.net/webservice/onlinepayment/curl-verify.php",
+  ];
+
+  let lastRaw = "";
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json, text/plain, */*",
+        },
+        body: new URLSearchParams(payload).toString(),
+      });
+      lastRaw = await res.text();
+      console.log("PaiementPro verify response:", { url, status: res.status, body: lastRaw.slice(0, 400) });
+      if (!res.ok) continue;
+
+      let parsed: any = null;
+      try {
+        parsed = JSON.parse(lastRaw);
+      } catch {
+        try {
+          parsed = Object.fromEntries(new URLSearchParams(lastRaw).entries());
+        } catch { /* ignore */ }
+      }
+      if (!parsed) continue;
+
+      const code = String(
+        parsed.responsecode ?? parsed.responseCode ?? parsed.status ?? "",
+      ).trim();
+      const confirmed = code === "0" || code === "00" ||
+        String(parsed.status ?? "").toLowerCase() === "success";
+      if (confirmed) return { confirmed: true, raw: lastRaw };
+    } catch (e) {
+      console.error("PaiementPro verify call failed:", url, e);
+    }
+  }
+
+  return { confirmed: false, raw: lastRaw };
+}
+
 serve(async (req) => {
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -61,8 +138,55 @@ serve(async (req) => {
       });
     }
 
-    const isSuccess = responsecode === "0" || responsecode === "00";
-    const status = isSuccess ? "active" : "failed";
+    // Already processed -> idempotent
+    if (sub.status === "active") {
+      return new Response("OK", { status: 200, headers: corsHeaders });
+    }
+
+    const merchantId = Deno.env.get("PAIEMENTPRO_MERCHANT_ID");
+    const merchantSecret = Deno.env.get("PAIEMENTPRO_SECRET_KEY");
+    if (!merchantId || !merchantSecret) {
+      console.error("Missing PaiementPro credentials — cannot verify payment");
+      return new Response(
+        JSON.stringify({ error: "Configuration marchand manquante" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    // NEVER trust the incoming payload alone: verify server-to-server.
+    const verification = await verifyWithPaiementPro({
+      merchantId,
+      merchantSecret,
+      reference,
+      sessionId: sessionId ?? sub.session_id,
+      amount: sub.amount,
+    });
+
+    const payloadSuccess = responsecode === "0" || responsecode === "00";
+
+    if (!verification.confirmed) {
+      console.warn("Payment NOT confirmed by PaiementPro:", reference, {
+        payloadSuccess,
+        raw: verification.raw.slice(0, 200),
+      });
+      // Nothing is written when the payload claimed success but verification failed.
+      if (payloadSuccess) {
+        return new Response(
+          JSON.stringify({ error: "Paiement non confirmé par Paiement Pro" }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      // Genuine failure notification: mark the pending subscription as failed.
+      await supabase
+        .from("subscriptions")
+        .update({ status: "failed", session_id: sessionId ?? sub.session_id, payment_method: paymentMethod })
+        .eq("reference", reference);
+      return new Response("OK", { status: 200, headers: corsHeaders });
+    }
+
+    const isSuccess = true;
+    const status = "active";
+
 
     // Compute expiration based on billing cycle
     const now = new Date();

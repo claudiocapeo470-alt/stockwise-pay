@@ -34,6 +34,22 @@ Deno.serve(async (req) => {
       JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') ?? '{}')['default'] ?? ''
     );
 
+    // Rate limiting: max 5 failed attempts per company_code / 15 minutes
+    const windowStart = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+    const { count } = await supabaseAdmin
+      .from("rate_limit_attempts")
+      .select("*", { count: "exact", head: true })
+      .eq("identifier", company_code)
+      .eq("action_type", "pin_login")
+      .gte("attempted_at", windowStart);
+
+    if ((count || 0) >= 5) {
+      return new Response(
+        JSON.stringify({ error: "Trop de tentatives, réessayez plus tard" }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Validate PIN against DB (now returns owner_id too)
     const { data: members, error: validateError } = await supabaseAdmin.rpc(
       "validate_pin_login",
@@ -41,11 +57,22 @@ Deno.serve(async (req) => {
     );
 
     if (validateError || !members || members.length === 0) {
+      await supabaseAdmin
+        .from("rate_limit_attempts")
+        .insert({ identifier: company_code, action_type: "pin_login" });
       return new Response(
         JSON.stringify({ error: "Code entreprise ou PIN incorrect" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Successful login: clear previous failed attempts for this company
+    await supabaseAdmin
+      .from("rate_limit_attempts")
+      .delete()
+      .eq("identifier", company_code)
+      .eq("action_type", "pin_login");
+
 
     const member = members[0];
     let authUserId = member.auth_user_id;

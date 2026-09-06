@@ -47,38 +47,38 @@ export default function AuthConfirm() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a1628] via-[#0d1f3c] to-[#081020] p-4">
-      <div className="w-full max-w-md bg-[#0f2440]/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8 text-center space-y-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sidebar via-sidebar-accent to-background dark p-4">
+      <div className="w-full max-w-md bg-card/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-border p-8 text-center space-y-6">
         <BrandLogo className="h-10 mx-auto" />
         
         {status === 'loading' && (
           <div className="space-y-4 py-6">
-            <Loader2 className="h-12 w-12 text-emerald-400 animate-spin mx-auto" />
-            <h2 className="text-xl font-bold text-white">Vérification en cours…</h2>
-            <p className="text-sm text-slate-400">Nous confirmons votre adresse email, veuillez patienter.</p>
+            <Loader2 className="h-12 w-12 text-primary animate-spin mx-auto" />
+            <h2 className="text-xl font-bold text-foreground">Vérification en cours…</h2>
+            <p className="text-sm text-muted-foreground">Nous confirmons votre adresse email, veuillez patienter.</p>
           </div>
         )}
         
         {status === 'success' && (
           <div className="space-y-4 py-6">
-            <CheckCircle className="h-12 w-12 text-emerald-400 mx-auto" />
-            <h2 className="text-xl font-bold text-white">Compte confirmé !</h2>
-            <p className="text-sm text-slate-400">Votre email a été vérifié. Redirection en cours…</p>
+            <CheckCircle className="h-12 w-12 text-primary mx-auto" />
+            <h2 className="text-xl font-bold text-foreground">Compte confirmé !</h2>
+            <p className="text-sm text-muted-foreground">Votre email a été vérifié. Redirection en cours…</p>
           </div>
         )}
         
         {status === 'error' && (
           <div className="space-y-4 py-6">
-            <XCircle className="h-12 w-12 text-red-400 mx-auto" />
-            <h2 className="text-xl font-bold text-white">Échec de la confirmation</h2>
-            <p className="text-sm text-slate-400">{errorMsg}</p>
+            <XCircle className="h-12 w-12 text-destructive mx-auto" />
+            <h2 className="text-xl font-bold text-foreground">Échec de la confirmation</h2>
+            <p className="text-sm text-muted-foreground">{errorMsg}</p>
             <Button
               onClick={() => navigate('/auth')}
-              className="w-full h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium"
+              className="w-full h-12 rounded-2xl bg-primary text-primary-foreground font-medium"
             >
               Retour à la connexion
             </Button>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               Besoin d'un nouveau lien ? Connectez-vous et cliquez sur "Renvoyer la confirmation".
             </p>
           </div>

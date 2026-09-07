@@ -103,7 +103,7 @@ export default function Checkout() {
       return;
     }
     const orderNumber = `CMD-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
-    const items = cart.map(i => ({ name: i.name, icon: i.icon_emoji, price: i.price, quantity: i.quantity }));
+    const items = cart.map(i => ({ id: i.id, name: i.name, icon: i.icon_emoji, price: i.price, quantity: i.quantity }));
     const { error } = await supabase.from("store_orders").insert({
       store_id: store.id, order_number: orderNumber,
       customer_name: form.name, customer_phone: form.phone,

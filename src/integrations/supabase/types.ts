@@ -1585,7 +1585,7 @@ export type Database = {
           id: string
           items: Json
           notes: string | null
-          order_number: string
+          order_number: string | null
           payment_method: string | null
           payment_status: string | null
           status: string | null
@@ -1604,7 +1604,7 @@ export type Database = {
           id?: string
           items: Json
           notes?: string | null
-          order_number: string
+          order_number?: string | null
           payment_method?: string | null
           payment_status?: string | null
           status?: string | null
@@ -1623,7 +1623,7 @@ export type Database = {
           id?: string
           items?: Json
           notes?: string | null
-          order_number?: string
+          order_number?: string | null
           payment_method?: string | null
           payment_status?: string | null
           status?: string | null
@@ -1931,6 +1931,11 @@ export type Database = {
         }
         Returns: string
       }
+      generate_order_number: {
+        Args: { _store_id: string; _year?: number }
+        Returns: string
+      }
+      get_order_tracking: { Args: { _order_id: string }; Returns: Json }
       get_subscription_pricing: { Args: never; Returns: Json }
       has_role: {
         Args: {

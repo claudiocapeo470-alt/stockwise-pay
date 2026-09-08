@@ -39,6 +39,7 @@ export default function Checkout() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
+  const [successId, setSuccessId] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     name: "", phone: "+225 ", email: "", address: "", notes: "",

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { Package, CheckCircle, Truck, Clock, Store } from 'lucide-react';
+import { Package, CheckCircle, Truck, Clock, Store, AlertTriangle } from 'lucide-react';
 
 const STEPS = [
   { key: 'pending', label: 'Commande reçue', icon: Package },
@@ -68,6 +68,7 @@ export default function OrderTracking() {
 
   const currentStep = STATUS_INDEX[order.status] ?? 0;
   const isCancelled = order.status === 'cancelled';
+  const isProblem = order.status === 'problem';
   const items = Array.isArray(order.items) ? order.items : [];
 
   return (
@@ -94,6 +95,8 @@ export default function OrderTracking() {
               <span className="font-mono text-sm font-bold">{order.order_number}</span>
               {isCancelled ? (
                 <Badge variant="destructive">Annulée</Badge>
+              ) : isProblem ? (
+                <Badge variant="outline" className="border-warning/30 text-warning bg-warning/10">Problème de livraison</Badge>
               ) : (
                 <Badge variant="default">{STEPS[currentStep]?.label || order.status}</Badge>
               )}
@@ -104,8 +107,23 @@ export default function OrderTracking() {
           </CardContent>
         </Card>
 
+        {/* Problem alert */}
+        {isProblem && (
+          <Card className="border-warning/30 bg-warning/10">
+            <CardContent className="p-4 flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-warning">Un problème est survenu pendant la livraison</p>
+                {order.delivery_problem_reason && (
+                  <p className="text-sm text-warning/90 mt-1">Motif : {order.delivery_problem_reason}</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Timeline */}
-        {!isCancelled && (
+        {!isCancelled && !isProblem && (
           <Card>
             <CardContent className="p-4">
               <div className="space-y-0">

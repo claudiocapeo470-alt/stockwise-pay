@@ -176,7 +176,7 @@ export default function Checkout() {
             )}
             {successId && (
               <button
-                onClick={() => navigate(`/boutique/${slug}/suivi/${successId}`)}
+                onClick={() => navigate(`/boutique/${slug}/commande/${successId}`)}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm text-white rounded-full font-semibold"
                 style={{ background: color }}
               >

@@ -39,6 +39,7 @@ export default function Checkout() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
+  const [successId, setSuccessId] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     name: "", phone: "+225 ", email: "", address: "", notes: "",
@@ -102,24 +103,32 @@ export default function Checkout() {
       alert(`${unavailable.name} n'est plus disponible dans cette quantité.`);
       return;
     }
-    const orderNumber = `CMD-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
+    const orderId = crypto.randomUUID();
     const items = cart.map(i => ({ id: i.id, name: i.name, icon: i.icon_emoji, price: i.price, quantity: i.quantity }));
     const { error } = await supabase.from("store_orders").insert({
-      store_id: store.id, order_number: orderNumber,
+      id: orderId,
+      store_id: store.id,
       customer_name: form.name, customer_phone: form.phone,
       customer_email: form.email || null, customer_address: form.address || null,
       items, subtotal, delivery_fee: deliveryFee, total,
       payment_method: form.payment_method, notes: form.notes || null,
     });
+    if (error) { setSubmitting(false); alert("Erreur: " + error.message); return; }
+
+    // Le numéro de commande est généré côté serveur : on le relit via la fonction de suivi
+    let orderNumber = "";
+    const { data: tracking } = await supabase.rpc("get_order_tracking", { _order_id: orderId });
+    orderNumber = (tracking as any)?.order_number || "";
     setSubmitting(false);
-    if (error) { alert("Erreur: " + error.message); return; }
+
     trackPixelEvent("Purchase", {
       content_ids: cart.map(i => i.id),
       value: total,
       quantity: cart.reduce((s, i) => s + i.quantity, 0),
-      order_id: orderNumber,
+      order_id: orderNumber || orderId,
     });
-    setSuccess(orderNumber);
+    setSuccess(orderNumber || orderId);
+    setSuccessId(orderId);
     localStorage.removeItem(`cart-${slug}`);
   };
 
@@ -164,6 +173,15 @@ export default function Checkout() {
               >
                 <MessageCircle className="h-4 w-4" /> Contacter le vendeur
               </a>
+            )}
+            {successId && (
+              <button
+                onClick={() => navigate(`/boutique/${slug}/commande/${successId}`)}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm text-white rounded-full font-semibold"
+                style={{ background: color }}
+              >
+                <Truck className="h-4 w-4" /> Suivre ma commande
+              </button>
             )}
             <button
               onClick={() => navigate(`/boutique/${slug}`)}

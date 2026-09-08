@@ -25,15 +25,11 @@ export default function OrderTracking() {
     const fetch = async () => {
       if (!orderId) return;
 
-      const { data: orderData } = await supabase
-        .from('store_orders')
-        .select('*, store:online_store(*)')
-        .eq('id', orderId)
-        .single();
-
-      if (orderData) {
-        setOrder(orderData);
-        setStore((orderData as any).store);
+      const { data } = await supabase.rpc('get_order_tracking', { _order_id: orderId });
+      const result: any = data;
+      if (result) {
+        setOrder(result.order || result);
+        setStore(result.store || null);
       }
       setLoading(false);
     };

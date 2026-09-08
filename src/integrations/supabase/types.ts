@@ -1956,6 +1956,16 @@ export type Database = {
         Args: { _owner_id: string; _permission: string }
         Returns: boolean
       }
+      submit_store_review: {
+        Args: {
+          _comment?: string
+          _customer_name: string
+          _product_id: string
+          _rating: number
+          _store_id: string
+        }
+        Returns: string
+      }
       validate_pin_login: {
         Args: { _company_code: string; _pin_code: string }
         Returns: {

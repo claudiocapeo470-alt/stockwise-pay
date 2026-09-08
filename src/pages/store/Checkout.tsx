@@ -174,6 +174,15 @@ export default function Checkout() {
                 <MessageCircle className="h-4 w-4" /> Contacter le vendeur
               </a>
             )}
+            {successId && (
+              <button
+                onClick={() => navigate(`/boutique/${slug}/suivi/${successId}`)}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm text-white rounded-full font-semibold"
+                style={{ background: color }}
+              >
+                <Truck className="h-4 w-4" /> Suivre ma commande
+              </button>
+            )}
             <button
               onClick={() => navigate(`/boutique/${slug}`)}
               className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm rounded-full font-semibold border border-gray-200 hover:bg-gray-50"

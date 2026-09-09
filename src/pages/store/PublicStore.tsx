@@ -447,13 +447,12 @@ export default function PublicStore() {
     const comment = payload.comment.trim().slice(0, 1000);
     if (name.length < 2) return { ok: false, error: "Entrez votre nom" };
     if (payload.rating < 1 || payload.rating > 5) return { ok: false, error: "Choisissez une note" };
-    const { error } = await supabase.from("store_reviews").insert({
-      store_id: store.id,
-      product_id: payload.productId,
-      customer_name: name,
-      rating: payload.rating,
-      comment: comment || null,
-      is_approved: false,
+    const { error } = await supabase.rpc("submit_store_review", {
+      _store_id: store.id,
+      _product_id: payload.productId,
+      _customer_name: name,
+      _rating: payload.rating,
+      _comment: comment || null,
     });
     if (error) return { ok: false, error: "Envoi impossible pour le moment" };
     return { ok: true as const, error: "" };

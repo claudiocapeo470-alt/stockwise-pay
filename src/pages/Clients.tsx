@@ -80,24 +80,29 @@ export default function Clients() {
     if (!form.first_name.trim() || !effectiveUserId) return;
     try {
       if (editClient) {
-        await supabase.from('customers').update({
+        const { error } = await supabase.from('customers').update({
           first_name: form.first_name, last_name: form.last_name || null,
           phone: form.phone || null, email: form.email || null,
           address: form.address || null, notes: form.notes || null,
         }).eq('id', editClient.id);
+        if (error) throw error;
         toast.success('Client mis à jour');
       } else {
-        await supabase.from('customers').insert({
+        const { error } = await supabase.from('customers').insert({
           user_id: effectiveUserId,
           first_name: form.first_name, last_name: form.last_name || null,
           phone: form.phone || null, email: form.email || null,
           address: form.address || null, notes: form.notes || null,
         });
+        if (error) throw error;
         toast.success('Client ajouté');
       }
       setDialogOpen(false);
       fetchClients();
-    } catch { toast.error('Erreur'); }
+    } catch (err: any) {
+      toast.error(err?.message || 'Erreur lors de l\'enregistrement du client');
+      setDialogOpen(true);
+    }
   };
 
   const handleDelete = async (id: string) => {

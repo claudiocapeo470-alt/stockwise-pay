@@ -37,26 +37,29 @@ export default function Rapports() {
   const [period, setPeriod] = useState<Period>('30');
 
   // ─── METRICS ───
+  const days = period === 'all' ? 365 : parseInt(period);
   const metrics = useMemo(() => {
-    const totalRevenue = sales.reduce((s, x) => s + Number(x.total_amount), 0);
-    const completedPayments = payments.filter(p => p.status === 'completed');
-    const pendingPayments = payments.filter(p => p.status === 'pending');
+    const cutoff = period === 'all' ? new Date(0) : startOfDay(subDays(new Date(), days));
+    const filteredSales = sales.filter(s => new Date(s.created_at) >= cutoff);
+    const filteredPayments = payments.filter(p => new Date(p.created_at) >= cutoff);
+    const totalRevenue = filteredSales.reduce((s, x) => s + Number(x.total_amount), 0);
+    const completedPayments = filteredPayments.filter(p => p.status === 'completed');
+    const pendingPayments = filteredPayments.filter(p => p.status === 'pending');
     return {
-      totalSales: sales.length,
+      totalSales: filteredSales.length,
       totalRevenue,
-      avgSale: sales.length > 0 ? totalRevenue / sales.length : 0,
+      avgSale: filteredSales.length > 0 ? totalRevenue / filteredSales.length : 0,
       totalProducts: products.length,
       lowStockProducts: products.filter(p => p.quantity <= p.min_quantity).length,
       outOfStockProducts: products.filter(p => p.quantity === 0).length,
       stockValue: products.reduce((s, p) => s + p.price * p.quantity, 0),
       totalPaid: completedPayments.reduce((s, p) => s + Number(p.total_amount), 0),
       totalPending: pendingPayments.reduce((s, p) => s + Number(p.total_amount), 0),
-      paymentRate: payments.length > 0 ? Math.round((completedPayments.length / payments.length) * 100) : 0,
+      paymentRate: filteredPayments.length > 0 ? Math.round((completedPayments.length / filteredPayments.length) * 100) : 0,
     };
-  }, [products, sales, payments]);
+  }, [products, sales, payments, period, days]);
 
   // ─── CHART DATA ───
-  const days = period === 'all' ? 365 : parseInt(period);
   const chartData = useMemo(() => {
     const data: { date: string; ventes: number; revenu: number; label: string }[] = [];
     for (let i = days - 1; i >= 0; i--) {

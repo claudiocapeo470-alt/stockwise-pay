@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { getPerms, isDriverOnly, canPos } from '@/lib/rolePermissions';
 
 const REDIRECT_FLAG_KEY = 'role_redirect_done';
 
 /**
- * Redirige UNE SEULE FOIS par session à l'arrivée initiale d'un employé vers son espace dédié.
- * Le flag est stocké dans sessionStorage pour se réinitialiser proprement entre sessions.
+ * Redirige UNE SEULE FOIS par session à l'arrivée initiale d'un employé vers son espace dédié,
+ * en se basant sur ses permissions réelles (jamais sur le nom du rôle).
  */
 export function useRoleRedirect() {
   const { isEmployee, memberInfo } = useAuth();
@@ -23,16 +24,16 @@ export function useRoleRedirect() {
 
     if (initialPathRef.current !== '/app') return;
 
-    const role = (memberInfo.member_role_name || '').toLowerCase();
+    const perms = getPerms(memberInfo);
 
-    if (role.includes('caissier')) {
-      sessionStorage.setItem(REDIRECT_FLAG_KEY, '1');
-      navigate('/app/caisse', { replace: true });
-      return;
-    }
-    if (role.includes('livreur')) {
+    if (isDriverOnly(perms)) {
       sessionStorage.setItem(REDIRECT_FLAG_KEY, '1');
       navigate('/app/livreur', { replace: true });
+      return;
+    }
+    if (canPos(perms) && perms.all !== true) {
+      sessionStorage.setItem(REDIRECT_FLAG_KEY, '1');
+      navigate('/app/caisse', { replace: true });
       return;
     }
   }, [isEmployee, memberInfo, navigate]);

@@ -5,6 +5,8 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompanyModules, type ModuleKey } from "@/hooks/useCompanyModules";
+import { getPerms, isFullAccess, isDriverOnly, canPos, canStock, canOrders } from "@/lib/rolePermissions";
+import { LogoutButton } from "@/components/layout/LogoutButton";
 
 interface NavItem {
   name: string;
@@ -111,14 +113,15 @@ export function BottomNav() {
   const { hasModule } = useCompanyModules();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const role = (memberInfo?.member_role_name || '').toLowerCase();
+  const perms = getPerms(memberInfo);
 
-  if (isEmployee && role.includes('caissier')) return null;
+  // Caissier (permission pos sans accès complet) : navigation dédiée gérée par Caisse.tsx
+  if (isEmployee && canPos(perms) && !isFullAccess(perms)) return null;
 
   const hasAccess = (item: NavItem) => {
     const itemModule = item.module || getRouteModule(item.href);
     if (itemModule && !hasModule(itemModule)) return false;
-    if (item.href === '/app/rapport-employes' && isEmployee && !role.includes('manager')) return false;
+    if (item.href === '/app/rapport-employes' && isEmployee && !isFullAccess(perms) && !hasPermission('reports')) return false;
     if (item.permission && isEmployee && !hasPermission(item.permission)) return false;
     return true;
   };
@@ -128,16 +131,16 @@ export function BottomNav() {
   let navigation: NavItem[];
   let showMenuButton = true;
 
-  if (isEmployee && role.includes('livreur')) {
+  if (isEmployee && isDriverOnly(perms)) {
     navigation = livreurNav;
     showMenuButton = false;
-  } else if (isEmployee && role.includes('manager')) {
+  } else if (isEmployee && isFullAccess(perms)) {
     navigation = filterItems(managerNav);
-  } else if (isEmployee && (role.includes('fusionn') || role.includes('fusionne'))) {
+  } else if (isEmployee && canStock(perms) && canOrders(perms)) {
     navigation = filterItems(fusionneNav);
-  } else if (isEmployee && role.includes('commande')) {
+  } else if (isEmployee && canOrders(perms)) {
     navigation = filterItems(commandesNav);
-  } else if (isEmployee && role.includes('stock')) {
+  } else if (isEmployee && canStock(perms)) {
     navigation = filterItems(stockManagerNav);
   } else {
     navigation = filterItems(allBottomNav).slice(0, 4);

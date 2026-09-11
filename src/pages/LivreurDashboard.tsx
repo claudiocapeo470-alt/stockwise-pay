@@ -9,6 +9,7 @@ import { useDeliveries, Delivery } from "@/hooks/useDeliveries";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAutoLock } from "@/hooks/useAutoLock";
 import { LockScreen } from "@/components/auth/LockScreen";
+import { LogoutButton } from "@/components/layout/LogoutButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Truck, Package, CheckCircle, AlertTriangle, Clock, MapPin, Phone, User, Lock, LogOut } from "lucide-react";
@@ -28,7 +29,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default function LivreurDashboard() {
-  const { signOut, memberInfo } = useAuth();
+  const { memberInfo } = useAuth();
   const memberId = memberInfo?.member_id;
   const { deliveries, updateStatus } = useDeliveries(memberId);
   const [tab, setTab] = useState<'today' | 'history' | 'profile'>('today');

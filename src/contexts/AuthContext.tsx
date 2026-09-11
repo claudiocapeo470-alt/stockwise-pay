@@ -108,6 +108,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     // Permission implications hierarchy
     if (module === 'boutique_orders' && perms.boutique === true) return true;
+    if (module === 'deliveries_own' && perms.deliveries === true) return true;
     if (module === 'deliveries' && perms.stock === true) return true;
     if (module === 'performance' && (perms.reports === true || perms.all === true)) return true;
     if (module === 'customers_basic' && perms.customers === true) return true;

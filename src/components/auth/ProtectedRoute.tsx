@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { PageLoader } from '@/components/ui/PageLoader'
+import { getDefaultRouteFromPerms, getPerms } from '@/lib/rolePermissions'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -10,6 +11,7 @@ interface ProtectedRouteProps {
 const ROUTE_PERMISSIONS: Record<string, string> = {
   '/app/stocks': 'stock',
   '/app/caisse': 'pos',
+  '/app/livreur': 'deliveries_own',
   '/app/ventes': 'sales',
   '/app/facturation': 'sales',
   '/app/factures': 'sales',
@@ -19,7 +21,6 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   '/app/rapport-employes': 'reports',
   '/app/boutique/config': 'boutique',
   '/app/boutique/produits': 'boutique',
-
   '/app/boutique/commandes': 'boutique_orders',
   '/app/boutique/avis': 'boutique',
   '/app/livraisons': 'deliveries',
@@ -28,18 +29,6 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   '/app/settings': 'settings',
   '/app/performance': 'performance',
 };
-
-function getDefaultRoute(memberInfo: any): string {
-  if (!memberInfo) return '/app';
-  const role = memberInfo.member_role_name?.toLowerCase() || '';
-  if (role.includes('caissier')) return '/app/caisse';
-  if (role.includes('livreur')) return '/app/livreur';
-  if (role.includes('manager')) return '/app';
-  if (role.includes('gestionnaire') || role.includes('stock')) return '/app/stocks';
-  if (role.includes('vendeur') || role.includes('commande')) return '/app/boutique/commandes';
-  if (role.includes('fusionn')) return '/app';
-  return '/app';
-}
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading, isEmployee, hasPermission, memberInfo } = useAuth()
@@ -53,17 +42,13 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/auth" replace />
   }
 
-  // Check route-level permissions for employees
+  // Check route-level permissions for employees (basé UNIQUEMENT sur les permissions, jamais sur le nom du rôle)
   if (isEmployee) {
     const path = location.pathname;
-    const role = memberInfo?.member_role_name?.toLowerCase() || '';
-    const hasRoleRouteAccess =
-      (path.startsWith('/app/caisse') && role.includes('caissier')) ||
-      (path.startsWith('/app/livreur') && role.includes('livreur'));
 
     for (const [route, perm] of Object.entries(ROUTE_PERMISSIONS)) {
-      if (path.startsWith(route) && !hasPermission(perm) && !hasRoleRouteAccess) {
-        const fallbackRoute = getDefaultRoute(memberInfo)
+      if (path.startsWith(route) && !hasPermission(perm)) {
+        const fallbackRoute = getDefaultRouteFromPerms(getPerms(memberInfo))
         return <Navigate to={fallbackRoute === path ? '/app' : fallbackRoute} replace />
       }
     }

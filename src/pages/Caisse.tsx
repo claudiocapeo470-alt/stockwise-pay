@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { PageLoader } from "@/components/ui/PageLoader";
+import { LogoutButton } from "@/components/layout/LogoutButton";
+import { getPerms, isFullAccess, canStock, canOrders, canOwnDeliveries } from "@/lib/rolePermissions";
 import { generateCashReportPDF, CashReportPreview } from "@/components/caisse/CashReport";
 import { PosReceipt, type ReceiptData } from "@/components/caisse/PosReceipt";
 
@@ -163,7 +165,7 @@ export default function Caisse() {
   const { addSale } = useSales();
   const { toast } = useToast();
   const { settings } = useCompanySettings();
-  const { profile, user, isEmployee, memberInfo, loading: authLoading, signOut } = useAuth();
+  const { profile, user, isEmployee, memberInfo, loading: authLoading } = useAuth();
   const { company, loading: companyLoading } = useCompany();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -692,10 +694,6 @@ export default function Caisse() {
     setLockPin('');
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/auth', { replace: true });
-  };
 
   const requireOpenCashSession = (onAllowed: () => void, description: string) => {
     if (cashSessionOpen) {
@@ -931,7 +929,11 @@ export default function Caisse() {
         <HeaderBtn icon={<BarChart3 className="h-4 w-4" />} label="Stats" onClick={() => navigate('/app/performance')} />
         <HeaderBtn icon={<Settings className="h-4 w-4" />} label="Paramètres" onClick={() => navigate('/app/settings')} />
         <HeaderBtn icon={<Camera className="h-4 w-4" />} label="Scanner" onClick={startScanner} />
-        <HeaderBtn icon={<LogOut className="h-4 w-4" />} label="Déconnexion" onClick={handleSignOut} />
+        <LogoutButton>
+          <button title="Déconnexion" className="flex items-center justify-center h-9 w-9 rounded-lg text-white/70 min-h-[44px] min-w-[44px] transition-colors" style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <LogOut className="h-4 w-4" />
+          </button>
+        </LogoutButton>
       </div>
     </header>
   );
@@ -1633,9 +1635,11 @@ export default function Caisse() {
               <Home className="h-5 w-5" />
             </button>
           ) : (
-            <button onClick={handleSignOut} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Déconnexion">
-              <LogOut className="h-5 w-5" />
-            </button>
+            <LogoutButton>
+              <button className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Déconnexion">
+                <LogOut className="h-5 w-5" />
+              </button>
+            </LogoutButton>
           )}
           <span className="text-white font-black text-sm" style={{ fontFamily: 'Nunito, sans-serif' }}>POS</span>
           {cashSessionOpen || !sessionChecked ? (
@@ -1670,9 +1674,11 @@ export default function Caisse() {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => requireOpenCashSession(() => setShowCloseCashModal(true), 'Aucune session ouverte à clôturer pour ce poste.')} className="text-amber-500">🔒 Clôturer</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                <LogOut className="h-4 w-4 mr-2" /> Déconnexion
-              </DropdownMenuItem>
+              <LogoutButton>
+                <div className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-destructive outline-none hover:bg-accent">
+                  <LogOut className="h-4 w-4 mr-2" /> Déconnexion
+                </div>
+              </LogoutButton>
             </DropdownMenuContent>
           </DropdownMenu>
           <button className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white" onClick={() => setMobileView(mobileView === 'products' ? 'ticket' : 'products')}>
@@ -1813,6 +1819,34 @@ export default function Caisse() {
           </div>
         </>
       )}
+
+      {/* Mobile bottom nav — cohérente avec BottomNav.tsx */}
+      {(() => {
+        const p = getPerms(memberInfo);
+        const canSeeDashboard = !isEmployee || isFullAccess(p) || canStock(p) || canOrders(p) || canOwnDeliveries(p);
+        const itemCls = (active: boolean) =>
+          `flex flex-col items-center justify-center flex-1 gap-1.5 pt-2 transition-colors duration-200 min-w-0 min-h-[44px] ${active ? '' : 'opacity-60'}`;
+        return (
+          <nav className="shrink-0 flex items-end justify-around h-[64px] px-2 pb-2" style={{ background: '#FFFFFF', borderTop: '1px solid #E8EAF0' }}>
+            <button onClick={() => setMobileView('products')} className={itemCls(true)} style={{ color: '#1F2937' }}>
+              <ShoppingCart className="h-[22px] w-[22px] stroke-[2.4]" />
+              <span className="text-[11px] leading-none font-semibold">Caisse</span>
+            </button>
+            {canSeeDashboard && (
+              <button onClick={() => navigate('/app')} className={itemCls(false)} style={{ color: '#6B7280' }}>
+                <Home className="h-[22px] w-[22px] stroke-[1.75]" />
+                <span className="text-[11px] leading-none">Accueil</span>
+              </button>
+            )}
+            <LogoutButton>
+              <button className={itemCls(false)} style={{ color: '#EF4444' }} aria-label="Déconnexion">
+                <LogOut className="h-[22px] w-[22px] stroke-[1.75]" />
+                <span className="text-[11px] leading-none">Déconnexion</span>
+              </button>
+            </LogoutButton>
+          </nav>
+        );
+      })()}
 
       {renderModals()}
     </div>

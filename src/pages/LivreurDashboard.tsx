@@ -9,6 +9,7 @@ import { useDeliveries, Delivery } from "@/hooks/useDeliveries";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAutoLock } from "@/hooks/useAutoLock";
 import { LockScreen } from "@/components/auth/LockScreen";
+import { LogoutButton } from "@/components/layout/LogoutButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Truck, Package, CheckCircle, AlertTriangle, Clock, MapPin, Phone, User, Lock, LogOut } from "lucide-react";
@@ -28,7 +29,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default function LivreurDashboard() {
-  const { signOut, memberInfo } = useAuth();
+  const { memberInfo } = useAuth();
   const memberId = memberInfo?.member_id;
   const { deliveries, updateStatus } = useDeliveries(memberId);
   const [tab, setTab] = useState<'today' | 'history' | 'profile'>('today');
@@ -177,24 +178,35 @@ export default function LivreurDashboard() {
               <p className="text-muted-foreground">{memberInfo?.member_role_name || 'Livreur'}</p>
             </div>
             <div className="space-y-2">
-              <Button variant="outline" className="w-full gap-2" onClick={signOut}><LogOut className="h-4 w-4" /> Déconnexion</Button>
+              <LogoutButton className="w-full flex items-center justify-center gap-2 h-11 rounded-md border border-input bg-background text-sm font-medium text-destructive hover:bg-accent transition-colors" />
             </div>
           </div>
         )}
       </div>
 
-      {/* Bottom tabs */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-background border-t flex h-16 z-50">
-        {[
-          { key: 'today' as const, label: "Aujourd'hui", icon: Clock },
-          { key: 'history' as const, label: 'Historique', icon: Package },
-          { key: 'profile' as const, label: 'Profil', icon: User },
-        ].map(t => (
-          <button key={t.key} onClick={() => setTab(t.key)} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${tab === t.key ? 'text-primary' : 'text-muted-foreground'}`}>
-            <t.icon className="h-5 w-5" />
-            <span className="text-[10px]">{t.label}</span>
-          </button>
-        ))}
+      {/* Bottom tabs — style aligné sur BottomNav.tsx */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl pb-safe">
+        <div className="flex items-end justify-around h-[68px] px-2 pb-2">
+          {[
+            { key: 'today' as const, label: "Aujourd'hui", icon: Clock },
+            { key: 'history' as const, label: 'Historique', icon: Package },
+            { key: 'profile' as const, label: 'Profil', icon: User },
+          ].map(t => {
+            const active = tab === t.key;
+            return (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                className={`flex flex-col items-center justify-center flex-1 gap-1.5 pt-2 transition-colors duration-200 min-w-0 min-h-[44px] ${
+                  active ? 'text-foreground' : 'text-muted-foreground/70'
+                }`}
+              >
+                <t.icon className={`h-[22px] w-[22px] flex-shrink-0 ${active ? 'stroke-[2.4]' : 'stroke-[1.75]'}`} />
+                <span className={`text-[11px] leading-none ${active ? 'font-semibold' : 'font-normal'}`}>{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </nav>
 
       {/* Problem dialog */}

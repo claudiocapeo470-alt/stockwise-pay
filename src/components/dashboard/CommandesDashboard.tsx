@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useMemo } from 'react';
 
-export function CommandesDashboard() {
+export function CommandesDashboard({ hideGreeting = false }: { hideGreeting?: boolean }) {
   const { memberInfo } = useAuth();
   const { store } = useOnlineStore();
   const { orders } = useStoreOrders(store?.id);
@@ -39,10 +39,12 @@ export function CommandesDashboard() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Bonjour, {firstName} 👋</h1>
-          <p className="text-sm text-muted-foreground">Gestion boutique en ligne</p>
-        </div>
+        {!hideGreeting && (
+          <div>
+            <h1 className="text-2xl font-bold">Bonjour, {firstName} 👋</h1>
+            <p className="text-sm text-muted-foreground">Gestion boutique en ligne</p>
+          </div>
+        )}
         {pending.length > 0 && (
           <Badge variant="destructive" className="animate-pulse gap-1">
             <Bell className="h-3 w-3" /> {pending.length} en attente

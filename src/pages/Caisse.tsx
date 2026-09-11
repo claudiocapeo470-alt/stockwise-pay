@@ -1820,6 +1820,34 @@ export default function Caisse() {
         </>
       )}
 
+      {/* Mobile bottom nav — cohérente avec BottomNav.tsx */}
+      {(() => {
+        const p = getPerms(memberInfo);
+        const canSeeDashboard = !isEmployee || isFullAccess(p) || canStock(p) || canOrders(p) || canOwnDeliveries(p);
+        const itemCls = (active: boolean) =>
+          `flex flex-col items-center justify-center flex-1 gap-1.5 pt-2 transition-colors duration-200 min-w-0 min-h-[44px] ${active ? '' : 'opacity-60'}`;
+        return (
+          <nav className="shrink-0 flex items-end justify-around h-[64px] px-2 pb-2" style={{ background: '#FFFFFF', borderTop: '1px solid #E8EAF0' }}>
+            <button onClick={() => setMobileView('products')} className={itemCls(true)} style={{ color: '#1F2937' }}>
+              <ShoppingCart className="h-[22px] w-[22px] stroke-[2.4]" />
+              <span className="text-[11px] leading-none font-semibold">Caisse</span>
+            </button>
+            {canSeeDashboard && (
+              <button onClick={() => navigate('/app')} className={itemCls(false)} style={{ color: '#6B7280' }}>
+                <Home className="h-[22px] w-[22px] stroke-[1.75]" />
+                <span className="text-[11px] leading-none">Accueil</span>
+              </button>
+            )}
+            <LogoutButton>
+              <button className={itemCls(false)} style={{ color: '#EF4444' }} aria-label="Déconnexion">
+                <LogOut className="h-[22px] w-[22px] stroke-[1.75]" />
+                <span className="text-[11px] leading-none">Déconnexion</span>
+              </button>
+            </LogoutButton>
+          </nav>
+        );
+      })()}
+
       {renderModals()}
     </div>
   );

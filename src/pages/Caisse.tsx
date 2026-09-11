@@ -165,7 +165,7 @@ export default function Caisse() {
   const { addSale } = useSales();
   const { toast } = useToast();
   const { settings } = useCompanySettings();
-  const { profile, user, isEmployee, memberInfo, loading: authLoading, signOut } = useAuth();
+  const { profile, user, isEmployee, memberInfo, loading: authLoading } = useAuth();
   const { company, loading: companyLoading } = useCompany();
   const navigate = useNavigate();
   const isMobile = useIsMobile();

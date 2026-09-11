@@ -7,7 +7,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 
-export function StockDashboard() {
+export function StockDashboard({ hideGreeting = false }: { hideGreeting?: boolean }) {
   const { products } = useProducts();
   const { invoices } = useInvoices('facture');
   const navigate = useNavigate();
@@ -18,10 +18,12 @@ export function StockDashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold">Gestion des Stocks</h1>
-        <p className="text-sm text-muted-foreground">Aperçu de votre inventaire</p>
-      </div>
+      {!hideGreeting && (
+        <div>
+          <h1 className="text-2xl font-bold">Gestion des Stocks</h1>
+          <p className="text-sm text-muted-foreground">Aperçu de votre inventaire</p>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

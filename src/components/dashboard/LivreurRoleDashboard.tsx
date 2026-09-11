@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useDeliveries } from '@/hooks/useDeliveries';
 
-export function LivreurRoleDashboard() {
+export function LivreurRoleDashboard({ hideGreeting = false }: { hideGreeting?: boolean }) {
   const { memberInfo } = useAuth();
   const navigate = useNavigate();
   const { deliveries } = useDeliveries();
@@ -20,10 +20,12 @@ export function LivreurRoleDashboard() {
 
   return (
     <div className='space-y-6 animate-fade-in'>
-      <div>
-        <h1 className='text-2xl font-bold'>Bonjour, {firstName} 👋</h1>
-        <p className='text-sm text-muted-foreground'>Vos livraisons du jour</p>
-      </div>
+      {!hideGreeting && (
+        <div>
+          <h1 className='text-2xl font-bold'>Bonjour, {firstName} 👋</h1>
+          <p className='text-sm text-muted-foreground'>Vos livraisons du jour</p>
+        </div>
+      )}
       <div className='grid grid-cols-3 gap-4'>
         <Card><CardContent className='p-5 text-center'>
           <Clock className='h-7 w-7 text-yellow-500 mx-auto mb-2' />

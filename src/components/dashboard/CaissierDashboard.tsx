@@ -71,10 +71,13 @@ export function CaissierDashboard({ hideGreeting = false }: { hideGreeting?: boo
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold">Bonjour, {firstName} 👋</h1>
-        <p className="text-sm text-muted-foreground">Vos statistiques du jour</p>
-      </div>
+      {!hideGreeting && (
+        <div>
+          <h1 className="text-2xl font-bold">Bonjour, {firstName} 👋</h1>
+          <p className="text-sm text-muted-foreground">Vos statistiques du jour</p>
+        </div>
+      )}
+
 
 
       {/* Session status */}

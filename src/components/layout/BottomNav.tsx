@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Home, BarChart3, Package, Scan, ShoppingCart, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X, Users, Truck, FileText, FileCheck, CreditCard } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompanyModules, type ModuleKey } from "@/hooks/useCompanyModules";
 import { getPerms, isFullAccess, isDriverOnly, canPos, canStock, canOrders } from "@/lib/rolePermissions";
@@ -109,7 +109,7 @@ const fusionneNav: NavItem[] = [
 export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { signOut, isEmployee, hasPermission, memberInfo } = useAuth();
+  const { isEmployee, hasPermission, memberInfo } = useAuth();
   const { hasModule } = useCompanyModules();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -229,34 +229,7 @@ export function BottomNav() {
               );
             })}
 
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl text-[15px] font-semibold text-destructive bg-destructive/10 active:bg-destructive/20 transition-colors">
-                  <LogOut className="h-5 w-5 flex-shrink-0" />
-                  Déconnexion
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="max-w-[320px] rounded-3xl p-6 text-center border-0">
-                <AlertDialogHeader className="items-center space-y-3">
-                  <div className="h-14 w-14 rounded-full bg-destructive/10 flex items-center justify-center">
-                    <LogOut className="h-6 w-6 text-destructive" />
-                  </div>
-                  <AlertDialogTitle className="text-lg font-bold">Se déconnecter ?</AlertDialogTitle>
-                  <AlertDialogDescription className="text-sm text-muted-foreground">
-                    Toute vente en cours à la caisse sera perdue.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="flex-col gap-2 sm:flex-col sm:space-x-0 mt-4">
-                  <AlertDialogAction
-                    className="w-full h-11 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    onClick={() => { signOut(); setDrawerOpen(false); }}
-                  >
-                    Se déconnecter
-                  </AlertDialogAction>
-                  <AlertDialogCancel className="w-full h-11 rounded-xl mt-0">Annuler</AlertDialogCancel>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <LogoutButton onConfirmed={() => setDrawerOpen(false)} />
           </div>
         </DrawerContent>
       </Drawer>

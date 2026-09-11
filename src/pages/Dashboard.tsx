@@ -8,6 +8,7 @@ import { useSales } from '@/hooks/useSales';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useCompany } from '@/hooks/useCompany';
 import { useCompanySettings } from '@/hooks/useCompanySettings';
+import { getPerms, isDriverOnly, canPos, isFullAccess } from '@/lib/rolePermissions';
 
 export default function Dashboard() {
   useRoleRedirect();
@@ -24,10 +25,9 @@ export default function Dashboard() {
   const monthlySales = (sales || []).filter(s => new Date(s.sale_date) >= monthStart);
   const monthlyCA = monthlySales.reduce((sum, s) => sum + (s.total_amount || 0), 0);
 
-  const role = (memberInfo?.member_role_name || '').toLowerCase();
-
-  // Mobile: role-specific employees get their dedicated dashboard
-  if (isMobile && isEmployee && (role.includes('caissier') || role.includes('livreur'))) {
+  // Mobile: caissiers et livreurs (par permission, jamais par nom de rôle) vont direct à leur espace
+  const perms = getPerms(memberInfo);
+  if (isMobile && isEmployee && (isDriverOnly(perms) || (canPos(perms) && !isFullAccess(perms)))) {
     return <RoleDashboard />;
   }
 

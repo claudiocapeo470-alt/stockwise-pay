@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { PageLoader } from "@/components/ui/PageLoader";
+import { LogoutButton } from "@/components/layout/LogoutButton";
+import { getPerms, isFullAccess, canStock, canOrders, canOwnDeliveries } from "@/lib/rolePermissions";
 import { generateCashReportPDF, CashReportPreview } from "@/components/caisse/CashReport";
 import { PosReceipt, type ReceiptData } from "@/components/caisse/PosReceipt";
 
@@ -692,10 +694,6 @@ export default function Caisse() {
     setLockPin('');
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/auth', { replace: true });
-  };
 
   const requireOpenCashSession = (onAllowed: () => void, description: string) => {
     if (cashSessionOpen) {

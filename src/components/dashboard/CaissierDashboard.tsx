@@ -12,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { useCompany } from '@/hooks/useCompany';
 
-export function CaissierDashboard() {
+export function CaissierDashboard({ hideGreeting = false }: { hideGreeting?: boolean }) {
   const { sales } = useSales();
   const { memberInfo, user, isEmployee, signOut } = useAuth();
   const { company } = useCompany();
@@ -75,6 +75,7 @@ export function CaissierDashboard() {
         <h1 className="text-2xl font-bold">Bonjour, {firstName} 👋</h1>
         <p className="text-sm text-muted-foreground">Vos statistiques du jour</p>
       </div>
+
 
       {/* Session status */}
       <Card className={openSession ? 'border-green-500/30 bg-green-500/5' : 'border-destructive/30 bg-destructive/5'}>

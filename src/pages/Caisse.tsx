@@ -929,7 +929,11 @@ export default function Caisse() {
         <HeaderBtn icon={<BarChart3 className="h-4 w-4" />} label="Stats" onClick={() => navigate('/app/performance')} />
         <HeaderBtn icon={<Settings className="h-4 w-4" />} label="Paramètres" onClick={() => navigate('/app/settings')} />
         <HeaderBtn icon={<Camera className="h-4 w-4" />} label="Scanner" onClick={startScanner} />
-        <HeaderBtn icon={<LogOut className="h-4 w-4" />} label="Déconnexion" onClick={handleSignOut} />
+        <LogoutButton>
+          <button title="Déconnexion" className="flex items-center justify-center h-9 w-9 rounded-lg text-white/70 min-h-[44px] min-w-[44px] transition-colors" style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <LogOut className="h-4 w-4" />
+          </button>
+        </LogoutButton>
       </div>
     </header>
   );
@@ -1631,9 +1635,11 @@ export default function Caisse() {
               <Home className="h-5 w-5" />
             </button>
           ) : (
-            <button onClick={handleSignOut} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Déconnexion">
-              <LogOut className="h-5 w-5" />
-            </button>
+            <LogoutButton>
+              <button className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/70" aria-label="Déconnexion">
+                <LogOut className="h-5 w-5" />
+              </button>
+            </LogoutButton>
           )}
           <span className="text-white font-black text-sm" style={{ fontFamily: 'Nunito, sans-serif' }}>POS</span>
           {cashSessionOpen || !sessionChecked ? (
@@ -1668,9 +1674,11 @@ export default function Caisse() {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => requireOpenCashSession(() => setShowCloseCashModal(true), 'Aucune session ouverte à clôturer pour ce poste.')} className="text-amber-500">🔒 Clôturer</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                <LogOut className="h-4 w-4 mr-2" /> Déconnexion
-              </DropdownMenuItem>
+              <LogoutButton>
+                <div className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-destructive outline-none hover:bg-accent">
+                  <LogOut className="h-4 w-4 mr-2" /> Déconnexion
+                </div>
+              </LogoutButton>
             </DropdownMenuContent>
           </DropdownMenu>
           <button className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white" onClick={() => setMobileView(mobileView === 'products' ? 'ticket' : 'products')}>

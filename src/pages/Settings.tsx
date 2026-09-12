@@ -23,6 +23,7 @@ import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import * as XLSX from 'xlsx';
 import { updateAppToLatest } from "@/lib/serviceWorker";
+import { getPerms, isFullAccess } from "@/lib/rolePermissions";
 
 type SettingsPage = "main" | "company" | "appearance" | "profile" | "security-data" | "system" | "subscription" | "notifications";
 

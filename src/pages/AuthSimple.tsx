@@ -13,6 +13,7 @@ import { PinKeypad } from "@/components/auth/PinKeypad";
 import { BrandLogo, stocknixLogoWhite } from '@/components/ui/brand-logo';
 import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
 import entrepreneursImage from "@/assets/african-entrepreneur-tablet.png";
+import { getDefaultRouteFromPerms, getPerms } from '@/lib/rolePermissions';
 
 // Schémas de validation
 const loginSchema = z.object({

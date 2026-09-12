@@ -64,11 +64,7 @@ export default function Settings() {
 
   const getRoleName = (): string => {
     if (!isEmployee) return "owner";
-    const role = (memberInfo?.member_role_name || '').toLowerCase();
-    if (role.includes('manager')) return 'manager';
-    if (role.includes('gestionnaire')) return 'gestionnaire';
-    if (role.includes('caissier')) return 'caissier';
-    if (role.includes('livreur')) return 'livreur';
+    if (isFullAccess(getPerms(memberInfo))) return 'manager';
     return 'employee';
   };
 

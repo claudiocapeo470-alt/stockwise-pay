@@ -89,17 +89,17 @@ export function AppSidebar() {
   };
 
   const shouldShowGroup = (group: NavGroup): boolean => {
-    const role = (memberInfo?.member_role_name || '').toLowerCase();
+    const perms = getPerms(memberInfo);
 
-    if (isEmployee && role.includes('caissier')) return false;
-    if (isEmployee && role.includes('livreur')) return false;
+    if (isEmployee && canPos(perms) && !isFullAccess(perms)) return false;
+    if (isEmployee && isDriverOnly(perms)) return false;
     if (group.modules && !group.modules.some(isModuleActive)) return false;
 
     return true;
   };
 
   const filterItems = (group: NavGroup): NavItem[] => {
-    const role = (memberInfo?.member_role_name || '').toLowerCase();
+    const perms = getPerms(memberInfo);
 
     return group.items.filter(item => {
       const itemModule = getItemModule(item.href);
@@ -107,7 +107,7 @@ export function AppSidebar() {
       if (item.ownerOnly && isEmployee) return false;
       if (itemModule && !isModuleActive(itemModule)) return false;
 
-      if (item.href === '/app/rapport-employes' && isEmployee && !role.includes('manager')) {
+      if (item.href === '/app/rapport-employes' && isEmployee && !isFullAccess(perms)) {
         return false;
       }
 

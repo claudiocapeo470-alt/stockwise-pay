@@ -103,11 +103,8 @@ export default function AuthSimple() {
       if (storedMember) {
         try {
           const mi = JSON.parse(storedMember);
-          const roleName = mi.member_role_name?.toLowerCase() || '';
-          if (roleName.includes('caissier')) { navigate('/app/caisse', { replace: true }); return; }
-          if (roleName.includes('livreur')) { navigate('/app/livreur', { replace: true }); return; }
-          if (roleName.includes('gestionnaire')) { navigate('/app/stocks', { replace: true }); return; }
-          if (roleName.includes('vendeur')) { navigate('/app/boutique/commandes', { replace: true }); return; }
+          const defaultRoute = getDefaultRouteFromPerms(getPerms(mi));
+          if (defaultRoute !== '/app') { navigate(defaultRoute, { replace: true }); return; }
         } catch {}
       }
       navigate('/app', { replace: true });
@@ -178,19 +175,8 @@ export default function AuthSimple() {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
 
-      // Navigate smoothly based on role
-      const roleName = (data.member.role_name || '').toLowerCase();
-      if (roleName.includes('caissier')) {
-        navigate('/app/caisse', { replace: true });
-      } else if (roleName.includes('livreur')) {
-        navigate('/app/livreur', { replace: true });
-      } else if (roleName.includes('gestionnaire')) {
-        navigate('/app/stocks', { replace: true });
-      } else if (roleName.includes('vendeur')) {
-        navigate('/app/boutique/commandes', { replace: true });
-      } else {
-        navigate('/app', { replace: true });
-      }
+      // Navigate smoothly based on real permissions (jamais sur le nom du rôle)
+      navigate(getDefaultRouteFromPerms(getPerms(mi)), { replace: true });
     } catch (err) {
       console.error('PIN login error:', err);
       setPinError('Erreur de connexion');

@@ -23,6 +23,7 @@ import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
 import * as XLSX from 'xlsx';
 import { updateAppToLatest } from "@/lib/serviceWorker";
+import { getPerms, isFullAccess } from "@/lib/rolePermissions";
 
 type SettingsPage = "main" | "company" | "appearance" | "profile" | "security-data" | "system" | "subscription" | "notifications";
 
@@ -64,11 +65,7 @@ export default function Settings() {
 
   const getRoleName = (): string => {
     if (!isEmployee) return "owner";
-    const role = (memberInfo?.member_role_name || '').toLowerCase();
-    if (role.includes('manager')) return 'manager';
-    if (role.includes('gestionnaire')) return 'gestionnaire';
-    if (role.includes('caissier')) return 'caissier';
-    if (role.includes('livreur')) return 'livreur';
+    if (isFullAccess(getPerms(memberInfo))) return 'manager';
     return 'employee';
   };
 

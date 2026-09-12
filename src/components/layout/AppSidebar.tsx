@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import stocknixLogo from '@/assets/stocknix-logo-official.png';
+import { getPerms, isFullAccess, canPos, isDriverOnly } from '@/lib/rolePermissions';
 
 interface NavItem { name: string; href: string; icon: any; permission?: string; ownerOnly?: boolean; }
 interface NavGroup { label: string; items: NavItem[]; modules?: ('boutique' | 'pos' | 'stock')[]; }
@@ -89,17 +90,17 @@ export function AppSidebar() {
   };
 
   const shouldShowGroup = (group: NavGroup): boolean => {
-    const role = (memberInfo?.member_role_name || '').toLowerCase();
+    const perms = getPerms(memberInfo);
 
-    if (isEmployee && role.includes('caissier')) return false;
-    if (isEmployee && role.includes('livreur')) return false;
+    if (isEmployee && canPos(perms) && !isFullAccess(perms)) return false;
+    if (isEmployee && isDriverOnly(perms)) return false;
     if (group.modules && !group.modules.some(isModuleActive)) return false;
 
     return true;
   };
 
   const filterItems = (group: NavGroup): NavItem[] => {
-    const role = (memberInfo?.member_role_name || '').toLowerCase();
+    const perms = getPerms(memberInfo);
 
     return group.items.filter(item => {
       const itemModule = getItemModule(item.href);
@@ -107,7 +108,7 @@ export function AppSidebar() {
       if (item.ownerOnly && isEmployee) return false;
       if (itemModule && !isModuleActive(itemModule)) return false;
 
-      if (item.href === '/app/rapport-employes' && isEmployee && !role.includes('manager')) {
+      if (item.href === '/app/rapport-employes' && isEmployee && !isFullAccess(perms)) {
         return false;
       }
 

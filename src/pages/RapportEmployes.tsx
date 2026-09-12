@@ -10,6 +10,7 @@ import { usePayments } from "@/hooks/usePayments";
 import { useSearchParams } from "react-router-dom";
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, parseISO, isWithinInterval } from "date-fns";
 import { fr } from "date-fns/locale";
+import { getPerms, isFullAccess } from "@/lib/rolePermissions";
 
 export default function RapportEmployes() {
   const [searchParams] = useSearchParams();
@@ -57,8 +58,7 @@ export default function RapportEmployes() {
     };
   }, [selectedMember, sales]);
 
-  const memberRole = memberInfo?.member_role_name?.toLowerCase() || '';
-  const isManager = memberRole.includes('manager');
+  const isManager = isFullAccess(getPerms(memberInfo));
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 })

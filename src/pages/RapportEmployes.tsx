@@ -10,6 +10,7 @@ import { usePayments } from "@/hooks/usePayments";
 import { useSearchParams } from "react-router-dom";
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, parseISO, isWithinInterval } from "date-fns";
 import { fr } from "date-fns/locale";
+import { getPerms, isFullAccess } from "@/lib/rolePermissions";
 
 export default function RapportEmployes() {
   const [searchParams] = useSearchParams();

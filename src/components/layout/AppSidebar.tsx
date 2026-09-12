@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import stocknixLogo from '@/assets/stocknix-logo-official.png';
+import { getPerms, isFullAccess, canPos, isDriverOnly } from '@/lib/rolePermissions';
 
 interface NavItem { name: string; href: string; icon: any; permission?: string; ownerOnly?: boolean; }
 interface NavGroup { label: string; items: NavItem[]; modules?: ('boutique' | 'pos' | 'stock')[]; }

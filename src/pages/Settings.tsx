@@ -48,6 +48,8 @@ const settingsCards: SettingsCard[] = [
 export default function Settings() {
   const { user, profile, isAdmin, isEmployee, memberInfo, signOut } = useAuth();
   const navigate = useNavigate();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _perms = getPerms(memberInfo);
   const [activePage, setActivePage] = useState<SettingsPage>("main");
   const { settings } = useCompanySettings();
 

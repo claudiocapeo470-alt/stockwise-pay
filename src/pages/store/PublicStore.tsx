@@ -1233,26 +1233,31 @@ export default function PublicStore() {
           )}
         </div>
 
-        {/* STICKY BOTTOM CTA — pilules flottantes fixes au-dessus de la nav */}
-        {isAvailable(p) && store.allow_orders && (
-          <div className="lz-sticky-cta fixed bottom-[var(--lz-nav-h)] left-0 right-0 z-40 pointer-events-none px-3 pb-3 lg:pb-4">
-            <div className="container mx-auto flex items-center gap-2.5 lg:gap-4 max-w-3xl pointer-events-auto">
-              <button
-                onClick={() => addToCart(p, qty)}
-                className="flex-1 h-14 px-4 bg-card border border-border text-foreground text-sm font-semibold shadow-lg hover:bg-muted transition-colors flex items-center justify-center gap-2 rounded-full"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                <span>Ajouter au panier</span>
-              </button>
-              <button
-                onClick={handleBuyNow}
-                className="lz-btn-cta flex-1 h-14 px-4 text-white text-sm font-bold rounded-full shadow-lg flex items-center justify-center gap-1.5"
-                style={{ background: color }}
-              >
-                <span>Acheter maintenant</span>
-              </button>
+        {/* STICKY BOTTOM CTA — rendu via portail dans <body> :
+            l'animation de transition de page applique un transform sur le conteneur
+            parent, ce qui casserait position:fixed pour tout descendant. */}
+        {isAvailable(p) && store.allow_orders && createPortal(
+          <div className={darkMode ? "dark" : ""}>
+            <div className="lz-sticky-cta fixed bottom-[var(--lz-nav-h)] left-0 right-0 z-[45] pointer-events-none px-3 pb-3 lg:pb-4">
+              <div className="container mx-auto flex items-center gap-2.5 lg:gap-4 max-w-3xl pointer-events-auto">
+                <button
+                  onClick={() => addToCart(p, qty)}
+                  className="flex-1 h-14 px-4 bg-card border border-border text-foreground text-sm font-semibold shadow-lg hover:bg-muted transition-colors flex items-center justify-center gap-2 rounded-full"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  <span>Ajouter au panier</span>
+                </button>
+                <button
+                  onClick={handleBuyNow}
+                  className="lz-btn-cta flex-1 h-14 px-4 text-white text-sm font-bold rounded-full shadow-lg flex items-center justify-center gap-1.5"
+                  style={{ background: color }}
+                >
+                  <span>Acheter maintenant</span>
+                </button>
+              </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
 
       </div>

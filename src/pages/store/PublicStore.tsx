@@ -6,7 +6,8 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { supabase } from "@/integrations/supabase/client";
 import StorePixels from "@/components/store/StorePixels";
@@ -18,8 +19,13 @@ import {
   Eye, MessageCircle, Moon, Sun, ChevronRight, ChevronLeft,
   ArrowRight, Truck, Shield, CheckCircle, CreditCard, Package,
   Phone, Mail, MapPin, SlidersHorizontal, ChevronDown,
-  User, Settings, LogOut, Bell, Bookmark,
+  User, Settings, LogOut, Bell, Bookmark, Share2,
 } from "lucide-react";
+
+// Endpoint de partage produit : les crawlers reçoivent les meta OG du produit,
+// les humains sont redirigés vers la page produit de la SPA.
+const PRODUCT_SHARE_ENDPOINT =
+  "https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/product-og";
 
 // ─── PARAMÈTRES ──────────────────────────────────────────────────────────────
 const FONT_HEADING_URL =
@@ -178,6 +184,8 @@ const ZONE_STYLES = `
   padding-bottom: max(env(safe-area-inset-bottom), 12px);
 }
 .dark .lz-sticky-cta { background: rgba(10,10,15,0.96); border-top-color: rgba(255,255,255,0.08); }
+/* Sur ordinateur, pas de barre de navigation basse : le bloc colle au bas de l'écran */
+@media (min-width: 1024px) { .lz-sticky-cta { --lz-nav-h: 0px; } }
 
 /* Order loading overlay */
 .lz-order-overlay {

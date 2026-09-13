@@ -509,6 +509,23 @@ export default function PublicStore() {
     setCart([]); setShowCheckout(false); setShowCart(false);
   };
 
+  // Lien de partage produit : passe par product-og (aperçu WhatsApp/Facebook correct)
+  const productShareUrl = (id: string) =>
+    `${PRODUCT_SHARE_ENDPOINT}?slug=${encodeURIComponent(slug || "")}&product=${encodeURIComponent(id)}`;
+
+  const shareProduct = async (p: ProductData) => {
+    const url = productShareUrl(p.id);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: p.name, text: `${p.name} — ${fmt(p.price)}`, url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setSharedId(p.id);
+      setTimeout(() => setSharedId(null), 2000);
+    } catch { /* partage annulé */ }
+  };
+
   const goToProduct = (id: string) => {
     const prod = products.find(p => p.id === id);
     if (prod) trackPixelEvent("ViewContent", { content_ids: [prod.id], content_name: prod.name, value: prod.price });
@@ -1045,13 +1062,25 @@ export default function PublicStore() {
             <div>
               <div className="flex items-start justify-between gap-4 mb-3">
                 <h1 className="lz-heading text-2xl md:text-3xl text-foreground">{p.name}</h1>
-                <button
-                  onClick={() => toggleFav(p.id)}
-                  className="h-11 w-11 rounded-full border border-border  flex items-center justify-center hover:border-gray-400 transition-colors flex-shrink-0"
-                  aria-label="Favori"
-                >
-                  <Heart className={`h-5 w-5 ${isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
-                </button>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => shareProduct(p)}
+                    className="h-11 w-11 rounded-full border border-border flex items-center justify-center hover:border-gray-400 transition-colors relative"
+                    aria-label="Partager ce produit"
+                    title="Partager ce produit"
+                  >
+                    {sharedId === p.id
+                      ? <CheckCircle className="h-5 w-5" style={{ color }} />
+                      : <Share2 className="h-5 w-5 text-muted-foreground" />}
+                  </button>
+                  <button
+                    onClick={() => toggleFav(p.id)}
+                    className="h-11 w-11 rounded-full border border-border  flex items-center justify-center hover:border-gray-400 transition-colors"
+                    aria-label="Favori"
+                  >
+                    <Heart className={`h-5 w-5 ${isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
+                  </button>
+                </div>
               </div>
 
 

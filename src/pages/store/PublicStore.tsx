@@ -6,7 +6,8 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { supabase } from "@/integrations/supabase/client";
 import StorePixels from "@/components/store/StorePixels";
@@ -18,8 +19,13 @@ import {
   Eye, MessageCircle, Moon, Sun, ChevronRight, ChevronLeft,
   ArrowRight, Truck, Shield, CheckCircle, CreditCard, Package,
   Phone, Mail, MapPin, SlidersHorizontal, ChevronDown,
-  User, Settings, LogOut, Bell, Bookmark,
+  User, Settings, LogOut, Bell, Bookmark, Share2,
 } from "lucide-react";
+
+// Endpoint de partage produit : les crawlers reçoivent les meta OG du produit,
+// les humains sont redirigés vers la page produit de la SPA.
+const PRODUCT_SHARE_ENDPOINT =
+  "https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/product-og";
 
 // ─── PARAMÈTRES ──────────────────────────────────────────────────────────────
 const FONT_HEADING_URL =
@@ -178,6 +184,8 @@ const ZONE_STYLES = `
   padding-bottom: max(env(safe-area-inset-bottom), 12px);
 }
 .dark .lz-sticky-cta { background: rgba(10,10,15,0.96); border-top-color: rgba(255,255,255,0.08); }
+/* Sur ordinateur, pas de barre de navigation basse : le bloc colle au bas de l'écran */
+@media (min-width: 1024px) { .lz-sticky-cta { --lz-nav-h: 0px; } }
 
 /* Order loading overlay */
 .lz-order-overlay {
@@ -222,6 +230,8 @@ export default function PublicStore() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activePage, setActivePage]         = useState<StorePage>("home");
   const [activeProductId, setActiveProductId] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const [sharedId, setSharedId] = useState<string | null>(null);
   const [darkMode, setDarkMode]             = useState(false);
   const [sortBy, setSortBy]                 = useState<SortOption>("recent");
   const [showSort, setShowSort]             = useState(false);
@@ -325,6 +335,15 @@ export default function PublicStore() {
     };
     load();
   }, [slug]);
+
+  // Deep link produit : /boutique/:slug?produit=<id> (lien de partage produit)
+  useEffect(() => {
+    const pid = searchParams.get("produit");
+    if (!pid || products.length === 0) return;
+    if (!products.some(p => p.id === pid)) return;
+    setActiveProductId(pid);
+    setActivePage("product");
+  }, [searchParams, products]);
 
   // Dynamic <title> + OG tags per boutique (client-side, best-effort for JS crawlers + tab title)
   useEffect(() => {
@@ -488,6 +507,23 @@ export default function PublicStore() {
     });
     setOrderSuccess(orderNumber);
     setCart([]); setShowCheckout(false); setShowCart(false);
+  };
+
+  // Lien de partage produit : passe par product-og (aperçu WhatsApp/Facebook correct)
+  const productShareUrl = (id: string) =>
+    `${PRODUCT_SHARE_ENDPOINT}?slug=${encodeURIComponent(slug || "")}&product=${encodeURIComponent(id)}`;
+
+  const shareProduct = async (p: ProductData) => {
+    const url = productShareUrl(p.id);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: p.name, text: `${p.name} — ${fmt(p.price)}`, url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setSharedId(p.id);
+      setTimeout(() => setSharedId(null), 2000);
+    } catch { /* partage annulé */ }
   };
 
   const goToProduct = (id: string) => {
@@ -1026,13 +1062,25 @@ export default function PublicStore() {
             <div>
               <div className="flex items-start justify-between gap-4 mb-3">
                 <h1 className="lz-heading text-2xl md:text-3xl text-foreground">{p.name}</h1>
-                <button
-                  onClick={() => toggleFav(p.id)}
-                  className="h-11 w-11 rounded-full border border-border  flex items-center justify-center hover:border-gray-400 transition-colors flex-shrink-0"
-                  aria-label="Favori"
-                >
-                  <Heart className={`h-5 w-5 ${isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
-                </button>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => shareProduct(p)}
+                    className="h-11 w-11 rounded-full border border-border flex items-center justify-center hover:border-gray-400 transition-colors relative"
+                    aria-label="Partager ce produit"
+                    title="Partager ce produit"
+                  >
+                    {sharedId === p.id
+                      ? <CheckCircle className="h-5 w-5" style={{ color }} />
+                      : <Share2 className="h-5 w-5 text-muted-foreground" />}
+                  </button>
+                  <button
+                    onClick={() => toggleFav(p.id)}
+                    className="h-11 w-11 rounded-full border border-border  flex items-center justify-center hover:border-gray-400 transition-colors"
+                    aria-label="Favori"
+                  >
+                    <Heart className={`h-5 w-5 ${isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
+                  </button>
+                </div>
               </div>
 
 
@@ -1185,26 +1233,31 @@ export default function PublicStore() {
           )}
         </div>
 
-        {/* STICKY BOTTOM CTA — pilules flottantes fixes au-dessus de la nav */}
-        {isAvailable(p) && store.allow_orders && (
-          <div className="lz-sticky-cta fixed bottom-[var(--lz-nav-h)] left-0 right-0 z-40 pointer-events-none px-3 pb-3 lg:pb-4">
-            <div className="container mx-auto flex items-center gap-2.5 lg:gap-4 max-w-3xl pointer-events-auto">
-              <button
-                onClick={() => addToCart(p, qty)}
-                className="flex-1 h-14 px-4 bg-card border border-border text-foreground text-sm font-semibold shadow-lg hover:bg-muted transition-colors flex items-center justify-center gap-2 rounded-full"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                <span>Ajouter au panier</span>
-              </button>
-              <button
-                onClick={handleBuyNow}
-                className="lz-btn-cta flex-1 h-14 px-4 text-white text-sm font-bold rounded-full shadow-lg flex items-center justify-center gap-1.5"
-                style={{ background: color }}
-              >
-                <span>Acheter maintenant</span>
-              </button>
+        {/* STICKY BOTTOM CTA — rendu via portail dans <body> :
+            l'animation de transition de page applique un transform sur le conteneur
+            parent, ce qui casserait position:fixed pour tout descendant. */}
+        {isAvailable(p) && store.allow_orders && createPortal(
+          <div className={darkMode ? "dark" : ""}>
+            <div className="lz-sticky-cta fixed bottom-[var(--lz-nav-h)] left-0 right-0 z-[45] pointer-events-none px-3 pb-3 lg:pb-4">
+              <div className="container mx-auto flex items-center gap-2.5 lg:gap-4 max-w-3xl pointer-events-auto">
+                <button
+                  onClick={() => addToCart(p, qty)}
+                  className="flex-1 h-14 px-4 bg-card border border-border text-foreground text-sm font-semibold shadow-lg hover:bg-muted transition-colors flex items-center justify-center gap-2 rounded-full"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  <span>Ajouter au panier</span>
+                </button>
+                <button
+                  onClick={handleBuyNow}
+                  className="lz-btn-cta flex-1 h-14 px-4 text-white text-sm font-bold rounded-full shadow-lg flex items-center justify-center gap-1.5"
+                  style={{ background: color }}
+                >
+                  <span>Acheter maintenant</span>
+                </button>
+              </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
 
       </div>

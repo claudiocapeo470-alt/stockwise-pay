@@ -230,6 +230,8 @@ export default function PublicStore() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activePage, setActivePage]         = useState<StorePage>("home");
   const [activeProductId, setActiveProductId] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const [sharedId, setSharedId] = useState<string | null>(null);
   const [darkMode, setDarkMode]             = useState(false);
   const [sortBy, setSortBy]                 = useState<SortOption>("recent");
   const [showSort, setShowSort]             = useState(false);
@@ -333,6 +335,15 @@ export default function PublicStore() {
     };
     load();
   }, [slug]);
+
+  // Deep link produit : /boutique/:slug?produit=<id> (lien de partage produit)
+  useEffect(() => {
+    const pid = searchParams.get("produit");
+    if (!pid || products.length === 0) return;
+    if (!products.some(p => p.id === pid)) return;
+    setActiveProductId(pid);
+    setActivePage("product");
+  }, [searchParams, products]);
 
   // Dynamic <title> + OG tags per boutique (client-side, best-effort for JS crawlers + tab title)
   useEffect(() => {

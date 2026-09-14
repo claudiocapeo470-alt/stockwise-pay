@@ -17,7 +17,6 @@ interface StoreHeaderProps {
 }
 
 const PUBLIC_DOMAIN = "https://www.stocknix.com";
-const SHARE_ENDPOINT = "https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/store-og";
 
 export function StoreHeader({
   title = "Ma Boutique",

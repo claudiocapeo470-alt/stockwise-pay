@@ -91,6 +91,7 @@ const App = () => (
               <Route path="/legal" element={<MentionsLegales />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/boutique/:slug" element={<PublicStore />} />
+              <Route path="/boutique/:slug/produit/:productId" element={<PublicStore />} />
               <Route path="/boutique/:slug/checkout" element={<Checkout />} />
               <Route path="/boutique/:slug/commande/:orderId" element={<OrderTracking />} />
               <Route path="/auth" element={<AuthSimple />} />

@@ -22,10 +22,10 @@ import {
   User, Settings, LogOut, Bell, Bookmark, Share2,
 } from "lucide-react";
 
-// Endpoint de partage produit : les crawlers reçoivent les meta OG du produit,
-// les humains sont redirigés vers la page produit de la SPA.
-const PRODUCT_SHARE_ENDPOINT =
-  "https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/product-og";
+// Domaine public : les liens partagés restent toujours sur stocknix.com.
+// Le filtre Cloudflare (voir cloudflare/README.md) redirige les robots
+// vers les fonctions store-og / product-og pour l'aperçu de partage.
+const PUBLIC_DOMAIN = "https://www.stocknix.com";
 
 // ─── PARAMÈTRES ──────────────────────────────────────────────────────────────
 const FONT_HEADING_URL =
@@ -217,7 +217,7 @@ const fmt = (n: number) => `${n.toLocaleString("de-DE")} CFA`;
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PublicStore() {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug, productId: routeProductId } = useParams<{ slug: string; productId?: string }>();
   const navigate = useNavigate();
   const [store, setStore]           = useState<StoreData | null>(null);
   const [products, setProducts]     = useState<ProductData[]>([]);
@@ -336,14 +336,15 @@ export default function PublicStore() {
     load();
   }, [slug]);
 
-  // Deep link produit : /boutique/:slug?produit=<id> (lien de partage produit)
+  // Deep link produit : /boutique/:slug/produit/:productId (canonique)
+  // ou /boutique/:slug?produit=<id> (ancien format, conservé)
   useEffect(() => {
-    const pid = searchParams.get("produit");
+    const pid = routeProductId || searchParams.get("produit");
     if (!pid || products.length === 0) return;
     if (!products.some(p => p.id === pid)) return;
     setActiveProductId(pid);
     setActivePage("product");
-  }, [searchParams, products]);
+  }, [routeProductId, searchParams, products]);
 
   // Dynamic <title> + OG tags per boutique (client-side, best-effort for JS crawlers + tab title)
   useEffect(() => {
@@ -509,9 +510,9 @@ export default function PublicStore() {
     setCart([]); setShowCheckout(false); setShowCart(false);
   };
 
-  // Lien de partage produit : passe par product-og (aperçu WhatsApp/Facebook correct)
+  // Lien de partage produit : URL canonique stocknix.com
   const productShareUrl = (id: string) =>
-    `${PRODUCT_SHARE_ENDPOINT}?slug=${encodeURIComponent(slug || "")}&product=${encodeURIComponent(id)}`;
+    `${PUBLIC_DOMAIN}/boutique/${encodeURIComponent(slug || "")}/produit/${encodeURIComponent(id)}`;
 
   const shareProduct = async (p: ProductData) => {
     const url = productShareUrl(p.id);

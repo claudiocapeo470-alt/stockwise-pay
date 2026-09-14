@@ -1864,6 +1864,50 @@ export type Database = {
         }
         Relationships: []
       }
+      telegram_links: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          link_token: string | null
+          linked_at: string | null
+          telegram_chat_id: string | null
+          telegram_username: string | null
+          token_expires_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          link_token?: string | null
+          linked_at?: string | null
+          telegram_chat_id?: string | null
+          telegram_username?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          link_token?: string | null
+          linked_at?: string | null
+          telegram_chat_id?: string | null
+          telegram_username?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telegram_links_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_login_history: {
         Row: {
           email: string

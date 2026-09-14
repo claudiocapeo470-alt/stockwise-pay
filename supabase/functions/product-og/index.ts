@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
       return new Response("Missing slug or product", { status: 400, headers: corsHeaders });
     }
 
-    const spaUrl = `${SITE}/boutique/${encodeURIComponent(slug)}?produit=${encodeURIComponent(productId)}`;
+    const spaUrl = `${SITE}/boutique/${encodeURIComponent(slug)}/produit/${encodeURIComponent(productId)}`;
 
     const ua = req.headers.get("user-agent") || "";
     if (!CRAWLER_RE.test(ua)) {

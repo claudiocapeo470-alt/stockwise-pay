@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { sendPushNotification } from "@/lib/webPush";
+import { sendTelegramNotification } from "@/lib/telegram";
 
 interface NotifyUserParams {
   companyId?: string;
@@ -34,4 +35,9 @@ export function notifyUser({
     company_id: companyId,
     type,
   });
+
+  // Canal supplémentaire : Telegram (ignoré si l'entreprise n'a pas lié son compte)
+  if (companyId) {
+    void sendTelegramNotification({ companyId, title, message, type, url });
+  }
 }

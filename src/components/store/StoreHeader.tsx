@@ -17,7 +17,6 @@ interface StoreHeaderProps {
 }
 
 const PUBLIC_DOMAIN = "https://www.stocknix.com";
-const SHARE_ENDPOINT = "https://fsdfzzhbydlmuiblgkvb.supabase.co/functions/v1/store-og";
 
 export function StoreHeader({
   title = "Ma Boutique",
@@ -34,9 +33,9 @@ export function StoreHeader({
 
 
   const storeUrl = store?.slug ? `${PUBLIC_DOMAIN}/boutique/${store.slug}` : "";
-  // Smart link : les crawlers (WhatsApp, Facebook, LinkedIn...) reçoivent
-  // les meta OG de la boutique, les humains sont redirigés vers l'URL propre.
-  const shareUrl = store?.slug ? `${SHARE_ENDPOINT}?slug=${encodeURIComponent(store.slug)}` : "";
+  // Lien partagé : toujours l'URL canonique. Le filtre Cloudflare envoie les
+  // robots (WhatsApp, Facebook, LinkedIn...) vers store-og pour l'aperçu.
+  const shareUrl = storeUrl;
 
   const handlePublish = async () => {
     try {

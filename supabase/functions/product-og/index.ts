@@ -72,13 +72,17 @@ Deno.serve(async (req) => {
   try {
     const reqUrl = new URL(req.url);
     const slug = reqUrl.searchParams.get("slug") || "";
-    const productId = reqUrl.searchParams.get("product") || reqUrl.searchParams.get("produit") || "";
+    const productId =
+      reqUrl.searchParams.get("productId") ||
+      reqUrl.searchParams.get("product") ||
+      reqUrl.searchParams.get("produit") ||
+      "";
 
     if (!slug || !productId) {
       return new Response("Missing slug or product", { status: 400, headers: corsHeaders });
     }
 
-    const spaUrl = `${SITE}/boutique/${encodeURIComponent(slug)}?produit=${encodeURIComponent(productId)}`;
+    const spaUrl = `${SITE}/boutique/${encodeURIComponent(slug)}/produit/${encodeURIComponent(productId)}`;
 
     const ua = req.headers.get("user-agent") || "";
     if (!CRAWLER_RE.test(ua)) {

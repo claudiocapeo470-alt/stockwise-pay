@@ -166,21 +166,45 @@ export default function Livraisons() {
       )}
 
       {/* Assign dialog */}
-      <Dialog open={!!assignDialog} onOpenChange={() => setAssignDialog(null)}>
+      <Dialog
+        open={!!assignDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setAssignDialog(null);
+            setSelectedDriver("");
+          }
+        }}
+      >
         <DialogContent>
-          <DialogHeader><DialogTitle>Assigner un livreur</DialogTitle></DialogHeader>
-          <Select value={selectedDriver} onValueChange={setSelectedDriver}>
-            <SelectTrigger><SelectValue placeholder="Choisir un livreur" /></SelectTrigger>
-            <SelectContent>
-              {drivers.map(d => (
-                <SelectItem key={d.id} value={d.id}>
-                  {d.first_name} {d.last_name || ''} — {deliveries.filter(del => del.driver_member_id === d.id && ['assigned', 'in_progress'].includes(del.status)).length} en cours
-                </SelectItem>
-              ))}
-              {drivers.length === 0 && <SelectItem value="" disabled>Aucun livreur actif</SelectItem>}
-            </SelectContent>
-          </Select>
-          <DialogFooter><Button onClick={handleAssign} disabled={!selectedDriver}>Assigner</Button></DialogFooter>
+          <DialogHeader>
+            <DialogTitle>Assigner un livreur</DialogTitle>
+            <DialogDescription>
+              {drivers.length > 0
+                ? "Choisissez le livreur qui prendra en charge cette livraison."
+                : "Aucun livreur actif pour le moment. Ajoutez un membre avec le rôle Livreur dans votre équipe."}
+            </DialogDescription>
+          </DialogHeader>
+          {drivers.length > 0 ? (
+            <Select value={selectedDriver} onValueChange={setSelectedDriver}>
+              <SelectTrigger><SelectValue placeholder="Choisir un livreur" /></SelectTrigger>
+              <SelectContent>
+                {drivers.map(d => (
+                  <SelectItem key={d.id} value={d.id}>
+                    {d.first_name} {d.last_name || ''} — {deliveries.filter(del => del.driver_member_id === d.id && ['assigned', 'in_progress'].includes(del.status)).length} en cours
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className="rounded-xl border border-border/60 bg-muted/40 p-4 text-sm text-muted-foreground">
+              Aucun livreur actif n'est disponible.
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={handleAssign} disabled={!selectedDriver || assignDriver.isPending}>
+              {assignDriver.isPending ? "Assignation..." : "Assigner"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

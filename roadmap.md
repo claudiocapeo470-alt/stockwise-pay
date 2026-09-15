@@ -1,11 +1,11 @@
 # Roadmap
 
-- [x] Partie 1 : liens de partage propres /boutique/{slug}/produit/{id}, route SPA, worker Cloudflare og-worker.js + guide
-- [ ] Partie 2 : Telegram
-  - [x] Table telegram_links (migration + RLS + realtime)
-  - [x] Edge functions telegram-webhook et send-telegram-notification (écrites)
-  - [ ] Déployer les 2 fonctions
-  - [ ] Composant TelegramSettings + intégration dans Settings.tsx
-  - [ ] Demander TELEGRAM_BOT_TOKEN à l'utilisateur (création @StocknixBot via BotFather)
-  - [ ] Enregistrer le webhook Telegram (setWebhook) après réception du token
-  - [ ] Mettre à jour la mémoire (Telegram n'est plus exclu)
+- [x] Partie 1 : liens propres /boutique/{slug}/produit/{id}, route SPA, worker Cloudflare (cloudflare/og-worker.js + README), fonctions OG vérifiées en conditions réelles
+- [x] Partie 2 : Telegram
+  - [x] Table telegram_links (RLS propriétaire, realtime)
+  - [x] telegram-webhook + send-telegram-notification déployées et testées
+  - [x] TelegramSettings dans Paramètres (owner)
+  - [x] Webhook Telegram enregistré (getWebhookInfo OK)
+  - [x] Mémoire mise à jour (Telegram autorisé)
+- [ ] Côté utilisateur : mettre stocknix.com chez Cloudflare + déployer cloudflare/og-worker.js (voir cloudflare/README.md), puis tester l'aperçu dans le débogueur Facebook
+- [ ] Côté utilisateur : se connecter au bot @StocknixBot depuis Paramètres → Notifications Telegram (test réel)

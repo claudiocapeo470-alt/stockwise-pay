@@ -56,7 +56,7 @@ export default function Settings() {
 
   // Guard: employees cannot access company or subscription settings directly
   useEffect(() => {
-    if (isEmployee && (activePage === 'company' || activePage === 'subscription' || activePage === 'security-data')) {
+    if (isEmployee && (activePage === 'company' || activePage === 'subscription' || activePage === 'security-data' || activePage === 'telegram')) {
       setActivePage('main');
     }
   }, [isEmployee, activePage]);
@@ -98,6 +98,7 @@ export default function Settings() {
         {activePage === "profile" && <ProfileSettingsPage navigate={navigate} />}
         {activePage === "security-data" && <SecurityDataSettings signOut={signOut} />}
         {activePage === "notifications" && <PushNotificationSettings />}
+        {activePage === "telegram" && <TelegramSettings />}
         {activePage === "system" && <SystemSettings displayName={displayName} isAdmin={isAdmin} />}
         {activePage === "subscription" && <SubscriptionSettings navigate={navigate} />}
       </div>
@@ -106,7 +107,7 @@ export default function Settings() {
 
   const groups: { title: string; ids: SettingsPage[] }[] = [
     { title: "Entreprise", ids: ["company"] },
-    { title: "Préférences", ids: ["appearance", "notifications"] },
+    { title: "Préférences", ids: ["appearance", "notifications", "telegram"] },
     { title: "Sécurité", ids: ["security-data"] },
     { title: "Abonnement", ids: ["subscription"] },
     { title: "Système", ids: ["system"] },

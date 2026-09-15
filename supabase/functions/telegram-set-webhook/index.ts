@@ -15,7 +15,11 @@ Deno.serve(async (req) => {
     });
 
   const setupKey = Deno.env.get("TELEGRAM_SETUP_KEY");
-  if (!setupKey || req.headers.get("x-setup-key") !== setupKey) {
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+  const okHeader = !!setupKey && req.headers.get("x-setup-key") === setupKey;
+  const okService = !!serviceKey && bearer === serviceKey;
+  if (!okHeader && !okService) {
     return json({ error: "unauthorized" }, 401);
   }
 

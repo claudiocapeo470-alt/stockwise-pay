@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Building2, Palette, User, Shield, Globe, ChevronRight, ArrowLeft, Crown, Save, Download, LogOut, Moon, Sun, Monitor, Check, RefreshCw, Bell } from "lucide-react";
+import { Building2, Palette, User, Shield, Globe, ChevronRight, ArrowLeft, Crown, Save, Download, LogOut, Moon, Sun, Monitor, Check, RefreshCw, Bell, Send } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 import { PushNotificationSettings } from "@/components/settings/PushNotificationSettings";
+import { TelegramSettings } from "@/components/settings/TelegramSettings";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
@@ -25,7 +26,7 @@ import * as XLSX from 'xlsx';
 import { updateAppToLatest } from "@/lib/serviceWorker";
 import { getPerms, isFullAccess } from "@/lib/rolePermissions";
 
-type SettingsPage = "main" | "company" | "appearance" | "profile" | "security-data" | "system" | "subscription" | "notifications";
+type SettingsPage = "main" | "company" | "appearance" | "profile" | "security-data" | "system" | "subscription" | "notifications" | "telegram";
 
 interface SettingsCard {
   id: SettingsPage;
@@ -42,6 +43,7 @@ const settingsCards: SettingsCard[] = [
   { id: "appearance", title: "Apparence & Thème", description: "Thème interface, langue, devise, format de date", icon: Palette, iconBg: "bg-secondary/10", iconColor: "text-secondary", roles: ["owner", "manager", "gestionnaire", "caissier", "livreur", "employee"] },
   { id: "security-data", title: "Sécurité & Données", description: "Mot de passe, sessions, export, sauvegarde", icon: Shield, iconBg: "bg-destructive/10", iconColor: "text-destructive", roles: ["owner"] },
   { id: "notifications", title: "Notifications push", description: "Alertes stock, ventes et commandes sur votre téléphone", icon: Bell, iconBg: "bg-primary/10", iconColor: "text-primary", roles: ["owner", "manager", "gestionnaire", "caissier", "livreur", "employee"] },
+  { id: "telegram", title: "Notifications Telegram", description: "Recevoir les alertes dans Telegram via @StocknixBot", icon: Send, iconBg: "bg-primary/10", iconColor: "text-primary", roles: ["owner"] },
   { id: "system", title: "Informations système", description: "Version, statut service, BDD, performance, support", icon: Globe, iconBg: "bg-muted", iconColor: "text-muted-foreground", roles: ["owner", "manager"] },
   { id: "subscription", title: "Mon abonnement", description: "Plan actuel, historique des paiements, changer de plan", icon: Crown, iconBg: "bg-primary/10", iconColor: "text-primary", roles: ["owner"] },
 ];

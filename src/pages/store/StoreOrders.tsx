@@ -12,6 +12,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { toast } from "sonner";
 import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck, CheckCircle2, ChefHat, XCircle, PackageCheck } from "lucide-react";
 import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from "@/components/layout/MinimalList";
+import { PageActionBar } from "@/components/layout/PageActionBar";
 
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any; iconColor: string }> = {
@@ -42,6 +43,7 @@ export default function StoreOrders() {
   const { company } = useCompany();
   const { createDelivery } = useDeliveries();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [search, setSearch] = useState("");
 
   const handleCreateDelivery = async (order: any) => {
     if (!company?.id) return;
@@ -56,6 +58,11 @@ export default function StoreOrders() {
   const todayOrders = orders.filter(o => new Date(o.created_at).toDateString() === new Date().toDateString());
   const pendingOrders = orders.filter(o => o.status === 'pending');
   const todayRevenue = todayOrders.filter(o => o.status === 'delivered').reduce((s, o) => s + (o.total || 0), 0);
+  const query = search.trim().toLowerCase();
+  const filteredOrders = !query ? orders : orders.filter(order =>
+    [order.customer_name, order.order_number, order.customer_phone]
+      .some(value => String(value || "").toLowerCase().includes(query)),
+  );
 
   const handleStatusChange = async (orderId: string, status: string) => {
     try {
@@ -68,7 +75,11 @@ export default function StoreOrders() {
 
   return (
     <div className="space-y-5 animate-fade-in max-w-5xl mx-auto w-full">
-      
+      <PageActionBar
+        searchValue={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Rechercher une commande..."
+      />
 
       {/* Stats */}
       <div className="stat-scroller" style={{ ["--stat-cols" as any]: 3 }}>
@@ -94,19 +105,19 @@ export default function StoreOrders() {
 
       <SectionHeading
         title="Détails des commandes"
-        count={orders.length}
+        count={filteredOrders.length}
       />
 
       {/* Liste minimaliste unifiée */}
-      {orders.length === 0 ? (
+      {filteredOrders.length === 0 ? (
         <ListEmpty
           icon={<Package className="h-6 w-6" />}
-          title="Aucune commande reçue"
-          description="Les commandes de votre boutique s'afficheront ici."
+          title={orders.length === 0 ? "Aucune commande reçue" : "Aucun résultat"}
+          description={orders.length === 0 ? "Les commandes de votre boutique s'afficheront ici." : "Aucune commande ne correspond à cette recherche."}
         />
       ) : (
         <ListShell>
-          {orders.map(order => {
+          {filteredOrders.map(order => {
             const status = STATUS_MAP[order.status] || STATUS_MAP.pending;
             const items = Array.isArray(order.items) ? order.items : [];
             const Icon = status.icon;

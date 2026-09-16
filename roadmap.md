@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Harmoniser les pages mobiles : recherche sous le titre, filtres en pilules, bouton Ajouter dans l'en-tête et notifications réservées à l'accueil
+
 - [x] Partie 1 : liens propres /boutique/{slug}/produit/{id}, route SPA, worker Cloudflare (cloudflare/og-worker.js + README), fonctions OG vérifiées en conditions réelles
 - [x] Partie 2 : Telegram
   - [x] Table telegram_links (RLS propriétaire, realtime)

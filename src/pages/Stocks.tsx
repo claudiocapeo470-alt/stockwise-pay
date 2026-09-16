@@ -117,14 +117,15 @@ export default function Stocks() {
         </div>
 
         {/* 3. Actions secondaires sous les blocs KPI */}
-        <div className="flex items-center justify-center">
-          <div className="inline-flex items-center gap-1.5">
-            <button
+        <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar">
+          <div className="inline-flex items-center gap-2.5 py-1">
+            <Button
+              variant="outline"
               onClick={() => setShowMovements(true)}
-              className="inline-flex items-center gap-1 rounded-full border border-foreground/60 px-2.5 py-0.5 text-[11px] font-semibold text-foreground transition-all hover:bg-foreground hover:text-background"
+              className="h-11 shrink-0 rounded-full border-foreground/70 px-5 text-sm font-semibold"
             >
-              <History className="h-3 w-3 shrink-0" /> Mouvements
-            </button>
+              <History className="h-4 w-4 shrink-0" /> Mouvements
+            </Button>
 
             <ImportProductsDialog />
           </div>

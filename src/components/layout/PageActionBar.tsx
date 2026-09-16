@@ -1,5 +1,6 @@
-import { ReactNode, useState } from "react";
-import { Search, X } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -30,7 +31,6 @@ export function PageActionBar({
   className,
 }: PageActionBarProps) {
   const isMobile = useIsMobile();
-  const [searchOpen, setSearchOpen] = useState(false);
   const hasSearch = typeof searchValue === "string" && !!onSearchChange;
 
   if (!isMobile) {
@@ -57,51 +57,36 @@ export function PageActionBar({
     );
   }
 
-  // Mobile / tablette : boutons flottants (recherche au-dessus, ajout en dessous) au-dessus de la barre de navigation
+  const [headerActionTarget, setHeaderActionTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setHeaderActionTarget(document.getElementById("mobile-page-primary-action"));
+  }, []);
+
+  // Mobile : recherche pleine largeur sous le titre et action principale dans l'en-tête.
   return (
-    <div className={cn(className)}>
+    <div className={cn("space-y-3", className)}>
       {segments && <SegmentRow>{segments}</SegmentRow>}
 
-      {hasSearch && searchOpen && (
-        <div className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(var(--fab-nav-h)+1rem)]">
-          <div className="relative rounded-2xl bg-card shadow-lg border border-border">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              autoFocus
-              value={searchValue}
-              onChange={(e) => onSearchChange!(e.target.value)}
-              placeholder={searchPlaceholder}
-              className="pl-9 pr-10 h-12 rounded-2xl border-0 bg-transparent"
-            />
-            <button
-              type="button"
-              aria-label="Fermer la recherche"
-              onClick={() => { onSearchChange!(""); setSearchOpen(false); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            >
-              <X className="h-4.5 w-4.5" />
-            </button>
-          </div>
+      {hasSearch && (
+        <div className="relative w-full">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={searchValue}
+            onChange={(e) => onSearchChange?.(e.target.value)}
+            placeholder={searchPlaceholder}
+            aria-label={searchPlaceholder}
+            className="h-12 w-full rounded-full border-0 bg-muted/80 pl-12 pr-4 text-base shadow-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/30"
+          />
         </div>
       )}
 
-      <div className="fixed right-4 bottom-[calc(var(--fab-nav-h)+0.75rem)] z-40 flex flex-col items-end gap-2.5">
-        {hasSearch && !searchOpen && (
-          <button
-            type="button"
-            aria-label="Rechercher"
-            onClick={() => setSearchOpen(true)}
-            className="h-11 w-11 rounded-full bg-card border border-border text-foreground shadow-md flex items-center justify-center active:scale-95 transition-transform"
-          >
-            <Search className="h-[18px] w-[18px]" />
-          </button>
-        )}
-        {primary && (
-          <div className="[&_button]:h-14 [&_button]:w-14 [&_button]:rounded-full [&_button]:p-0 [&_button]:gap-0 [&_button_span]:hidden [&_button_div]:hidden [&_button]:shadow-xl [&_svg]:h-6 [&_svg]:w-6">
-            {primary}
-          </div>
-        )}
-      </div>
+      {primary && headerActionTarget && createPortal(
+        <div className="[&_button]:h-10 [&_button]:w-10 [&_button]:rounded-full [&_button]:p-0 [&_button]:gap-0 [&_button_span]:hidden [&_button_div]:hidden [&_button]:shadow-none [&_svg]:h-5 [&_svg]:w-5">
+          {primary}
+        </div>,
+        headerActionTarget,
+      )}
     </div>
   );
 }

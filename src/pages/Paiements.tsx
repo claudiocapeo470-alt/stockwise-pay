@@ -160,7 +160,7 @@ export default function Paiements() {
       {/* Filtres — même disposition segmentée que la page Stocks */}
       <div className="flex items-center gap-2">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="flex-1 min-w-0 h-11 rounded-xl bg-card border border-border shadow-soft text-[13px] font-semibold"><SelectValue placeholder="Statut" /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-0 h-12 rounded-full bg-card border border-border shadow-soft text-sm font-semibold px-5"><SelectValue placeholder="Statut" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tous statuts</SelectItem>
             <SelectItem value="completed">Payés</SelectItem>
@@ -170,7 +170,7 @@ export default function Paiements() {
           </SelectContent>
         </Select>
         <Select value={methodFilter} onValueChange={setMethodFilter}>
-          <SelectTrigger className="flex-1 min-w-0 h-11 rounded-xl bg-card border border-border shadow-soft text-[13px] font-semibold"><SelectValue placeholder="Méthode" /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-0 h-12 rounded-full bg-card border border-border shadow-soft text-sm font-semibold px-5"><SelectValue placeholder="Méthode" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Toutes méthodes</SelectItem>
             <SelectItem value="especes">Espèces</SelectItem>

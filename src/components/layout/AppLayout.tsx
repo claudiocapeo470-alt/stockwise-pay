@@ -254,9 +254,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                   {pageTitle}
                 </h1>
 
-                <div className="ml-auto flex items-center flex-shrink-0 [&_button]:rounded-full [&_button]:bg-muted/40 [&_button]:border [&_button]:border-border [&_button]:hover:bg-muted">
-                  <SubscriptionAlert />
-                  <NotificationCenter />
+                <div className="ml-auto flex items-center flex-shrink-0 [&_button]:rounded-full [&_button]:border [&_button]:border-border">
+                  <div id="mobile-page-primary-action" className="flex items-center" />
                 </div>
               </div>
             ) : (
@@ -290,7 +289,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 )}
                 <SubscriptionAlert />
                 <ThemeToggle />
-                <NotificationCenter />
+                {isHomePage && <NotificationCenter />}
                 {user && <div className="hidden lg:block">{<UserMenu />}</div>}
               </div>
 

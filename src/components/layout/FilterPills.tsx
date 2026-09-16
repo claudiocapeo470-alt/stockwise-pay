@@ -22,9 +22,9 @@ export function FilterPills({
   className?: string;
 }) {
   return (
-    <div className={cn("flex justify-center", className)}>
+    <div className={cn("flex justify-start sm:justify-center", className)}>
       <div className="max-w-full overflow-x-auto no-scrollbar">
-        <div className="inline-flex items-center gap-1.5 py-0.5">
+        <div className="inline-flex items-center gap-2.5 py-1 pr-3">
           {filters.map((f) => {
             const active = value === f.key;
             return (
@@ -33,7 +33,7 @@ export function FilterPills({
                 type="button"
                 onClick={() => onChange(f.key)}
                 className={cn(
-                  "shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-all",
+                  "shrink-0 rounded-full border px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all sm:px-4 sm:py-2",
                   active
                     ? "border-foreground bg-foreground text-background"
                     : "border-foreground/70 text-foreground hover:bg-foreground/5",

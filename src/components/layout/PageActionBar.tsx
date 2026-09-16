@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -57,9 +57,11 @@ export function PageActionBar({
     );
   }
 
-  const headerActionTarget = typeof document !== "undefined"
-    ? document.getElementById("mobile-page-primary-action")
-    : null;
+  const [headerActionTarget, setHeaderActionTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setHeaderActionTarget(document.getElementById("mobile-page-primary-action"));
+  }, []);
 
   // Mobile : recherche pleine largeur sous le titre et action principale dans l'en-tête.
   return (

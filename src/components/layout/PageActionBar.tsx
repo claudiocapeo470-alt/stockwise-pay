@@ -32,6 +32,11 @@ export function PageActionBar({
 }: PageActionBarProps) {
   const isMobile = useIsMobile();
   const hasSearch = typeof searchValue === "string" && !!onSearchChange;
+  const [headerActionTarget, setHeaderActionTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (isMobile) setHeaderActionTarget(document.getElementById("mobile-page-primary-action"));
+  }, [isMobile]);
 
   if (!isMobile) {
     return (
@@ -57,11 +62,6 @@ export function PageActionBar({
     );
   }
 
-  const [headerActionTarget, setHeaderActionTarget] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    setHeaderActionTarget(document.getElementById("mobile-page-primary-action"));
-  }, []);
 
   // Mobile : recherche pleine largeur sous le titre et action principale dans l'en-tête.
   return (

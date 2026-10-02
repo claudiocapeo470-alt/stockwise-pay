@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Refonte responsive mobile/tablette/PWA : Bottom Sheets communs et Drawer latéral tactile
+- [x] Refonte responsive mobile/tablette/PWA : Bottom Sheets communs et Drawer latéral tactile
 
 - [x] Harmoniser les pages mobiles : recherche sous le titre, filtres en pilules, bouton Ajouter dans l'en-tête et notifications réservées à l'accueil
 

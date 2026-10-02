@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Drawer as Vaul } from "vaul";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Home, BarChart3, Package, Scan, ShoppingCart, Menu, Store, ShoppingBag, ClipboardList, Star, User, Settings, LogOut, TrendingUp, X, Users, Truck, FileText, FileCheck, CreditCard } from "lucide-react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
+import { DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompanyModules, type ModuleKey } from "@/hooks/useCompanyModules";
@@ -152,6 +153,30 @@ export function BottomNav() {
     return false;
   };
 
+  // Ouverture par glissement depuis le bord gauche
+  useEffect(() => {
+    if (!showMenuButton) return;
+    let sx = 0, sy = 0, tracking = false;
+    const start = (e: TouchEvent) => {
+      const t = e.touches[0];
+      tracking = t.clientX < 24;
+      sx = t.clientX; sy = t.clientY;
+    };
+    const move = (e: TouchEvent) => {
+      if (!tracking) return;
+      const t = e.touches[0];
+      const dx = t.clientX - sx, dy = Math.abs(t.clientY - sy);
+      if (dy > 30 && dy > dx) { tracking = false; return; }
+      if (dx > 60) { tracking = false; setDrawerOpen(true); }
+    };
+    window.addEventListener("touchstart", start, { passive: true });
+    window.addEventListener("touchmove", move, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", start);
+      window.removeEventListener("touchmove", move);
+    };
+  }, [showMenuButton]);
+
   const handleNavClick = (href: string) => {
     navigate(href);
     setDrawerOpen(false);
@@ -159,7 +184,7 @@ export function BottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 md:hidden pb-safe backdrop-blur-xl">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 lg:hidden pb-safe backdrop-blur-xl">
         <div className="flex items-end justify-around h-[68px] px-2 pb-2">
           {navigation.map((item) => {
             const active = isActive(item.href);
@@ -192,15 +217,17 @@ export function BottomNav() {
 
 
 
-      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="max-h-[85vh] border-0">
-          <DrawerHeader className="flex items-center justify-between px-5 pb-2">
+      <Vaul.Root direction="left" open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <Vaul.Portal>
+        <Vaul.Overlay className="fixed inset-0 z-[60] bg-black/60" />
+        <Vaul.Content className="fixed inset-y-0 left-0 z-[60] flex w-[86vw] max-w-[360px] flex-col bg-background border-r border-border rounded-r-3xl outline-none pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" aria-describedby={undefined}>
+          <DrawerHeader className="flex flex-row items-center justify-between px-5 pt-5 pb-2 text-left">
             <DrawerTitle className="text-2xl font-bold tracking-tight">Menu</DrawerTitle>
             <DrawerClose asChild>
               <button className="h-9 w-9 rounded-full bg-muted/60 flex items-center justify-center text-muted-foreground"><X className="h-4 w-4" /></button>
             </DrawerClose>
           </DrawerHeader>
-          <div className="overflow-y-auto px-5 pb-8 space-y-6">
+          <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-8 space-y-6">
             {allDrawerNavigation.map((section) => {
               const items = filterItems(section.items);
               if (items.length === 0) return null;
@@ -231,8 +258,9 @@ export function BottomNav() {
 
             <LogoutButton onConfirmed={() => setDrawerOpen(false)} />
           </div>
-        </DrawerContent>
-      </Drawer>
+        </Vaul.Content>
+        </Vaul.Portal>
+      </Vaul.Root>
     </>
   );
 }

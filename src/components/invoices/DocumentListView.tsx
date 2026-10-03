@@ -52,6 +52,8 @@ export function DocumentListView({
   return (
     <ListShell>
       {documents.map((doc) => {
+              if (!doc.id) return null;
+              const documentId = doc.id;
               const tone = STATUS_TONE[doc.status] ?? STATUS_TONE.brouillon;
               const initials = (doc.client_name || "?")
                 .split(" ")
@@ -62,8 +64,8 @@ export function DocumentListView({
               return (
                 <ListRow
                   key={doc.id}
-                  onClick={() => onOpen(doc.id!)}
-                  onSwipeDelete={() => onDelete(doc.id!)}
+                  onClick={() => onOpen(documentId)}
+                  onSwipeDelete={() => onDelete(documentId)}
                   leading={
                     <ListAvatar
                       icon={initials || <FileText className="h-4 w-4" />}
@@ -88,21 +90,21 @@ export function DocumentListView({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-44">
-                          <DropdownMenuItem onClick={() => onOpen(doc.id!)}>
+                          <DropdownMenuItem onClick={() => onOpen(documentId)}>
                             <Eye className="mr-2 h-4 w-4" />Voir
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onEdit(doc.id!)}>
+                          <DropdownMenuItem onClick={() => onEdit(documentId)}>
                             <Edit className="mr-2 h-4 w-4" />Modifier
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onDuplicate(doc.id!)}>
+                          <DropdownMenuItem onClick={() => onDuplicate(documentId)}>
                             <Copy className="mr-2 h-4 w-4" />Dupliquer
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onDownload(doc.id!)}>
+                          <DropdownMenuItem onClick={() => onDownload(documentId)}>
                             <Download className="mr-2 h-4 w-4" />Télécharger
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            onClick={() => onDelete(doc.id!)}
+                            onClick={() => onDelete(documentId)}
                             className="text-destructive focus:text-destructive"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />Supprimer

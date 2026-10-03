@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ListShell, ListRow, ListAvatar, ListBadge } from '@/components/layout/MinimalList';
+import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from '@/components/layout/MinimalList';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -24,7 +24,6 @@ import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
 import { uploadProductImage } from '@/lib/uploadProductImage';
 import { PageActionBar } from '@/components/layout/PageActionBar';
-import { ProductGrid, ProductGridCard, ProductMeta } from '@/components/products/ProductGridCard';
 import { SectionHeading } from '@/components/layout/PageShell';
 
 function ProductIcon({ product }: { product: any }) {
@@ -558,51 +557,46 @@ export default function StoreProducts() {
           />
 
           {filteredOnline.length === 0 ? (
-            <Card><CardContent className="py-10 sm:py-14 text-center space-y-3">
-              <Globe className="h-10 w-10 mx-auto text-muted-foreground/30" />
-              <p className="text-muted-foreground text-sm">Aucun produit en ligne</p>
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowCreateDialog(true)}>
-                <Plus className="h-4 w-4" /> Créer votre premier produit
-              </Button>
-            </CardContent></Card>
+            <ListEmpty
+              icon={<Globe className="h-5 w-5" />}
+              title={storeProducts.length === 0 ? "Aucun produit en ligne" : "Aucun résultat"}
+              description={storeProducts.length === 0 ? "Créez ou publiez votre premier produit" : "Aucun produit trouvé pour cette recherche"}
+            />
           ) : (
-            <ProductGrid>
+            <ListShell>
               {filteredOnline.map((sp: any) => (
-                <ProductGridCard
+                <ListRow
                   key={sp.id}
-                  image={sp.products?.image_url}
-                  name={sp.products?.name || '—'}
-                  badge={<span className="rounded-full bg-success/10 px-1 py-0 text-[8px] font-semibold text-success">Publié</span>}
-                  meta={<ProductMeta icon={<Tag className="h-2.5 w-2.5" />}>{sp.products?.category || 'Sans catégorie'}</ProductMeta>}
-                  price={<>{sp.online_price?.toLocaleString('de-DE')}<span className="ml-0.5 text-[9px] font-normal text-muted-foreground">XOF</span></>}
-                  priceAction={
-                    <button
-                      onClick={async () => {
-                        try {
-                          await removeProduct.mutateAsync(sp.product_id);
-                          toast.success('Produit dépublié');
-                        } catch (e: any) { toast.error(e.message); }
-                      }}
-                      className="rounded-full border border-foreground/70 px-1.5 py-0 text-[9px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background"
-                    >
-                      Dépublier
-                    </button>
+                  leading={
+                    <ListAvatar src={sp.products?.image_url} alt={sp.products?.name || "Produit"} icon={<Package className="h-5 w-5" />} tone="success" />
                   }
+                  title={sp.products?.name || '—'}
+                  badge={<ListBadge className="bg-success/10 text-success">Publié</ListBadge>}
+                  subtitle={sp.products?.category || 'Sans catégorie'}
+                  meta={sp.products?.quantity != null ? `${sp.products.quantity} en stock` : undefined}
+                  value={`${sp.online_price?.toLocaleString('de-DE')} XOF`}
                   onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}
                   actions={
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Supprimer"
-                      className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label={`Actions pour ${sp.products?.name || "ce produit"}`}><MoreVertical className="h-4 w-4" /></Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}><Edit2 className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
+                        <DropdownMenuItem onClick={async () => {
+                          try {
+                            await removeProduct.mutateAsync(sp.product_id);
+                            toast.success('Produit dépublié');
+                          } catch (e: any) { toast.error(e.message); }
+                        }}><Globe className="mr-2 h-4 w-4" />Dépublier</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   }
                 />
               ))}
-            </ProductGrid>
+            </ListShell>
           )}
         </>
       ) : (
@@ -612,49 +606,43 @@ export default function StoreProducts() {
             count={filteredUnpublished.length}
           />
           {filteredUnpublished.length === 0 ? (
-            <Card><CardContent className="py-10 sm:py-14 text-center space-y-2">
-              <Package className="h-10 w-10 mx-auto text-muted-foreground/30" />
-              <p className="text-muted-foreground text-sm">{unpublished.length === 0 ? 'Tous les produits sont publiés' : 'Aucun résultat'}</p>
-            </CardContent></Card>
+            <ListEmpty
+              icon={<Package className="h-5 w-5" />}
+              title={unpublished.length === 0 ? "Tous les produits sont publiés" : "Aucun résultat"}
+              description={unpublished.length === 0 ? "Les produits publiés apparaissent dans l’onglet En ligne" : "Aucun produit trouvé pour cette recherche"}
+            />
           ) : (
-            <ProductGrid>
+            <ListShell>
               {filteredUnpublished.map(p => (
-                <ProductGridCard
+                <ListRow
                   key={p.id}
-                  image={p.image_url}
-                  name={p.name}
+                  leading={<ListAvatar src={p.image_url} alt={p.name} icon={<Package className="h-5 w-5" />} tone={p.quantity > 0 ? "warning" : "destructive"} />}
+                  title={p.name}
                   badge={
-                    <span className={`rounded-full px-1 py-0 text-[8px] font-semibold ${p.quantity > 0 ? "bg-orange-500/10 text-orange-600" : "bg-destructive/10 text-destructive"}`}>
+                    <ListBadge className={p.quantity > 0 ? "bg-warning/10 text-warning" : "bg-destructive/10 text-destructive"}>
                       {p.quantity > 0 ? `${p.quantity} en stock` : 'Rupture'}
-                    </span>
+                    </ListBadge>
                   }
-                  meta={<ProductMeta icon={<Tag className="h-2.5 w-2.5" />}>{p.category || 'Sans catégorie'}</ProductMeta>}
-                  price={<>{p.price?.toLocaleString('de-DE')}<span className="ml-0.5 text-[9px] font-normal text-muted-foreground">XOF</span></>}
-                  priceAction={
-                    <button
-                      disabled={publishingId === p.id}
-                      onClick={() => publishOne(p)}
-                      className="inline-flex items-center gap-0.5 rounded-full border border-foreground/70 px-1.5 py-0 text-[9px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background disabled:opacity-60"
-                    >
-                      {publishingId === p.id ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : null}
-                      Publier
-                    </button>
-                  }
-                  onClick={() => publishOne(p)}
+                  subtitle={p.category || 'Sans catégorie'}
+                  meta="Non publié"
+                  value={`${p.price?.toLocaleString('de-DE')} XOF`}
                   actions={
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Supprimer"
-                      className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label={`Actions pour ${p.name}`}><MoreVertical className="h-4 w-4" /></Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem disabled={publishingId === p.id} onClick={() => publishOne(p)}>
+                          {publishingId === p.id ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Globe className="mr-2 h-4 w-4" />}Publier
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setConfirmDelete({ id: p.id, name: p.name })}><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   }
                 />
               ))}
-            </ProductGrid>
+            </ListShell>
           )}
         </>
       )}

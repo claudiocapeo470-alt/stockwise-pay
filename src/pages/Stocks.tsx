@@ -1,9 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Package, Search, AlertTriangle, Edit2, Trash2, History, Bell, Layers, Tag } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Package, AlertTriangle, Edit2, Trash2, History, MoreVertical } from "lucide-react";
 import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
@@ -12,10 +12,9 @@ import { ImportProductsDialog } from "@/components/stocks/ImportProductsDialog";
 import { StockMovementsDialog } from "@/components/stocks/StockMovementsDialog";
 import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { PageActionBar } from "@/components/layout/PageActionBar";
 import { SectionHeading, StickyTop } from "@/components/layout/PageShell";
-import { ProductGrid, ProductGridCard, ProductMeta } from "@/components/products/ProductGridCard";
+import { ListAvatar, ListBadge, ListEmpty, ListRow, ListShell } from "@/components/layout/MinimalList";
 
 
 export default function Stocks() {
@@ -24,7 +23,6 @@ export default function Stocks() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showMovements, setShowMovements] = useState(false);
   const { products, isLoading, deleteProduct } = useProducts();
-  const isMobile = useIsMobile();
   const { formatCurrency } = useCurrency();
 
   const filteredProducts = products.filter(product =>
@@ -140,84 +138,69 @@ export default function Stocks() {
 
       {/* Products */}
       {filteredProducts.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">{products.length === 0 ? "Aucun produit" : "Aucun résultat"}</h3>
-            <p className="text-muted-foreground mb-4">{products.length === 0 ? "Commencez par ajouter votre premier produit" : "Aucun produit trouvé pour cette recherche"}</p>
-            {products.length === 0 && <AddProductDialog />}
-          </CardContent>
-        </Card>
+        <ListEmpty
+          icon={<Package className="h-5 w-5" />}
+          title={products.length === 0 ? "Aucun produit" : "Aucun résultat"}
+          description={products.length === 0 ? "Commencez par ajouter votre premier produit" : "Aucun produit trouvé pour cette recherche"}
+        />
       ) : (
-        <>
-          {/* Grille catalogue : 2 colonnes mobile, 3 tablette, 4 desktop */}
-          <ProductGrid>
+          <ListShell>
             {filteredProducts.map((product) => {
               const status = getStockStatus(product);
               return (
-                <ProductGridCard
+                <ListRow
                   key={product.id}
-                  image={product.image_url}
-                  name={product.name}
                   onClick={() => handleEditProduct(product)}
+                  onSwipeDelete={() => handleDeleteProduct(product)}
+                  leading={
+                    <ListAvatar
+                      src={product.image_url}
+                      alt={product.name}
+                      icon={<Package className="h-5 w-5" />}
+                      tone={status.variant === "destructive" ? "destructive" : status.variant === "warning" ? "warning" : "primary"}
+                    />
+                  }
+                  title={product.name}
                   badge={
-                    <Badge variant={status.variant} className="text-[8px] px-1 py-0">{status.label}</Badge>
+                    <ListBadge className={status.variant === "destructive" ? "bg-destructive/10 text-destructive" : status.variant === "warning" ? "bg-warning/10 text-warning" : "bg-success/10 text-success"}>
+                      {status.label}
+                    </ListBadge>
                   }
-                  meta={
-                    <>
-                      <ProductMeta icon={<Layers className="h-2.5 w-2.5" />}>
-                        {product.quantity}/{product.min_quantity}
-                      </ProductMeta>
-                      <ProductMeta icon={<Tag className="h-2.5 w-2.5" />} className="max-w-[55%]">
-                        {product.category || (product.sku ? `SKU ${product.sku}` : "Sans catégorie")}
-                      </ProductMeta>
-                    </>
-                  }
-                  price={formatCurrency(product.price)}
+                  subtitle={product.category || "Sans catégorie"}
+                  meta={product.sku ? `SKU ${product.sku}` : `Seuil d’alerte : ${product.min_quantity}`}
+                  value={formatCurrency(product.price)}
+                  hint={`${product.quantity} en stock`}
                   actions={
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEditProduct(product)}
-                        className="h-6 w-6 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-                        aria-label="Modifier"
-                      >
-                        <Edit2 className="h-3 w-3" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                            aria-label="Supprimer"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </AlertDialogTrigger>
-
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-                            <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer "{product.name}" ?</AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Annuler</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteProduct(product)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label={`Actions pour ${product.name}`}>
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEditProduct(product)}><Edit2 className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <DropdownMenuItem onSelect={(event) => event.preventDefault()} className="text-destructive focus:text-destructive"><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+                              <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer "{product.name}" ?</AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Annuler</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteProduct(product)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Supprimer</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   }
                 />
               );
             })}
-          </ProductGrid>
-
-
-
-        </>
+          </ListShell>
       )}
 
       {editingProduct && (

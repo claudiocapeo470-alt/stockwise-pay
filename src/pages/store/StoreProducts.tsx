@@ -1,40 +1,27 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ListShell, ListRow, ListAvatar, ListBadge } from '@/components/layout/MinimalList';
+import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from '@/components/layout/MinimalList';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useProducts } from '@/hooks/useProducts';
 import { useOnlineStore, useStoreProducts } from '@/hooks/useOnlineStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQueryClient } from '@tanstack/react-query';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Edit2, Globe, Package, Search, Upload, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes, Store, MoreVertical, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Trash2, Edit2, Globe, Package, Loader2, ImageIcon, X, Check, Camera, Info, Tag, Boxes, MoreVertical, ChevronLeft, ChevronRight } from 'lucide-react';
 import { StoreProductEditDialog } from '@/components/store/StoreProductEditDialog';
 import { RichTextEditor } from '@/components/stocks/RichTextEditor';
 import { StoreHeader } from '@/components/store/StoreHeader';
 import { uploadProductImage } from '@/lib/uploadProductImage';
 import { PageActionBar } from '@/components/layout/PageActionBar';
-import { ProductGrid, ProductGridCard, ProductMeta } from '@/components/products/ProductGridCard';
 import { SectionHeading } from '@/components/layout/PageShell';
-
-function ProductIcon({ product }: { product: any }) {
-  if (product.image_url) return <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded-lg object-cover" />;
-  return (
-    <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-      <Package className="h-4 w-4 text-muted-foreground" />
-    </div>
-  );
-}
 
 interface CategoryItem { id?: string; name: string; image_url: string | null; }
 
@@ -369,86 +356,12 @@ function CreateProductDialog({ open, onClose, storeId, onCreated }: { open: bool
   );
 }
 
-// Carte produit en ligne — style carte blanche arrondie (image de référence)
-function OnlineProductCard({ sp, onEdit, onUnpublish, onDelete }: { sp: any; onEdit: () => void; onUnpublish: () => void; onDelete: () => void }) {
-  const product = sp.products;
-  return (
-    <div className="flex items-center gap-3 rounded-2xl bg-card border border-border/60 p-3 shadow-sm transition-shadow hover:shadow-md">
-      {product?.image_url ? (
-        <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0 bg-muted" />
-      ) : (
-        <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center text-2xl shrink-0">
-          <Package className="h-5 w-5 text-muted-foreground" />
-        </div>
-      )}
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold text-[15px] leading-tight truncate">{product?.name || '—'}</p>
-        <p className="text-sm font-bold mt-0.5">{sp.online_price?.toLocaleString('de-DE')} XOF</p>
-        <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-          <span className="px-2.5 py-1 rounded-full bg-muted text-[11px] font-medium text-muted-foreground">
-            {product?.category || 'Sans catégorie'}
-          </span>
-          <span className="px-2.5 py-1 rounded-full bg-success/10 text-[11px] font-medium text-success">Publié</span>
-        </div>
-      </div>
-      <div className="flex flex-col items-center gap-1 shrink-0">
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" onClick={onEdit} title="Modifier"><Edit2 className="h-4 w-4" /></Button>
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-orange-500" onClick={onUnpublish} title="Retirer"><Globe className="h-4 w-4" /></Button>
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive" onClick={onDelete} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
-      </div>
-    </div>
-  );
-}
-
-
-
-// Carte produit en stock — même design que les produits en ligne
-function StockProductCard({ product, selected, onToggle, onlinePrice, onPriceChange, onPublish, onDelete }: {
-  product: any; selected: boolean; onToggle: () => void; onlinePrice: number; onPriceChange: (v: number) => void; onPublish: () => void; onDelete: () => void;
-}) {
-  return (
-    <div className={`rounded-2xl bg-card border p-3 shadow-sm transition-all ${selected ? 'border-primary ring-1 ring-primary/20' : 'border-border/60 hover:shadow-md'}`}>
-      <div className="flex items-center gap-3">
-        <Checkbox checked={selected} onCheckedChange={onToggle} className="shrink-0" />
-        {product.image_url ? (
-          <img src={product.image_url} alt={product.name} loading="lazy" className="h-16 w-16 rounded-xl object-cover shrink-0 bg-muted" />
-        ) : (
-          <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center shrink-0"><Package className="h-6 w-6 text-muted-foreground" /></div>
-        )}
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-[15px] leading-tight truncate">{product.name}</p>
-          <p className="text-sm font-bold mt-0.5">{product.price?.toLocaleString('de-DE')} XOF</p>
-          <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-            <span className="px-2.5 py-1 rounded-full bg-muted text-[11px] font-medium text-muted-foreground">
-              {product.quantity > 0 ? `${product.quantity} en stock` : 'Rupture'}
-            </span>
-            <span className="px-2.5 py-1 rounded-full bg-orange-500/10 text-[11px] font-medium text-orange-600">Non publié</span>
-          </div>
-        </div>
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-destructive shrink-0" onClick={onDelete} title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
-      </div>
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/60">
-        <Input type="number" className="h-10 text-sm flex-1 rounded-xl" value={onlinePrice} onChange={e => onPriceChange(Number(e.target.value))} placeholder="Prix en ligne" />
-        <Button size="sm" className="gap-1 shrink-0 h-10 rounded-xl" onClick={onPublish}>
-          <Globe className="h-3.5 w-3.5" /> Publier
-        </Button>
-      </div>
-    </div>
-
-  );
-}
-
-
 export default function StoreProducts() {
   const { store } = useOnlineStore();
   const { products, deleteProduct } = useProducts();
   const { storeProducts, publishProducts, removeProduct } = useStoreProducts(store?.id);
   const queryClient = useQueryClient();
-  const isMobile = useIsMobile();
-
-  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [tab, setTab] = useState<'online' | 'stock'>('online');
-  const [onlinePrices, setOnlinePrices] = useState<Record<string, number>>({});
   const [editingProduct, setEditingProduct] = useState<{ storeProduct: any; product: any } | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [search, setSearch] = useState('');
@@ -458,7 +371,7 @@ export default function StoreProducts() {
   const publishOne = async (p: any) => {
     setPublishingId(p.id);
     try {
-      await publishProducts.mutateAsync([{ product_id: p.id, online_price: onlinePrices[p.id] || p.price || 0 }]);
+      await publishProducts.mutateAsync([{ product_id: p.id, online_price: p.price || 0 }]);
       toast.success(`${p.name} publié !`);
     } catch (e: any) { toast.error(e.message); }
     finally { setPublishingId(null); }
@@ -468,19 +381,6 @@ export default function StoreProducts() {
   const unpublished = products.filter(p => !publishedIds.has(p.id));
   const filteredUnpublished = unpublished.filter(p => !search || p.name.toLowerCase().includes(search.toLowerCase()));
   const filteredOnline = storeProducts.filter((sp: any) => !search || sp.products?.name?.toLowerCase().includes(search.toLowerCase()));
-
-  const toggleSelect = (id: string) => {
-    setSelected(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
-  };
-
-  const handlePublishSelected = async () => {
-    if (selected.size === 0) return;
-    try {
-      await publishProducts.mutateAsync(Array.from(selected).map(pid => ({ product_id: pid, online_price: onlinePrices[pid] || products.find(p => p.id === pid)?.price || 0 })));
-      toast.success(`${selected.size} produit(s) publié(s) !`);
-      setSelected(new Set());
-    } catch (e: any) { toast.error(e.message); }
-  };
 
   const refreshAll = () => {
     queryClient.invalidateQueries({ queryKey: ['store-products'] });
@@ -558,51 +458,46 @@ export default function StoreProducts() {
           />
 
           {filteredOnline.length === 0 ? (
-            <Card><CardContent className="py-10 sm:py-14 text-center space-y-3">
-              <Globe className="h-10 w-10 mx-auto text-muted-foreground/30" />
-              <p className="text-muted-foreground text-sm">Aucun produit en ligne</p>
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowCreateDialog(true)}>
-                <Plus className="h-4 w-4" /> Créer votre premier produit
-              </Button>
-            </CardContent></Card>
+            <ListEmpty
+              icon={<Globe className="h-5 w-5" />}
+              title={storeProducts.length === 0 ? "Aucun produit en ligne" : "Aucun résultat"}
+              description={storeProducts.length === 0 ? "Créez ou publiez votre premier produit" : "Aucun produit trouvé pour cette recherche"}
+            />
           ) : (
-            <ProductGrid>
+            <ListShell>
               {filteredOnline.map((sp: any) => (
-                <ProductGridCard
+                <ListRow
                   key={sp.id}
-                  image={sp.products?.image_url}
-                  name={sp.products?.name || '—'}
-                  badge={<span className="rounded-full bg-success/10 px-1 py-0 text-[8px] font-semibold text-success">Publié</span>}
-                  meta={<ProductMeta icon={<Tag className="h-2.5 w-2.5" />}>{sp.products?.category || 'Sans catégorie'}</ProductMeta>}
-                  price={<>{sp.online_price?.toLocaleString('de-DE')}<span className="ml-0.5 text-[9px] font-normal text-muted-foreground">XOF</span></>}
-                  priceAction={
-                    <button
-                      onClick={async () => {
-                        try {
-                          await removeProduct.mutateAsync(sp.product_id);
-                          toast.success('Produit dépublié');
-                        } catch (e: any) { toast.error(e.message); }
-                      }}
-                      className="rounded-full border border-foreground/70 px-1.5 py-0 text-[9px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background"
-                    >
-                      Dépublier
-                    </button>
+                  leading={
+                    <ListAvatar src={sp.products?.image_url} alt={sp.products?.name || "Produit"} icon={<Package className="h-5 w-5" />} tone="success" />
                   }
+                  title={sp.products?.name || '—'}
+                  badge={<ListBadge className="bg-success/10 text-success">Publié</ListBadge>}
+                  subtitle={sp.products?.category || 'Sans catégorie'}
+                  meta={sp.products?.quantity != null ? `${sp.products.quantity} en stock` : undefined}
+                  value={`${sp.online_price?.toLocaleString('de-DE')} XOF`}
                   onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}
                   actions={
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Supprimer"
-                      className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label={`Actions pour ${sp.products?.name || "ce produit"}`}><MoreVertical className="h-4 w-4" /></Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => sp.products && setEditingProduct({ storeProduct: sp, product: sp.products })}><Edit2 className="mr-2 h-4 w-4" />Modifier</DropdownMenuItem>
+                        <DropdownMenuItem onClick={async () => {
+                          try {
+                            await removeProduct.mutateAsync(sp.product_id);
+                            toast.success('Produit dépublié');
+                          } catch (e: any) { toast.error(e.message); }
+                        }}><Globe className="mr-2 h-4 w-4" />Dépublier</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   }
                 />
               ))}
-            </ProductGrid>
+            </ListShell>
           )}
         </>
       ) : (
@@ -612,49 +507,43 @@ export default function StoreProducts() {
             count={filteredUnpublished.length}
           />
           {filteredUnpublished.length === 0 ? (
-            <Card><CardContent className="py-10 sm:py-14 text-center space-y-2">
-              <Package className="h-10 w-10 mx-auto text-muted-foreground/30" />
-              <p className="text-muted-foreground text-sm">{unpublished.length === 0 ? 'Tous les produits sont publiés' : 'Aucun résultat'}</p>
-            </CardContent></Card>
+            <ListEmpty
+              icon={<Package className="h-5 w-5" />}
+              title={unpublished.length === 0 ? "Tous les produits sont publiés" : "Aucun résultat"}
+              description={unpublished.length === 0 ? "Les produits publiés apparaissent dans l’onglet En ligne" : "Aucun produit trouvé pour cette recherche"}
+            />
           ) : (
-            <ProductGrid>
+            <ListShell>
               {filteredUnpublished.map(p => (
-                <ProductGridCard
+                <ListRow
                   key={p.id}
-                  image={p.image_url}
-                  name={p.name}
+                  leading={<ListAvatar src={p.image_url} alt={p.name} icon={<Package className="h-5 w-5" />} tone={p.quantity > 0 ? "warning" : "destructive"} />}
+                  title={p.name}
                   badge={
-                    <span className={`rounded-full px-1 py-0 text-[8px] font-semibold ${p.quantity > 0 ? "bg-orange-500/10 text-orange-600" : "bg-destructive/10 text-destructive"}`}>
+                    <ListBadge className={p.quantity > 0 ? "bg-warning/10 text-warning" : "bg-destructive/10 text-destructive"}>
                       {p.quantity > 0 ? `${p.quantity} en stock` : 'Rupture'}
-                    </span>
+                    </ListBadge>
                   }
-                  meta={<ProductMeta icon={<Tag className="h-2.5 w-2.5" />}>{p.category || 'Sans catégorie'}</ProductMeta>}
-                  price={<>{p.price?.toLocaleString('de-DE')}<span className="ml-0.5 text-[9px] font-normal text-muted-foreground">XOF</span></>}
-                  priceAction={
-                    <button
-                      disabled={publishingId === p.id}
-                      onClick={() => publishOne(p)}
-                      className="inline-flex items-center gap-0.5 rounded-full border border-foreground/70 px-1.5 py-0 text-[9px] font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background disabled:opacity-60"
-                    >
-                      {publishingId === p.id ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : null}
-                      Publier
-                    </button>
-                  }
-                  onClick={() => publishOne(p)}
+                  subtitle={p.category || 'Sans catégorie'}
+                  meta="Non publié"
+                  value={`${p.price?.toLocaleString('de-DE')} XOF`}
                   actions={
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Supprimer"
-                      className="h-6 w-6 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => setConfirmDelete({ id: p.id, name: p.name })}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label={`Actions pour ${p.name}`}><MoreVertical className="h-4 w-4" /></Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem disabled={publishingId === p.id} onClick={() => publishOne(p)}>
+                          {publishingId === p.id ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Globe className="mr-2 h-4 w-4" />}Publier
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setConfirmDelete({ id: p.id, name: p.name })}><Trash2 className="mr-2 h-4 w-4" />Supprimer</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   }
                 />
               ))}
-            </ProductGrid>
+            </ListShell>
           )}
         </>
       )}

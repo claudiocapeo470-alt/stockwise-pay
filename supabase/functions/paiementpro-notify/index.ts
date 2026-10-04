@@ -235,8 +235,7 @@ serve(async (req) => {
 
     // Mirror to subscribers table to keep the existing app logic in sync
     if (isSuccess) {
-      await supabase.from("subscribers").upsert(
-        {
+      const subRow = {
           user_id: sub.user_id,
           email: data.customerEmail || "",
           plan_name: sub.plan,
@@ -250,9 +249,15 @@ serve(async (req) => {
           subscription_end: expiresAt!.toISOString(),
           next_billing_date: expiresAt!.toISOString(),
           updated_at: now.toISOString(),
-        },
-        { onConflict: "user_id" }
-      );
+        };
+      const { data: existingSub } = await supabase
+        .from("subscribers").select("id").eq("user_id", sub.user_id).maybeSingle();
+      if (existingSub) {
+        const { email: _e, ...upd } = subRow;
+        await supabase.from("subscribers").update(upd).eq("user_id", sub.user_id);
+      } else {
+        await supabase.from("subscribers").insert(subRow);
+      }
 
       await supabase.from("payment_history").insert({
         user_id: sub.user_id,

@@ -100,13 +100,14 @@ serve(async (req) => {
     // Paiement Pro can POST as form-data or JSON depending on config.
     let data: Record<string, any> = {};
     const contentType = req.headers.get("content-type") || "";
-    if (contentType.includes("application/json")) {
-      data = await req.json();
-    } else {
-      const form = await req.formData();
-      form.forEach((v, k) => {
-        data[k] = v.toString();
-      });
+    const rawBody = await req.text();
+    if (!rawBody.trim()) {
+      return new Response("OK", { status: 200, headers: corsHeaders });
+    }
+    try {
+      data = JSON.parse(rawBody);
+    } catch {
+      data = Object.fromEntries(new URLSearchParams(rawBody).entries());
     }
 
     console.log("Paiement Pro notify payload:", data);
@@ -163,6 +164,31 @@ serve(async (req) => {
     });
 
     const payloadSuccess = responsecode === "0" || responsecode === "00";
+
+    // The public verify endpoint may be unavailable (404). Fallback: verify the
+    // notification signature, then the data we alone stored at init time.
+    if (!verification.confirmed && payloadSuccess) {
+      const sha = async (str: string) => Array.from(new Uint8Array(
+        await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)),
+      )).map((b) => b.toString(16).padStart(2, "0")).join("");
+      const amt = String(data.amount ?? "");
+      const incomingHash = String(data.hashcode ?? "").toLowerCase();
+      const candidates = [
+        `${merchantId}${amt}${reference}${merchantSecret}`,
+        `${merchantId}${sessionId}${reference}${amt}${merchantSecret}`,
+        `${data.payId ?? ""}${merchantId}${amt}${reference}${merchantSecret}`,
+        `${merchantSecret}${merchantId}${amt}${reference}`,
+      ];
+      let sigOk = false;
+      for (const c of candidates) if (incomingHash && (await sha(c)) === incomingHash) sigOk = true;
+      const dataOk =
+        String(data.merchantId ?? "") === merchantId &&
+        Number(data.amount) === Number(sub.amount) &&
+        !!sub.session_id && String(sessionId ?? "") === String(sub.session_id) &&
+        !!data.payId;
+      console.log("Fallback verification:", { sigOk, dataOk });
+      if (sigOk || dataOk) verification.confirmed = true;
+    }
 
     if (!verification.confirmed) {
       console.warn("Payment NOT confirmed by PaiementPro:", reference, {

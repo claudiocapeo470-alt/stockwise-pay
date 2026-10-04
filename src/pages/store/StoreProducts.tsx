@@ -527,6 +527,7 @@ export default function StoreProducts() {
                   subtitle={p.category || 'Sans catégorie'}
                   meta="Non publié"
                   value={`${p.price?.toLocaleString('de-DE')} XOF`}
+                  onClick={() => publishOne(p)}
                   actions={
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

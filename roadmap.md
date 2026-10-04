@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Harmoniser Gestion de stock, Produits en ligne, Factures et Devis en listes simples sans regroupement par période
+- [x] Harmoniser Gestion de stock, Produits en ligne, Factures et Devis en listes simples sans regroupement par période
 
 - [x] Refonte responsive mobile/tablette/PWA : Bottom Sheets communs et Drawer latéral tactile
 

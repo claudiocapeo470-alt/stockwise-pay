@@ -75,7 +75,21 @@ export function TelegramSettings() {
         );
       if (error) throw error;
       queryClient.invalidateQueries({ queryKey: ["telegram-link", companyId] });
-      window.open(telegramStartUrl(token), "_blank", "noopener,noreferrer");
+      // Ouvre directement l'application Telegram (tg://), repli sur t.me si absente.
+      const appUrl = `tg://resolve?domain=StocknixBot&start=${encodeURIComponent(token)}`;
+      const webUrl = telegramStartUrl(token);
+      const isTouch = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+      let left = false;
+      const onHide = () => { if (document.hidden) left = true; };
+      document.addEventListener("visibilitychange", onHide);
+      window.location.href = appUrl;
+      setTimeout(() => {
+        document.removeEventListener("visibilitychange", onHide);
+        if (!left) {
+          if (isTouch) window.location.href = webUrl;
+          else window.open(webUrl, "_blank", "noopener,noreferrer");
+        }
+      }, 1500);
       toast.info("Ouvrez Telegram et appuyez sur Démarrer pour finaliser la connexion.");
     } catch (e) {
       toast.error("Impossible de préparer la connexion : " + (e as Error).message);

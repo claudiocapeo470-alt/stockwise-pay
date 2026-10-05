@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Package, AlertTriangle, Edit2, Trash2, History, MoreVertical } from "lucide-react";
+import { Package, AlertTriangle, Edit2, Trash2, History, MoreVertical, Upload } from "lucide-react";
 import { useState } from "react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { AddProductDialog } from "@/components/stocks/AddProductDialog";
@@ -22,6 +22,7 @@ export default function Stocks() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showMovements, setShowMovements] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const { products, isLoading, deleteProduct } = useProducts();
   const { formatCurrency } = useCurrency();
 
@@ -74,6 +75,23 @@ export default function Stocks() {
           onSearchChange={setSearchQuery}
           searchPlaceholder="Rechercher un produit..."
           primary={<AddProductDialog />}
+          segments={
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="h-10 w-10 rounded-full" aria-label="Actions du stock">
+                  <MoreVertical className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={() => setShowMovements(true)}>
+                  <History /> Mouvements
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowImport(true)}>
+                  <Upload /> Importer
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          }
         />
 
 
@@ -113,22 +131,6 @@ export default function Stocks() {
             </CardContent>
           </Card>
         </div>
-
-        {/* 3. Actions secondaires sous les blocs KPI */}
-        <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar">
-          <div className="inline-flex items-center gap-2.5 py-1">
-            <Button
-              variant="outline"
-              onClick={() => setShowMovements(true)}
-              className="h-11 shrink-0 rounded-full border-foreground/70 px-5 text-sm font-semibold"
-            >
-              <History className="h-4 w-4 shrink-0" /> Mouvements
-            </Button>
-
-            <ImportProductsDialog />
-          </div>
-        </div>
-
 
       </StickyTop>
 
@@ -212,6 +214,7 @@ export default function Stocks() {
       )}
 
       <StockMovementsDialog open={showMovements} onOpenChange={setShowMovements} />
+      <ImportProductsDialog open={showImport} onOpenChange={setShowImport} />
     </div>
   );
 }

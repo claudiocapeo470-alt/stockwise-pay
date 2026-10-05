@@ -13,7 +13,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  Save, Eye, Rocket, Copy, Check, Link2, Store, Palette,
+  Save, Copy, Check, Link2, Store, Palette,
   Phone, ChevronLeft, ChevronRight, Image as ImageIcon, Upload, Trash2, Loader2, Tags, Settings2, Megaphone,
 } from "lucide-react";
 import CategoryManager from "@/components/store/CategoryManager";
@@ -46,7 +46,7 @@ const MAX_BANNER_SIZE = 3 * 1024 * 1024; // 3 MB
 
 
 export default function StoreConfig() {
-  const { store, isLoading, upsertStore, togglePublish, checkSlugAvailability } = useOnlineStore();
+  const { store, isLoading, upsertStore, checkSlugAvailability } = useOnlineStore();
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -112,13 +112,6 @@ export default function StoreConfig() {
       await upsertStore.mutateAsync(form as any);
       toast.success("Boutique enregistrée !");
     } catch (e: any) { toast.error(e.message || "Erreur"); }
-  };
-
-  const handlePublish = async () => {
-    try {
-      await togglePublish.mutateAsync();
-      toast.success(store?.is_published ? "Boutique dépubliée" : "🎉 Boutique en ligne !");
-    } catch (e: any) { toast.error(e.message); }
   };
 
   // ─── UPLOAD BANNIÈRE ────────────────────────────────────────────────

@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
 import { UserMenu } from "./UserMenu";
-import { ThemeToggle } from "./ThemeToggle";
 import { AdminBottomNav } from "./AdminBottomNav";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -64,7 +63,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </div>
                 <h2 className="text-lg font-semibold text-foreground">{pageTitle}</h2>
               </div>
-              <ThemeToggle />
               {user && <UserMenu />}
             </div>
           </header>

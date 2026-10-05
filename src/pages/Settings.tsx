@@ -13,7 +13,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { CompanySettings } from "@/components/settings/CompanySettings";
 import { PushNotificationSettings } from "@/components/settings/PushNotificationSettings";
 import { TelegramSettings } from "@/components/settings/TelegramSettings";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";

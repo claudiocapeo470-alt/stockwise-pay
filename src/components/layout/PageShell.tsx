@@ -63,8 +63,8 @@ export function SectionHeading({
   className?: string;
 }) {
   return (
-    <div className={cn("relative mt-2 sm:mt-3 mb-2.5 flex items-center justify-center gap-2", className)}>
-      <h2 className="text-[15px] sm:text-base font-semibold tracking-tight leading-none truncate text-center">
+    <div className={cn("relative mt-2 sm:mt-3 mb-2.5 flex items-center justify-start gap-2", className)}>
+      <h2 className="text-[15px] sm:text-base font-semibold tracking-tight leading-none truncate text-left">
         {title}
       </h2>
       {count !== undefined && (

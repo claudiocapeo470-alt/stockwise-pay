@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { ReactNode, useState, useRef } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -32,7 +32,7 @@ const COLUMN_MAP: Record<string, string> = {
   unité: 'unit', unite: 'unit', unit: 'unit',
 };
 
-export function ImportProductsDialog() {
+export function ImportProductsDialog({ trigger }: { trigger?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState<ImportRow[]>([]);
   const [importing, setImporting] = useState(false);
@@ -137,14 +137,14 @@ export function ImportProductsDialog() {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="inline-flex items-center gap-1 rounded-full border border-foreground/60 px-2.5 py-0.5 text-[11px] font-semibold text-foreground transition-all hover:bg-foreground hover:text-background">
-        <Upload className="h-3 w-3" /> Importer
-      </button>
-
-
-
-
       <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          {trigger || (
+            <Button variant="outline" className="h-11 rounded-full px-5 text-sm font-semibold">
+              <Upload className="h-4 w-4" /> Importer
+            </Button>
+          )}
+        </DialogTrigger>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">

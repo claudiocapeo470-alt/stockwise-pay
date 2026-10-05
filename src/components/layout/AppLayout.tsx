@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { UserMenu } from "./UserMenu";
-import { ThemeToggle } from "./ThemeToggle";
 import { BottomNav } from "./BottomNav";
 import { LockScreen } from "@/components/auth/LockScreen";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,7 +10,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { PageLoader } from "@/components/ui/PageLoader";
-import { Lock, BarChart3, UserSquare2 } from "lucide-react";
+import { Lock } from "lucide-react";
 import { SubscriptionAlert } from "@/components/subscription/SubscriptionAlert";
 import { useSessionWarning } from "@/hooks/useSessionWarning";
 import { useStockAlerts } from "@/hooks/useStockAlerts";
@@ -21,7 +20,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { NotificationCenter } from "./NotificationCenter";
 import { PWAInstallBanner } from "./PWAInstallBanner";
 import { StatScrollerDots } from "./StatScrollerDots";
-import { StoreOpenButton } from "@/components/store/StoreOpenButton";
 
 
 import stocknixLogoIcon from '@/assets/stocknix-logo-icon.png';
@@ -136,34 +134,6 @@ export function AppLayout({ children }: AppLayoutProps) {
   }, [location.pathname]);
 
   const isHomePage = location.pathname === '/app' || location.pathname === '/app/';
-  const isStorePage = location.pathname.includes('/boutique');
-
-
-
-
-  // Pages exclues de l'en-tête centré : Accueil, Caisse, Paramètres + pages d'analyse (titre à gauche)
-  const isExcludedHeader = isHomePage
-    || location.pathname.includes('/caisse')
-    || location.pathname.includes('/settings')
-    || location.pathname.includes('/performance')
-    || location.pathname.includes('/rapports')
-    || location.pathname.includes('/rapport-employes');
-
-  const useCenteredHeader = isMobile && !isExcludedHeader;
-
-  // Bouton d'action à gauche de l'en-tête (analyse / rapport employés)
-  const headerLeftAction = useMemo(() => {
-    const p = location.pathname;
-    if (p.includes('/team')) {
-      return { to: '/app/rapport-employes', label: 'Rapport employés', icon: UserSquare2 };
-    }
-    if (p.includes('/stocks') || p.includes('/ventes') || p.includes('/clients')
-      || p.includes('/factures') || p.includes('/devis') || p.includes('/paiements')
-      || p.includes('/boutique/commandes') || p.includes('/livraisons')) {
-      return { to: '/app/rapports', label: 'Analyse', icon: BarChart3 };
-    }
-    return null;
-  }, [location.pathname]);
 
 
   useEffect(() => {
@@ -229,43 +199,10 @@ export function AppLayout({ children }: AppLayoutProps) {
             <div className="w-full max-w-[1440px] mx-auto flex items-center h-14 sm:h-16">
 
 
-            {useCenteredHeader ? (
-              <div className="relative flex items-center w-full min-w-0">
-                <div className="flex items-center flex-shrink-0">
-                  {isStorePage ? (
-                    <StoreOpenButton />
-                  ) : headerLeftAction ? (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => navigate(headerLeftAction.to)}
-                      className="h-10 w-10 rounded-full bg-muted/40 border border-border hover:bg-muted text-foreground"
-                      title={headerLeftAction.label}
-                    >
-                      <headerLeftAction.icon className="h-[18px] w-[18px]" />
-                    </Button>
-                  ) : (
-                    <span className="h-10 w-10 block" aria-hidden />
-                  )}
-                </div>
-
-
-                <h1 className="absolute left-1/2 -translate-x-1/2 max-w-[55%] text-[19px] leading-none font-bold text-foreground truncate tracking-tight text-center">
-                  {pageTitle}
-                </h1>
-
-                <div className="ml-auto flex items-center flex-shrink-0 [&_button]:rounded-full [&_button]:border [&_button]:border-border">
-                  <div id="mobile-page-primary-action" className="flex items-center" />
-                </div>
-              </div>
-            ) : (
             <div className="flex items-center gap-2 sm:gap-4 w-full min-w-0">
               {!isMobile && (
                 <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0" />
               )}
-              {isStorePage && <StoreOpenButton />}
-
-
               <div className="flex-1 min-w-0">
                 {isMobile && isHomePage ? (
                   <div className="flex items-center gap-2.5">
@@ -288,13 +225,12 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </Button>
                 )}
                 <SubscriptionAlert />
-                <ThemeToggle />
+                {isHomePage && <ThemeToggle />}
                 {isHomePage && <NotificationCenter />}
                 {user && <div className="hidden lg:block">{<UserMenu />}</div>}
               </div>
 
             </div>
-            )}
             </div>
           </header>
           <div

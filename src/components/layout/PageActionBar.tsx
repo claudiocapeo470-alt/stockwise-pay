@@ -1,5 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { ReactNode } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -12,7 +11,7 @@ interface PageActionBarProps {
   searchPlaceholder?: string;
   /** Actions secondaires (boutons / déclencheurs de dialogues) : pilule segmentée sur mobile */
   segments?: ReactNode;
-  /** Action principale (bouton ou déclencheur de dialogue) : FAB sur mobile */
+  /** Action principale (bouton ou déclencheur de dialogue) */
   primary?: ReactNode;
   className?: string;
 }
@@ -32,11 +31,6 @@ export function PageActionBar({
 }: PageActionBarProps) {
   const isMobile = useIsMobile();
   const hasSearch = typeof searchValue === "string" && !!onSearchChange;
-  const [headerActionTarget, setHeaderActionTarget] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (isMobile) setHeaderActionTarget(document.getElementById("mobile-page-primary-action"));
-  }, [isMobile]);
 
   if (!isMobile) {
     return (
@@ -63,29 +57,31 @@ export function PageActionBar({
   }
 
 
-  // Mobile : recherche pleine largeur sous le titre et action principale dans l'en-tête.
+  // Mobile : recherche et ajout restent groupés sur la même ligne.
   return (
     <div className={cn("space-y-3", className)}>
       {segments && <SegmentRow>{segments}</SegmentRow>}
 
-      {hasSearch && (
-        <div className="relative w-full">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={searchValue}
-            onChange={(e) => onSearchChange?.(e.target.value)}
-            placeholder={searchPlaceholder}
-            aria-label={searchPlaceholder}
-            className="h-12 w-full rounded-full border-0 bg-muted/80 pl-12 pr-4 text-base shadow-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/30"
-          />
+      {(hasSearch || primary) && (
+        <div className="flex w-full items-center gap-2">
+          {hasSearch && (
+            <div className="relative min-w-0 flex-1">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={searchValue}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                placeholder={searchPlaceholder}
+                aria-label={searchPlaceholder}
+                className="h-12 w-full rounded-full border-0 bg-muted/80 pl-12 pr-4 text-base shadow-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/30"
+              />
+            </div>
+          )}
+          {primary && (
+            <div className="shrink-0 [&_button]:h-12 [&_button]:w-12 [&_button]:rounded-full [&_button]:p-0 [&_button]:gap-0 [&_button_span]:hidden [&_button_div]:hidden [&_button]:shadow-none [&_svg]:h-5 [&_svg]:w-5">
+              {primary}
+            </div>
+          )}
         </div>
-      )}
-
-      {primary && headerActionTarget && createPortal(
-        <div className="[&_button]:h-10 [&_button]:w-10 [&_button]:rounded-full [&_button]:p-0 [&_button]:gap-0 [&_button_span]:hidden [&_button_div]:hidden [&_button]:shadow-none [&_svg]:h-5 [&_svg]:w-5">
-          {primary}
-        </div>,
-        headerActionTarget,
       )}
     </div>
   );

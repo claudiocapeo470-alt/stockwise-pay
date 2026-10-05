@@ -7,7 +7,7 @@ import { useCompany } from "@/hooks/useCompany";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { toast } from "sonner";
-import { Save, Store, Rocket, Copy, Check, Loader2 } from "lucide-react";
+import { Save, Store, Rocket, Copy, Check, Loader2, ExternalLink } from "lucide-react";
 
 interface StoreHeaderProps {
   title?: string;
@@ -37,10 +37,13 @@ export function StoreHeader({
   // robots (WhatsApp, Facebook, LinkedIn...) vers store-og pour l'aperçu.
   const shareUrl = storeUrl;
 
-  const handlePublish = async () => {
+  const handleSaveAndPublish = async () => {
     try {
-      await togglePublish.mutateAsync();
-      toast.success(store?.is_published ? "Boutique dépubliée" : "🎉 Boutique en ligne !");
+      await onSave?.();
+      if (store && !store.is_published) {
+        await togglePublish.mutateAsync();
+        toast.success("🎉 Boutique enregistrée et publiée !");
+      }
     } catch (e: any) {
       toast.error(e.message || "Erreur");
     }
@@ -72,31 +75,25 @@ export function StoreHeader({
           <p className="text-lg font-bold truncate leading-tight mt-1">{store?.name || title}</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          {onSave && (
+          {storeUrl && (
             <Button
               size="icon"
               variant="outline"
-              onClick={onSave}
-              disabled={saving}
-              aria-label="Enregistrer"
+              asChild
+              aria-label="Voir la boutique"
               className="h-10 w-10 rounded-full border-primary/30 text-primary hover:bg-primary/10"
             >
-              {saving ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <Save className="h-[18px] w-[18px]" />}
+              <a href={storeUrl} target="_blank" rel="noreferrer"><ExternalLink className="h-[18px] w-[18px]" /></a>
             </Button>
           )}
-          {store && (
+          {(onSave || store) && (
             <Button
-              size="icon"
-              onClick={handlePublish}
-              disabled={togglePublish.isPending}
-              aria-label={store.is_published ? "Dépublier" : "Publier"}
-              className={`h-10 w-10 rounded-full shadow-sm ${
-                store.is_published
-                  ? "bg-primary/15 text-primary hover:bg-primary/25"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90"
-              }`}
+              onClick={handleSaveAndPublish}
+              disabled={saving || togglePublish.isPending}
+              className="h-10 rounded-full px-4 gap-2 shadow-sm"
             >
-              <Rocket className="h-[18px] w-[18px]" />
+              {saving || togglePublish.isPending ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : store?.is_published ? <Save className="h-[18px] w-[18px]" /> : <Rocket className="h-[18px] w-[18px]" />}
+              <span>{store?.is_published ? "Enregistrer" : "Enregistrer et publier"}</span>
             </Button>
           )}
         </div>

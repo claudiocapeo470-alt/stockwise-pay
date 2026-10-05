@@ -22,6 +22,7 @@ export default function Stocks() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showMovements, setShowMovements] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const { products, isLoading, deleteProduct } = useProducts();
   const { formatCurrency } = useCurrency();
 
@@ -85,11 +86,9 @@ export default function Stocks() {
                 <DropdownMenuItem onClick={() => setShowMovements(true)}>
                   <History /> Mouvements
                 </DropdownMenuItem>
-                <ImportProductsDialog trigger={
-                  <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                    <Upload /> Importer
-                  </DropdownMenuItem>
-                } />
+                <DropdownMenuItem onClick={() => setShowImport(true)}>
+                  <Upload /> Importer
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           }
@@ -215,6 +214,7 @@ export default function Stocks() {
       )}
 
       <StockMovementsDialog open={showMovements} onOpenChange={setShowMovements} />
+      <ImportProductsDialog open={showImport} onOpenChange={setShowImport} />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { UserMenu } from "./UserMenu";
+import { ThemeToggle } from "./ThemeToggle";
 import { BottomNav } from "./BottomNav";
 import { LockScreen } from "@/components/auth/LockScreen";
 import { useAuth } from "@/contexts/AuthContext";
@@ -203,6 +204,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               {!isMobile && (
                 <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0" />
               )}
+              {isMobile && !isHomePage && <div id="mobile-page-secondary-action" className="flex shrink-0 items-center" />}
               <div className="flex-1 min-w-0">
                 {isMobile && isHomePage ? (
                   <div className="flex items-center gap-2.5">

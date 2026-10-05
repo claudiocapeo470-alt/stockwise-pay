@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -31,6 +32,11 @@ export function PageActionBar({
 }: PageActionBarProps) {
   const isMobile = useIsMobile();
   const hasSearch = typeof searchValue === "string" && !!onSearchChange;
+  const [headerActionTarget, setHeaderActionTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (isMobile) setHeaderActionTarget(document.getElementById("mobile-page-secondary-action"));
+  }, [isMobile]);
 
   if (!isMobile) {
     return (
@@ -60,7 +66,12 @@ export function PageActionBar({
   // Mobile : recherche et ajout restent groupés sur la même ligne.
   return (
     <div className={cn("space-y-3", className)}>
-      {segments && <SegmentRow>{segments}</SegmentRow>}
+      {segments && headerActionTarget && createPortal(
+        <div className="[&_button]:h-10 [&_button]:w-10 [&_button]:rounded-full [&_button]:p-0 [&_button]:shadow-none">
+          {segments}
+        </div>,
+        headerActionTarget,
+      )}
 
       {(hasSearch || primary) && (
         <div className="flex w-full items-center gap-2">

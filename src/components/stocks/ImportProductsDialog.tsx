@@ -32,8 +32,10 @@ const COLUMN_MAP: Record<string, string> = {
   unité: 'unit', unite: 'unit', unit: 'unit',
 };
 
-export function ImportProductsDialog({ trigger }: { trigger?: ReactNode }) {
-  const [open, setOpen] = useState(false);
+export function ImportProductsDialog({ trigger, open: controlledOpen, onOpenChange }: { trigger?: ReactNode; open?: boolean; onOpenChange?: (open: boolean) => void }) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   const [rows, setRows] = useState<ImportRow[]>([]);
   const [importing, setImporting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -138,13 +140,14 @@ export function ImportProductsDialog({ trigger }: { trigger?: ReactNode }) {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          {trigger || (
+        {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+        {controlledOpen === undefined && !trigger && (
+          <DialogTrigger asChild>
             <Button variant="outline" className="h-11 rounded-full px-5 text-sm font-semibold">
               <Upload className="h-4 w-4" /> Importer
             </Button>
-          )}
-        </DialogTrigger>
+          </DialogTrigger>
+        )}
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">

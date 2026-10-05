@@ -113,14 +113,16 @@ export function StoreHeader({
               {storeUrl} ↗
             </a>
           </div>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={copyUrl}
             aria-label="Copier le lien"
             className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
           >
             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-          </button>
+          </Button>
         </div>
       )}
 

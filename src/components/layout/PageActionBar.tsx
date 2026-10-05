@@ -40,23 +40,23 @@ export function PageActionBar({
 
   if (!isMobile) {
     return (
-      <div className={cn("flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between", className)}>
-        {hasSearch ? (
-          <div className="relative w-full lg:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              value={searchValue}
-              onChange={(e) => onSearchChange!(e.target.value)}
-              placeholder={searchPlaceholder}
-              className="pl-10 h-11 rounded-xl"
-            />
-          </div>
-        ) : (
-          <div />
-        )}
-        <div className="flex items-center gap-2 flex-wrap lg:justify-end">
-          {segments}
+      <div className={cn("flex flex-col gap-3 lg:flex-row lg:items-center", className)}>
+        <div className="flex w-full items-center gap-2 lg:max-w-lg">
+          {hasSearch && (
+            <div className="relative min-w-0 flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={searchValue}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                placeholder={searchPlaceholder}
+                className="pl-10 h-11 rounded-xl"
+              />
+            </div>
+          )}
           {primary}
+        </div>
+        <div className="flex items-center gap-2 flex-wrap lg:ml-auto lg:justify-end">
+          {segments}
         </div>
       </div>
     );

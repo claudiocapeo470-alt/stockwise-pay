@@ -46,7 +46,7 @@ const MAX_BANNER_SIZE = 3 * 1024 * 1024; // 3 MB
 
 
 export default function StoreConfig() {
-  const { store, isLoading, upsertStore, togglePublish, checkSlugAvailability } = useOnlineStore();
+  const { store, isLoading, upsertStore, checkSlugAvailability } = useOnlineStore();
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const fileInputRef = useRef<HTMLInputElement>(null);

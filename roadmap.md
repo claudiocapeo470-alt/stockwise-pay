@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Harmoniser tous les en-têtes : titres à gauche, actions contextuelles à gauche, ajout près de la recherche, boutique unifiée et thème uniquement sur Accueil
+- [x] Harmoniser tous les en-têtes : titres à gauche, actions contextuelles à gauche, ajout près de la recherche, boutique unifiée et thème uniquement sur Accueil
 
 - [x] Harmoniser Gestion de stock, Produits en ligne, Factures et Devis en listes simples sans regroupement par période
 

@@ -468,6 +468,7 @@ export default function StoreProducts() {
               {filteredOnline.map((sp: any) => (
                 <ListRow
                   key={sp.id}
+                  onSwipeDelete={() => sp.products && setConfirmDelete({ id: sp.product_id, name: sp.products.name })}
                   leading={
                     <ListAvatar src={sp.products?.image_url} alt={sp.products?.name || "Produit"} icon={<Package className="h-5 w-5" />} tone="success" />
                   }
@@ -517,6 +518,7 @@ export default function StoreProducts() {
               {filteredUnpublished.map(p => (
                 <ListRow
                   key={p.id}
+                  onSwipeDelete={() => setConfirmDelete({ id: p.id, name: p.name })}
                   leading={<ListAvatar src={p.image_url} alt={p.name} icon={<Package className="h-5 w-5" />} tone={p.quantity > 0 ? "warning" : "destructive"} />}
                   title={p.name}
                   badge={

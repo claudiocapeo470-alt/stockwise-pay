@@ -164,11 +164,21 @@ export default function StoreOrders() {
                   {selectedOrder.customer_email && <p className="text-muted-foreground">{selectedOrder.customer_email}</p>}
                   {selectedOrder.customer_address && <p className="text-muted-foreground">{selectedOrder.customer_address}</p>}
                 </div>
-                <div className="border rounded-lg p-3 space-y-2">
+                <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-2">
                   {(Array.isArray(selectedOrder.items) ? selectedOrder.items : []).map((item: any, i: number) => (
-                    <div key={i} className="flex justify-between text-sm">
-                      <span>{item.icon || '📦'} {item.name} ×{item.quantity}</span>
-                      <span className="font-medium">{((item.price || 0) * (item.quantity || 1)).toLocaleString('de-DE')} F</span>
+                    <div key={i} className="flex items-center gap-3 py-2 border-b border-border/60 last:border-b-0">
+                      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-background border border-border/60 flex items-center justify-center">
+                        {item.image_url ? (
+                          <img src={item.image_url} alt={item.name || "Produit commandé"} className="h-full w-full object-cover" />
+                        ) : (
+                          <span className="text-xl" aria-hidden>{item.icon || '📦'}</span>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-foreground">{item.name}</p>
+                        <p className="text-xs text-muted-foreground">{item.quantity} × {(item.price || 0).toLocaleString('de-DE')} F</p>
+                      </div>
+                      <span className="shrink-0 text-sm font-semibold tabular-nums">{((item.price || 0) * (item.quantity || 1)).toLocaleString('de-DE')} F</span>
                     </div>
                   ))}
                   <div className="border-t pt-2 space-y-1 text-sm">

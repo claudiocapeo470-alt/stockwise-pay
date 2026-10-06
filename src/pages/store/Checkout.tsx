@@ -104,7 +104,14 @@ export default function Checkout() {
       return;
     }
     const orderId = crypto.randomUUID();
-    const items = cart.map(i => ({ id: i.id, name: i.name, icon: i.icon_emoji, price: i.price, quantity: i.quantity }));
+    const items = cart.map(i => ({
+      id: i.id,
+      name: i.name,
+      icon: i.icon_emoji,
+      image_url: i.image_url,
+      price: i.price,
+      quantity: i.quantity,
+    }));
     const { error } = await supabase.from("store_orders").insert({
       id: orderId,
       store_id: store.id,

@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Améliorer le panier avec photos, scanner caméra/torche, photos des commandes et suppression fluide des produits en ligne
+
 - [x] Harmoniser tous les en-têtes : titres à gauche, actions contextuelles à gauche, ajout près de la recherche, boutique unifiée et thème uniquement sur Accueil
 
 - [x] Harmoniser Gestion de stock, Produits en ligne, Factures et Devis en listes simples sans regroupement par période

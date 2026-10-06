@@ -22,9 +22,11 @@ export function SwipeToDelete({
   const [offset, setOffset] = useState(0);
   const [open, setOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const start = useRef<{ x: number; y: number } | null>(null);
+  const start = useRef<{ x: number; y: number; offset: number } | null>(null);
   const locked = useRef<"h" | "v" | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+  const frame = useRef<number | null>(null);
+  const pendingOffset = useRef(0);
 
   useEffect(() => {
     if (!open) return;
@@ -42,34 +44,52 @@ export function SwipeToDelete({
     };
   }, [open]);
 
-  const onTouchStart = (e: React.TouchEvent) => {
-    const t = e.touches[0];
-    start.current = { x: t.clientX, y: t.clientY };
-    locked.current = null;
-    setDragging(true);
+  useEffect(() => () => {
+    if (frame.current !== null) cancelAnimationFrame(frame.current);
+  }, []);
+
+  const updateOffset = (next: number) => {
+    pendingOffset.current = next;
+    if (frame.current !== null) return;
+    frame.current = requestAnimationFrame(() => {
+      setOffset(pendingOffset.current);
+      frame.current = null;
+    });
   };
 
-  const onTouchMove = (e: React.TouchEvent) => {
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    start.current = { x: e.clientX, y: e.clientY, offset: open ? -ACTION_W : 0 };
+    locked.current = null;
+    setDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!start.current) return;
-    const t = e.touches[0];
-    const dx = t.clientX - start.current.x;
-    const dy = t.clientY - start.current.y;
+    const dx = e.clientX - start.current.x;
+    const dy = e.clientY - start.current.y;
     if (!locked.current) {
-      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
       locked.current = Math.abs(dx) > Math.abs(dy) ? "h" : "v";
     }
     if (locked.current !== "h") return;
-    const base = open ? -ACTION_W : 0;
-    const next = Math.min(0, Math.max(-ACTION_W - 20, base + dx));
-    setOffset(next);
+    const raw = start.current.offset + dx;
+    const next = raw < -ACTION_W ? -ACTION_W - Math.min(18, Math.abs(raw + ACTION_W) * 0.2) : Math.min(0, raw);
+    updateOffset(next);
   };
 
-  const onTouchEnd = () => {
+  const onPointerEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!start.current) return;
+    const dx = e.clientX - start.current.x;
+    const projected = start.current.offset + dx;
     setDragging(false);
     start.current = null;
-    const shouldOpen = offset < -ACTION_W / 2;
+    const shouldOpen = locked.current === "h" && projected < -ACTION_W * 0.38;
     setOpen(shouldOpen);
     setOffset(shouldOpen ? -ACTION_W : 0);
+    pendingOffset.current = shouldOpen ? -ACTION_W : 0;
+    locked.current = null;
   };
 
   return (
@@ -93,9 +113,10 @@ export function SwipeToDelete({
 
       {/* Contenu glissant */}
       <div
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerEnd}
+        onPointerCancel={onPointerEnd}
         onClickCapture={(e) => {
           if (open) {
             e.preventDefault();
@@ -105,7 +126,10 @@ export function SwipeToDelete({
           }
         }}
         style={{ transform: `translate3d(${offset}px,0,0)` }}
-        className={cn("relative bg-card", !dragging && "transition-transform duration-200 ease-out")}
+        className={cn(
+          "relative bg-card touch-pan-y will-change-transform",
+          !dragging && "transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        )}
       >
         {children}
       </div>

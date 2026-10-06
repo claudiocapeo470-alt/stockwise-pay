@@ -14,7 +14,7 @@ import {
   Camera, X, User, LogOut,
   CreditCard, Smartphone, DollarSign,
   Menu as MenuIcon, Percent, Hash, StickyNote, DoorOpen, XCircle,
-  FileText, ArrowDownCircle, ArrowUpCircle, Package, ImageOff, Loader2
+  FileText, ArrowDownCircle, ArrowUpCircle, Package, ImageOff, Loader2, Flashlight, Keyboard
 } from "lucide-react";
 import { Html5Qrcode } from "html5-qrcode";
 import {
@@ -26,6 +26,7 @@ import { LogoutButton } from "@/components/layout/LogoutButton";
 import { getPerms, isFullAccess, canStock, canOrders, canOwnDeliveries } from "@/lib/rolePermissions";
 import { generateCashReportPDF, CashReportPreview } from "@/components/caisse/CashReport";
 import { PosReceipt, type ReceiptData } from "@/components/caisse/PosReceipt";
+import { Button } from "@/components/ui/button";
 
 // ─── Types ──────────────────────────────────────────────
 interface CartItem {
@@ -102,6 +103,8 @@ export default function Caisse() {
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [scannerStatus, setScannerStatus] = useState<'idle' | 'active' | 'detected' | 'not_found'>('idle');
+  const [torchAvailable, setTorchAvailable] = useState(false);
+  const [torchOn, setTorchOn] = useState(false);
   const [tableName, setTableName] = useState("Table 1");
   const [mobileView, setMobileView] = useState<'products' | 'ticket'>('products');
   const [orderMode, setOrderMode] = useState<'surplace' | 'emporter' | 'livraison'>('surplace');
@@ -424,6 +427,8 @@ export default function Caisse() {
           if (scannerStatus !== 'detected') setScannerStatus('active');
         }
       );
+      const capabilities = html5Qrcode.getRunningTrackCapabilities() as MediaTrackCapabilities & { torch?: boolean };
+      setTorchAvailable(Boolean(capabilities?.torch));
       setScannerStatus('active');
     } catch (err: any) {
       console.error('Scanner error:', err);
@@ -441,6 +446,21 @@ export default function Caisse() {
     }
     setShowScanner(false);
     setScannerStatus('idle');
+    setTorchAvailable(false);
+    setTorchOn(false);
+  };
+
+  const toggleTorch = async () => {
+    if (!scannerRef.current || !torchAvailable) return;
+    const next = !torchOn;
+    try {
+      await scannerRef.current.applyVideoConstraints({ advanced: [{ torch: next } as MediaTrackConstraintSet] });
+      setTorchOn(next);
+    } catch {
+      setTorchAvailable(false);
+      setTorchOn(false);
+      toast({ title: "Torche indisponible", description: "Le flash de cette caméra ne peut pas être activé." });
+    }
   };
 
   // ─── Sale Validation ─────────────────────────────────
@@ -1057,9 +1077,7 @@ export default function Caisse() {
                   background: selectedItemId === item.id ? '#EEF2FF' : 'transparent',
                   borderBottom: '1px solid #F0F2F5', cursor: 'pointer'
                 }}>
-                <span className="h-7 min-w-[28px] rounded-md text-[11px] text-white flex items-center justify-center font-bold" style={{ background: '#4F46E5' }}>
-                  {item.quantity}
-                </span>
+                <CartProductImage item={item} size="sm" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold truncate" style={{ color: '#1F2937' }}>{item.name}</p>
                   {item.note && <p className="text-[10px] truncate" style={{ color: '#F59E0B' }}>📝 {item.note}</p>}
@@ -1191,13 +1209,19 @@ export default function Caisse() {
         </div>
       )}
 
-      {/* Scanner Modal — supports QR, barcode 1D/2D, all formats */}
+      {/* Scanner immersif mobile/tablette, fenêtre compacte sur ordinateur */}
       {showScanner && (
-        <ModalOverlay onClose={stopScanner}>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-sm" style={{ color: '#1F2937' }}>Scanner de produit</h3>
-            <div className="flex items-center gap-2">
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+        <div className="fixed inset-0 z-[80] bg-foreground lg:flex lg:items-center lg:justify-center lg:bg-foreground/60 lg:p-4 lg:backdrop-blur-sm">
+          <div className="relative h-full w-full overflow-hidden bg-foreground lg:h-auto lg:max-w-lg lg:rounded-2xl lg:bg-background lg:p-5 lg:shadow-xl">
+            <div id="qr-reader" className="absolute inset-0 h-full w-full bg-foreground lg:relative lg:aspect-[4/3] lg:overflow-hidden lg:rounded-xl" />
+            <div className="absolute inset-0 bg-gradient-to-b from-foreground/55 via-transparent to-foreground/70 pointer-events-none lg:rounded-xl" />
+
+            <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between p-5 pt-[max(1.25rem,env(safe-area-inset-top))] lg:p-3">
+              <Button variant="ghost" size="icon" onClick={stopScanner} className="h-11 w-11 rounded-full bg-background/15 text-primary-foreground backdrop-blur-md hover:bg-background/25" aria-label="Fermer le scanner">
+                <X className="h-6 w-6" />
+              </Button>
+              <div className="flex items-center gap-2">
+                <span className={`hidden rounded-full px-3 py-1.5 text-xs font-semibold backdrop-blur-md lg:inline-flex ${
                 scannerStatus === 'active'   ? 'bg-green-100 text-green-700' :
                 scannerStatus === 'detected' ? 'bg-blue-100 text-blue-700' :
                 scannerStatus === 'not_found'? 'bg-red-100 text-red-700' :
@@ -1207,40 +1231,36 @@ export default function Caisse() {
                  scannerStatus === 'detected'  ? '✓ Code détecté' :
                  scannerStatus === 'not_found' ? '✗ Non trouvé' :
                                                 '◌ Démarrage...'}
-              </span>
-              <button onClick={stopScanner} style={{ color: '#6B7280' }}><X className="h-4 w-4" /></button>
-            </div>
-          </div>
-          <div className="relative rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '4/3' }}>
-            <div id="qr-reader" className="w-full h-full" />
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 60px rgba(0,0,0,0.5)' }} />
-              <div className="absolute" style={{ top: '20%', left: '8%', right: '8%', bottom: '20%', border: '2px solid rgba(255,255,255,0.4)', borderRadius: 8 }} />
-              <div className="absolute left-[10%] right-[10%] h-0.5 bg-red-500/80 animate-pulse" style={{ top: '40%' }} />
-              <div className="absolute w-6 h-6 border-t-2 border-l-2 border-green-400" style={{ top: '18%', left: '6%' }} />
-              <div className="absolute w-6 h-6 border-t-2 border-r-2 border-green-400" style={{ top: '18%', right: '6%' }} />
-              <div className="absolute w-6 h-6 border-b-2 border-l-2 border-green-400" style={{ bottom: '18%', left: '6%' }} />
-              <div className="absolute w-6 h-6 border-b-2 border-r-2 border-green-400" style={{ bottom: '18%', right: '6%' }} />
-              <div className="absolute bottom-3 left-0 right-0 text-center">
-                <span className="text-[10px] text-white/60 bg-black/30 px-2 py-0.5 rounded">QR Code • Code-barres 1D/2D • EAN • UPC</span>
+                </span>
+                <Button variant="ghost" size="icon" onClick={toggleTorch} disabled={!torchAvailable} className="h-11 w-11 rounded-full bg-background/15 text-primary-foreground backdrop-blur-md hover:bg-background/25 disabled:opacity-40" aria-label={torchOn ? "Éteindre la torche" : "Allumer la torche"}>
+                  <Flashlight className={`h-5 w-5 ${torchOn ? "fill-current" : ""}`} />
+                </Button>
               </div>
             </div>
+
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-52 w-[82%] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-primary-foreground/70 shadow-[0_0_0_999px_hsl(var(--foreground)/0.18)] lg:h-44 lg:w-[78%]">
+              <span className="absolute -left-0.5 -top-0.5 h-9 w-9 rounded-tl-2xl border-l-4 border-t-4 border-success" />
+              <span className="absolute -right-0.5 -top-0.5 h-9 w-9 rounded-tr-2xl border-r-4 border-t-4 border-success" />
+              <span className="absolute -bottom-0.5 -left-0.5 h-9 w-9 rounded-bl-2xl border-b-4 border-l-4 border-success" />
+              <span className="absolute -bottom-0.5 -right-0.5 h-9 w-9 rounded-br-2xl border-b-4 border-r-4 border-success" />
+              <span className="absolute left-4 right-4 top-1/2 h-0.5 bg-destructive shadow-[0_0_10px_hsl(var(--destructive))]" />
+            </div>
             {scannerStatus === 'detected' && (
-              <div className="absolute inset-0 bg-green-400/20 rounded-xl animate-pulse pointer-events-none" />
+              <div className="absolute inset-0 bg-success/20 animate-pulse pointer-events-none lg:rounded-xl" />
             )}
+
+            <div className="absolute inset-x-0 bottom-0 z-10 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] lg:relative lg:p-0 lg:pt-4">
+              <div className="mx-auto grid max-w-sm grid-cols-2 gap-3">
+                <Button variant="secondary" onClick={() => { stopScanner(); setShowManualScan(true); }} className="h-12 rounded-full bg-background/90 text-foreground backdrop-blur-md hover:bg-background">
+                  <Keyboard className="h-4 w-4" /> Saisie manuelle
+                </Button>
+                <Button variant="ghost" onClick={stopScanner} className="h-12 rounded-full bg-foreground/70 text-primary-foreground backdrop-blur-md hover:bg-foreground/80 lg:bg-muted lg:text-foreground">
+                  <X className="h-4 w-4" /> Fermer
+                </Button>
+              </div>
+            </div>
           </div>
-          <p className="text-center text-xs mt-2" style={{ color: '#9CA3AF' }}>Centrez le code dans le cadre • Restez stable</p>
-          <div className="grid grid-cols-2 gap-2 mt-3">
-            <button onClick={() => { stopScanner(); setShowManualScan(true); }}
-              className="py-2.5 rounded-xl text-sm font-medium" style={{ background: '#F8F9FB', color: '#6B7280' }}>
-              ⌨ Saisie manuelle
-            </button>
-            <button onClick={stopScanner}
-              className="py-2.5 rounded-xl text-sm font-medium" style={{ background: '#FEE2E2', color: '#EF4444' }}>
-              ✕ Fermer
-            </button>
-          </div>
-        </ModalOverlay>
+        </div>
       )}
 
       {/* Manual scan — accepts barcode, SKU, number, text */}
@@ -1759,30 +1779,25 @@ export default function Caisse() {
               <button onClick={() => setCart([])} className="text-xs min-h-[44px] flex items-center" style={{ color: '#EF4444' }}>Vider</button>
             </div>
             {cart.map(item => (
-              <div key={item.id} className="flex items-center justify-between py-2.5 rounded-lg" style={{ borderBottom: '1px solid #E8EAF0' }}>
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <span className="h-7 min-w-[28px] rounded-md text-[11px] text-white flex items-center justify-center font-bold" style={{ background: '#4F46E5' }}>
-                    {item.quantity}
-                  </span>
+              <div key={item.id} className="mb-2 flex items-center gap-3 rounded-xl border border-border/60 bg-card p-2.5 shadow-sm">
+                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                  <CartProductImage item={item} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate" style={{ color: '#1F2937' }}>{item.name}</p>
-                    <p className="text-xs" style={{ color: '#6B7280' }}>{item.price.toLocaleString('de-DE')} F × {item.quantity}</p>
+                    <p className="text-sm font-semibold truncate text-foreground">{item.name}</p>
+                    <p className="text-xs text-muted-foreground">{item.price.toLocaleString('de-DE')} F × {item.quantity}</p>
                     {item.discount && <p className="text-[10px]" style={{ color: '#EF4444' }}>Remise: -{item.discount.toLocaleString('de-DE')} F</p>}
                   </div>
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={() => updateQuantity(item.id, -1)} className="h-9 w-9 flex items-center justify-center rounded-lg min-h-[44px] min-w-[44px]" style={{ background: '#F8F9FB' }}>
-                    <Minus className="h-3 w-3" style={{ color: '#1F2937' }} />
-                  </button>
-                  <button onClick={() => updateQuantity(item.id, 1)} className="h-9 w-9 flex items-center justify-center rounded-lg min-h-[44px] min-w-[44px]" style={{ background: '#F8F9FB' }}>
-                    <Plus className="h-3 w-3" style={{ color: '#1F2937' }} />
-                  </button>
-                  <button onClick={() => removeFromCart(item.id)} className="h-9 w-9 flex items-center justify-center min-h-[44px] min-w-[44px]" style={{ color: '#EF4444' }}>
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                  <span className="text-sm font-bold ml-1 w-16 text-right" style={{ color: '#1F2937' }}>
+                <div className="flex shrink-0 flex-col items-end gap-1.5">
+                  <span className="text-sm font-bold tabular-nums text-foreground">
                     {(item.price * item.quantity - (item.discount || 0)).toLocaleString('de-DE')} F
                   </span>
+                  <div className="flex items-center gap-1 rounded-lg bg-muted p-0.5">
+                    <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, -1)} className="h-8 w-8 rounded-md" aria-label={`Diminuer ${item.name}`}><Minus className="h-3.5 w-3.5" /></Button>
+                    <span className="w-6 text-center text-xs font-bold tabular-nums">{item.quantity}</span>
+                    <Button variant="ghost" size="icon" onClick={() => updateQuantity(item.id, 1)} className="h-8 w-8 rounded-md" aria-label={`Augmenter ${item.name}`}><Plus className="h-3.5 w-3.5" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="h-8 w-8 rounded-md text-destructive hover:text-destructive" aria-label={`Supprimer ${item.name}`}><Trash2 className="h-3.5 w-3.5" /></Button>
+                  </div>
                 </div>
               </div>
             ))}

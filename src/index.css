@@ -511,3 +511,13 @@ table td .truncate, table th .truncate { display: block; max-width: 100%; }
   .stat-scroller { gap: 1.25rem; }
 }
 
+/* The scanner owns its camera viewport; library overlays must not add a second frame. */
+.pos-scanner #qr-reader { border: 0 !important; padding: 0 !important; }
+.pos-scanner #qr-reader video { width: 100% !important; height: 100% !important; object-fit: cover; }
+.pos-scanner #qr-shaded-region { display: none !important; }
+.pos-scanner-frame { box-shadow: 0 0 0 999px hsl(var(--foreground) / 0.18); }
+.pos-scanner-line { box-shadow: 0 0 10px hsl(var(--destructive)); }
+@media (prefers-reduced-motion: reduce) {
+  .swipe-row { transition-duration: 0ms !important; }
+}
+

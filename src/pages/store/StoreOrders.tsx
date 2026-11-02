@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import { Phone, MessageCircle, Package, Clock, DollarSign, TrendingUp, Truck, CheckCircle2, ChefHat, XCircle, PackageCheck } from "lucide-react";
 import { ListShell, ListRow, ListAvatar, ListBadge, ListEmpty } from "@/components/layout/MinimalList";
 import { PageActionBar } from "@/components/layout/PageActionBar";
+import { useProducts } from "@/hooks/useProducts";
+import { CartProductImage } from "@/components/caisse/CartProductImage";
 
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: any; iconColor: string }> = {
@@ -42,6 +44,7 @@ export default function StoreOrders() {
   const { orders, updateOrderStatus } = useStoreOrders(store?.id);
   const { company } = useCompany();
   const { createDelivery } = useDeliveries();
+  const { products } = useProducts();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [search, setSearch] = useState("");
 
@@ -167,13 +170,7 @@ export default function StoreOrders() {
                 <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-2">
                   {(Array.isArray(selectedOrder.items) ? selectedOrder.items : []).map((item: any, i: number) => (
                     <div key={i} className="flex items-center gap-3 py-2 border-b border-border/60 last:border-b-0">
-                      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-background border border-border/60 flex items-center justify-center">
-                        {item.image_url ? (
-                          <img src={item.image_url} alt={item.name || "Produit commandé"} className="h-full w-full object-cover" />
-                        ) : (
-                          <span className="text-xl" aria-hidden>{item.icon || '📦'}</span>
-                        )}
-                      </div>
+                      <CartProductImage item={{ name: item.name || "Produit commandé", image_url: item.image_url || products.find(product => product.id === (item.product_id || item.id))?.image_url }} />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-foreground">{item.name}</p>
                         <p className="text-xs text-muted-foreground">{item.quantity} × {(item.price || 0).toLocaleString('de-DE')} F</p>

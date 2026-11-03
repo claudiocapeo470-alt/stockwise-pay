@@ -282,7 +282,7 @@ export default function PublicStore() {
         quantity: s.products.quantity,
         icon_emoji: s.products.icon_emoji || "📦",
         icon_bg_color: s.products.icon_bg_color || "bg-blue",
-        category: s.products.category, description: s.products.description,
+        category: s.products.category, description: s.online_description ?? s.products.description,
         online_price: s.online_price, is_featured: s.is_featured,
         is_active: s.is_active !== false,
         force_out_of_stock: s.force_out_of_stock === true,
@@ -1169,9 +1169,9 @@ export default function PublicStore() {
                 <div>
                   <h3 className="lz-heading text-base text-foreground mb-3">À propos de ce produit</h3>
                   {p.description ? (
-                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap break-words">
-                      {decodeToPlainText(p.description)}
-                    </p>
+                    <div className="product-description text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap break-words [&_img]:my-4 [&_img]:block [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_ul]:list-disc [&_ul]:pl-5"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(p.description, { ALLOWED_TAGS: ['p', 'br', 'div', 'span', 'b', 'strong', 'i', 'em', 'u', 'ul', 'ol', 'li', 'img'], ALLOWED_ATTR: ['src', 'alt', 'title'] }) }}
+                    />
                   ) : (
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       {p.name} — Produit de qualité premium, idéal pour un usage quotidien.

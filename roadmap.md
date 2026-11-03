@@ -1,6 +1,7 @@
 # Roadmap
 
-- [ ] Améliorer le panier avec photos, scanner caméra/torche, photos des commandes et suppression fluide des produits en ligne
+- [x] Améliorer le panier avec photos, scanner caméra/torche, photos des commandes et suppression fluide des produits en ligne — compilation validée ; photos et balayage testés isolément sur mobile/tablette/PC
+- [ ] Vérifier la caméra et la torche sur appareil réel ainsi que les écrans connectés — accès de test authentifié indisponible pour ce projet externe
 
 - [x] Harmoniser tous les en-têtes : titres à gauche, actions contextuelles à gauche, ajout près de la recherche, boutique unifiée et thème uniquement sur Accueil
 

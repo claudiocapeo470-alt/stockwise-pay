@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { Label } from "@/components/ui/label";
-import { Bold, Italic, Underline, List, Image as ImageIcon } from "lucide-react";
+import { Bold, Italic, Underline, List, Image as ImageIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { uploadProductImage } from "@/lib/uploadProductImage";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,6 +17,12 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const savedRange = useRef<Range | null>(null);
+
+  const saveSelection = () => {
+    const selection = window.getSelection();
+    if (selection?.rangeCount && editorRef.current?.contains(selection.anchorNode)) savedRange.current = selection.getRangeAt(0).cloneRange();
+  };
 
   const execCommand = useCallback((command: string, value?: string) => {
     document.execCommand(command, false, value);
@@ -48,7 +54,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
+    if (!user) { toast.error("Votre session n’est pas prête. Réessayez."); return; }
     if (file.size > 5 * 1024 * 1024) { toast.error("Max 5 Mo"); return; }
 
     setUploading(true);
@@ -60,14 +67,30 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
       canvas.width = img.width * scale;
       canvas.height = img.height * scale;
-      const ctx = canvas.getContext('2d')!;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error("Traitement de l’image indisponible");
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      img.close();
       const blob = await new Promise<Blob>((resolve, reject) =>
         canvas.toBlob(b => b ? resolve(b) : reject('fail'), 'image/webp', 0.8)
       );
       const webpFile = new File([blob], fileName.split('/').pop() || 'desc.webp', { type: "image/webp" });
       const { url } = await uploadProductImage(webpFile);
-      execCommand('insertHTML', `<img src="${url}" style="max-width:100%;border-radius:8px;margin:8px 0;" />`);
+      const editor = editorRef.current;
+      if (!editor) return;
+      editor.focus();
+      const range = savedRange.current && editor.contains(savedRange.current.commonAncestorContainer) ? savedRange.current : document.createRange();
+      if (!savedRange.current || !editor.contains(range.commonAncestorContainer)) { range.selectNodeContents(editor); range.collapse(false); }
+      const image = document.createElement('img');
+      image.src = url;
+      image.alt = file.name.replace(/\.[^.]+$/, '');
+      range.deleteContents();
+      range.insertNode(image);
+      range.setStartAfter(image); range.collapse(true);
+      const selection = window.getSelection();
+      selection?.removeAllRanges(); selection?.addRange(range);
+      savedRange.current = range.cloneRange();
+      onChange(editor.innerHTML);
     } catch {
       toast.error("Erreur upload image");
     } finally {
@@ -95,8 +118,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           <List className="h-3.5 w-3.5" />
         </Button>
         <div className="w-px h-5 bg-border mx-1" />
-        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => fileInputRef.current?.click()} disabled={uploading} title="Insérer image">
-          <ImageIcon className="h-3.5 w-3.5" />
+        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onMouseDown={e => { e.preventDefault(); saveSelection(); }} onClick={() => { saveSelection(); fileInputRef.current?.click(); }} disabled={uploading} title="Insérer image" aria-label="Insérer image">
+          {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImageIcon className="h-3.5 w-3.5" />}
         </Button>
       </div>
 
@@ -106,8 +129,10 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         contentEditable
         suppressContentEditableWarning
         onInput={handleInput}
+        onKeyUp={saveSelection}
+        onMouseUp={saveSelection}
         dir="ltr"
-        className="min-h-[120px] max-h-[300px] overflow-y-auto p-3 border border-border border-t-0 rounded-b-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring bg-background text-left"
+        className="min-h-[120px] max-h-[300px] overflow-y-auto p-3 border border-border border-t-0 rounded-b-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring bg-background text-left [&_img]:max-w-full [&_img]:h-auto [&_img]:my-3 [&_img]:rounded-lg"
         data-placeholder={placeholder || "Tapez votre description ici..."}
         style={{ 
           wordBreak: 'break-word',

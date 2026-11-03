@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Corriger les notifications et l’insertion des images dans les descriptions de produits
+- [ ] Améliorer la caisse sur PC avec un affichage lisible et adapté aux différentes tailles d’écran
+
 - [x] Améliorer le panier avec photos, scanner caméra/torche, photos des commandes et suppression fluide des produits en ligne — compilation validée ; photos et balayage testés isolément sur mobile/tablette/PC
 - [ ] Vérifier la caméra et la torche sur appareil réel ainsi que les écrans connectés — accès de test authentifié indisponible pour ce projet externe
 

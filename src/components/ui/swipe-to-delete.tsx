@@ -1,6 +1,7 @@
 import { ReactNode, useRef, useState, useEffect } from "react";
 import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const ACTION_W = 84; // largeur du bouton révélé
 
@@ -27,6 +28,7 @@ export function SwipeToDelete({
   const ref = useRef<HTMLDivElement>(null);
   const frame = useRef<number | null>(null);
   const pendingOffset = useRef(0);
+  const suppressClick = useRef(false);
 
   useEffect(() => {
     if (!open) return;
@@ -59,10 +61,11 @@ export function SwipeToDelete({
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (e.target instanceof Element && e.target.closest("button,a,input,select,textarea,[role=button]")) return;
     start.current = { x: e.clientX, y: e.clientY, offset: open ? -ACTION_W : 0 };
     locked.current = null;
     setDragging(true);
-    e.currentTarget.setPointerCapture(e.pointerId);
+    suppressClick.current = false;
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -74,6 +77,8 @@ export function SwipeToDelete({
       locked.current = Math.abs(dx) > Math.abs(dy) ? "h" : "v";
     }
     if (locked.current !== "h") return;
+    suppressClick.current = true;
+    if (!e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.setPointerCapture(e.pointerId);
     const raw = start.current.offset + dx;
     const next = raw < -ACTION_W ? -ACTION_W - Math.min(18, Math.abs(raw + ACTION_W) * 0.2) : Math.min(0, raw);
     updateOffset(next);
@@ -85,7 +90,9 @@ export function SwipeToDelete({
     const projected = start.current.offset + dx;
     setDragging(false);
     start.current = null;
-    const shouldOpen = locked.current === "h" && projected < -ACTION_W * 0.38;
+    const shouldOpen = e.type === "pointercancel" ? open : locked.current === "h" ? projected < -ACTION_W * 0.38 : open;
+    if (frame.current !== null) cancelAnimationFrame(frame.current);
+    frame.current = null;
     setOpen(shouldOpen);
     setOffset(shouldOpen ? -ACTION_W : 0);
     pendingOffset.current = shouldOpen ? -ACTION_W : 0;
@@ -95,9 +102,12 @@ export function SwipeToDelete({
   return (
     <div ref={ref} className={cn("relative overflow-hidden", className)}>
       {/* Action révélée */}
-      <button
+      <Button
+        variant="destructive"
         type="button"
         aria-label={label}
+        tabIndex={open ? 0 : -1}
+        aria-hidden={!open}
         onClick={(e) => {
           e.stopPropagation();
           setOpen(false);
@@ -105,11 +115,11 @@ export function SwipeToDelete({
           onDelete();
         }}
         style={{ width: ACTION_W }}
-        className="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-1 bg-destructive text-destructive-foreground"
+        className="absolute inset-y-0 right-0 h-full rounded-none flex flex-col items-center justify-center gap-1"
       >
         <Trash2 className="h-5 w-5" />
         <span className="text-[11px] font-semibold">{label}</span>
-      </button>
+      </Button>
 
       {/* Contenu glissant */}
       <div
@@ -118,16 +128,15 @@ export function SwipeToDelete({
         onPointerUp={onPointerEnd}
         onPointerCancel={onPointerEnd}
         onClickCapture={(e) => {
-          if (open) {
+          if (suppressClick.current) {
             e.preventDefault();
             e.stopPropagation();
-            setOpen(false);
-            setOffset(0);
+            suppressClick.current = false;
           }
         }}
         style={{ transform: `translate3d(${offset}px,0,0)` }}
         className={cn(
-          "relative bg-card touch-pan-y will-change-transform",
+          "swipe-row relative bg-card touch-pan-y will-change-transform",
           !dragging && "transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
         )}
       >

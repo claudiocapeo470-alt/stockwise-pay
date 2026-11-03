@@ -27,6 +27,8 @@ import { getPerms, isFullAccess, canStock, canOrders, canOwnDeliveries } from "@
 import { generateCashReportPDF, CashReportPreview } from "@/components/caisse/CashReport";
 import { PosReceipt, type ReceiptData } from "@/components/caisse/PosReceipt";
 import { Button } from "@/components/ui/button";
+import { CartProductImage } from "@/components/caisse/CartProductImage";
+import { createPortal } from "react-dom";
 
 // ─── Types ──────────────────────────────────────────────
 interface CartItem {
@@ -173,6 +175,24 @@ export default function Caisse() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const scannerRef = useRef<Html5Qrcode | null>(null);
+  const scannerGeneration = useRef(0);
+  const scannerTask = useRef<Promise<void>>(Promise.resolve());
+
+  useEffect(() => () => {
+    scannerGeneration.current += 1;
+    void scannerTask.current.finally(async () => {
+      const scanner = scannerRef.current;
+      if (scanner?.isScanning) await scanner.stop().catch(() => {});
+      if (scannerRef.current === scanner) scannerRef.current = null;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!showScanner) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previous; };
+  }, [showScanner]);
   const barcodeBufferRef = useRef("");
   const barcodeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScanTimeRef = useRef(0);
@@ -390,10 +410,20 @@ export default function Caisse() {
       handleScanResult]);
 
   const startScanner = async () => {
+    const generation = ++scannerGeneration.current;
     setShowScanner(true);
     setScannerStatus('idle');
+    setTorchAvailable(false);
+    setTorchOn(false);
+    const previousTask = scannerTask.current;
+    const task = async () => {
+    await previousTask;
+    if (generation !== scannerGeneration.current) return;
     try {
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+      if (generation !== scannerGeneration.current) return;
       const devices = await Html5Qrcode.getCameras();
+      if (generation !== scannerGeneration.current) return;
       if (!devices || devices.length === 0) {
         setShowScanner(false);
         setScannerStatus('idle');
@@ -414,36 +444,50 @@ export default function Caisse() {
         {
           fps: 15,
           qrbox: { width: 280, height: 180 },
-          aspectRatio: 1.5,
           disableFlip: false,
         },
         (decodedText) => {
+          if (generation !== scannerGeneration.current) return;
           const cleaned = decodedText.trim().replace(/\s+/g, ' ');
           setScannerStatus('detected');
           handleScanResult(cleaned);
-          setTimeout(() => setScannerStatus('active'), 1500);
+          setTimeout(() => { if (generation === scannerGeneration.current) setScannerStatus('active'); }, 1500);
         },
         () => {
-          if (scannerStatus !== 'detected') setScannerStatus('active');
+          // Detection failures are normal while searching for a code.
         }
       );
+      if (generation !== scannerGeneration.current) {
+        if (html5Qrcode.isScanning) await html5Qrcode.stop().catch(() => {});
+        if (scannerRef.current === html5Qrcode) scannerRef.current = null;
+        return;
+      }
       const capabilities = html5Qrcode.getRunningTrackCapabilities() as MediaTrackCapabilities & { torch?: boolean };
       setTorchAvailable(Boolean(capabilities?.torch));
       setScannerStatus('active');
     } catch (err: any) {
+      const scanner = scannerRef.current;
+      if (scanner?.isScanning) await scanner.stop().catch(() => {});
+      if (scannerRef.current === scanner) scannerRef.current = null;
+      if (generation !== scannerGeneration.current) return;
       console.error('Scanner error:', err);
       setShowScanner(false);
       setScannerStatus('idle');
       setShowManualScan(true);
       toast({ title: "Erreur caméra", description: "Impossible d'accéder à la caméra. Utilisez la saisie manuelle.", variant: "destructive" });
     }
+    };
+    scannerTask.current = task();
+    await scannerTask.current;
   };
 
   const stopScanner = () => {
-    if (scannerRef.current) {
-      scannerRef.current.stop().catch(() => {});
-      scannerRef.current = null;
-    }
+    scannerGeneration.current += 1;
+    scannerTask.current = scannerTask.current.then(async () => {
+      const scanner = scannerRef.current;
+      if (scanner?.isScanning) await scanner.stop().catch(() => {});
+      if (scannerRef.current === scanner) scannerRef.current = null;
+    });
     setShowScanner(false);
     setScannerStatus('idle');
     setTorchAvailable(false);
@@ -1210,8 +1254,8 @@ export default function Caisse() {
       )}
 
       {/* Scanner immersif mobile/tablette, fenêtre compacte sur ordinateur */}
-      {showScanner && (
-        <div className="fixed inset-0 z-[80] bg-foreground lg:flex lg:items-center lg:justify-center lg:bg-foreground/60 lg:p-4 lg:backdrop-blur-sm">
+      {showScanner && createPortal(
+        <div role="dialog" aria-modal="true" aria-label="Scanner de produit" onKeyDown={e => { if (e.key === 'Escape') stopScanner(); }} className="pos-scanner fixed inset-0 z-[80] bg-foreground lg:flex lg:items-center lg:justify-center lg:bg-foreground/60 lg:p-4 lg:backdrop-blur-sm">
           <div className="relative h-full w-full overflow-hidden bg-foreground lg:h-auto lg:max-w-lg lg:rounded-2xl lg:bg-background lg:p-5 lg:shadow-xl">
             <div id="qr-reader" className="absolute inset-0 h-full w-full bg-foreground lg:relative lg:aspect-[4/3] lg:overflow-hidden lg:rounded-xl" />
             <div className="absolute inset-0 bg-gradient-to-b from-foreground/55 via-transparent to-foreground/70 pointer-events-none lg:rounded-xl" />
@@ -1222,10 +1266,10 @@ export default function Caisse() {
               </Button>
               <div className="flex items-center gap-2">
                 <span className={`hidden rounded-full px-3 py-1.5 text-xs font-semibold backdrop-blur-md lg:inline-flex ${
-                scannerStatus === 'active'   ? 'bg-green-100 text-green-700' :
-                scannerStatus === 'detected' ? 'bg-blue-100 text-blue-700' :
-                scannerStatus === 'not_found'? 'bg-red-100 text-red-700' :
-                                              'bg-gray-100 text-gray-500'
+                scannerStatus === 'active'   ? 'bg-success/20 text-success' :
+                scannerStatus === 'detected' ? 'bg-accent/20 text-accent' :
+                scannerStatus === 'not_found'? 'bg-destructive/20 text-destructive' :
+                                              'bg-muted text-muted-foreground'
               }`}>
                 {scannerStatus === 'active'    ? '● Caméra active' :
                  scannerStatus === 'detected'  ? '✓ Code détecté' :
@@ -1238,12 +1282,12 @@ export default function Caisse() {
               </div>
             </div>
 
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-52 w-[82%] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-primary-foreground/70 shadow-[0_0_0_999px_hsl(var(--foreground)/0.18)] lg:h-44 lg:w-[78%]">
+            <div className="pos-scanner-frame pointer-events-none absolute left-1/2 top-1/2 h-52 w-[82%] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-primary-foreground/70 lg:h-44 lg:w-[78%]">
               <span className="absolute -left-0.5 -top-0.5 h-9 w-9 rounded-tl-2xl border-l-4 border-t-4 border-success" />
               <span className="absolute -right-0.5 -top-0.5 h-9 w-9 rounded-tr-2xl border-r-4 border-t-4 border-success" />
               <span className="absolute -bottom-0.5 -left-0.5 h-9 w-9 rounded-bl-2xl border-b-4 border-l-4 border-success" />
               <span className="absolute -bottom-0.5 -right-0.5 h-9 w-9 rounded-br-2xl border-b-4 border-r-4 border-success" />
-              <span className="absolute left-4 right-4 top-1/2 h-0.5 bg-destructive shadow-[0_0_10px_hsl(var(--destructive))]" />
+              <span className="pos-scanner-line absolute left-4 right-4 top-1/2 h-0.5 bg-destructive" />
             </div>
             {scannerStatus === 'detected' && (
               <div className="absolute inset-0 bg-success/20 animate-pulse pointer-events-none lg:rounded-xl" />
@@ -1261,7 +1305,7 @@ export default function Caisse() {
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
 
       {/* Manual scan — accepts barcode, SKU, number, text */}
       {showManualScan && (

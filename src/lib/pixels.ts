@@ -185,11 +185,16 @@ export function loadPixels() {
   }
 
   trackPixelEvent("PageView");
+  const queued = pendingEvents.splice(0);
+  queued.forEach(([ev, d]) => trackPixelEvent(ev, d));
 }
+
+const pendingEvents: [PixelEvent, PixelEventData][] = [];
 
 /** Diffuse un événement standard vers chaque pixel actif. */
 export function trackPixelEvent(event: PixelEvent, data: PixelEventData = {}) {
-  if (!loaded || !current || activeList.length === 0) return;
+  if (!loaded) { if (pendingEvents.length < 20) pendingEvents.push([event, data]); return; }
+  if (!current || activeList.length === 0) return;
   const currency = data.currency || "XOF";
 
   try {

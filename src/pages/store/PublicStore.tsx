@@ -489,17 +489,17 @@ export default function PublicStore() {
   const submitOrder = async () => {
     if (!store || !orderForm.name || !orderForm.phone || submitting) return;
     setSubmitting(true);
-    const orderNumber = `CMD-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
-    const items = cart.map(i => ({ id: i.id, name: i.name, icon: i.icon_emoji, price: i.price, quantity: i.quantity }));
-    const { error } = await supabase.from("store_orders").insert({
-      store_id: store.id, order_number: orderNumber,
+    const items = cart.map(i => ({ id: i.id, name: i.name, icon: i.icon_emoji, image_url: i.image_url, price: i.price, quantity: i.quantity }));
+    const { data: created, error } = await supabase.from("store_orders").insert({
+      store_id: store.id,
       customer_name: orderForm.name, customer_phone: orderForm.phone,
       customer_email: orderForm.email || null, customer_address: orderForm.address || null,
       items, subtotal, delivery_fee: deliveryFee, total: cartTotal,
       payment_method: orderForm.payment_method, notes: orderForm.notes || null,
-    });
+    } as any).select("order_number").single();
     setSubmitting(false);
     if (error) { alert("Erreur: " + error.message); return; }
+    const orderNumber = (created as any)?.order_number || "";
     trackPixelEvent("Purchase", {
       content_ids: cart.map(i => i.id),
       value: cartTotal,

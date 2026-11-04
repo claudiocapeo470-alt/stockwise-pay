@@ -18,6 +18,22 @@ function alreadyNotified(key: string): boolean {
   }
 }
 
+/** Une seule alerte par document, pour toujours (pas de répétition à chaque ouverture). */
+function seenOnce(key: string): boolean {
+  try {
+    const raw = localStorage.getItem('alert:seen-docs');
+    const set: string[] = raw ? JSON.parse(raw) : [];
+    if (set.includes(key)) return true;
+    set.push(key);
+    localStorage.setItem('alert:seen-docs', JSON.stringify(set.slice(-500)));
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+const clean = (v?: string | null) => (v || '').replace(/\s+/g, ' ').trim();
+
 /**
  * Alertes métier périodiques + temps réel :
  * - factures échues, paiements en retard
@@ -45,15 +61,15 @@ export function useBusinessAlerts() {
         .lt('due_date', nowIso)
         .in('status', ['envoye', 'brouillon']);
 
-      const newInv = (overdueInvoices || []).filter((inv: any) => inv.document_type !== 'devis' && inv.status === 'envoye' && !alreadyNotified(`invoice-overdue-${inv.id}`));
+      const newInv = (overdueInvoices || []).filter((inv: any) => inv.document_type !== 'devis' && inv.status === 'envoye' && !seenOnce(`invoice-overdue-${inv.id}`));
       if (newInv.length > 0) {
         const total = newInv.reduce((t: number, i: any) => t + Number(i.total_amount || 0), 0);
         notifyUser({
           companyId: company?.id, userId: ownerId, type: 'warning',
           title: newInv.length > 1 ? `${newInv.length} factures échues` : 'Facture échue',
           message: newInv.length > 1
-            ? `${total.toLocaleString('fr-FR')} FCFA à relancer`
-            : `Facture ${newInv[0].document_number} — ${newInv[0].client_name || 'client'} — ${total.toLocaleString('fr-FR')} FCFA`,
+            ? `${total.toLocaleString('fr-FR')} FCFA à relancer auprès de vos clients`
+            : `Facture ${newInv[0].document_number} — ${clean(newInv[0].client_name) || 'client'} — ${total.toLocaleString('fr-FR')} FCFA`,
           url: '/app/factures', tag: 'invoices-overdue',
         });
       }
@@ -65,11 +81,11 @@ export function useBusinessAlerts() {
         .lt('due_date', nowIso)
         .in('status', ['pending', 'partial', 'overdue']);
 
-      const newPay = (latePayments || []).filter((p: any) => !alreadyNotified(`payment-overdue-${p.id}`));
+      const newPay = (latePayments || []).filter((p: any) => !seenOnce(`payment-overdue-${p.id}`));
       if (newPay.length > 0) {
         const rest = newPay.reduce((t: number, p: any) => t + Number(p.remaining_amount || 0), 0);
         const first: any = newPay[0];
-        const client = first.customer_name || [first.customer_first_name, first.customer_last_name].filter(Boolean).join(' ') || 'Client';
+        const client = clean(first.customer_name) || clean([first.customer_first_name, first.customer_last_name].filter(Boolean).join(' ')) || 'Client';
         notifyUser({
           companyId: company?.id, userId: ownerId, type: 'warning',
           title: newPay.length > 1 ? `${newPay.length} paiements en retard` : 'Paiement en retard',

@@ -45,21 +45,18 @@ export function useBusinessAlerts() {
         .lt('due_date', nowIso)
         .in('status', ['envoye', 'brouillon']);
 
-      (overdueInvoices || []).forEach((inv: any) => {
-        if (alreadyNotified(`invoice-overdue-${inv.id}`)) return;
-        const label = `${inv.document_type === 'devis' ? 'Devis' : 'Facture'} ${inv.document_number}`;
-        const body = `${label} — ${inv.client_name || 'client'} — ${Number(inv.total_amount || 0).toLocaleString('fr-FR')} FCFA`;
+      const newInv = (overdueInvoices || []).filter((inv: any) => inv.document_type !== 'devis' && inv.status === 'envoye' && !alreadyNotified(`invoice-overdue-${inv.id}`));
+      if (newInv.length > 0) {
+        const total = newInv.reduce((t: number, i: any) => t + Number(i.total_amount || 0), 0);
         notifyUser({
-          companyId: company?.id,
-          userId: ownerId,
-          type: 'warning',
-          title: 'Facture échue',
-          message: body,
-          url: inv.document_type === 'devis' ? '/app/devis' : '/app/factures',
-          tag: `invoice-overdue-${inv.id}`,
-          requireInteraction: true,
+          companyId: company?.id, userId: ownerId, type: 'warning',
+          title: newInv.length > 1 ? `${newInv.length} factures échues` : 'Facture échue',
+          message: newInv.length > 1
+            ? `${total.toLocaleString('fr-FR')} FCFA à relancer`
+            : `Facture ${newInv[0].document_number} — ${newInv[0].client_name || 'client'} — ${total.toLocaleString('fr-FR')} FCFA`,
+          url: '/app/factures', tag: 'invoices-overdue',
         });
-      });
+      }
 
       const { data: latePayments } = await supabase
         .from('payments')
@@ -68,24 +65,18 @@ export function useBusinessAlerts() {
         .lt('due_date', nowIso)
         .in('status', ['pending', 'partial', 'overdue']);
 
-      (latePayments || []).forEach((pay: any) => {
-        if (alreadyNotified(`payment-overdue-${pay.id}`)) return;
-        const client =
-          pay.customer_name ||
-          [pay.customer_first_name, pay.customer_last_name].filter(Boolean).join(' ') ||
-          'Client';
-        const body = `${client} — reste ${Number(pay.remaining_amount || 0).toLocaleString('fr-FR')} FCFA`;
+      const newPay = (latePayments || []).filter((p: any) => !alreadyNotified(`payment-overdue-${p.id}`));
+      if (newPay.length > 0) {
+        const rest = newPay.reduce((t: number, p: any) => t + Number(p.remaining_amount || 0), 0);
+        const first: any = newPay[0];
+        const client = first.customer_name || [first.customer_first_name, first.customer_last_name].filter(Boolean).join(' ') || 'Client';
         notifyUser({
-          companyId: company?.id,
-          userId: ownerId,
-          type: 'warning',
-          title: 'Paiement en retard',
-          message: body,
-          url: '/app/paiements',
-          tag: `payment-overdue-${pay.id}`,
-          requireInteraction: true,
+          companyId: company?.id, userId: ownerId, type: 'warning',
+          title: newPay.length > 1 ? `${newPay.length} paiements en retard` : 'Paiement en retard',
+          message: newPay.length > 1 ? `Reste ${rest.toLocaleString('fr-FR')} FCFA à encaisser` : `${client} — reste ${rest.toLocaleString('fr-FR')} FCFA`,
+          url: '/app/paiements', tag: 'payments-overdue',
         });
-      });
+      }
     };
 
     void check();

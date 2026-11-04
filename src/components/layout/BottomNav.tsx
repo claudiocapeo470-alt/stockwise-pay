@@ -117,7 +117,7 @@ export function BottomNav() {
   const perms = getPerms(memberInfo);
 
   // Caissier (permission pos sans accès complet) : navigation dédiée gérée par Caisse.tsx
-  if (isEmployee && canPos(perms) && !isFullAccess(perms)) return null;
+  if (isEmployee && canPos(perms) && !isFullAccess(perms) && !canStock(perms) && !canOrders(perms)) return null;
 
   const hasAccess = (item: NavItem) => {
     const itemModule = item.module || getRouteModule(item.href);

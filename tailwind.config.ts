@@ -116,11 +116,11 @@ export default {
 				draw: { from: { strokeDashoffset: '1' }, to: { strokeDashoffset: '0' } },
 				fade: { from: { opacity: '0' }, to: { opacity: '1' } },
 				grow: { from: { transform: 'scaleX(0)' }, to: { transform: 'scaleX(1)' } },
-				pop: { '0%': { transform: 'scale(.4)', opacity: '0' }, '60%': { transform: 'scale(1.1)' }, '100%': { transform: 'scale(1)', opacity: '1' } },
+				pop: { '0%': { transform: 'scale(.4)', opacity: '0' }, '60%': { transform: 'scale(1.25)' }, '100%': { transform: 'scale(1)', opacity: '1' } },
 				slide: { from: { opacity: '0', transform: 'translateX(14px)' }, to: { opacity: '1' } },
 				shine: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
-				ping2: { '0%': { boxShadow: '0 0 0 0 rgba(229,72,77,.55)' }, '100%': { boxShadow: '0 0 0 10px rgba(229,72,77,0)' } },
-				float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } },
+				ping2: { '0%': { boxShadow: '0 0 0 0 rgba(229,72,77,.55)' }, '100%': { boxShadow: '0 0 0 9px rgba(229,72,77,0)' } },
+				float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-4px)' } },
 				'accordion-down': {
 					from: { height: '0' },
 					to: { height: 'var(--radix-accordion-content-height)' }

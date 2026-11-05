@@ -515,7 +515,8 @@ table td .truncate, table th .truncate { display: block; max-width: 100%; }
 
 /* ═══ StockWise Pay — animations & utilitaires ═══ */
 @layer components {
-  .card-lift { @apply bg-card border border-border rounded-2xl transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-medium active:scale-[.97]; }
+  .card-lift { @apply bg-card border border-border rounded-2xl; transition: transform 200ms ease, box-shadow 200ms ease; }
+  .card-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px rgba(16,24,40,.18); }
   .art-hover { @apply transition-transform duration-300 ease-out; }
   .group:hover .art-hover { transform: translateY(-3px) rotate(-3deg) scale(1.06); }
   .draw-line { stroke-dasharray: 1; }

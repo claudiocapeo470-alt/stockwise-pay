@@ -1,4 +1,5 @@
 import { Toaster as Sonner } from '@/components/ui/sonner';
+import DesignTest from "./pages/DesignTest";
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -85,6 +86,7 @@ const App = () => (
           <AuthProvider>
             <AnimatedRoutes topLevel>
               <Route path="/" element={<PWARedirect />} />
+              <Route path="/design-test" element={<DesignTest />} />
               <Route path="/tarifs" element={<Tarifs />} />
               <Route path="/fonctionnalites" element={<Fonctionnalites />} />
               <Route path="/faq" element={<FAQ />} />

@@ -19,7 +19,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'sans': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+				'sans': ['Geist', 'Inter', 'system-ui', 'sans-serif'],
 			},
 			fontSize: {
 				'xs': ['12px', { lineHeight: '1.5' }],
@@ -98,8 +98,9 @@ export default {
 				sm: '4px',
 				md: '8px',
 				lg: '12px',
-				xl: '16px',
-				'2xl': '24px',
+				xl: '14px',
+				'2xl': '16px',
+				'3xl': '20px',
 				DEFAULT: '8px',
 			},
 			boxShadow: {
@@ -107,7 +108,19 @@ export default {
 				'medium': 'var(--shadow-medium)',
 				'large': 'var(--shadow-large)',
 			},
+			backgroundImage: {
+				'brand-gradient': 'linear-gradient(135deg, #3B5BFF 0%, #1B2FB5 100%)',
+			},
 			keyframes: {
+				rise: { from: { opacity: '0', transform: 'translateY(12px)' }, to: { opacity: '1' } },
+				draw: { from: { strokeDashoffset: '1' }, to: { strokeDashoffset: '0' } },
+				fade: { from: { opacity: '0' }, to: { opacity: '1' } },
+				grow: { from: { transform: 'scaleX(0)' }, to: { transform: 'scaleX(1)' } },
+				pop: { '0%': { transform: 'scale(.4)', opacity: '0' }, '60%': { transform: 'scale(1.1)' }, '100%': { transform: 'scale(1)', opacity: '1' } },
+				slide: { from: { opacity: '0', transform: 'translateX(14px)' }, to: { opacity: '1' } },
+				shine: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
+				ping2: { '0%': { boxShadow: '0 0 0 0 rgba(229,72,77,.55)' }, '100%': { boxShadow: '0 0 0 10px rgba(229,72,77,0)' } },
+				float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } },
 				'accordion-down': {
 					from: { height: '0' },
 					to: { height: 'var(--radix-accordion-content-height)' }
@@ -134,7 +147,16 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
 				'scale-in': 'scale-in 0.2s ease-out',
-				'slide-up': 'slide-up 0.35s ease-out'
+				'slide-up': 'slide-up 0.35s ease-out',
+				rise: 'rise .55s cubic-bezier(.2,.7,.2,1) both',
+				draw: 'draw 1.6s cubic-bezier(.4,0,.2,1) .35s both',
+				fade: 'fade 1s ease .9s both',
+				grow: 'grow .9s cubic-bezier(.2,.7,.2,1) .5s both',
+				pop: 'pop .35s cubic-bezier(.3,1.4,.5,1) both',
+				slide: 'slide .3s ease both',
+				shine: 'shine 4s linear infinite',
+				ping2: 'ping2 1.8s infinite',
+				float: 'float 4s ease-in-out infinite',
 			}
 		}
 	},

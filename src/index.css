@@ -52,20 +52,7 @@ img, svg, video, canvas, iframe {
   height: auto;
 }
 
-/* Tables: horizontally scrollable, page stays fixed */
-table {
-  display: block;
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-td, th {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+/* Tables: scroll inside their own overflow-x-auto container (page never scrolls sideways) */
 
 /* Inputs never exceed container */
 input, select, textarea, button {
@@ -132,31 +119,33 @@ input, select, textarea {
 
 @layer base {
   :root {
-    /* Stocknix Design System — Guide v2 */
-    --background: 220 14% 98%;
-    --foreground: 222 47% 11%;
+    /* StockWise Pay — Refonte UI */
+    --background: 220 20% 97%;
+    --foreground: 240 12% 5%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 240 12% 5%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 222 70% 14%;
+    --popover-foreground: 240 12% 5%;
+    --primary: 229 82% 52%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 221 83% 53%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 73% 51%;
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 240 12% 5%;
+    --muted: 220 14% 94%;
+    --muted-foreground: 240 6% 40%;
+    --accent: 228 100% 96%;
+    --accent-foreground: 229 82% 52%;
+    --destructive: 4 74% 42%;
     --destructive-foreground: 0 0% 100%;
-    --success: 160 94% 30%;
+    --success: 160 83% 26%;
     --success-foreground: 0 0% 100%;
-    --warning: 27 96% 44%;
+    --warning: 27 87% 36%;
     --warning-foreground: 0 0% 100%;
-    --border: 220 13% 91%;
-    --input: 0 0% 100%;
-    --ring: 221 83% 53%;
-    --radius: 0.5rem;
+    --border: 222 16% 90%;
+    --input: 222 16% 90%;
+    --ring: 229 82% 52%;
+    --radius: 1rem;
+    --brand-from: #3B5BFF;
+    --brand-to: #1B2FB5;
     --shadow-soft: 0 1px 2px rgba(16, 24, 40, 0.05);
     --shadow-medium: 0 4px 12px rgba(16, 24, 40, 0.08);
     --shadow-large: 0 12px 32px rgba(16, 24, 40, 0.12);
@@ -171,11 +160,11 @@ input, select, textarea {
   }
 
   .dark {
-    --background: 222 47% 6%;
+    --background: 222 30% 7%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 10%;
+    --card: 222 28% 10%;
     --card-foreground: 210 40% 98%;
-    --popover: 222 47% 10%;
+    --popover: 222 28% 10%;
     --popover-foreground: 210 40% 98%;
     --primary: 221 83% 60%;
     --primary-foreground: 0 0% 100%;
@@ -191,8 +180,10 @@ input, select, textarea {
     --success-foreground: 0 0% 100%;
     --warning: 43 96% 58%;
     --warning-foreground: 0 0% 4%;
-    --border: 222 30% 18%;
-    --input: 222 47% 12%;
+    --border: 222 20% 18%;
+    --input: 222 20% 18%;
+    --brand-from: #3B5BFF;
+    --brand-to: #1B2FB5;
     --ring: 221 83% 60%;
     --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
     --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
@@ -219,7 +210,7 @@ input, select, textarea {
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
@@ -521,3 +512,16 @@ table td .truncate, table th .truncate { display: block; max-width: 100%; }
   .swipe-row { transition-duration: 0ms !important; }
 }
 
+
+/* ═══ StockWise Pay — animations & utilitaires ═══ */
+@layer components {
+  .card-lift { @apply bg-card border border-border rounded-2xl transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-medium active:scale-[.97]; }
+  .art-hover { @apply transition-transform duration-300 ease-out; }
+  .group:hover .art-hover { transform: translateY(-3px) rotate(-3deg) scale(1.06); }
+  .draw-line { stroke-dasharray: 1; }
+  .bar-grow { transform-origin: left; }
+  .cta-shine { background: linear-gradient(110deg, #1B2FB5 20%, #4C6BFF 45%, #1B2FB5 70%); background-size: 200% 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
+const fmt = (n: number) => Math.round(n).toLocaleString('fr-FR').replace(/\u202f|\u00a0/g, ' ');
+
 export function AdminOwnerDashboard() {
   const { products } = useProducts();
   const { sales } = useSales();
@@ -68,10 +70,23 @@ export function AdminOwnerDashboard() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card><CardContent className="p-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground font-medium">Produits en stock</p><p className="text-3xl font-bold text-foreground mt-1">{metrics.totalProducts}</p><div className="flex items-center gap-1 mt-2">{metrics.lowStockProducts > 0 ? (<><ArrowDownRight className="h-4 w-4 text-destructive" /><span className="text-sm text-destructive font-medium">{metrics.lowStockProducts} en rupture</span></>) : (<><ArrowUpRight className="h-4 w-4 text-success" /><span className="text-sm text-success font-medium">Stock normal</span></>)}</div></div><div className="h-12 w-12 bg-primary/10 flex items-center justify-center rounded-xl"><Package className="h-6 w-6 text-primary" /></div></div></CardContent></Card>
-        <Card><CardContent className="p-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground font-medium">Ventes aujourd'hui</p><p className="text-3xl font-bold text-foreground mt-1">{metrics.todaySales}</p><p className="text-sm text-muted-foreground mt-2">{metrics.todayTotal.toLocaleString('de-DE')} FCFA</p></div><div className="h-12 w-12 bg-success/10 flex items-center justify-center rounded-xl"><ShoppingCart className="h-6 w-6 text-success" /></div></div></CardContent></Card>
-        <Card><CardContent className="p-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground font-medium">Paiements en attente</p><p className="text-3xl font-bold text-foreground mt-1">{metrics.pendingPayments}</p><p className="text-sm text-muted-foreground mt-2">{metrics.pendingPayments} factures</p></div><div className="h-12 w-12 bg-warning/10 flex items-center justify-center rounded-xl"><Receipt className="h-6 w-6 text-warning" /></div></div></CardContent></Card>
-        <Card><CardContent className="p-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground font-medium">CA du mois</p><p className="text-3xl font-bold text-foreground mt-1">{(metrics.monthlyRevenue / 1000).toFixed(0)}K</p><p className="text-sm text-muted-foreground mt-2">{metrics.monthlyRevenue.toLocaleString('de-DE')} FCFA</p></div><div className="h-12 w-12 bg-secondary/10 flex items-center justify-center rounded-xl"><TrendingUp className="h-6 w-6 text-secondary" /></div></div></CardContent></Card>
+        {[
+          { label: "Ventes aujourd'hui", value: fmt(metrics.todayTotal), unit: "FCFA", hint: `${metrics.todaySales} vente${metrics.todaySales > 1 ? "s" : ""}`, icon: ShoppingCart, tone: "text-success bg-success/10", to: "/app/ventes" },
+          { label: "CA du mois", value: fmt(metrics.monthlyRevenue), unit: "FCFA", hint: format(new Date(), "MMMM yyyy", { locale: fr }), icon: TrendingUp, tone: "text-accent bg-accent/10", to: "/app/rapports" },
+          { label: "Produits", value: String(metrics.totalProducts), unit: "", hint: metrics.lowStockProducts > 0 ? `${metrics.lowStockProducts} en stock bas` : "Stock normal", warn: metrics.lowStockProducts > 0, icon: Package, tone: "text-primary bg-primary/10", to: "/app/stocks" },
+          { label: "Paiements en attente", value: String(metrics.pendingPayments), unit: "", hint: metrics.pendingPayments > 0 ? "À encaisser" : "Tout est réglé", icon: Receipt, tone: "text-warning bg-warning/10", to: "/app/paiements" },
+        ].map((k) => (
+          <button key={k.label} onClick={() => navigate(k.to)} className="group text-left rounded-lg border border-border bg-card p-4 sm:p-5 transition-all hover:border-accent/40 hover:shadow-md">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{k.label}</p>
+              <div className={`h-9 w-9 shrink-0 rounded-lg flex items-center justify-center ${k.tone}`}><k.icon className="h-4 w-4" /></div>
+            </div>
+            <p className="mt-3 text-xl sm:text-2xl font-bold text-foreground tabular-nums truncate">{k.value}{k.unit && <span className="ml-1 text-xs font-medium text-muted-foreground">{k.unit}</span>}</p>
+            <p className={`mt-1 flex items-center gap-1 text-xs ${k.warn ? "text-destructive" : "text-muted-foreground"}`}>
+              {k.warn ? <ArrowDownRight className="h-3.5 w-3.5" /> : <ArrowUpRight className="h-3.5 w-3.5 opacity-60" />}{k.hint}
+            </p>
+          </button>
+        ))}
       </div>
 
       {metrics.lowStockProducts > 0 && (
@@ -80,7 +95,7 @@ export function AdminOwnerDashboard() {
             <div className="flex items-start gap-4">
               <div className="h-10 w-10 bg-destructive/10 flex items-center justify-center flex-shrink-0 rounded-xl"><AlertTriangle className="h-5 w-5 text-destructive" /></div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-2"><h3 className="font-semibold text-foreground">Alerte Stock</h3><Badge variant="destructive">{metrics.lowStockProducts}</Badge></div>
+                <div className="flex items-center gap-2 mb-2"><h3 className="font-semibold text-foreground">Produits à réapprovisionner</h3><Badge variant="destructive">{metrics.lowStockProducts}</Badge></div>
                 <div className="flex flex-wrap gap-2">
                   {metrics.lowStockProductsList.slice(0, 5).map((product) => (
                     <div key={product.id} className="flex items-center gap-2 bg-background px-3 py-1.5 border border-border text-sm rounded-lg"><span className="font-medium">{product.name}</span><span className="text-muted-foreground">{product.quantity}/{product.min_quantity}</span></div>
@@ -96,10 +111,10 @@ export function AdminOwnerDashboard() {
         <Card>
           <CardHeader className="pb-4"><CardTitle className="text-base">Actions rapides</CardTitle></CardHeader>
           <CardContent className="space-y-2">
-            <Button variant="outline" className="w-full justify-start h-12" onClick={() => navigate('/app/caisse')}><Plus className="h-4 w-4 mr-3" />Nouvelle vente</Button>
-            <Button variant="outline" className="w-full justify-start h-12" onClick={() => navigate('/app/stocks')}><Package className="h-4 w-4 mr-3" />Ajouter un produit</Button>
-            <Button variant="outline" className="w-full justify-start h-12" onClick={() => navigate('/app/factures/new')}><Receipt className="h-4 w-4 mr-3" />Créer une facture</Button>
-            <Button variant="outline" className="w-full justify-start h-12" onClick={() => navigate('/app/rapports')}><TrendingUp className="h-4 w-4 mr-3" />Voir les rapports</Button>
+            <Button variant="outline" className="w-full justify-start h-11 rounded-lg" onClick={() => navigate('/app/caisse')}><Plus className="h-4 w-4 mr-3" />Nouvelle vente</Button>
+            <Button variant="outline" className="w-full justify-start h-11 rounded-lg" onClick={() => navigate('/app/stocks')}><Package className="h-4 w-4 mr-3" />Ajouter un produit</Button>
+            <Button variant="outline" className="w-full justify-start h-11 rounded-lg" onClick={() => navigate('/app/factures/new')}><Receipt className="h-4 w-4 mr-3" />Créer une facture</Button>
+            <Button variant="outline" className="w-full justify-start h-11 rounded-lg" onClick={() => navigate('/app/rapports')}><TrendingUp className="h-4 w-4 mr-3" />Voir les rapports</Button>
           </CardContent>
         </Card>
 
@@ -113,7 +128,7 @@ export function AdminOwnerDashboard() {
                 {recentSales.map((sale) => (
                   <div key={sale.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
                     <div className="flex items-center gap-3"><div className="h-10 w-10 bg-muted flex items-center justify-center rounded-lg"><ShoppingCart className="h-4 w-4 text-muted-foreground" /></div><div><p className="font-medium text-sm">{(sale as any).products?.name || 'Produit'}</p><p className="text-xs text-muted-foreground">{format(new Date(sale.sale_date), "dd MMM à HH:mm", { locale: fr })}</p></div></div>
-                    <div className="text-right"><p className="font-semibold text-sm">{sale.total_amount.toLocaleString('de-DE')} FCFA</p><p className="text-xs text-muted-foreground">Qté: {sale.quantity}</p></div>
+                    <div className="text-right"><p className="font-semibold text-sm">{sale.total_amount.toLocaleString('fr-FR').replace(/\u202f|\u00a0/g, ' ')} FCFA</p><p className="text-xs text-muted-foreground">Qté: {sale.quantity}</p></div>
                   </div>
                 ))}
               </div>

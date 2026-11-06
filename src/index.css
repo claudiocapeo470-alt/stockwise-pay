@@ -188,13 +188,13 @@ input, select, textarea {
     --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
     --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
     --shadow-large: 0 8px 32px rgba(0, 0, 0, 0.5);
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 210 40% 98%;
+    --sidebar-background: var(--background);
+    --sidebar-foreground: var(--foreground);
     --sidebar-primary: 221 83% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 222 30% 16%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 30% 18%;
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: var(--border);
     --sidebar-ring: 221 83% 60%;
   }
 }

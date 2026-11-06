@@ -149,14 +149,14 @@ input, select, textarea {
     --shadow-soft: 0 1px 2px rgba(16, 24, 40, 0.05);
     --shadow-medium: 0 4px 12px rgba(16, 24, 40, 0.08);
     --shadow-large: 0 12px 32px rgba(16, 24, 40, 0.12);
-    --sidebar-background: 222 70% 14%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-background: var(--background);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: 229 82% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 60% 20%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 222 50% 22%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-accent: 220 14% 94%;
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: 229 82% 52%;
   }
 
   .dark {

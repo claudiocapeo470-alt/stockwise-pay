@@ -44,7 +44,7 @@ export function paymentInfo(method?: string | null): { label: string; dot: strin
   const m = (method || "").toLowerCase();
   if (m.includes("wave")) return { label: "Wave", dot: "bg-accent" };
   if (m.includes("orange")) return { label: "Orange Money", dot: "bg-warning" };
-  if (m.includes("mtn") || m.includes("momo")) return { label: "MTN MoMo", dot: "bg-yellow-400" };
+  if (m.includes("mtn") || m.includes("momo")) return { label: "MTN MoMo", dot: "bg-warning/50" };
   if (m.includes("cash") || m.includes("esp")) return { label: "Espèces", dot: "bg-success" };
   if (m.includes("card") || m.includes("carte")) return { label: "Carte", dot: "bg-primary" };
   if (m.includes("credit") || m.includes("crédit")) return { label: "Crédit", dot: "bg-destructive" };
@@ -63,6 +63,7 @@ export function AreaChart({ values, labels, height = 180 }: { values: number[]; 
   const last = pts[pts.length - 1];
   return (
     <div className="w-full">
+      <div className="relative">
       <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="w-full" style={{ height }} role="img" aria-label="Évolution du chiffre d'affaires">
         <defs>
           <linearGradient id="dash-area" x1="0" y1="0" x2="0" y2="1">
@@ -76,10 +77,9 @@ export function AreaChart({ values, labels, height = 180 }: { values: number[]; 
         <path d={area} fill="url(#dash-area)" className="animate-fade-in" />
         <path d={line} fill="none" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray="1" className="animate-draw" vectorEffect="non-scaling-stroke" />
       </svg>
-      <div className="relative -mt-1">
         <span
           className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-primary bg-card animate-fade-in"
-          style={{ left: `${(last[0] / w) * 100}%`, top: -(h - last[1]) - 4 }}
+          style={{ left: `${(last[0] / w) * 100}%`, top: last[1] }}
         />
       </div>
       <div className="mt-2 flex justify-between text-[11px] text-muted-foreground tabular-nums">

@@ -202,7 +202,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
             <div className="flex items-center gap-2 sm:gap-4 w-full min-w-0">
               {!isMobile && (
-                <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-10 w-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0" />
+                <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted h-11 w-11 rounded-xl flex items-center justify-center transition-colors flex-shrink-0" />
               )}
               {isMobile && !isHomePage && <div id="mobile-page-secondary-action" className="flex shrink-0 items-center" />}
               <div className="flex-1 min-w-0">
@@ -220,9 +220,9 @@ export function AppLayout({ children }: AppLayoutProps) {
                 )}
               </div>
 
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 [&_button]:rounded-full [&_button]:bg-muted/40 [&_button]:border [&_button]:border-border [&_button]:hover:bg-muted">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 [&_button]:h-11 [&_button]:w-11 [&_button]:rounded-xl [&_button]:bg-card [&_button]:border [&_button]:border-border [&_button]:shadow-sm [&_button]:hover:bg-muted">
                 {isEmployee && !isMobile && (
-                  <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground hover:text-foreground rounded-full bg-muted/60" title="Verrouiller">
+                  <Button variant="ghost" size="icon" onClick={handleLock} className="text-muted-foreground hover:text-foreground" title="Verrouiller">
                     <Lock className="h-4 w-4" />
                   </Button>
                 )}

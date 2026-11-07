@@ -21,20 +21,23 @@ export function AdminBottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border shadow-lg">
-      <div className="flex justify-around items-center h-16 px-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/70 bg-card/95 backdrop-blur-xl pb-safe">
+      <div className="flex justify-around items-start h-[84px] px-2 pt-2">
         {navigation.map((item) => (
           <NavLink
             key={item.name}
             to={item.href}
             end={item.href === "/admin"}
-            className={({ isActive }) => `
-              flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg transition-colors w-full
-              ${isActive ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30' : 'text-muted-foreground hover:text-foreground'}
-            `}
+            className={({ isActive }) => `flex flex-col items-center gap-1 flex-1 min-w-0 min-h-[44px] transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}
           >
-            <item.icon className="h-5 w-5" />
-            <span className="text-[10px] font-medium">{item.label}</span>
+            {({ isActive }) => (
+              <>
+                <span className={`flex h-7 w-10 items-center justify-center rounded-full transition-all ${isActive ? "bg-primary/10" : ""}`}>
+                  <item.icon className={`h-5 w-5 ${isActive ? "stroke-[2.4]" : "stroke-[1.8]"}`} />
+                </span>
+                <span className={`text-[11px] leading-none ${isActive ? "font-semibold" : "font-medium"}`}>{item.label}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </div>

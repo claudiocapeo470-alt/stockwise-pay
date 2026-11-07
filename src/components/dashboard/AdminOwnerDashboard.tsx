@@ -1,7 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle, ArrowUpRight, ArrowDownRight, Plus, Clock, ChevronRight } from "lucide-react";
+import { Package, ShoppingCart, Receipt, TrendingUp, AlertTriangle, Plus, ChevronRight, Wallet } from "lucide-react";
+import { KpiCard } from "@/components/ui/KpiCard";
+import { ProductArt } from "@/components/ui/ProductArt";
+import { useCompany } from "@/hooks/useCompany";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { fmtNum, DashCard, EmptyState, SkeletonBlock, AreaChart, BarRow, paymentInfo, fmtFcfa, rise } from "./DashboardParts";
+import { cn } from "@/lib/utils";
 import { useProducts } from "@/hooks/useProducts";
 import { useSales } from "@/hooks/useSales";
 import { usePayments } from "@/hooks/usePayments";
@@ -12,11 +16,15 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
-const fmt = (n: number) => Math.round(n).toLocaleString('fr-FR').replace(/\u202f|\u00a0/g, ' ');
+
 
 export function AdminOwnerDashboard() {
   const { products } = useProducts();
-  const { sales } = useSales();
+  const { sales, isLoading } = useSales();
+  const { company } = useCompany();
+  const { settings } = useCompanySettings();
+  const companyName = settings?.company_name?.trim() || company?.name?.trim() || 'Votre entreprise';
+  const [period, setPeriod] = useState<'today' | '7' | '30'>('today');
   const { payments } = usePayments();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -65,77 +73,169 @@ export function AdminOwnerDashboard() {
     setShowWelcomeGuide(false);
   };
 
-  const recentSales = useMemo(() => [...sales].sort((a, b) => new Date(b.sale_date).getTime() - new Date(a.sale_date).getTime()).slice(0, 5), [sales]);
+  const view = useMemo(() => {
+    const now = new Date();
+    const start = new Date(now); start.setHours(0, 0, 0, 0);
+    if (period !== 'today') start.setDate(start.getDate() - (Number(period) - 1));
+    const inPeriod = sales.filter(s => new Date(s.sale_date) >= start);
+    const revenue = inPeriod.reduce((a, s) => a + s.total_amount, 0);
+    const avg = inPeriod.length ? revenue / inPeriod.length : 0;
+    const days: { label: string; total: number; count: number }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now); d.setDate(d.getDate() - i);
+      const ds = d.toDateString();
+      const list = sales.filter(s => new Date(s.sale_date).toDateString() === ds);
+      days.push({ label: format(d, 'EEE', { locale: fr }).replace('.', ''), total: list.reduce((a, s) => a + s.total_amount, 0), count: list.length });
+    }
+    const byProduct = new Map<string, { name: string; image?: string | null; category?: string | null; qty: number }>();
+    inPeriod.forEach(s => {
+      const cur = byProduct.get(s.product_id) || { name: s.products?.name || 'Produit', image: s.products?.image_url, category: s.products?.category, qty: 0 };
+      cur.qty += s.quantity; byProduct.set(s.product_id, cur);
+    });
+    const top = [...byProduct.values()].sort((a, b) => b.qty - a.qty).slice(0, 5);
+    const pay = new Map<string, { label: string; dot: string; total: number }>();
+    inPeriod.forEach(s => { const p = paymentInfo(s.payment_method); const c = pay.get(p.label) || { ...p, total: 0 }; c.total += s.total_amount; pay.set(p.label, c); });
+    const payList = [...pay.values()].sort((a, b) => b.total - a.total);
+    const recent = [...sales].sort((a, b) => new Date(b.sale_date).getTime() - new Date(a.sale_date).getTime()).slice(0, 6);
+    return { revenue, count: inPeriod.length, avg, days, top, payList, recent };
+  }, [sales, period]);
+
+  const periodLabel = period === 'today' ? "aujourd'hui" : `sur ${period} jours`;
+  const topMax = view.top[0]?.qty || 1;
+  const payTotal = view.payList.reduce((a, p) => a + p.total, 0);
+
+  const kpis = [
+    { title: "Chiffre d'affaires", value: fmtNum(view.revenue), unit: "FCFA", icon: TrendingUp, hero: true, trend: view.days.map(d => d.total), delta: `Mois : ${fmtNum(metrics.monthlyRevenue)}` },
+    { title: "Ventes", value: String(view.count), icon: ShoppingCart, tone: "green" as const, trend: view.days.map(d => d.count), delta: periodLabel },
+    { title: "Panier moyen", value: fmtNum(view.avg), unit: "FCFA", icon: Wallet, tone: "violet" as const, delta: `${metrics.pendingPayments} paiement${metrics.pendingPayments > 1 ? "s" : ""} en attente`, deltaTone: metrics.pendingPayments > 0 ? "warn" as const : "up" as const },
+    { title: "Alertes de stock", value: String(metrics.lowStockProducts), icon: AlertTriangle, tone: "orange" as const, delta: `${metrics.totalProducts} produits`, deltaTone: metrics.lowStockProducts > 0 ? "warn" as const : "up" as const },
+  ];
+
+  const recentCard = (
+    <DashCard index={6} title="Ventes récentes" className="flex-1" action={<Button variant="ghost" size="sm" onClick={() => navigate('/app/ventes')}>Voir tout <ChevronRight className="h-4 w-4 ml-1" /></Button>}>
+      {view.recent.length === 0 ? (
+        <EmptyState message="Aucune vente pour le moment" actionLabel="Nouvelle vente" onAction={() => navigate('/app/caisse')} />
+      ) : (
+        <ul className="divide-y divide-border">
+          {view.recent.map((sale) => {
+            const p = paymentInfo(sale.payment_method);
+            return (
+              <li key={sale.id} className="flex items-center gap-3 py-2.5 min-w-0">
+                <ProductArt name={sale.products?.name} imageUrl={sale.products?.image_url} category={sale.products?.category || undefined} size={44} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-foreground">{sale.customer_name?.replace(/\s+/g, ' ').trim() || sale.products?.name || 'Client comptoir'}</p>
+                  <p className="truncate text-xs text-muted-foreground">{sale.products?.name || 'Produit'} · {sale.quantity} article{sale.quantity > 1 ? 's' : ''} · {format(new Date(sale.sale_date), "dd MMM HH:mm", { locale: fr })}</p>
+                </div>
+                <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-muted-foreground shrink-0"><span className={cn("h-2 w-2 rounded-full", p.dot)} />{p.label}</span>
+                <span className="shrink-0 text-sm font-semibold tabular-nums text-foreground">{fmtFcfa(sale.total_amount)}</span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </DashCard>
+  );
+
+  const restockCard = (
+    <DashCard index={5} title="À réapprovisionner" action={<Button variant="ghost" size="sm" onClick={() => navigate('/app/stocks')}>Stock <ChevronRight className="h-4 w-4 ml-1" /></Button>}>
+      {metrics.lowStockProductsList.length === 0 ? (
+        <EmptyState message="Tous vos stocks sont au bon niveau" />
+      ) : (
+        <ul className="space-y-2.5">
+          {metrics.lowStockProductsList.slice(0, 5).map((p) => (
+            <li key={p.id} className="flex items-center gap-3 min-w-0">
+              <ProductArt name={p.name} imageUrl={p.image_url} category={p.category || undefined} size={40} />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">{p.name}</p>
+                <p className="text-xs text-muted-foreground tabular-nums">Seuil : {p.min_quantity}</p>
+              </div>
+              <span className={cn("inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-xs font-semibold tabular-nums", p.quantity <= 0 ? "bg-destructive/10 text-destructive" : "bg-warning/10 text-warning")}>{p.quantity}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </DashCard>
+  );
+
+  const topCard = (
+    <DashCard index={5} title="Top produits">
+      {view.top.length === 0 ? (
+        <EmptyState message="Pas encore de ventes sur cette période" />
+      ) : (
+        <div className="space-y-3">
+          {view.top.map((t, i) => (
+            <BarRow key={i} name={t.name} imageUrl={t.image} category={t.category} right={`${t.qty} vendu${t.qty > 1 ? 's' : ''}`} pct={(t.qty / topMax) * 100} color={["bg-primary", "bg-success", "bg-warning", "bg-accent", "bg-destructive"][i]} />
+          ))}
+        </div>
+      )}
+    </DashCard>
+  );
+
+  const payCard = payTotal > 0 ? (
+    <DashCard index={7} title="Modes de paiement">
+      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-muted">
+        {view.payList.map((p) => <div key={p.label} className={cn("h-full origin-left animate-grow", p.dot)} style={{ width: `${(p.total / payTotal) * 100}%` }} />)}
+      </div>
+      <ul className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2">
+        {view.payList.map((p) => (
+          <li key={p.label} className="flex items-center gap-2 text-xs min-w-0">
+            <span className={cn("h-2 w-2 shrink-0 rounded-full", p.dot)} />
+            <span className="truncate text-muted-foreground">{p.label}</span>
+            <span className="ml-auto font-semibold tabular-nums">{Math.round((p.total / payTotal) * 100)} %</span>
+          </li>
+        ))}
+      </ul>
+    </DashCard>
+  ) : null;
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {[
-          { label: "Ventes aujourd'hui", value: fmt(metrics.todayTotal), unit: "FCFA", hint: `${metrics.todaySales} vente${metrics.todaySales > 1 ? "s" : ""}`, icon: ShoppingCart, tone: "text-success bg-success/10", to: "/app/ventes" },
-          { label: "CA du mois", value: fmt(metrics.monthlyRevenue), unit: "FCFA", hint: format(new Date(), "MMMM yyyy", { locale: fr }), icon: TrendingUp, tone: "text-accent bg-accent/10", to: "/app/rapports" },
-          { label: "Produits", value: String(metrics.totalProducts), unit: "", hint: metrics.lowStockProducts > 0 ? `${metrics.lowStockProducts} en stock bas` : "Stock normal", warn: metrics.lowStockProducts > 0, icon: Package, tone: "text-primary bg-primary/10", to: "/app/stocks" },
-          { label: "Paiements en attente", value: String(metrics.pendingPayments), unit: "", hint: metrics.pendingPayments > 0 ? "À encaisser" : "Tout est réglé", icon: Receipt, tone: "text-warning bg-warning/10", to: "/app/paiements" },
-        ].map((k) => (
-          <button key={k.label} onClick={() => navigate(k.to)} className="group text-left rounded-lg border border-border bg-card p-4 sm:p-5 transition-all hover:border-accent/40 hover:shadow-md">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{k.label}</p>
-              <div className={`h-9 w-9 shrink-0 rounded-lg flex items-center justify-center ${k.tone}`}><k.icon className="h-4 w-4" /></div>
-            </div>
-            <p className="mt-3 text-xl sm:text-2xl font-bold text-foreground tabular-nums truncate">{k.value}{k.unit && <span className="ml-1 text-xs font-medium text-muted-foreground">{k.unit}</span>}</p>
-            <p className={`mt-1 flex items-center gap-1 text-xs ${k.warn ? "text-destructive" : "text-muted-foreground"}`}>
-              {k.warn ? <ArrowDownRight className="h-3.5 w-3.5" /> : <ArrowUpRight className="h-3.5 w-3.5 opacity-60" />}{k.hint}
-            </p>
-          </button>
-        ))}
+    <div className="flex flex-col gap-4 lg:gap-5 min-h-[calc(100dvh-8rem)]">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between animate-rise">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Tableau de bord</h1>
+          <p className="text-sm text-muted-foreground truncate first-letter:uppercase">{format(new Date(), "EEEE d MMMM yyyy", { locale: fr })} · {companyName}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <div role="group" aria-label="Période" className="inline-flex rounded-xl border border-border bg-card p-1">
+            {([['today', "Aujourd'hui"], ['7', '7 jours'], ['30', '30 jours']] as const).map(([k, l]) => (
+              <button key={k} onClick={() => setPeriod(k)} aria-pressed={period === k} className={cn("h-9 rounded-lg px-3 text-sm font-medium transition-colors", period === k ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground")}>{l}</button>
+            ))}
+          </div>
+          <Button onClick={() => navigate('/app/caisse')} className="cta-shine h-11 rounded-xl px-4 text-primary-foreground"><Plus className="h-4 w-4 mr-2" />Nouvelle vente</Button>
+        </div>
       </div>
 
-      {metrics.lowStockProducts > 0 && (
-        <Card className="border-destructive/30 bg-destructive/5">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-4">
-              <div className="h-10 w-10 bg-destructive/10 flex items-center justify-center flex-shrink-0 rounded-xl"><AlertTriangle className="h-5 w-5 text-destructive" /></div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-2"><h3 className="font-semibold text-foreground">Produits à réapprovisionner</h3><Badge variant="destructive">{metrics.lowStockProducts}</Badge></div>
-                <div className="flex flex-wrap gap-2">
-                  {metrics.lowStockProductsList.slice(0, 5).map((product) => (
-                    <div key={product.id} className="flex items-center gap-2 bg-background px-3 py-1.5 border border-border text-sm rounded-lg"><span className="font-medium">{product.name}</span><span className="text-muted-foreground">{product.quantity}/{product.min_quantity}</span></div>
-                  ))}
-                </div>
-              </div>
+      {isLoading ? (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">{[0, 1, 2, 3].map(i => <SkeletonBlock key={i} className="h-[128px]" />)}</div>
+          <div className="grid gap-4 lg:grid-cols-[3fr_1.6fr]"><SkeletonBlock className="h-[290px]" /><SkeletonBlock className="h-[290px]" /></div>
+          <SkeletonBlock className="h-[320px]" />
+        </>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
+            {kpis.map((k, i) => (
+              <KpiCard key={k.title} {...k} style={rise(i)} className={cn(!k.hero && "border border-border bg-card", "min-w-0")} />
+            ))}
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-[3fr_1.6fr]">
+            <DashCard index={4} title="Chiffre d'affaires · 7 jours" className="md:col-span-2 lg:col-span-1" action={<span className="text-sm font-semibold tabular-nums">{fmtFcfa(view.days.reduce((a, d) => a + d.total, 0))}</span>}>
+              <AreaChart values={view.days.map(d => d.total)} labels={view.days.map(d => d.label)} />
+            </DashCard>
+            {topCard}
+            <div className="lg:hidden">{restockCard}</div>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-[3fr_1.6fr] flex-1">
+            <div className="flex flex-col min-w-0">{recentCard}</div>
+            <div className="flex flex-col gap-4 min-w-0">
+              <div className="hidden lg:block">{restockCard}</div>
+              {payCard}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </>
       )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="pb-4"><CardTitle className="text-base">Actions rapides</CardTitle></CardHeader>
-          <CardContent className="space-y-2">
-            <Button variant="outline" className="w-full justify-start h-11 rounded-lg" onClick={() => navigate('/app/caisse')}><Plus className="h-4 w-4 mr-3" />Nouvelle vente</Button>
-            <Button variant="outline" className="w-full justify-start h-11 rounded-lg" onClick={() => navigate('/app/stocks')}><Package className="h-4 w-4 mr-3" />Ajouter un produit</Button>
-            <Button variant="outline" className="w-full justify-start h-11 rounded-lg" onClick={() => navigate('/app/factures/new')}><Receipt className="h-4 w-4 mr-3" />Créer une facture</Button>
-            <Button variant="outline" className="w-full justify-start h-11 rounded-lg" onClick={() => navigate('/app/rapports')}><TrendingUp className="h-4 w-4 mr-3" />Voir les rapports</Button>
-          </CardContent>
-        </Card>
-
-        <Card className="lg:col-span-2">
-          <CardHeader className="pb-4 flex flex-row items-center justify-between"><CardTitle className="text-base">Activité récente</CardTitle><Button variant="ghost" size="sm" onClick={() => navigate('/app/ventes')}>Voir tout <ChevronRight className="h-4 w-4 ml-1" /></Button></CardHeader>
-          <CardContent>
-            {recentSales.length === 0 ? (
-              <div className="text-center py-8"><Clock className="h-10 w-10 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">Aucune activité récente</p></div>
-            ) : (
-              <div className="space-y-3">
-                {recentSales.map((sale) => (
-                  <div key={sale.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
-                    <div className="flex items-center gap-3"><div className="h-10 w-10 bg-muted flex items-center justify-center rounded-lg"><ShoppingCart className="h-4 w-4 text-muted-foreground" /></div><div><p className="font-medium text-sm">{(sale as any).products?.name || 'Produit'}</p><p className="text-xs text-muted-foreground">{format(new Date(sale.sale_date), "dd MMM à HH:mm", { locale: fr })}</p></div></div>
-                    <div className="text-right"><p className="font-semibold text-sm">{sale.total_amount.toLocaleString('fr-FR').replace(/\u202f|\u00a0/g, ' ')} FCFA</p><p className="text-xs text-muted-foreground">Qté: {sale.quantity}</p></div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
 
       {showWelcomeGuide && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">

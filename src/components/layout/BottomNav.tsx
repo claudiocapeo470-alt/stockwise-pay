@@ -184,20 +184,22 @@ export function BottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 lg:hidden pb-safe backdrop-blur-xl">
-        <div className="flex items-end justify-around h-[68px] px-2 pb-2">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/70 bg-card/95 lg:hidden pb-safe backdrop-blur-xl">
+        <div className="flex items-start justify-around h-[84px] px-2 pt-2">
           {navigation.map((item) => {
             const active = isActive(item.href);
             return (
               <NavLink
                 key={item.name}
                 to={item.href}
-                className={`flex flex-col items-center justify-center flex-1 gap-1.5 pt-2 transition-colors duration-200 min-w-0 min-h-[44px] ${
-                  active ? "text-foreground" : "text-muted-foreground/70"
+                className={`flex flex-col items-center flex-1 gap-1 min-w-0 min-h-[44px] transition-colors duration-200 ${
+                  active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
-                <item.icon className={`h-[22px] w-[22px] flex-shrink-0 ${active ? "stroke-[2.4]" : "stroke-[1.75]"}`} />
-                <span className={`text-[11px] leading-none truncate max-w-[64px] ${active ? "font-semibold" : "font-normal"}`}>
+                <span className={`flex h-7 w-10 items-center justify-center rounded-full transition-all duration-200 ${active ? "bg-primary/10" : ""}`}>
+                  <item.icon className={`h-5 w-5 flex-shrink-0 ${active ? "stroke-[2.4]" : "stroke-[1.8]"}`} />
+                </span>
+                <span className={`text-[11px] leading-none truncate max-w-[64px] ${active ? "font-semibold" : "font-medium"}`}>
                   {item.label || item.name}
                 </span>
               </NavLink>
@@ -206,10 +208,12 @@ export function BottomNav() {
           {showMenuButton && (
             <button
               onClick={() => setDrawerOpen(true)}
-              className="flex flex-col items-center justify-center flex-1 gap-1.5 pt-2 transition-colors duration-200 min-w-0 min-h-[44px] text-muted-foreground/70"
+              className="flex flex-col items-center flex-1 gap-1 min-w-0 min-h-[44px] text-muted-foreground"
             >
-              <Menu className="h-[22px] w-[22px] flex-shrink-0 stroke-[1.75]" />
-              <span className="text-[11px] leading-none font-normal">Menu</span>
+              <span className="flex h-7 w-10 items-center justify-center rounded-full">
+                <Menu className="h-5 w-5 flex-shrink-0 stroke-[1.8]" />
+              </span>
+              <span className="text-[11px] leading-none font-medium">Menu</span>
             </button>
           )}
         </div>

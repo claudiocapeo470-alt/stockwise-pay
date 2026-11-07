@@ -42,7 +42,7 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+        <Button variant="ghost" className="relative h-11 w-11 rounded-xl">
           <Avatar className="h-8 w-8">
             <AvatarImage src={profile?.avatar_url || ''} alt={displayName} />
             <AvatarFallback className="bg-primary text-primary-foreground text-xs">

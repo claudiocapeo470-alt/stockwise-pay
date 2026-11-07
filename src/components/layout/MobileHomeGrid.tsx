@@ -97,11 +97,11 @@ export function MobileHomeGrid() {
                 className="flex flex-col items-center justify-center gap-1.5 p-1 active:scale-95 transition-transform min-w-0 min-h-0"
               >
                 <span
-                  className="rounded-full flex items-center justify-center shrink-0 h-[clamp(44px,8vh,58px)] w-[clamp(44px,8vh,58px)]"
+                  className="rounded-[14px] ring-1 ring-border/60 shadow-sm flex items-center justify-center shrink-0 h-12 w-12"
                   style={{ backgroundColor: `${tile.color}1F` }}
                 >
                   <tile.icon
-                    className="h-[clamp(20px,4vh,26px)] w-[clamp(20px,4vh,26px)]"
+                    className="h-[22px] w-[22px]"
                     style={{ color: tile.color }}
                     strokeWidth={1.9}
                   />
@@ -116,8 +116,8 @@ export function MobileHomeGrid() {
             onClick={() => setLogoutOpen(true)}
             className="flex flex-col items-center justify-center gap-1.5 p-1 active:scale-95 transition-transform min-w-0 min-h-0"
           >
-            <span className="rounded-full flex items-center justify-center shrink-0 h-[clamp(44px,8vh,58px)] w-[clamp(44px,8vh,58px)] bg-destructive/10">
-              <LogOut className="h-[clamp(20px,4vh,26px)] w-[clamp(20px,4vh,26px)] text-destructive" strokeWidth={1.9} />
+            <span className="rounded-[14px] ring-1 ring-border/60 shadow-sm flex items-center justify-center shrink-0 h-12 w-12 bg-destructive/10">
+              <LogOut className="h-[22px] w-[22px] text-destructive" strokeWidth={1.9} />
             </span>
             <span className="text-foreground text-[11px] font-medium text-center leading-tight">
               Déconnexion

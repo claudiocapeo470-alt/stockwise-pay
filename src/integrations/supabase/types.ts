@@ -258,7 +258,7 @@ export type Database = {
           last_login_at: string | null
           last_name: string | null
           photo_url: string | null
-          pin_code: string
+          pin_code: string | null
           role_id: string | null
           service_id: string | null
           updated_at: string
@@ -273,7 +273,7 @@ export type Database = {
           last_login_at?: string | null
           last_name?: string | null
           photo_url?: string | null
-          pin_code: string
+          pin_code?: string | null
           role_id?: string | null
           service_id?: string | null
           updated_at?: string
@@ -288,7 +288,7 @@ export type Database = {
           last_login_at?: string | null
           last_name?: string | null
           photo_url?: string | null
-          pin_code?: string
+          pin_code?: string | null
           role_id?: string | null
           service_id?: string | null
           updated_at?: string
@@ -803,6 +803,32 @@ export type Database = {
             foreignKeyName: "lock_sessions_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
+            referencedRelation: "company_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_pins: {
+        Row: {
+          member_id: string
+          pin_hash: string
+          updated_at: string
+        }
+        Insert: {
+          member_id: string
+          pin_hash: string
+          updated_at?: string
+        }
+        Update: {
+          member_id?: string
+          pin_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_pins_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: true
             referencedRelation: "company_members"
             referencedColumns: ["id"]
           },
@@ -1979,6 +2005,7 @@ export type Database = {
         Args: { _store_id: string; _year?: number }
         Returns: string
       }
+      get_auth_user_id_by_email: { Args: { _email: string }; Returns: string }
       get_order_tracking: { Args: { _order_id: string }; Returns: Json }
       get_subscription_pricing: { Args: never; Returns: Json }
       has_role: {

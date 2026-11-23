@@ -8,6 +8,20 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// Les codes sont stockés hachés (SHA-256) : une fuite de la base ne révèle aucun code valide.
+async function hashResetCode(email: string, code: string): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${email}:${code}`));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Code à 6 chiffres issu d'un générateur cryptographique (Math.random n'est pas sûr)
+function generateResetCode(): string {
+  const limit = 4294967296 - (4294967296 % 900000);
+  const arr = new Uint32Array(1);
+  do { crypto.getRandomValues(arr); } while (arr[0] >= limit);
+  return (100000 + (arr[0] % 900000)).toString();
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -56,12 +70,12 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     // Generate a 6-digit reset code
-    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const resetCode = generateResetCode();
 
     // Store the reset code
     const { error: dbError } = await supabase
       .from('password_reset_codes')
-      .insert({ email, code: resetCode });
+      .insert({ email, code: await hashResetCode(email, resetCode) });
 
     if (dbError) {
       console.error("Error storing reset code");

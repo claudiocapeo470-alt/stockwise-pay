@@ -98,11 +98,10 @@ Deno.serve(async (req) => {
 
       if (createError) {
         // User might already exist with this email
-        const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-        const existingUser = existingUsers?.users?.find(u => u.email === memberEmail);
-        
-        if (existingUser) {
-          authUserId = existingUser.id;
+        const { data: existingId } = await supabaseAdmin.rpc("get_auth_user_id_by_email", { _email: memberEmail });
+
+        if (existingId) {
+          authUserId = existingId as string;
         } else {
           console.error("Error creating auth user:", createError);
           return new Response(

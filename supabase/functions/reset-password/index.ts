@@ -7,6 +7,11 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+async function hashResetCode(email: string, code: string): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${email}:${code}`));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -71,7 +76,7 @@ const handler = async (req: Request): Promise<Response> => {
       .from('password_reset_codes')
       .select('*')
       .eq('email', email)
-      .eq('code', code)
+      .eq('code', await hashResetCode(email, code))
       .eq('used', false)
       .gte('expires_at', new Date().toISOString())
       .single();
@@ -83,40 +88,42 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Find user by email
-    const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
-    if (userError) {
-      return new Response(
-        JSON.stringify({ error: "Erreur interne", success: false }),
-        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    }
-
-    const user = userData.users.find(u => u.email === email);
-    if (!user) {
+    // Consommer le code de façon atomique (empêche toute réutilisation en parallèle)
+    const { data: consumed } = await supabase
+      .from('password_reset_codes')
+      .update({ used: true })
+      .eq('id', resetCodeData.id)
+      .eq('used', false)
+      .select('id');
+    if (!consumed || consumed.length === 0) {
       return new Response(
         JSON.stringify({ error: "Code de réinitialisation invalide ou expiré", success: false }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // Update password
+    // Trouver l'utilisateur par e-mail (listUsers() ne renvoie que les 50 premiers comptes)
+    const { data: userId, error: userError } = await supabase.rpc('get_auth_user_id_by_email', { _email: email });
+    if (userError || !userId) {
+      return new Response(
+        JSON.stringify({ error: "Code de réinitialisation invalide ou expiré", success: false }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Mettre à jour le mot de passe
     const { error: updateError } = await supabase.auth.admin.updateUserById(
-      user.id, { password: newPassword }
+      userId as string, { password: newPassword }
     );
 
     if (updateError) {
+      // Rendre le code réutilisable si la mise à jour a échoué
+      await supabase.from('password_reset_codes').update({ used: false }).eq('id', resetCodeData.id);
       return new Response(
         JSON.stringify({ error: "Erreur lors de la mise à jour du mot de passe", success: false }),
         { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
-
-    // Mark code as used
-    await supabase
-      .from('password_reset_codes')
-      .update({ used: true })
-      .eq('id', resetCodeData.id);
 
     return new Response(JSON.stringify({
       success: true,

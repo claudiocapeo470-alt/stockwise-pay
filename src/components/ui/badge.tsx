@@ -20,6 +20,8 @@ const badgeVariants = cva(
           "bg-warning/10 text-warning border border-warning/20",
         outline:
           "border border-border text-foreground bg-transparent",
+        info:
+          "bg-primary/10 text-primary border border-primary/20",
       },
     },
     defaultVariants: {

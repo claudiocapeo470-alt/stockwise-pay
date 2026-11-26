@@ -131,7 +131,7 @@ input, select, textarea {
     --secondary: 220 14% 94%;
     --secondary-foreground: 240 12% 5%;
     --muted: 220 14% 94%;
-    --muted-foreground: 240 6% 40%;
+    --muted-foreground: 220 9% 40%;
     --accent: 228 100% 96%;
     --accent-foreground: 229 82% 52%;
     --destructive: 4 74% 42%;
@@ -140,15 +140,24 @@ input, select, textarea {
     --success-foreground: 0 0% 100%;
     --warning: 27 87% 36%;
     --warning-foreground: 0 0% 100%;
-    --border: 222 16% 90%;
-    --input: 222 16% 90%;
+    --border: 220 15% 91%;
+    --input: 220 15% 91%;
     --ring: 229 82% 52%;
     --radius: 1rem;
     --brand-from: #3B5BFF;
     --brand-to: #1B2FB5;
-    --shadow-soft: 0 1px 2px rgba(16, 24, 40, 0.05);
-    --shadow-medium: 0 4px 12px rgba(16, 24, 40, 0.08);
-    --shadow-large: 0 12px 32px rgba(16, 24, 40, 0.12);
+    /* Ombres en couches : un contour fin + une ombre diffuse = profondeur discrète */
+    --shadow-xs: 0 1px 1px rgba(16, 24, 40, 0.04);
+    --shadow-soft: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 1px rgba(16, 24, 40, 0.03);
+    --shadow-medium: 0 6px 16px -4px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.05);
+    --shadow-large: 0 24px 48px -12px rgba(16, 24, 40, 0.16), 0 8px 16px -8px rgba(16, 24, 40, 0.06);
+    --shadow-brand: 0 1px 2px hsl(229 82% 28% / 0.30), 0 4px 12px -4px hsl(229 82% 52% / 0.45), inset 0 1px 0 hsl(0 0% 100% / 0.16);
+    --shadow-brand-hover: 0 1px 2px hsl(229 82% 28% / 0.30), 0 8px 20px -6px hsl(229 82% 52% / 0.55), inset 0 1px 0 hsl(0 0% 100% / 0.20);
+    /* Mouvement : durées et courbes partagées */
+    --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 150ms;
+    --dur-base: 220ms;
+    --dur-slow: 420ms;
     --sidebar-background: var(--background);
     --sidebar-foreground: var(--foreground);
     --sidebar-primary: 229 82% 52%;
@@ -185,9 +194,12 @@ input, select, textarea {
     --brand-from: #3B5BFF;
     --brand-to: #1B2FB5;
     --ring: 221 83% 60%;
-    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
-    --shadow-large: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.30);
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.35), 0 0 0 1px hsl(0 0% 100% / 0.02);
+    --shadow-medium: 0 6px 18px -4px rgba(0, 0, 0, 0.45);
+    --shadow-large: 0 24px 48px -12px rgba(0, 0, 0, 0.6);
+    --shadow-brand: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 14px -4px hsl(221 83% 60% / 0.35), inset 0 1px 0 hsl(0 0% 100% / 0.14);
+    --shadow-brand-hover: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 22px -6px hsl(221 83% 60% / 0.5), inset 0 1px 0 hsl(0 0% 100% / 0.18);
     --sidebar-background: var(--background);
     --sidebar-foreground: var(--foreground);
     --sidebar-primary: 221 83% 60%;
@@ -211,13 +223,25 @@ input, select, textarea {
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
   }
 
-  h1 { @apply text-2xl sm:text-[32px] font-bold leading-tight tracking-tight; }
-  h2 { @apply text-xl sm:text-[24px] font-semibold leading-tight; }
-  h3 { @apply text-lg sm:text-[20px] font-semibold leading-snug; }
-  h4 { @apply text-base sm:text-[18px] font-medium leading-snug; }
+  /* Titres : approche serrée et hiérarchie nette */
+  h1 { @apply text-2xl sm:text-[32px] font-bold leading-tight tracking-[-0.025em]; text-wrap: balance; }
+  h2 { @apply text-xl sm:text-[24px] font-semibold leading-tight tracking-[-0.02em]; text-wrap: balance; }
+  h3 { @apply text-lg sm:text-[20px] font-semibold leading-snug tracking-[-0.015em]; }
+  h4 { @apply text-base sm:text-[18px] font-medium leading-snug tracking-[-0.01em]; }
+  p { text-wrap: pretty; }
+
+  ::selection { background: hsl(var(--primary) / 0.18); color: inherit; }
+
+  /* Focus clavier visible partout (les composants qui définissent leur propre anneau gardent le leur) */
+  a:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -241,7 +265,7 @@ input, select, textarea {
   .status-success { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20; }
   .status-warning { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warning/10 text-warning border border-warning/20; }
   .status-error   { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive border border-destructive/20; }
-  .status-info    { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent border border-accent/20; }
+  .status-info    { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20; }
   .status-neutral { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground border border-border; }
   .table-header { @apply bg-muted/50 text-xs font-semibold uppercase tracking-wider text-muted-foreground; }
   .table-row-hover { @apply transition-colors; }
@@ -281,7 +305,32 @@ input, select, textarea {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  /* Le retour de chargement doit rester perceptible */
+  .animate-spin { animation-duration: 1.2s !important; animation-iteration-count: infinite !important; }
 }
+
+/* ═══ Utilitaires de design (étape 1) ═══ */
+@layer utilities {
+  /* Verre dépoli pour en-têtes collants et barres flottantes */
+  .glass { background: hsl(var(--background) / 0.72); -webkit-backdrop-filter: saturate(180%) blur(14px); backdrop-filter: saturate(180%) blur(14px); }
+  .glass-card { background: hsl(var(--card) / 0.7); -webkit-backdrop-filter: saturate(160%) blur(18px); backdrop-filter: saturate(160%) blur(18px); border: 1px solid hsl(var(--border) / 0.7); }
+  /* Texte dégradé de marque */
+  .text-gradient { background: linear-gradient(135deg, hsl(229 82% 56%) 0%, hsl(199 89% 48%) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  /* Quadrillage très discret pour les fonds de sections */
+  .bg-grid { background-image: linear-gradient(to right, hsl(var(--foreground) / 0.045) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--foreground) / 0.045) 1px, transparent 1px); background-size: 40px 40px; }
+  .bg-grid-fade { -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 80%); mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 80%); }
+  /* Halo coloré derrière un élément (hero, visuel 3D) */
+  .glow { position: relative; isolation: isolate; }
+  .glow::before { content: ""; position: absolute; inset: -20%; z-index: -1; background: radial-gradient(closest-side, hsl(229 82% 60% / 0.28), transparent 70%); filter: blur(30px); }
+  /* Chiffres alignés (tableaux, montants) */
+  .tabular { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+  /* Apparition douce (à combiner avec un délai via style="animation-delay") */
+  .reveal-up { animation: reveal-up var(--dur-slow) var(--ease-out-expo) both; }
+  /* Perspective pour les visuels 3D */
+  .perspective-1000 { perspective: 1000px; }
+  .preserve-3d { transform-style: preserve-3d; }
+}
+@keyframes reveal-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Responsive Container */
 .container-app { @apply max-w-[1440px] mx-auto px-3 sm:px-6 lg:px-12; }
@@ -290,6 +339,7 @@ input, select, textarea {
 @media (pointer: coarse) {
   .touch-target { min-height: 44px; min-width: 44px; }
   button, a, [role="button"] { min-height: 44px; }
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height: 44px; }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -523,6 +573,4 @@ table td .truncate, table th .truncate { display: block; max-width: 100%; }
   .bar-grow { transform-origin: left; }
   .cta-shine { background: linear-gradient(110deg, #1B2FB5 20%, #4C6BFF 45%, #1B2FB5 70%); background-size: 200% 100%; }
 }
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-}
+

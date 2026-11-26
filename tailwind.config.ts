@@ -20,6 +20,7 @@ export default {
 		extend: {
 			fontFamily: {
 				'sans': ['Geist', 'Inter', 'system-ui', 'sans-serif'],
+				'mono': ['Geist Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
 			},
 			fontSize: {
 				'xs': ['12px', { lineHeight: '1.5' }],
@@ -103,7 +104,13 @@ export default {
 				'3xl': '20px',
 				DEFAULT: '8px',
 			},
+			transitionTimingFunction: {
+				'out-expo': 'var(--ease-out-expo)',
+			},
 			boxShadow: {
+				'xs': 'var(--shadow-xs)',
+				'brand': 'var(--shadow-brand)',
+				'brand-hover': 'var(--shadow-brand-hover)',
 				'soft': 'var(--shadow-soft)',
 				'medium': 'var(--shadow-medium)',
 				'large': 'var(--shadow-large)',
